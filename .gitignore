@@ -1,0 +1,11 @@
+# Compiled Binaries and Objects
+*.exe
+*.o
+*.obj
+
+# Temporary / Scratch files
+*.log
+*.tmp
+
+# VS Code directory (optional local settings)
+.vscode/
