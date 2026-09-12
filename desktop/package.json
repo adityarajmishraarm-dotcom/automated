@@ -1,0 +1,12 @@
+{
+  "name": "antigravity-browser",
+  "version": "1.0.0",
+  "description": "Native AI-Native Browser (Chrome/Brave Alternative)",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "keywords": ["browser", "ai", "chromium"],
+  "author": "",
+  "license": "ISC"
+}

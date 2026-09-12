@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Antigravity Browser - AI-Native Chromium Core</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="native-browser-app">
+        <!-- Native Tab Strip (TabStripModel) -->
+        <header class="tab-strip-bar">
+            <div class="brand-badge">
+                <span class="brand-logo">✨</span>
+                <span class="brand-title">Antigravity</span>
+            </div>
+            <div class="tabs-track" id="tabsTrack">
+                <!-- Dynamically rendered tabs -->
+            </div>
+            <button class="btn-tab-add" id="btnAddTab" title="New Tab (Ctrl+T)">+</button>
+            <div class="window-controls-placeholder">
+                <span class="shield-badge" id="shieldBadge" title="Native Adblock Filter">
+                    🛡️ <span id="shieldCount">0</span> Blocked
+                </span>
+                <button class="btn-toggle-hud" id="btnToggleHud" title="Toggle AI Copilot HUD">🤖 AI HUD</button>
+            </div>
+        </header>
+
+        <!-- Omnibox Navigation Toolbar -->
+        <nav class="navigation-toolbar">
+            <div class="nav-controls">
+                <button class="btn-nav" id="btnBack" title="Back (Alt+Left)">‹</button>
+                <button class="btn-nav" id="btnForward" title="Forward (Alt+Right)">›</button>
+                <button class="btn-nav" id="btnReload" title="Reload (Ctrl+R)">↻</button>
+                <button class="btn-nav" id="btnHome" title="Home">🏠</button>
+            </div>
+            <div class="omnibox-box">
+                <span class="lock-icon" id="lockIcon">🔒</span>
+                <input type="text" id="urlInput" class="url-input" value="https://news.ycombinator.com" placeholder="Search Google or type a URL..." spellcheck="false" />
+                <span class="engine-tag">Blink Core</span>
+            </div>
+            <button class="btn-go" id="btnGo">Go</button>
+            <div class="status-pill">
+                <span class="dot-live"></span>
+                <span>In-Process C++</span>
+            </div>
+        </nav>
+
+        <!-- Main Content Area: Real Chromium Webview & AI Sidebar -->
+        <main class="main-browser-workspace">
+            <!-- Left: Real Live Chromium Webview Container -->
+            <div class="webview-container" id="webviewContainer">
+                <div class="webview-loading-bar" id="loadingBar"></div>
+            </div>
+
+            <!-- Right: AI Agent Control HUD -->
+            <aside class="ai-hud-sidebar" id="aiHudSidebar">
+                <div class="sidebar-header">
+                    <span class="sidebar-title">⚡ AI Copilot & Core Engine</span>
+                    <label class="som-toggle-label" title="Render Set-of-Marks numerical bounding boxes over elements">
+                        <input type="checkbox" id="chkSoM" checked>
+                        <span class="som-toggle-badge">SoM Overlay</span>
+                    </label>
+                </div>
+
+                <!-- HUD Navigation Tabs -->
+                <div class="sidebar-tabs">
+                    <button class="tab-btn active" data-view="viewAx">🌲 AX Tree</button>
+                    <button class="tab-btn" data-view="viewGrep">🔍 Grep</button>
+                    <button class="tab-btn" data-view="viewAutofill">📝 Autofill</button>
+                    <button class="tab-btn" data-view="viewCaptcha">🛡️ CAPTCHA</button>
+                    <button class="tab-btn" data-view="viewTelemetry">🔄 Closed Loop</button>
+                </div>
+
+                <div class="sidebar-body">
+                    <!-- View 1: AX Tree -->
+                    <div class="sidebar-view active" id="viewAx">
+                        <div class="view-header">
+                            <span class="view-meta">Sanitized Accessibility Markdown (&lt;3k tokens)</span>
+                            <button class="btn-small" id="btnRescanAx">Scan DOM</button>
+                        </div>
+                        <div class="ax-tree-box" id="axTreeBox">
+                            <div class="loading-spinner">Analyzing live page elements...</div>
+                        </div>
+                    </div>
+
+                    <!-- View 2: In-Memory Grep -->
+                    <div class="sidebar-view" id="viewGrep">
+                        <div class="view-header">
+                            <span class="view-meta">In-Memory Grep (±10 Lines Context)</span>
+                        </div>
+                        <div class="grep-search-box">
+                            <input type="text" id="txtGrepQuery" class="input-grep" placeholder="Search live DOM/scripts..." value="href" />
+                            <button class="btn-small btn-blue" id="btnExecuteGrep">Search</button>
+                        </div>
+                        <div class="grep-stats-bar" id="grepStatsBar" style="display: none;">
+                            <span id="lblGrepStats">Showing 1 to 10 of 42 matches</span>
+                            <div class="grep-page-controls">
+                                <button class="btn-page" id="btnGrepPrev" disabled>‹</button>
+                                <button class="btn-page" id="btnGrepNext">›</button>
+                            </div>
+                        </div>
+                        <div class="grep-output-area" id="grepOutputArea">
+                            <p class="hint-text">Enter query to inspect live page source code chunks.</p>
+                        </div>
+                    </div>
+
+                    <!-- View 3: Autofill -->
+                    <div class="sidebar-view" id="viewAutofill">
+                        <div class="view-header">
+                            <span class="view-meta">components/autofill Semantic Engine</span>
+                            <button class="btn-small btn-green" id="btnTriggerAutofill">Autofill Now</button>
+                        </div>
+                        <p class="view-desc">
+                            Leverages Chromium's 10-year tuned heuristics to parse forms into semantic fields
+                            and invokes <code>AutofillManager::FillForm()</code> directly on the active webview.
+                        </p>
+                        <div class="demo-buttons">
+                            <button class="btn-demo-form" id="btnLoadFormDemo">Load Checkout Demo</button>
+                            <button class="btn-demo-form" id="btnLoadGoogle">Load Google</button>
+                            <button class="btn-demo-form" id="btnLoadWikipedia">Load Wikipedia</button>
+                        </div>
+                        <div class="autofill-status" id="autofillStatus">Ready to autofill inputs on active page.</div>
+                    </div>
+
+                    <!-- View 4: CAPTCHA / HITL -->
+                    <div class="sidebar-view" id="viewCaptcha">
+                        <div class="view-header">
+                            <span class="view-meta">4-Layer Bot-Defense & Human Takeover</span>
+                        </div>
+                        <div class="status-grid">
+                            <div class="status-item">
+                                <span>Layer 1 (Stealth):</span>
+                                <span class="tag tag-green">Zero Port Leaks</span>
+                            </div>
+                            <div class="status-item">
+                                <span>Layer 2 (Detection):</span>
+                                <span class="tag tag-yellow" id="tagCaptchaDetected">Monitoring Live DOM</span>
+                            </div>
+                            <div class="status-item">
+                                <span>Layer 3 (Solver):</span>
+                                <span class="tag tag-blue">CapSolver / 2Captcha MCP</span>
+                            </div>
+                        </div>
+                        <div class="hitl-panel">
+                            <h4>Layer 4: Human-in-the-Loop (HITL)</h4>
+                            <p>Pause autonomous loop for manual user completion.</p>
+                            <button class="btn-small btn-yellow" id="btnHitlTrigger">Take Over Manually</button>
+                        </div>
+                    </div>
+
+                    <!-- View 5: Telemetry / Closed Loop -->
+                    <div class="sidebar-view" id="viewTelemetry">
+                        <div class="view-header">
+                            <span class="view-meta">Observe → Verify → Act → Diff</span>
+                            <button class="btn-small" id="btnClearTelemetry">Clear</button>
+                        </div>
+                        <div class="telemetry-box" id="telemetryBox">
+                            <div class="log-line info">Ready. Chromium WebContents attached.</div>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+        </main>
+    </div>
+
+    <!-- Human Takeover Floating HUD Banner -->
+    <div class="takeover-banner" id="takeoverBanner" style="display: none;">
+        <div class="takeover-content">
+            <span class="takeover-icon">⚠️</span>
+            <div class="takeover-text">
+                <strong>HUMAN-IN-THE-LOOP ACTIVE</strong>
+                <span>Autonomous loop paused. You have direct control of the live browser window.</span>
+            </div>
+            <button class="btn-small btn-green" id="btnResumeAutonomy">Resume Autonomous Agent</button>
+        </div>
+    </div>
+
+    <script src="renderer.js"></script>
+</body>
+</html>

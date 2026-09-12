@@ -1,0 +1,23 @@
+# Build artifacts
+build/
+bin/
+obj/
+*.exe
+*.o
+*.a
+*.dll
+*.so
+*.dylib
+
+# Node dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS and Editor files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.log
