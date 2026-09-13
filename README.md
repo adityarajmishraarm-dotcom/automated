@@ -67,7 +67,7 @@
 │   └── orchestrator/       # Dual-Model Router & Closed-Loop Agent
 ├── tests/                  # C++ Verification Suite (13 test suites)
 │   └── test_suite.cpp      # Automated unit and integration tests
-└── shell/                  # CLI Runner & Server harnesses
+└── AGENTS.md               # Strict native desktop & agent operational directives
 ```
 
 ---

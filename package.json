@@ -1,0 +1,26 @@
+{
+  "name": "antigravity-browser",
+  "version": "1.0.0",
+  "description": "Antigravity AI-Native Desktop Browser (Chrome/Brave Alternative)",
+  "main": "desktop/main.js",
+  "scripts": {
+    "build:react": "esbuild desktop/src/index.jsx --bundle --outfile=desktop/dist/bundle.js --platform=node --external:electron --loader:.jsx=jsx",
+    "start": "npm run build:react && electron desktop"
+  },
+  "keywords": [
+    "browser",
+    "ai-native",
+    "chromium"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@huggingface/transformers": "^4.2.0",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0"
+  },
+  "devDependencies": {
+    "electron": "^44.3.0",
+    "esbuild": "^0.28.2"
+  }
+}
