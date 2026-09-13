@@ -2190,13 +2190,13 @@ async function clickElementOnActivePage(targetText) {
     const tab = getActiveTab();
     const cleanTarget = (targetText || '').trim();
     if (!cleanTarget) {
-        return { success: false, message: 'Please specify the target element, button, link, plus icon, or search bar to click.' };
+        return { success: false, message: 'Please specify the target element, button, link, plus icon, dropdown, or search bar to click.' };
     }
 
     const targetLower = cleanTarget.toLowerCase();
 
     // -------------------------------------------------------------------------
-    // STEP 1: CHECK MAIN BROWSER WINDOW UI (Titlebar, Address Bar, Tab Strip, Controls)
+    // STEP 1: CHECK MAIN BROWSER WINDOW UI (Titlebar, Address Bar, Tab Strip, Controls, Dropdowns)
     // -------------------------------------------------------------------------
 
     // A. Plus Icon / New Tab Button (+ button on address bar / tab strip)
@@ -2256,7 +2256,46 @@ async function clickElementOnActivePage(targetText) {
         };
     }
 
-    // C. General Main Window Toolbar / Header Buttons
+    // C. Main Window Dropdown Select Menus (Search Engine, Workspace, Theme, Tools Dropdown)
+    const dropdownControls = [
+        { ids: ['searchEngineSelect'], keywords: ['search engine dropdown', 'search engine', 'google dropdown', 'duckduckgo dropdown', 'bing dropdown', 'brave dropdown', 'perplexity dropdown', 'provider dropdown'] },
+        { ids: ['workspaceSelect'], keywords: ['workspace dropdown', 'workspace select', 'workspace', 'workspaces'] },
+        { ids: ['themeSelect'], keywords: ['theme dropdown', 'theme select', 'color theme', 'theme studio'] },
+        { ids: ['toolsDropdownBtn'], keywords: ['tools dropdown', 'tools menu', 'utilities dropdown', 'tools'] }
+    ];
+
+    for (const ctrl of dropdownControls) {
+        if (ctrl.keywords.some(k => targetLower.includes(k))) {
+            for (const id of ctrl.ids) {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    const origOutline = el.style.outline;
+                    const origBoxShadow = el.style.boxShadow;
+                    el.style.outline = '3px solid #FFE600';
+                    el.style.boxShadow = '0 0 16px #FFE600';
+                    setTimeout(() => {
+                        el.style.outline = origOutline;
+                        el.style.boxShadow = origBoxShadow;
+                    }, 1200);
+
+                    el.focus();
+                    if (typeof el.showPicker === 'function') {
+                        try { el.showPicker(); } catch(e) {}
+                    } else {
+                        el.click();
+                    }
+                    if (txtChatInput) txtChatInput.blur();
+                    return {
+                        success: true,
+                        message: `🎯 AI clicked and opened the <strong>${el.title || id}</strong> dropdown menu.`
+                    };
+                }
+            }
+        }
+    }
+
+    // D. General Main Window Toolbar / Header Buttons
     const uiControls = [
         { ids: ['btnTabSearch'], keywords: ['search tabs', 'tab search', 'find tab'] },
         { ids: ['btnBack'], keywords: ['back button', 'back icon', 'go back'] },
@@ -2367,16 +2406,18 @@ async function clickElementOnActivePage(targetText) {
                     }
                 }
 
-                // Tier 1: Dynamic Search Bar Detection anywhere on the screen
+                // Tier 1: Dynamic Search Bar Detection anywhere on screen (even if completely EMPTY!)
                 const isSearchIntent = targetLower.includes('search bar') || 
                                        targetLower.includes('search box') || 
                                        targetLower.includes('search input') || 
                                        targetLower.includes('search field') || 
-                                       targetLower === 'search';
+                                       targetLower.includes('search') ||
+                                       targetLower.includes('find');
 
                 if (!matchedEl && isSearchIntent) {
                     const searchSelectors = [
                         'input[type="search"]',
+                        'input[name="q"]',
                         'input[name*="search" i]',
                         'input[id*="search" i]',
                         'input[placeholder*="search" i]',
@@ -2385,6 +2426,7 @@ async function clickElementOnActivePage(targetText) {
                         'textarea[name*="search" i]',
                         '[role="searchbox"]',
                         '[role="search"] input',
+                        'form[action*="search" i] input',
                         'input[type="text"]',
                         'input:not([type="hidden"])'
                     ];
@@ -2394,6 +2436,34 @@ async function clickElementOnActivePage(targetText) {
                         if (el && isVisible(el)) {
                             matchedEl = el;
                             matchType = 'Dynamic Search Bar';
+                            break;
+                        }
+                    }
+                }
+
+                // Tier 1b: Dropdown Menu / Select Element Detection
+                const isDropdownIntent = targetLower.includes('dropdown') || 
+                                         targetLower.includes('select') || 
+                                         targetLower.includes('menu') || 
+                                         targetLower.includes('volume') || 
+                                         targetLower.includes('options');
+
+                if (!matchedEl && isDropdownIntent) {
+                    const dropdownSelectors = [
+                        'select',
+                        '[role="combobox"]',
+                        '[role="listbox"]',
+                        '[role="menu"]',
+                        '.dropdown',
+                        '.select-menu',
+                        '[aria-haspopup="true"]'
+                    ];
+
+                    for (const sel of dropdownSelectors) {
+                        const el = document.querySelector(sel);
+                        if (el && isVisible(el)) {
+                            matchedEl = el;
+                            matchType = 'Dropdown Menu';
                             break;
                         }
                     }
@@ -2443,7 +2513,7 @@ async function clickElementOnActivePage(targetText) {
                             let parent = node;
                             while (parent && parent !== document.body) {
                                 const tag = parent.tagName.toLowerCase();
-                                if (tag === 'button' || tag === 'a' || tag === 'input' || parent.getAttribute('role') === 'button' || parent.onclick) {
+                                if (tag === 'button' || tag === 'a' || tag === 'input' || tag === 'select' || parent.getAttribute('role') === 'button' || parent.onclick) {
                                     matchedEl = parent;
                                     matchType = 'Clickable Wrapper Match';
                                     break;
@@ -2474,6 +2544,12 @@ async function clickElementOnActivePage(targetText) {
                         matchedEl.style.boxShadow = origBoxShadow;
                     }, 1200);
 
+                    // If matched element is a <select> dropdown, trigger showPicker or click
+                    const tag = matchedEl.tagName.toLowerCase();
+                    if (tag === 'select' && typeof matchedEl.showPicker === 'function') {
+                        try { matchedEl.showPicker(); } catch(e) {}
+                    }
+
                     // Dispatch full pointer and mouse event sequence
                     ['pointerdown', 'mousedown', 'pointerup', 'mouseup', 'click'].forEach(evtType => {
                         const evt = new MouseEvent(evtType, {
@@ -2491,9 +2567,9 @@ async function clickElementOnActivePage(targetText) {
 
                     const m = getElementMetadata(matchedEl);
                     const foundLabel = (m.txt || m.val || m.aria || m.placeholder || m.title || matchType || targetRaw).trim();
-                    const tag = matchedEl.tagName.toLowerCase();
                     const isInput = tag === 'input' || tag === 'textarea' || matchedEl.getAttribute('role') === 'searchbox';
-                    return { success: true, label: foundLabel, tag: tag, matchType: matchType, markIndex: markIndex, isInput: isInput };
+                    const isDropdown = tag === 'select' || matchedEl.getAttribute('role') === 'combobox';
+                    return { success: true, label: foundLabel, tag: tag, matchType: matchType, markIndex: markIndex, isInput: isInput, isDropdown: isDropdown };
                 }
 
                 return { success: false, target: targetRaw };
