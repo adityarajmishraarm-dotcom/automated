@@ -2822,6 +2822,38 @@ async function executeAiBrowserCommand(promptText) {
         return lower.includes(p);
     });
 
+    // 0a. TELL ME THE SHORTCUT / SHORTCUTS LIST COMMAND ("tell me the shortcut", "shortcuts", "show shortcuts", "all shortcuts")
+    if (matches('tell me the shortcut', 'tell me shortcut', 'tell me shortcuts', 'show shortcut', 'show shortcuts', 'list shortcut', 'list shortcuts', 'what are the shortcuts', 'shortcut list', 'shortcuts list', 'all shortcuts', 'ai shortcuts', 'keyboard shortcuts', 'tell me all shortcuts', 'shortcut help', 'help shortcut', 'help shortcuts') || lower === 'shortcuts' || lower === 'shortcut') {
+        return `⌨️ <strong>Complete Browser & AI Assistant Shortcuts Guide:</strong><br><br>
+
+🔍 <strong>AI Search Bar & Direct Typing Shortcuts:</strong><br>
+• <code>CLK SB</code> or <code>CLK S</code> or <code>clk sb</code> or <code>clk s</code> — Click & focus the Search Bar directly.<br>
+• <code>enter; &lt;text&gt;</code> or <code>enter: &lt;text&gt;</code> or <code>enter &lt;text&gt;</code> — Directly type <code>&lt;text&gt;</code> into Search Bar and execute search.<br>
+• <code>CLK +</code> or <code>CLK plus</code> — Open a new browser tab.<br>
+• <code>CLK #&lt;N&gt;</code> (e.g. <code>CLK #7</code> or <code>hashtag 7</code>) — Dynamically scan screen & click badge/mark <code>#N</code>.<br><br>
+
+📜 <strong>Logical Page Scroll Shortcuts:</strong><br>
+• <code>S50</code> / <code>SL50</code> / <code>SLE50</code> / <code>scroll 50</code> — Scroll page down to 50%.<br>
+• <code>S0</code> / <code>scroll 0</code> / <code>scroll top</code> — Instant scroll to start/top of page.<br>
+• <code>S1000</code> / <code>scroll 1000</code> / <code>scroll end</code> — Instant scroll to bottom/end of page.<br><br>
+
+🔥 <strong>Tab & History Intelligence:</strong><br>
+• <code>most used tab</code> / <code>frequently used tab</code> — List or jump to your most visited open tabs.<br><br>
+
+⌨️ <strong>Global Keyboard Hotkeys:</strong><br>
+• <code>Ctrl+T</code> / <code>Cmd+T</code> — Open New Tab<br>
+• <code>Ctrl+W</code> / <code>Cmd+W</code> — Close Active Tab<br>
+• <code>Ctrl+Shift+T</code> — Reopen Last Closed Tab<br>
+• <code>Ctrl+K</code> / <code>Cmd+K</code> — Open Command Palette & Tab Search<br>
+• <code>Ctrl+D</code> / <code>Cmd+D</code> — Bookmark Current Page<br>
+• <code>Ctrl+H</code> / <code>Cmd+H</code> — Toggle History Sidebar<br>
+• <code>Ctrl+J</code> / <code>Cmd+J</code> — Open Downloads Manager<br>
+• <code>Ctrl+F</code> / <code>Cmd+F</code> — Find Text on Active Page<br>
+• <code>Ctrl + / -</code> — Zoom In / Zoom Out (<code>Ctrl+0</code> to reset)<br>
+• <code>Ctrl+R</code> / <code>F5</code> — Reload Active Tab<br>
+• <code>Alt + Left / Right</code> — Go Back / Forward in History`;
+    }
+
     // REACT / NEXT.JS FRAMER MOTION & BROWSER ARCHITECTURE AI PROMPTS
     if (matches('framer motion', 'chrome dnd', 'reorder.group', 'reorder.item', 'zustand store', 'persist store', 'add shortcut', 'bookmark star')) {
         if (matches('tabs', 'drag', 'reorder')) {
