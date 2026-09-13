@@ -2194,7 +2194,7 @@ async function clickElementOnActivePage(targetText) {
 
     const cleanTarget = (targetText || '').trim();
     if (!cleanTarget) {
-        return { success: false, message: 'Please specify the name or mark number (e.g. #7, hashtag 7) of the button or element to click.' };
+        return { success: false, message: 'Please specify the target element, button, link, or search bar to click.' };
     }
 
     try {
@@ -2213,23 +2213,38 @@ async function clickElementOnActivePage(targetText) {
                            el.offsetHeight > 0;
                 }
 
-                // Parse mark number if target contains hashtag or mark index (e.g. "#7", "hashtag 7", "mark 7", "gap 7", "7")
+                function getElementMetadata(el) {
+                    const txt = (el.innerText || el.textContent || '').trim();
+                    const val = (el.value || '').trim();
+                    const aria = (el.getAttribute('aria-label') || '').trim();
+                    const placeholder = (el.getAttribute('placeholder') || '').trim();
+                    const title = (el.getAttribute('title') || '').trim();
+                    const name = (el.getAttribute('name') || '').trim();
+                    const id = (el.id || '').trim();
+                    const role = (el.getAttribute('role') || '').trim();
+                    const type = (el.getAttribute('type') || '').trim();
+                    const alt = (el.getAttribute('alt') || '').trim();
+                    return { txt, val, aria, placeholder, title, name, id, role, type, alt };
+                }
+
+                // Check for Set-of-Marks mark index (#7, hashtag 7, mark 7)
                 let markIndex = null;
                 const markMatch = targetRaw.match(/^(?:#|hashtag\s*|mark\s*|badge\s*|gap\s*|number\s*|no\.?\s*)?(\d+)$/i);
                 if (markMatch) {
                     markIndex = parseInt(markMatch[1], 10);
                 }
 
+                // Comprehensive query selector covering all interactive & dynamic page elements anywhere on screen
                 const selectors = [
-                    'button', 'a', 'input', 'select', 'textarea',
-                    '[role="button"]', '[role="link"]', '[role="menuitem"]', '[role="tab"]', '[role="searchbox"]', '[role="textbox"]', '[role="option"]', '[role="combobox"]',
-                    'summary', '[tabindex]:not([tabindex="-1"])', '.btn', '.button', '[onclick]'
+                    'button', 'a', 'input', 'textarea', 'select',
+                    '[role="button"]', '[role="link"]', '[role="searchbox"]', '[role="search"]', '[role="textbox"]', '[role="combobox"]', '[role="option"]', '[role="menuitem"]', '[role="tab"]', '[role="checkbox"]', '[role="radio"]',
+                    'summary', '[tabindex]:not([tabindex="-1"])', '.btn', '.button', '[onclick]', 'img', 'svg', 'label', 'form'
                 ];
 
                 const rawCandidates = Array.from(document.querySelectorAll(selectors.join(',')));
                 const visibleCandidates = rawCandidates.filter(isVisible);
 
-                // Sort candidates by visual position (top-to-bottom, left-to-right)
+                // Sort candidates by document visual position (top-to-bottom, left-to-right)
                 visibleCandidates.sort((a, b) => {
                     const rA = a.getBoundingClientRect();
                     const rB = b.getBoundingClientRect();
@@ -2242,7 +2257,7 @@ async function clickElementOnActivePage(targetText) {
                 let matchedEl = null;
                 let matchType = '';
 
-                // 0. Set-of-Marks badge or index lookup (#7, hashtag 7, mark 7)
+                // Tier 0: Set-of-Marks Mark Index Match
                 if (markIndex !== null) {
                     const somEl = document.querySelector('[data-som-id="' + markIndex + '"]') || document.querySelector('#som-' + markIndex);
                     if (somEl && isVisible(somEl)) {
@@ -2254,11 +2269,52 @@ async function clickElementOnActivePage(targetText) {
                     }
                 }
 
-                // 1. Exact text / value / aria-label / title / id match
+                // Tier 1: Dynamic Search Bar Detection anywhere on the screen
+                const isSearchIntent = targetLower.includes('search bar') || 
+                                       targetLower.includes('search box') || 
+                                       targetLower.includes('search input') || 
+                                       targetLower.includes('search field') || 
+                                       targetLower === 'search';
+
+                if (!matchedEl && isSearchIntent) {
+                    const searchSelectors = [
+                        'input[type="search"]',
+                        'input[name*="search" i]',
+                        'input[id*="search" i]',
+                        'input[placeholder*="search" i]',
+                        'input[aria-label*="search" i]',
+                        'input[title*="search" i]',
+                        'textarea[name*="search" i]',
+                        '[role="searchbox"]',
+                        '[role="search"] input',
+                        'input[type="text"]',
+                        'input:not([type="hidden"])'
+                    ];
+
+                    for (const sel of searchSelectors) {
+                        const el = document.querySelector(sel);
+                        if (el && isVisible(el)) {
+                            matchedEl = el;
+                            matchType = 'Dynamic Search Bar';
+                            break;
+                        }
+                    }
+                }
+
+                // Tier 2: Exact Semantic Match (Text, Value, Aria-Label, Placeholder, Title, Name, ID)
                 if (!matchedEl) {
                     for (const el of visibleCandidates) {
-                        const txt = (el.innerText || el.value || el.getAttribute('aria-label') || el.title || el.placeholder || el.id || '').trim().toLowerCase();
-                        if (txt === targetLower || txt === '#' + targetLower) {
+                        const m = getElementMetadata(el);
+                        if (
+                            m.txt.toLowerCase() === targetLower ||
+                            m.val.toLowerCase() === targetLower ||
+                            m.aria.toLowerCase() === targetLower ||
+                            m.placeholder.toLowerCase() === targetLower ||
+                            m.title.toLowerCase() === targetLower ||
+                            m.name.toLowerCase() === targetLower ||
+                            m.id.toLowerCase() === targetLower ||
+                            m.alt.toLowerCase() === targetLower
+                        ) {
                             matchedEl = el;
                             matchType = 'Exact Match';
                             break;
@@ -2266,11 +2322,12 @@ async function clickElementOnActivePage(targetText) {
                     }
                 }
 
-                // 2. Partial match (contains target string)
+                // Tier 3: Partial / Fuzzy Semantic Match (contains target string)
                 if (!matchedEl) {
                     for (const el of visibleCandidates) {
-                        const txt = (el.innerText || el.value || el.getAttribute('aria-label') || el.title || el.placeholder || '').trim().toLowerCase();
-                        if (txt.length > 0 && (txt.includes(targetLower) || targetLower.includes(txt))) {
+                        const m = getElementMetadata(el);
+                        const combined = (m.txt + ' ' + m.val + ' ' + m.aria + ' ' + m.placeholder + ' ' + m.title + ' ' + m.name + ' ' + m.id + ' ' + m.alt).toLowerCase();
+                        if (combined.length > 0 && combined.includes(targetLower)) {
                             matchedEl = el;
                             matchType = 'Partial Match';
                             break;
@@ -2278,21 +2335,48 @@ async function clickElementOnActivePage(targetText) {
                     }
                 }
 
+                // Tier 4: Nearest Clickable Parent / Container Match anywhere on screen
+                if (!matchedEl) {
+                    const allNodes = Array.from(document.querySelectorAll('*'));
+                    for (const node of allNodes) {
+                        if (!isVisible(node)) continue;
+                        const txt = (node.innerText || node.textContent || '').trim().toLowerCase();
+                        if (txt === targetLower || (txt.length > 0 && txt.includes(targetLower) && txt.length < 80)) {
+                            let parent = node;
+                            while (parent && parent !== document.body) {
+                                const tag = parent.tagName.toLowerCase();
+                                if (tag === 'button' || tag === 'a' || tag === 'input' || parent.getAttribute('role') === 'button' || parent.onclick) {
+                                    matchedEl = parent;
+                                    matchType = 'Clickable Wrapper Match';
+                                    break;
+                                }
+                                parent = parent.parentElement;
+                            }
+                            if (!matchedEl) {
+                                matchedEl = node;
+                                matchType = 'DOM Node Match';
+                            }
+                            break;
+                        }
+                    }
+                }
+
                 if (matchedEl) {
-                    matchedEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    // Center matched element in viewport anywhere on screen
+                    matchedEl.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
                     matchedEl.focus();
 
-                    // Glowing yellow visual border highlight (#FFE600)
+                    // Glowing yellow visual outline highlight (#FFE600)
                     const origOutline = matchedEl.style.outline;
                     const origBoxShadow = matchedEl.style.boxShadow;
                     matchedEl.style.outline = '3px solid #FFE600';
-                    matchedEl.style.boxShadow = '0 0 14px #FFE600';
+                    matchedEl.style.boxShadow = '0 0 16px #FFE600';
                     setTimeout(() => {
                         matchedEl.style.outline = origOutline;
                         matchedEl.style.boxShadow = origBoxShadow;
                     }, 1200);
 
-                    // Dispatch full pointer and mouse event chain
+                    // Dispatch full pointer and mouse event sequence
                     ['pointerdown', 'mousedown', 'pointerup', 'mouseup', 'click'].forEach(evtType => {
                         const evt = new MouseEvent(evtType, {
                             view: window,
@@ -2307,7 +2391,8 @@ async function clickElementOnActivePage(targetText) {
                         try { matchedEl.click(); } catch(e) {}
                     }
 
-                    const foundLabel = (matchedEl.innerText || matchedEl.value || matchedEl.getAttribute('aria-label') || matchedEl.title || matchType || targetRaw).trim();
+                    const m = getElementMetadata(matchedEl);
+                    const foundLabel = (m.txt || m.val || m.aria || m.placeholder || m.title || matchType || targetRaw).trim();
                     const tag = matchedEl.tagName.toLowerCase();
                     return { success: true, label: foundLabel, tag: tag, matchType: matchType, markIndex: markIndex };
                 }
@@ -2321,12 +2406,12 @@ async function clickElementOnActivePage(targetText) {
             const markBadge = result.markIndex ? ` <strong>[Mark #${result.markIndex}]</strong>` : '';
             return {
                 success: true,
-                message: `🎯 AI scanned page interface & clicked on${markBadge} <strong>"${result.label.slice(0, 60)}"</strong> (&lt;${result.tag}&gt; element).`
+                message: `🎯 AI dynamically scanned screen & clicked on${markBadge} <strong>"${result.label.slice(0, 60)}"</strong> (&lt;${result.tag}&gt; element).`
             };
         } else {
             return {
                 success: false,
-                message: `⚠️ Could not find visible element or mark matching <strong>"${cleanTarget}"</strong> on the active page.`
+                message: `⚠️ Could not find visible element matching <strong>"${cleanTarget}"</strong> anywhere on the active screen.`
             };
         }
     } catch (e) {
@@ -2391,12 +2476,12 @@ async function executeAiBrowserCommand(promptText) {
         return listHtml;
     }
 
-    // 0a. AUTOMATED PAGE CLICK & SOM MARK COMMANDS ("click #7", "click hashtag 7", "click submit", "click on hashtag 7", "click mark 7", "click 7")
+    // 0a. AUTOMATED DYNAMIC PAGE CLICK COMMANDS ("click search bar", "click on search bar", "click #7", "click hashtag 7", "click submit")
     if ((lower.includes('click') || lower.includes('press') || lower.includes('tap') || lower.includes('hashtag') || lower.includes('#')) && !matches('tab', 'window', 'split', 'group')) {
         let targetText = raw
-            .replace(/.*?\b(?:click\s+on\s+these\s+|click\s+on\s+|click\s+|press\s+|tap\s+|select\s+)/i, '')
-            .replace(/\b(?:these\s+|yellow\s+gaps\s+like\s+|yellow\s+gap\s+like\s+|yellow\s+gap\s+|yellow\s+badge\s+|gaps\s+like\s+|gap\s+like\s+|gap\s+|badge\s+)\b/gi, '')
-            .replace(/\s+(button|option|link|element|tab)$/i, '')
+            .replace(/.*?\b(?:click\s+on\s+the\s+|click\s+on\s+these\s+|click\s+on\s+|click\s+the\s+|click\s+|press\s+|tap\s+|select\s+)/i, '')
+            .replace(/\b(?:these\s+|yellow\s+gaps\s+like\s+|yellow\s+gap\s+like\s+|yellow\s+gap\s+|yellow\s+badge\s+|gaps\s+like\s+|gap\s+like\s+|gap\s+|badge\s+|anywhere\s+on\s+the\s+screen|anywhere\s+on\s+screen|on\s+screen)\b/gi, '')
+            .replace(/\s+(option|element|tab)$/i, '')
             .trim();
 
         if (!targetText && (lower.includes('hashtag') || lower.includes('#'))) {
