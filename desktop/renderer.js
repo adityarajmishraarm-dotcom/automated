@@ -2804,11 +2804,13 @@ async function executeAiBrowserCommand(promptText) {
         raw = raw.replace(/\b(click|clk)\s+s\b/gi, 'click search bar');
     }
 
-    // Check for "enter; <text>" or "enter;<text>" remote search bar typing command
-    const enterSemiMatch = raw.match(/^(?:enter|type|input)\s*;\s*(.*)/i);
-    if (enterSemiMatch) {
-        const textToType = enterSemiMatch[1].trim();
-        return await typeAndSubmitInSearchBar(textToType);
+    // Check for "enter; <text>", "enter: <text>", or "enter <text>" remote search bar typing command
+    const enterCmdMatch = raw.match(/^(?:enter|type|write|input)\s*(?:[;:|]\s*|\s+)(.+)/i);
+    if (enterCmdMatch) {
+        const textToType = enterCmdMatch[1].trim();
+        if (textToType) {
+            return await typeAndSubmitInSearchBar(textToType);
+        }
     }
 
     const lower = raw.toLowerCase();
@@ -3905,8 +3907,7 @@ function processAiUserChat(userPrompt) {
         // Scenario 1: For search bar focus actions (CLK SB / CLK S / click search bar) or enter; typing commands, focus transfers to the search bar.
         // Scenario 2: For non-search bar commands (opening tab, closing tab, scrolling, reloading, bookmarks, general chat, etc.),
         // keep focus in the AI Chat Input box so user cursor stays in the AI agent!
-        const isSearchOrInputCmd = /^\s*(?:clk|click|focus|open|type|s|sb|enter\s*;)/i.test(cleanPrompt) && 
-                                   /(?:search|omnibox|address\s*bar|sb|s$|enter\s*;)/i.test(cleanPrompt);
+        const isSearchOrInputCmd = /^\s*(?:clk|click|focus|type|write|s|sb|enter)/i.test(cleanPrompt);
 
         if (!isSearchOrInputCmd && txtChatInput) {
             try { txtChatInput.focus(); } catch(e) {}
