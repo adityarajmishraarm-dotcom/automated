@@ -14,6 +14,7 @@ include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/src/grep
     ${CMAKE_CURRENT_SOURCE_DIR}/src/captcha
     ${CMAKE_CURRENT_SOURCE_DIR}/src/orchestrator
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/native
 )
 
 # Source files
@@ -41,6 +42,7 @@ set(SOURCES
     src/captcha/hitl_controller.cpp
     src/orchestrator/closed_loop_agent.cpp
     src/orchestrator/dual_model_router.cpp
+    src/native/native_tab_engine.cpp
 )
 
 # Build static library for browser core
