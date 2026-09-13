@@ -2693,9 +2693,124 @@ async function clickElementOnActivePage(targetText) {
     }
 }
 
+// Helper: Remote direct typing into Search Bar for "enter; <text>" command
+async function typeAndSubmitInSearchBar(textToType) {
+    const tab = getActiveTab();
+    const text = (textToType || '').trim();
+    if (!text) {
+        return '⚠️ Please enter text after <code>enter;</code> to type into the search bar (e.g. <code>enter; google maps</code>).';
+    }
+
+    if (tab && tab.webview) {
+        try {
+            const res = await tab.webview.executeJavaScript(`
+                (function() {
+                    function isVisible(el) {
+                        if (!el) return false;
+                        const style = window.getComputedStyle(el);
+                        return style.display !== 'none' && style.visibility !== 'hidden' && style.opacity !== '0' && el.offsetWidth > 0 && el.offsetHeight > 0;
+                    }
+
+                    const selectors = [
+                        'textarea[name="q"]', 'input[name="q"]', 'textarea.gLFyf', 'input.gLFyf',
+                        'textarea[title*="Search" i]', 'input[title*="Search" i]',
+                        'textarea[aria-label*="Search" i]', 'input[aria-label*="Search" i]',
+                        'input#search', 'input#searchInput', 'input#searchbox_input', 'input[type="search"]',
+                        'textarea[name*="search" i]', 'input[name*="search" i]', 'input[id*="search" i]',
+                        'input[placeholder*="search" i]', 'textarea[placeholder*="search" i]',
+                        '[role="searchbox"]', '[role="search"] textarea', '[role="search"] input',
+                        'textarea:not([type="hidden"])', 'input[type="text"]', 'input:not([type="hidden"])'
+                    ];
+
+                    let matchedEl = null;
+                    for (const sel of selectors) {
+                        const el = document.querySelector(sel);
+                        if (el && isVisible(el)) {
+                            matchedEl = el;
+                            break;
+                        }
+                    }
+
+                    if (matchedEl) {
+                        matchedEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        matchedEl.focus();
+                        matchedEl.value = ${JSON.stringify(text)};
+                        matchedEl.dispatchEvent(new Event('input', { bubbles: true }));
+                        matchedEl.dispatchEvent(new Event('change', { bubbles: true }));
+                        
+                        matchedEl.style.outline = '3px solid #FFE600';
+                        matchedEl.style.boxShadow = '0 0 20px #FFE600';
+                        setTimeout(() => {
+                            matchedEl.style.outline = '';
+                            matchedEl.style.boxShadow = '';
+                        }, 1200);
+
+                        const form = matchedEl.form || matchedEl.closest('form');
+                        if (form) {
+                            if (typeof form.requestSubmit === 'function') {
+                                try { form.requestSubmit(); } catch(e) { form.submit(); }
+                            } else {
+                                try { form.submit(); } catch(e) {}
+                            }
+                        } else {
+                            const enterEvt = new KeyboardEvent('keydown', { key: 'Enter', code: 'Enter', keyCode: 13, which: 13, bubbles: true, cancelable: true });
+                            matchedEl.dispatchEvent(enterEvt);
+                        }
+                        return { success: true, target: matchedEl.tagName };
+                    }
+                    return { success: false };
+                })();
+            `);
+
+            if (res && res.success) {
+                if (txtChatInput) {
+                    txtChatInput.blur();
+                    txtChatInput.value = '';
+                }
+                return `⌨️ AI typed <strong>"${text}"</strong> into the Search Bar and executed search!`;
+            }
+        } catch(e) {
+            logTelemetry('warn', `typeAndSubmitInSearchBar webview failed: ${e.message}`);
+        }
+    }
+
+    // Fallback to Omnibox / Address Bar
+    if (urlInput) {
+        urlInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        urlInput.value = text;
+        urlInput.focus();
+        urlInput.select();
+        navigateActiveWebview(text);
+        if (txtChatInput) {
+            txtChatInput.blur();
+            txtChatInput.value = '';
+        }
+        return `⌨️ AI typed <strong>"${text}"</strong> into the Omnibox / Search Bar and executed search!`;
+    }
+
+    return `⚠️ Could not locate search bar to type <strong>"${text}"</strong>.`;
+}
+
 // AI Browser Command Controller & Natural Language Processor
 async function executeAiBrowserCommand(promptText) {
-    const raw = promptText.trim();
+    let raw = (promptText || '').trim();
+
+    // 0. Shortcut Normalization (CLK SB, CLK S, clk sb, clk s, CLK search bar, enter; text)
+    if (/^\s*(?:clk|click)\s+(?:sb|s|search\s*bar|searchbox)\s*$/i.test(raw)) {
+        raw = 'click search bar';
+    } else if (/^clk\b/i.test(raw)) {
+        raw = raw.replace(/^clk\b/i, 'click');
+        raw = raw.replace(/\b(click|clk)\s+sb\b/gi, 'click search bar');
+        raw = raw.replace(/\b(click|clk)\s+s\b/gi, 'click search bar');
+    }
+
+    // Check for "enter; <text>" or "enter;<text>" remote search bar typing command
+    const enterSemiMatch = raw.match(/^(?:enter|type|input)\s*;\s*(.*)/i);
+    if (enterSemiMatch) {
+        const textToType = enterSemiMatch[1].trim();
+        return await typeAndSubmitInSearchBar(textToType);
+    }
+
     const lower = raw.toLowerCase();
     const tab = getActiveTab();
     const tabId = activeTabId;
@@ -3785,6 +3900,17 @@ function processAiUserChat(userPrompt) {
         const reply = await executeAiBrowserCommand(cleanPrompt);
         addChatMessage('AI Assistant', reply, 'ai');
         logTelemetry('act', `AI Assistant executed command: "${cleanPrompt}"`);
+
+        // FOCUS RETENTION LOGIC:
+        // Scenario 1: For search bar focus actions (CLK SB / CLK S / click search bar) or enter; typing commands, focus transfers to the search bar.
+        // Scenario 2: For non-search bar commands (opening tab, closing tab, scrolling, reloading, bookmarks, general chat, etc.),
+        // keep focus in the AI Chat Input box so user cursor stays in the AI agent!
+        const isSearchOrInputCmd = /^\s*(?:clk|click|focus|open|type|s|sb|enter\s*;)/i.test(cleanPrompt) && 
+                                   /(?:search|omnibox|address\s*bar|sb|s$|enter\s*;)/i.test(cleanPrompt);
+
+        if (!isSearchOrInputCmd && txtChatInput) {
+            try { txtChatInput.focus(); } catch(e) {}
+        }
     }, 100);
 }
 
