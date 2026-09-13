@@ -2188,13 +2188,111 @@ function scrollActiveWebview(direction, amountInput, isPercentage = false) {
 
 async function clickElementOnActivePage(targetText) {
     const tab = getActiveTab();
-    if (!tab || !tab.webview) {
-        return { success: false, message: 'No active webview tab available to interact.' };
-    }
-
     const cleanTarget = (targetText || '').trim();
     if (!cleanTarget) {
-        return { success: false, message: 'Please specify the target element, button, link, or search bar to click.' };
+        return { success: false, message: 'Please specify the target element, button, link, plus icon, or search bar to click.' };
+    }
+
+    const targetLower = cleanTarget.toLowerCase();
+
+    // -------------------------------------------------------------------------
+    // STEP 1: CHECK MAIN BROWSER WINDOW UI (Titlebar, Address Bar, Tab Strip, Controls)
+    // -------------------------------------------------------------------------
+
+    // A. Plus Icon / New Tab Button (+ button on address bar / tab strip)
+    const isPlusIntent = targetLower.includes('plus') || 
+                         targetLower.includes('+') || 
+                         targetLower.includes('add tab') || 
+                         targetLower.includes('new tab button') || 
+                         targetLower.includes('open new tab');
+
+    if (isPlusIntent) {
+        const btnAddTab = document.getElementById('btnAddTab');
+        if (btnAddTab) {
+            btnAddTab.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            const origOutline = btnAddTab.style.outline;
+            const origBoxShadow = btnAddTab.style.boxShadow;
+            btnAddTab.style.outline = '3px solid #FFE600';
+            btnAddTab.style.boxShadow = '0 0 16px #FFE600';
+            setTimeout(() => {
+                btnAddTab.style.outline = origOutline;
+                btnAddTab.style.boxShadow = origBoxShadow;
+            }, 1200);
+
+            btnAddTab.click();
+            if (txtChatInput) txtChatInput.blur();
+            return {
+                success: true,
+                message: '🎯 AI clicked the <strong>"+" New Tab button</strong> on the address bar and opened a new tab.'
+            };
+        }
+    }
+
+    // B. Address Bar / Omnibox Search Input
+    const isOmniboxIntent = targetLower.includes('address bar') || 
+                            targetLower.includes('omnibox') || 
+                            targetLower.includes('url bar') || 
+                            targetLower.includes('url input') || 
+                            targetLower.includes('browser search bar');
+
+    if (isOmniboxIntent && urlInput) {
+        urlInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        const origOutline = urlInput.style.outline;
+        const origBoxShadow = urlInput.style.boxShadow;
+        urlInput.style.outline = '3px solid #FFE600';
+        urlInput.style.boxShadow = '0 0 16px #FFE600';
+        setTimeout(() => {
+            urlInput.style.outline = origOutline;
+            urlInput.style.boxShadow = origBoxShadow;
+        }, 1200);
+
+        urlInput.focus();
+        urlInput.select();
+        if (txtChatInput) txtChatInput.blur();
+
+        return {
+            success: true,
+            message: '🎯 AI clicked and focused the <strong>Browser Address Bar</strong>. Typing will now go directly into the address bar!'
+        };
+    }
+
+    // C. General Main Window Toolbar / Header Buttons
+    const uiControls = [
+        { ids: ['btnTabSearch'], keywords: ['search tabs', 'tab search', 'find tab'] },
+        { ids: ['btnBack'], keywords: ['back button', 'back icon', 'go back'] },
+        { ids: ['btnForward'], keywords: ['forward button', 'forward icon'] },
+        { ids: ['btnReload'], keywords: ['reload button', 'refresh button', 'reload icon'] },
+        { ids: ['btnHome'], keywords: ['home button', 'home icon'] },
+        { ids: ['btnBookmark'], keywords: ['bookmark button', 'star button', 'bookmark star'] },
+        { ids: ['btnToggleHud'], keywords: ['hud button', 'sidebar button', 'toggle hud'] },
+        { ids: ['btnDetachHud'], keywords: ['external cockpit', 'detach hud', 'popout hud'] },
+        { ids: ['btnWinClose'], keywords: ['close button', 'close app', 'red button'] },
+        { ids: ['btnWinMinimize'], keywords: ['minimize button', 'yellow button'] },
+        { ids: ['btnWinMaximize'], keywords: ['maximize button', 'green button'] }
+    ];
+
+    for (const ctrl of uiControls) {
+        if (ctrl.keywords.some(k => targetLower.includes(k))) {
+            for (const id of ctrl.ids) {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.click();
+                    if (txtChatInput) txtChatInput.blur();
+                    return {
+                        success: true,
+                        message: `🎯 AI clicked the <strong>${el.title || id}</strong> toolbar button.`
+                    };
+                }
+            }
+        }
+    }
+
+    // -------------------------------------------------------------------------
+    // STEP 2: CHECK ACTIVE WEBVIEW PAGE (Screen-Wide Dynamic DOM Scan)
+    // -------------------------------------------------------------------------
+
+    if (!tab || !tab.webview) {
+        return { success: false, message: 'No active webview tab available to interact.' };
     }
 
     try {
@@ -2394,7 +2492,8 @@ async function clickElementOnActivePage(targetText) {
                     const m = getElementMetadata(matchedEl);
                     const foundLabel = (m.txt || m.val || m.aria || m.placeholder || m.title || matchType || targetRaw).trim();
                     const tag = matchedEl.tagName.toLowerCase();
-                    return { success: true, label: foundLabel, tag: tag, matchType: matchType, markIndex: markIndex };
+                    const isInput = tag === 'input' || tag === 'textarea' || matchedEl.getAttribute('role') === 'searchbox';
+                    return { success: true, label: foundLabel, tag: tag, matchType: matchType, markIndex: markIndex, isInput: isInput };
                 }
 
                 return { success: false, target: targetRaw };
@@ -2404,9 +2503,17 @@ async function clickElementOnActivePage(targetText) {
         if (result && result.success) {
             logTelemetry('act', `AiClick::ClickElement("${result.label}" <${result.tag}> [${result.matchType}])`);
             const markBadge = result.markIndex ? ` <strong>[Mark #${result.markIndex}]</strong>` : '';
+
+            // Shift focus away from AI Chat Input so typing immediately goes into search bar / webview
+            if (txtChatInput) txtChatInput.blur();
+            if (tab && tab.webview) {
+                try { tab.webview.focus(); } catch(e) {}
+            }
+
+            const focusNote = result.isInput ? ' Cursor and typing focus opened directly in the search bar! Type away.' : '';
             return {
                 success: true,
-                message: `🎯 AI dynamically scanned screen & clicked on${markBadge} <strong>"${result.label.slice(0, 60)}"</strong> (&lt;${result.tag}&gt; element).`
+                message: `🎯 AI dynamically scanned screen & clicked on${markBadge} <strong>"${result.label.slice(0, 60)}"</strong> (&lt;${result.tag}&gt; element).${focusNote}`
             };
         } else {
             return {
@@ -2476,17 +2583,24 @@ async function executeAiBrowserCommand(promptText) {
         return listHtml;
     }
 
-    // 0a. AUTOMATED DYNAMIC PAGE CLICK COMMANDS ("click search bar", "click on search bar", "click #7", "click hashtag 7", "click submit")
-    if ((lower.includes('click') || lower.includes('press') || lower.includes('tap') || lower.includes('hashtag') || lower.includes('#')) && !matches('tab', 'window', 'split', 'group')) {
+    // 0a. AUTOMATED DYNAMIC PAGE & TOOLBAR CLICK COMMANDS ("click search bar", "click plus icon", "click #7", "click submit", "click +")
+    const isClickIntent = (lower.includes('click') || lower.includes('press') || lower.includes('tap') || lower.includes('hashtag') || lower.includes('#') || lower.includes('plus') || lower.includes('+')) &&
+                          !matches('close tab', 'switch tab', 'next tab', 'prev tab', 'mute tab', 'move tab', 'close all tabs');
+
+    if (isClickIntent) {
         let targetText = raw
             .replace(/.*?\b(?:click\s+on\s+the\s+|click\s+on\s+these\s+|click\s+on\s+|click\s+the\s+|click\s+|press\s+|tap\s+|select\s+)/i, '')
             .replace(/\b(?:these\s+|yellow\s+gaps\s+like\s+|yellow\s+gap\s+like\s+|yellow\s+gap\s+|yellow\s+badge\s+|gaps\s+like\s+|gap\s+like\s+|gap\s+|badge\s+|anywhere\s+on\s+the\s+screen|anywhere\s+on\s+screen|on\s+screen)\b/gi, '')
-            .replace(/\s+(option|element|tab)$/i, '')
+            .replace(/\s+(option|element)$/i, '')
             .trim();
 
         if (!targetText && (lower.includes('hashtag') || lower.includes('#'))) {
             const m = raw.match(/(?:hashtag|mark|gap|badge|#)\s*\d+/i);
             if (m) targetText = m[0];
+        }
+
+        if (!targetText && (lower.includes('plus') || lower.includes('+'))) {
+            targetText = 'plus icon';
         }
 
         if (targetText && targetText.length > 0) {
