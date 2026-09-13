@@ -2663,6 +2663,19 @@ async function clickElementOnActivePage(targetText) {
                         try { matchedEl.click(); } catch(e) {}
                     }
 
+                    // For links <a>, ensure navigation occurs by setting window.location.href if click() does not navigate
+                    const linkNode = tag === 'a' ? matchedEl : matchedEl.closest('a');
+                    if (linkNode && linkNode.href && !linkNode.href.startsWith('javascript:')) {
+                        const targetHref = linkNode.href;
+                        setTimeout(() => {
+                            try {
+                                if (window.location.href !== targetHref) {
+                                    window.location.href = targetHref;
+                                }
+                            } catch(e) {}
+                        }, 120);
+                    }
+
                     // Persist guest focus inside search bar input after event dispatch
                     setTimeout(() => {
                         try {
@@ -3213,7 +3226,7 @@ async function executeAiBrowserCommand(promptText) {
         return listHtml;
     }
 
-    // 0a. AUTOMATED DYNAMIC PAGE & TOOLBAR CLICK COMMANDS ("click search bar", "click plus icon", "click #7", "click submit", "click +")
+    // 0a. AUTOMATED DYNAMIC PAGE & TOOLBAR CLICK COMMANDS ("click search bar", "click plus icon", "click #7", "click submit", "click on youtube link", "open second youtube")
     const isClickIntent = (
         lower.includes('click') || 
         lower.includes('press') || 
@@ -3227,8 +3240,13 @@ async function executeAiBrowserCommand(promptText) {
         lower.includes('search input') ||
         lower.includes('search field') ||
         lower.includes('default search engine') ||
-        lower.includes('search engine')
-    ) && !matches('close tab', 'switch tab', 'next tab', 'prev tab', 'mute tab', 'move tab', 'close all tabs');
+        lower.includes('search engine') ||
+        lower.includes('link') ||
+        lower.includes('result') ||
+        lower.includes('button') ||
+        /\b(1st|first|2nd|second|3rd|third|4th|fourth|5th|fifth|6th|sixth|7th|seventh|8th|eighth|9th|ninth|10th|\d+(?:st|nd|rd|th)?)\b/i.test(lower) ||
+        lower.startsWith('open ')
+    ) && !matches('close tab', 'switch tab', 'next tab', 'prev tab', 'mute tab', 'move tab', 'close all tabs', 'open new tab', 'open blank tab');
 
     if (isClickIntent) {
         let targetText = raw
@@ -3254,7 +3272,11 @@ async function executeAiBrowserCommand(promptText) {
 
         if (targetText && targetText.length > 0) {
             const res = await clickElementOnActivePage(targetText);
-            return res.message;
+            if (res && res.success) {
+                return res.message;
+            } else if (!lower.startsWith('open ')) {
+                return res.message;
+            }
         }
     }
 
