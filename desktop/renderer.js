@@ -2858,6 +2858,111 @@ async function typeAndSubmitInSearchBar(textToType) {
     return `⚠️ Could not locate search bar to type <strong>"${text}"</strong>.`;
 }
 
+// Helper: Visual Keyword Numbering & Badging Script
+async function highlightAndNumberOccurrences(keyword) {
+    const tab = getActiveTab();
+    const term = (keyword || '').trim();
+    if (!tab || !tab.webview || !term) return { success: false, count: 0 };
+
+    try {
+        const res = await tab.webview.executeJavaScript(`
+            (function() {
+                const oldContainer = document.getElementById('antigravity-keyword-numbering-container');
+                if (oldContainer) oldContainer.remove();
+
+                const searchTerm = ${JSON.stringify(term)}.toLowerCase();
+                const container = document.createElement('div');
+                container.id = 'antigravity-keyword-numbering-container';
+                container.style.position = 'absolute';
+                container.style.top = '0';
+                container.style.left = '0';
+                container.style.width = '100%';
+                container.style.height = '100%';
+                container.style.pointerEvents = 'none';
+                container.style.zIndex = '2147483647';
+
+                function isVisible(el) {
+                    if (!el) return false;
+                    const style = window.getComputedStyle(el);
+                    return style.display !== 'none' && style.visibility !== 'hidden' && style.opacity !== '0' && el.offsetWidth > 0 && el.offsetHeight > 0;
+                }
+
+                const selectors = ['a', 'button', 'input', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'p', 'span', 'li', '[role="button"]', '[role="link"]'];
+                const candidates = Array.from(document.querySelectorAll(selectors.join(','))).filter(isVisible);
+
+                candidates.sort((a, b) => {
+                    const rA = a.getBoundingClientRect();
+                    const rB = b.getBoundingClientRect();
+                    if (Math.abs(rA.top - rB.top) > 8) return rA.top - rB.top;
+                    return rA.left - rB.left;
+                });
+
+                const matchedItems = [];
+                const seenNodes = new Set();
+
+                candidates.forEach(el => {
+                    const txt = (el.innerText || el.textContent || el.value || el.getAttribute('aria-label') || '').trim();
+                    const tag = el.tagName.toLowerCase();
+                    const isLink = tag === 'a' || el.closest('a');
+                    const clickNode = isLink ? (el.closest('a') || el) : el;
+
+                    if (txt.toLowerCase().includes(searchTerm) && !seenNodes.has(clickNode)) {
+                        seenNodes.add(clickNode);
+                        const rect = clickNode.getBoundingClientRect();
+                        if (rect.width > 0 && rect.height > 0) {
+                            matchedItems.push({ node: clickNode, rect: rect, text: txt.slice(0, 60) });
+                        }
+                    }
+                });
+
+                let markIndex = 1;
+                matchedItems.forEach(item => {
+                    const badge = document.createElement('div');
+                    badge.className = 'antigravity-kw-badge';
+                    badge.textContent = '#' + markIndex;
+                    badge.style.position = 'absolute';
+                    badge.style.left = (window.scrollX + item.rect.left) + 'px';
+                    badge.style.top = (window.scrollY + item.rect.top) + 'px';
+                    badge.style.backgroundColor = '#FFE600';
+                    badge.style.color = '#000000';
+                    badge.style.fontFamily = 'monospace';
+                    badge.style.fontSize = '12px';
+                    badge.style.fontWeight = 'bold';
+                    badge.style.padding = '2px 6px';
+                    badge.style.borderRadius = '4px';
+                    badge.style.border = '2px solid #000';
+                    badge.style.boxShadow = '0 2px 6px rgba(0,0,0,0.6)';
+                    badge.style.pointerEvents = 'none';
+                    badge.style.zIndex = '2147483647';
+
+                    const box = document.createElement('div');
+                    box.style.position = 'absolute';
+                    box.style.left = (window.scrollX + item.rect.left) + 'px';
+                    box.style.top = (window.scrollY + item.rect.top) + 'px';
+                    box.style.width = item.rect.width + 'px';
+                    box.style.height = item.rect.height + 'px';
+                    box.style.border = '2px solid #FFE600';
+                    box.style.borderRadius = '4px';
+                    box.style.pointerEvents = 'none';
+                    box.style.zIndex = '2147483646';
+
+                    container.appendChild(box);
+                    container.appendChild(badge);
+                    markIndex++;
+                });
+
+                if (document.body) document.body.appendChild(container);
+
+                return { count: matchedItems.length, items: matchedItems.map((m, i) => ({ rank: i + 1, text: m.text })) };
+            })();
+        `);
+
+        return res;
+    } catch(e) {
+        return { success: false, count: 0 };
+    }
+}
+
 // AI Browser Command Controller & Natural Language Processor
 async function executeAiBrowserCommand(promptText) {
     let raw = (promptText || '').trim();
@@ -2888,6 +2993,19 @@ async function executeAiBrowserCommand(promptText) {
         if (p instanceof RegExp) return p.test(lower);
         return lower.includes(p);
     });
+
+    // 0a0. VISUAL KEYWORD NUMBERING & BADGING COMMAND ("numbering", "number YouTube", "rank YouTube", "show numbers")
+    if (matches('numbering', 'number words', 'numbering words', 'rank words', 'show numbers', 'number youtube', 'number google', 'number links')) {
+        let kw = raw.replace(/.*?\b(?:numbering\s+|number\s+|rank\s+|show\s+numbers\s+for\s+|show\s+numbers\s+)/i, '').trim();
+        if (!kw || kw.toLowerCase() === 'words' || kw.toLowerCase() === 'links') kw = 'youtube';
+
+        const numRes = await highlightAndNumberOccurrences(kw);
+        if (numRes && numRes.count > 0) {
+            return `🔢 Numbered <strong>${numRes.count}</strong> occurrences of <strong>"${kw}"</strong> on screen with visual yellow badges (#1, #2, #3...). You can now say <code>open 2nd ${kw}</code> or <code>click #2</code>!`;
+        } else {
+            return `⚠️ Could not find visible occurrences of <strong>"${kw}"</strong> on active page to number.`;
+        }
+    }
 
     // 0a. TELL ME THE SHORTCUT / SHORTCUTS LIST COMMAND ("tell me the shortcut", "shortcuts", "show shortcuts", "all shortcuts")
     if (matches('tell me the shortcut', 'tell me shortcut', 'tell me shortcuts', 'show shortcut', 'show shortcuts', 'list shortcut', 'list shortcuts', 'what are the shortcuts', 'shortcut list', 'shortcuts list', 'all shortcuts', 'ai shortcuts', 'keyboard shortcuts', 'tell me all shortcuts', 'shortcut help', 'help shortcut', 'help shortcuts') || lower === 'shortcuts' || lower === 'shortcut') {
