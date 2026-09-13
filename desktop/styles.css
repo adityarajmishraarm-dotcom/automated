@@ -333,6 +333,8 @@ body {
     display: flex;
     flex-direction: column;
     height: 100vh;
+    position: relative;
+    z-index: 1;
 }
 
 /* Tab Strip Bar (TabStripModel) */
@@ -1867,7 +1869,7 @@ outline: none;
 .wallpaper-layer {
     position: fixed;
     inset: 0;
-    z-index: -1;
+    z-index: 0;
     pointer-events: none;
     background-size: cover;
     background-position: center;
@@ -1881,6 +1883,8 @@ outline: none;
     width: 100%;
     height: 100%;
     object-fit: cover;
+    pointer-events: none;
+    z-index: 0;
 }
 
 /* Dark scrim overlay so text stays readable over bright wallpapers */
@@ -1891,9 +1895,19 @@ outline: none;
     background: rgba(0, 0, 0, var(--wallpaper-overlay-opacity, 0.4));
     pointer-events: none;
     transition: background 0.3s ease;
+    z-index: 1;
 }
 
-/* When wallpaper is active, make browser chrome translucent */
+/* When wallpaper is active, make browser chrome translucent and body transparent */
+body.has-wallpaper {
+    background: transparent !important;
+}
+
+body.has-wallpaper .main-browser-workspace,
+body.has-wallpaper .webview-container {
+    background: transparent !important;
+}
+
 body.has-wallpaper .tab-strip-bar,
 body.has-wallpaper .navigation-toolbar,
 body.has-wallpaper .bookmarks-bar {
@@ -2018,4 +2032,258 @@ body.has-wallpaper .ai-hud-sidebar {
     flex: 1;
     accent-color: var(--accent-cyan);
     cursor: pointer;
+}
+
+/* ── Typography & Font Canvas Studio ── */
+.font-size-segmented-control {
+    display: flex;
+    gap: 2px;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 2px;
+    border-radius: 6px;
+    border: 1px solid var(--border-bright);
+}
+
+.font-size-pill {
+    padding: 2px 8px;
+    font-size: 11px;
+    font-weight: 700;
+    font-family: var(--font-mono);
+    color: var(--text-muted);
+    background: transparent;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.font-size-pill:hover {
+    color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.font-size-pill.active {
+    background: var(--accent-cyan);
+    color: #070b14;
+    font-weight: 800;
+}
+
+/* 8 Curated Fonts: GT Super, Juana, Playfair Display, Ogg, Inter, Poppins, Plus Jakarta Sans, Avenir */
+@font-face {
+    font-family: 'GT Super';
+    src: local('GT Super'), local('GT Super Display'), local('GT-Super'), local('Cheltenham');
+    font-weight: 400 800;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Juana';
+    src: local('Juana'), local('Juana-Regular'), local('Juana-Medium'), local('Juana-Bold');
+    font-weight: 400 800;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Ogg';
+    src: local('Ogg'), local('Ogg-Regular'), local('Ogg-Roman'), local('Ogg-Medium');
+    font-weight: 400 800;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Avenir';
+    src: local('Avenir'), local('Avenir Next'), local('AvenirNext-Regular');
+    font-weight: 400 800;
+    font-display: swap;
+}
+
+.font-style-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    max-height: 220px;
+    overflow-y: auto;
+    padding-right: 4px;
+}
+.font-style-grid::-webkit-scrollbar {
+    width: 5px;
+}
+.font-style-grid::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.16);
+    border-radius: 4px;
+}
+
+.font-style-card {
+    padding: 10px 12px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border-bright);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.font-style-card:hover {
+    background: rgba(0, 229, 255, 0.06);
+    border-color: rgba(0, 229, 255, 0.35);
+    transform: translateY(-1px);
+}
+
+.font-style-card.active {
+    background: rgba(0, 229, 255, 0.12);
+    border-color: var(--accent-cyan);
+    box-shadow: 0 0 12px rgba(0, 229, 255, 0.2);
+}
+
+.font-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.font-card-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.font-card-badge {
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 1px 6px;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--accent-cyan);
+}
+
+.font-card-sub {
+    font-size: 11px;
+    color: var(--text-muted);
+}
+
+.font-size-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    padding: 8px 4px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--border-bright);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    color: var(--text-secondary);
+}
+
+.font-size-btn:hover {
+    background: rgba(0, 229, 255, 0.08);
+    border-color: rgba(0, 229, 255, 0.3);
+}
+
+.font-size-btn.active {
+    background: rgba(0, 229, 255, 0.16);
+    border-color: var(--accent-cyan);
+    color: #fff;
+    box-shadow: 0 0 10px rgba(0, 229, 255, 0.2);
+}
+
+.font-size-btn .size-letter {
+    font-weight: 800;
+    line-height: 1;
+}
+
+.font-size-btn .size-name {
+    font-size: 9px;
+    color: var(--text-muted);
+}
+
+.font-size-btn.active .size-name {
+    color: var(--accent-cyan);
+    font-weight: 600;
+}
+
+/* Reader Content Body Modern Minimalist Article Styling */
+.reader-content-body {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 24px 28px;
+    transition: font-size 0.2s ease, font-family 0.2s ease, line-height 0.2s ease;
+}
+
+.reader-content-body h1 {
+    font-size: 1.65em !important;
+    font-weight: 800 !important;
+    letter-spacing: -0.025em !important;
+    line-height: 1.25 !important;
+    margin-bottom: 8px !important;
+}
+
+.reader-content-body p {
+    margin-bottom: 1.3em !important;
+    letter-spacing: -0.005em !important;
+}
+
+/* Floating HUD Toast for Typography Shortcuts & Live Adjustments */
+.typography-toast {
+    position: fixed;
+    top: 52px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-16px) scale(0.94);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 9px 18px;
+    background: rgba(10, 15, 29, 0.94);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(56, 189, 248, 0.45);
+    border-radius: 9999px;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.65), 0 0 24px rgba(56, 189, 248, 0.25);
+    color: #fff;
+    font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    z-index: 10000;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.22s cubic-bezier(0.16, 1, 0.3, 1), transform 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.typography-toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1);
+}
+
+.typography-toast-icon {
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: rgba(56, 189, 248, 0.15);
+    border: 1px solid rgba(56, 189, 248, 0.35);
+    flex-shrink: 0;
+}
+
+.typography-toast-text {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+}
+
+.typography-toast-title {
+    font-size: 12.5px;
+    font-weight: 700;
+    color: #f8fafc;
+    letter-spacing: -0.01em;
+    line-height: 1.3;
+}
+
+.typography-toast-sub {
+    font-size: 10.5px;
+    color: #94a3b8;
+    font-family: var(--font-mono, monospace);
+    line-height: 1.2;
 }

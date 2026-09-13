@@ -547,6 +547,9 @@ function activateTab(tabId) {
     tabs.forEach(t => {
         if (t.id === tabId) {
             t.webview.style.display = 'flex';
+            if (typeof injectTypographyIntoWebview === 'function') {
+                injectTypographyIntoWebview(t.webview);
+            }
         } else {
             t.webview.style.display = 'none';
         }
@@ -1254,6 +1257,9 @@ function setupWebviewEvents(tab) {
             urlInput.value = tab.url;
             triggerPageAnalysis(tab);
         }
+        if (typeof injectTypographyIntoWebview === 'function') {
+            injectTypographyIntoWebview(wv);
+        }
     });
 
     wv.addEventListener('did-start-loading', () => {
@@ -1282,6 +1288,9 @@ function setupWebviewEvents(tab) {
 
         if (tab.id === activeTabId) {
             triggerPageAnalysis(tab);
+        }
+        if (typeof injectTypographyIntoWebview === 'function') {
+            injectTypographyIntoWebview(wv);
         }
     });
 
@@ -1316,6 +1325,9 @@ function setupWebviewEvents(tab) {
             updateBookmarkStar();
         }
         recordHistory(e.url, tab.title);
+        if (typeof injectTypographyIntoWebview === 'function') {
+            injectTypographyIntoWebview(wv);
+        }
     });
 
     wv.addEventListener('did-navigate-in-page', (e) => {
@@ -1330,7 +1342,49 @@ function setupWebviewEvents(tab) {
             updateBookmarkStar();
         }
         recordHistory(e.url, tab.title);
+        if (typeof injectTypographyIntoWebview === 'function') {
+            injectTypographyIntoWebview(wv);
+        }
     });
+
+    // Forward keyboard shortcuts when focused inside the webview
+    wv.addEventListener('before-input-event', (event) => {
+        const input = event.input;
+        if (!input || input.type !== 'keyDown') return;
+        const isCtrl = input.control || input.meta;
+        if (!isCtrl) return;
+
+        // Ctrl + + / = / NumpadAdd : Increase font size
+        if (!input.alt && (input.key === '+' || input.key === '=' || input.code === 'Equal' || input.code === 'NumpadAdd')) {
+            event.preventDefault();
+            stepCanvasFontSize(1);
+        }
+        // Ctrl + - / _ / NumpadSubtract : Decrease font size
+        else if (!input.alt && (input.key === '-' || input.key === '_' || input.code === 'Minus' || input.code === 'NumpadSubtract')) {
+            event.preventDefault();
+            stepCanvasFontSize(-1);
+        }
+        // Ctrl + Alt + 1..8 : Switch font style
+        else if (input.alt && ['1', '2', '3', '4', '5', '6', '7', '8'].includes(input.key)) {
+            event.preventDefault();
+            setCanvasFontStyleByIndex(parseInt(input.key, 10));
+        }
+    });
+
+    // Handle Ctrl + Mouse Wheel directly on webview element
+    wv.addEventListener('wheel', (e) => {
+        if (e.ctrlKey || e.metaKey) {
+            e.preventDefault();
+            const now = Date.now();
+            if (now - lastFontWheelTime < 180) return;
+            lastFontWheelTime = now;
+            if (e.deltaY < 0) {
+                stepCanvasFontSize(1);
+            } else if (e.deltaY > 0) {
+                stepCanvasFontSize(-1);
+            }
+        }
+    }, { passive: false });
 }
 
 // Navigation Controls
@@ -2104,11 +2158,45 @@ window.addEventListener('keydown', (e) => {
         const tabBtn = document.getElementById('tabBtnHistory');
         if (tabBtn) tabBtn.click();
     }
-    // Escape: Close Command Palette
+    // Ctrl + + / = / NumpadAdd: Increase Canvas Font Size (Small -> Medium -> Large -> Extra Large)
+    else if ((e.ctrlKey || e.metaKey) && !e.altKey && (e.key === '+' || e.key === '=' || e.code === 'Equal' || e.code === 'NumpadAdd')) {
+        e.preventDefault();
+        stepCanvasFontSize(1);
+    }
+    // Ctrl + - / _ / NumpadSubtract: Decrease Canvas Font Size (Extra Large -> Large -> Medium -> Small)
+    else if ((e.ctrlKey || e.metaKey) && !e.altKey && (e.key === '-' || e.key === '_' || e.code === 'Minus' || e.code === 'NumpadSubtract')) {
+        e.preventDefault();
+        stepCanvasFontSize(-1);
+    }
+    // Ctrl + Alt + 1..8: Switch Canvas Font Style
+    else if ((e.ctrlKey || e.metaKey) && e.altKey && ['1', '2', '3', '4', '5', '6', '7', '8'].includes(e.key)) {
+        e.preventDefault();
+        setCanvasFontStyleByIndex(parseInt(e.key, 10));
+    }
+    // Escape: Close Command Palette, Modals
     else if (e.key === 'Escape') {
         closeCommandPalette();
+        if (typeof closeWallpaperModal === 'function') closeWallpaperModal();
+        if (typeof closeTypographyModal === 'function') closeTypographyModal();
+        if (typeof closeReaderModal === 'function') closeReaderModal();
     }
 });
+
+// Global Ctrl + Mouse Wheel listener for smooth font size stepping
+let lastFontWheelTime = 0;
+window.addEventListener('wheel', (e) => {
+    if (e.ctrlKey || e.metaKey) {
+        e.preventDefault();
+        const now = Date.now();
+        if (now - lastFontWheelTime < 180) return; // 180ms debounce so it doesn't skip multiple steps
+        lastFontWheelTime = now;
+        if (e.deltaY < 0) {
+            stepCanvasFontSize(1);
+        } else if (e.deltaY > 0) {
+            stepCanvasFontSize(-1);
+        }
+    }
+}, { passive: false });
 
 if (btnBookmark) {
     btnBookmark.onclick = () => {
@@ -4079,8 +4167,9 @@ const readerModalTitle = document.getElementById('readerModalTitle');
 const readerContentBody = document.getElementById('readerContentBody');
 const btnCloseReaderModal = document.getElementById('btnCloseReaderModal');
 const btnReaderMode = document.getElementById('btnReaderMode');
-const btnReaderFontToggle = document.getElementById('btnReaderFontToggle');
-let readerFontSize = 15;
+const readerFontStyleSelect = document.getElementById('readerFontStyleSelect');
+const readerFontSizeGroup = document.getElementById('readerFontSizeGroup');
+const btnOpenTypographyFromReader = document.getElementById('btnOpenTypographyFromReader');
 
 async function openReaderMode() {
     const tab = getActiveTab();
@@ -4089,6 +4178,10 @@ async function openReaderMode() {
     readerModalTitle.textContent = `📖 Reader View: ${tab.title || 'Page'}`;
     readerContentBody.innerHTML = '<div class="loading-spinner">Extracting clean article content...</div>';
     readerModeModal.style.display = 'flex';
+
+    if (typeof applyCanvasTypography === 'function') {
+        applyCanvasTypography(currentCanvasFontSize, currentCanvasFontStyle, false);
+    }
 
     try {
         const textContent = await tab.webview.executeJavaScript(`
@@ -4121,10 +4214,29 @@ function closeReaderModal() {
 if (btnReaderMode) btnReaderMode.onclick = openReaderMode;
 if (btnCloseReaderModal) btnCloseReaderModal.onclick = closeReaderModal;
 if (readerModeBackdrop) readerModeBackdrop.onclick = closeReaderModal;
-if (btnReaderFontToggle) {
-    btnReaderFontToggle.onclick = () => {
-        readerFontSize = readerFontSize >= 20 ? 13 : readerFontSize + 2;
-        readerContentBody.style.fontSize = `${readerFontSize}px`;
+
+if (readerFontStyleSelect) {
+    readerFontStyleSelect.onchange = (e) => {
+        if (typeof applyCanvasTypography === 'function') {
+            applyCanvasTypography(currentCanvasFontSize, e.target.value);
+        }
+    };
+}
+
+if (readerFontSizeGroup) {
+    readerFontSizeGroup.querySelectorAll('.font-size-pill').forEach(pill => {
+        pill.onclick = () => {
+            const sz = pill.getAttribute('data-size');
+            if (sz && typeof applyCanvasTypography === 'function') {
+                applyCanvasTypography(sz, currentCanvasFontStyle);
+            }
+        };
+    });
+}
+
+if (btnOpenTypographyFromReader) {
+    btnOpenTypographyFromReader.onclick = () => {
+        if (typeof openTypographyModal === 'function') openTypographyModal();
     };
 }
 
@@ -4222,6 +4334,12 @@ if (toolsDropdown) {
                 break;
             case 'purge':
                 purgeMemoryCache();
+                break;
+            case 'wallpaper':
+                openWallpaperModal();
+                break;
+            case 'typography':
+                openTypographyModal();
                 break;
         }
         toolsDropdown.value = '';
@@ -4390,3 +4508,689 @@ document.querySelectorAll('.chat-chip').forEach(chip => {
         if (prompt) processAiUserChat(prompt);
     };
 });
+
+// =============================================================================
+// 12. CUSTOM BACKGROUND WALLPAPER ENGINE (GALLERY & LOCAL PHOTOS/VIDEOS SUPPORT)
+// =============================================================================
+const btnWallpaper = document.getElementById('btnWallpaper');
+const wallpaperLayer = document.getElementById('wallpaperLayer');
+const wallpaperModal = document.getElementById('wallpaperModal');
+const wallpaperBackdrop = document.getElementById('wallpaperBackdrop');
+const btnCloseWallpaperModal = document.getElementById('btnCloseWallpaperModal');
+const wallpaperPreviewBox = document.getElementById('wallpaperPreviewBox');
+const wallpaperPreviewPlaceholder = document.getElementById('wallpaperPreviewPlaceholder');
+const wallpaperPreviewImg = document.getElementById('wallpaperPreviewImg');
+const wallpaperPreviewVid = document.getElementById('wallpaperPreviewVid');
+const btnWallpaperUpload = document.getElementById('btnWallpaperUpload');
+const wallpaperFileInput = document.getElementById('wallpaperFileInput');
+const wallpaperTypeBadge = document.getElementById('wallpaperTypeBadge');
+const wallpaperAudioRow = document.getElementById('wallpaperAudioRow');
+const btnToggleWallpaperAudio = document.getElementById('btnToggleWallpaperAudio');
+const wallpaperColorPicker = document.getElementById('wallpaperColorPicker');
+const wallpaperOpacity = document.getElementById('wallpaperOpacity');
+const wallpaperOpacityLabel = document.getElementById('wallpaperOpacityLabel');
+const btnWallpaperApply = document.getElementById('btnWallpaperApply');
+const btnWallpaperRemove = document.getElementById('btnWallpaperRemove');
+
+let pendingWallpaperData = null; // { type: 'image' | 'video' | 'color', src: string, fileName?: string, muted?: boolean }
+
+function setWallpaperVisuals(wallpaperData, opacityValue) {
+    if (!wallpaperLayer) return;
+
+    if (opacityValue !== undefined && opacityValue !== null) {
+        document.documentElement.style.setProperty('--wallpaper-overlay-opacity', (opacityValue / 100).toString());
+        if (wallpaperOpacity) wallpaperOpacity.value = opacityValue;
+        if (wallpaperOpacityLabel) wallpaperOpacityLabel.textContent = `${opacityValue}%`;
+    }
+
+    if (!wallpaperData || !wallpaperData.src) {
+        wallpaperLayer.style.backgroundImage = 'none';
+        wallpaperLayer.style.backgroundColor = '';
+        const existingVid = wallpaperLayer.querySelector('video');
+        if (existingVid) existingVid.remove();
+        document.body.classList.remove('has-wallpaper');
+        return;
+    }
+
+    document.body.classList.add('has-wallpaper');
+
+    if (wallpaperData.type === 'video') {
+        wallpaperLayer.style.backgroundImage = 'none';
+        wallpaperLayer.style.backgroundColor = '';
+        let vid = wallpaperLayer.querySelector('video');
+        if (!vid) {
+            vid = document.createElement('video');
+            vid.autoplay = true;
+            vid.loop = true;
+            vid.playsInline = true;
+            vid.setAttribute('autoplay', '');
+            vid.setAttribute('loop', '');
+            vid.setAttribute('playsinline', '');
+            wallpaperLayer.appendChild(vid);
+        }
+        vid.muted = (wallpaperData.muted !== false);
+        if (vid.muted) {
+            vid.setAttribute('muted', '');
+        } else {
+            vid.removeAttribute('muted');
+        }
+        if (vid.src !== wallpaperData.src) {
+            vid.src = wallpaperData.src;
+        }
+        vid.play().catch(err => console.warn('Wallpaper video autoplay prevented:', err));
+    } else if (wallpaperData.type === 'color') {
+        const existingVid = wallpaperLayer.querySelector('video');
+        if (existingVid) existingVid.remove();
+        wallpaperLayer.style.backgroundImage = 'none';
+        wallpaperLayer.style.backgroundColor = wallpaperData.src;
+    } else {
+        // Image / Photo from Gallery
+        const existingVid = wallpaperLayer.querySelector('video');
+        if (existingVid) existingVid.remove();
+        wallpaperLayer.style.backgroundImage = `url("${wallpaperData.src}")`;
+        wallpaperLayer.style.backgroundColor = '';
+    }
+}
+
+function updateWallpaperModalPreview(wallpaperData) {
+    if (!wallpaperPreviewBox) return;
+
+    if (!wallpaperData || !wallpaperData.src) {
+        if (wallpaperPreviewPlaceholder) {
+            wallpaperPreviewPlaceholder.style.display = 'block';
+            wallpaperPreviewPlaceholder.textContent = 'No wallpaper set';
+        }
+        if (wallpaperPreviewImg) wallpaperPreviewImg.style.display = 'none';
+        if (wallpaperPreviewVid) {
+            wallpaperPreviewVid.pause();
+            wallpaperPreviewVid.style.display = 'none';
+        }
+        if (wallpaperTypeBadge) wallpaperTypeBadge.style.display = 'none';
+        if (wallpaperAudioRow) wallpaperAudioRow.style.display = 'none';
+        wallpaperPreviewBox.style.backgroundColor = 'rgba(0, 0, 0, 0.4)';
+        return;
+    }
+
+    if (wallpaperPreviewPlaceholder) wallpaperPreviewPlaceholder.style.display = 'none';
+
+    if (wallpaperData.type === 'video') {
+        if (wallpaperPreviewImg) wallpaperPreviewImg.style.display = 'none';
+        if (wallpaperPreviewVid) {
+            wallpaperPreviewVid.src = wallpaperData.src;
+            wallpaperPreviewVid.muted = (wallpaperData.muted !== false);
+            wallpaperPreviewVid.style.display = 'block';
+            wallpaperPreviewVid.play().catch(() => {});
+        }
+        if (wallpaperTypeBadge) {
+            wallpaperTypeBadge.style.display = 'inline-block';
+            wallpaperTypeBadge.textContent = '🎥 Video Wallpaper';
+        }
+        if (wallpaperAudioRow) {
+            wallpaperAudioRow.style.display = 'flex';
+        }
+        if (btnToggleWallpaperAudio) {
+            btnToggleWallpaperAudio.textContent = (wallpaperData.muted !== false) ? '🔇 Muted' : '🔊 Audio On';
+        }
+        wallpaperPreviewBox.style.backgroundColor = '#000';
+    } else if (wallpaperData.type === 'color') {
+        if (wallpaperPreviewImg) wallpaperPreviewImg.style.display = 'none';
+        if (wallpaperPreviewVid) {
+            wallpaperPreviewVid.pause();
+            wallpaperPreviewVid.style.display = 'none';
+        }
+        if (wallpaperTypeBadge) {
+            wallpaperTypeBadge.style.display = 'inline-block';
+            wallpaperTypeBadge.textContent = '🎨 Solid Color';
+        }
+        if (wallpaperAudioRow) wallpaperAudioRow.style.display = 'none';
+        wallpaperPreviewBox.style.backgroundColor = wallpaperData.src;
+    } else {
+        // Image / Photo
+        if (wallpaperPreviewVid) {
+            wallpaperPreviewVid.pause();
+            wallpaperPreviewVid.style.display = 'none';
+        }
+        if (wallpaperPreviewImg) {
+            wallpaperPreviewImg.src = wallpaperData.src;
+            wallpaperPreviewImg.style.display = 'block';
+        }
+        if (wallpaperTypeBadge) {
+            wallpaperTypeBadge.style.display = 'inline-block';
+            wallpaperTypeBadge.textContent = '🖼️ Image Wallpaper';
+        }
+        if (wallpaperAudioRow) wallpaperAudioRow.style.display = 'none';
+        wallpaperPreviewBox.style.backgroundColor = 'transparent';
+    }
+}
+
+function openWallpaperModal() {
+    if (!wallpaperModal) return;
+    wallpaperModal.style.display = 'flex';
+
+    // Hydrate preview from active saved wallpaper
+    let saved = null;
+    try {
+        const raw = localStorage.getItem('antigravity_custom_wallpaper');
+        if (raw) saved = JSON.parse(raw);
+    } catch (e) {
+        const raw = localStorage.getItem('antigravity_custom_wallpaper');
+        if (raw) saved = { type: 'image', src: raw };
+    }
+
+    pendingWallpaperData = saved;
+    updateWallpaperModalPreview(saved);
+
+    const savedOpacity = localStorage.getItem('antigravity_wallpaper_opacity') || '40';
+    if (wallpaperOpacity) wallpaperOpacity.value = savedOpacity;
+    if (wallpaperOpacityLabel) wallpaperOpacityLabel.textContent = `${savedOpacity}%`;
+    document.documentElement.style.setProperty('--wallpaper-overlay-opacity', (parseInt(savedOpacity, 10) / 100).toString());
+}
+
+function closeWallpaperModal() {
+    if (wallpaperModal) wallpaperModal.style.display = 'none';
+    if (wallpaperPreviewVid) {
+        try { wallpaperPreviewVid.pause(); } catch (e) {}
+    }
+}
+
+if (btnCloseWallpaperModal) btnCloseWallpaperModal.onclick = closeWallpaperModal;
+if (wallpaperBackdrop) wallpaperBackdrop.onclick = closeWallpaperModal;
+if (btnWallpaper) btnWallpaper.onclick = openWallpaperModal;
+
+if (btnWallpaperUpload && wallpaperFileInput) {
+    btnWallpaperUpload.onclick = () => {
+        wallpaperFileInput.click();
+    };
+}
+
+if (btnToggleWallpaperAudio) {
+    btnToggleWallpaperAudio.onclick = () => {
+        if (!pendingWallpaperData || pendingWallpaperData.type !== 'video') return;
+        pendingWallpaperData.muted = (pendingWallpaperData.muted === false) ? true : false;
+        btnToggleWallpaperAudio.textContent = pendingWallpaperData.muted ? '🔇 Muted' : '🔊 Audio On';
+        if (wallpaperPreviewVid) wallpaperPreviewVid.muted = pendingWallpaperData.muted;
+    };
+}
+
+if (wallpaperFileInput) {
+    wallpaperFileInput.onchange = (e) => {
+        const file = e.target.files && e.target.files[0];
+        if (!file) return;
+
+        const isVideo = (file.type && file.type.startsWith('video')) || /\.(mp4|webm|mov|mkv|avi|m4v|ogv)$/i.test(file.name);
+
+        // In Electron environment, file.path exists and provides direct high-speed disk access
+        // without hitting localStorage base64 quota limits for large 4K/HD video files!
+        if (file.path) {
+            const fileSrc = 'file:///' + file.path.replace(/\\/g, '/');
+            pendingWallpaperData = {
+                type: isVideo ? 'video' : 'image',
+                src: fileSrc,
+                fileName: file.name,
+                muted: true
+            };
+            updateWallpaperModalPreview(pendingWallpaperData);
+        } else {
+            const reader = new FileReader();
+            reader.onload = (evt) => {
+                const dataUrl = evt.target.result;
+                pendingWallpaperData = {
+                    type: isVideo ? 'video' : 'image',
+                    src: dataUrl,
+                    fileName: file.name,
+                    muted: true
+                };
+                updateWallpaperModalPreview(pendingWallpaperData);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+}
+
+if (wallpaperColorPicker) {
+    wallpaperColorPicker.oninput = (e) => {
+        const col = e.target.value;
+        pendingWallpaperData = { type: 'color', src: col };
+        updateWallpaperModalPreview(pendingWallpaperData);
+    };
+}
+
+if (wallpaperOpacity) {
+    wallpaperOpacity.oninput = (e) => {
+        const val = e.target.value;
+        if (wallpaperOpacityLabel) wallpaperOpacityLabel.textContent = `${val}%`;
+        document.documentElement.style.setProperty('--wallpaper-overlay-opacity', (val / 100).toString());
+        localStorage.setItem('antigravity_wallpaper_opacity', val);
+    };
+}
+
+if (btnWallpaperApply) {
+    btnWallpaperApply.onclick = () => {
+        if (pendingWallpaperData && pendingWallpaperData.src) {
+            setWallpaperVisuals(pendingWallpaperData);
+            try {
+                localStorage.setItem('antigravity_custom_wallpaper', JSON.stringify(pendingWallpaperData));
+            } catch (err) {
+                try {
+                    localStorage.setItem('antigravity_custom_wallpaper', JSON.stringify({
+                        type: pendingWallpaperData.type,
+                        src: pendingWallpaperData.src,
+                        muted: pendingWallpaperData.muted
+                    }));
+                } catch (e) {
+                    console.warn('LocalStorage quota exceeded for wallpaper:', e);
+                }
+            }
+            logTelemetry('act', 'WallpaperEngine::Apply()', `Custom ${pendingWallpaperData.type} wallpaper applied`);
+        }
+        closeWallpaperModal();
+    };
+}
+
+if (btnWallpaperRemove) {
+    btnWallpaperRemove.onclick = () => {
+        pendingWallpaperData = null;
+        setWallpaperVisuals(null);
+        localStorage.removeItem('antigravity_custom_wallpaper');
+        updateWallpaperModalPreview(null);
+        logTelemetry('act', 'WallpaperEngine::Remove()', 'Removed custom wallpaper');
+        closeWallpaperModal();
+    };
+}
+
+// Startup hydration: restore custom wallpaper & opacity from localStorage
+(function restoreSavedWallpaper() {
+    try {
+        const savedOpacity = localStorage.getItem('antigravity_wallpaper_opacity') || '40';
+        document.documentElement.style.setProperty('--wallpaper-overlay-opacity', (parseInt(savedOpacity, 10) / 100).toString());
+
+        const raw = localStorage.getItem('antigravity_custom_wallpaper');
+        if (raw) {
+            let wp = null;
+            try {
+                wp = JSON.parse(raw);
+            } catch (e) {
+                wp = { type: 'image', src: raw };
+            }
+            if (wp && wp.src) {
+                setWallpaperVisuals(wp, savedOpacity);
+            }
+        }
+    } catch (e) {
+        console.warn('Could not restore custom wallpaper on boot:', e);
+    }
+})();
+
+// =============================================================================
+// 13. MODERN TYPOGRAPHY & FONT CANVAS STUDIO (4 SIZES & 4 STYLES)
+// =============================================================================
+const typographyModal = document.getElementById('typographyModal');
+const typographyBackdrop = document.getElementById('typographyBackdrop');
+const btnCloseTypographyModal = document.getElementById('btnCloseTypographyModal');
+const btnCloseTypographyBtn = document.getElementById('btnCloseTypographyBtn');
+const typographySizeLabel = document.getElementById('typographySizeLabel');
+const typographyPreviewCanvas = document.getElementById('typographyPreviewCanvas');
+const btnApplyTypography = document.getElementById('btnApplyTypography');
+const btnResetTypography = document.getElementById('btnResetTypography');
+
+const TYPOGRAPHY_FONT_SIZES = {
+    'compact': { px: 14, name: 'Compact (14px)', lineHeight: 1.65 },
+    'standard': { px: 16, name: 'Standard (16px)', lineHeight: 1.75 },
+    'comfortable': { px: 18, name: 'Comfortable (18px)', lineHeight: 1.8 },
+    'spacious': { px: 21, name: 'Spacious (21px)', lineHeight: 1.85 }
+};
+
+const TYPOGRAPHY_FONT_STYLES = {
+    'gt-super': {
+        name: 'GT Super',
+        fontFamily: "'GT Super', 'GT Super Display', 'Cheltenham', 'Georgia', serif",
+        letterSpacing: '-0.015em',
+        category: 'Editorial Serif'
+    },
+    'juana': {
+        name: 'Juana',
+        fontFamily: "'Juana', 'Bodoni Moda', 'Didot', 'Playfair Display', serif",
+        letterSpacing: '0.005em',
+        category: 'High-Contrast Luxury Serif'
+    },
+    'playfair-display': {
+        name: 'Playfair Display',
+        fontFamily: "'Playfair Display', 'Georgia', serif",
+        letterSpacing: '0.01em',
+        category: 'Classical Editorial'
+    },
+    'ogg': {
+        name: 'Ogg',
+        fontFamily: "'Ogg', 'Cormorant Garamond', 'Baskerville', 'Georgia', serif",
+        letterSpacing: '-0.01em',
+        category: 'Calligraphic Serif'
+    },
+    'inter': {
+        name: 'Inter',
+        fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+        letterSpacing: '-0.011em',
+        category: 'Clean Neo-Grotesque'
+    },
+    'poppins': {
+        name: 'Poppins (Toppins)',
+        fontFamily: "'Poppins', 'Toppins', sans-serif",
+        letterSpacing: '-0.005em',
+        category: 'Geometric Sans'
+    },
+    'plus-jakarta-sans': {
+        name: 'Plus Jakarta Sans',
+        fontFamily: "'Plus Jakarta Sans', 'Inter', sans-serif",
+        letterSpacing: '-0.02em',
+        category: 'Modern Neo-Grotesque'
+    },
+    'avenir': {
+        name: 'Avenir',
+        fontFamily: "'Avenir', 'Avenir Next', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+        letterSpacing: '-0.01em',
+        category: 'Humanist Geometric'
+    }
+};
+
+let currentCanvasFontSize = 'standard';
+let currentCanvasFontStyle = 'inter';
+
+const GOOGLE_FONTS_URL = 'https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Fraunces:ital,opsz,wght@0,9..144,400..900;1,9..144,400..900&family=Inter:wght@400;500;600;700;800&family=Nunito+Sans:ital,wght@0,400;0,600;0,700;1,400&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap';
+const AVENIR_FONT_URL = 'https://fonts.cdnfonts.com/css/avenir';
+
+function injectTypographyIntoWebview(wv) {
+    if (!wv) return;
+    const styleObj = TYPOGRAPHY_FONT_STYLES[currentCanvasFontStyle] || TYPOGRAPHY_FONT_STYLES['inter'];
+    const zoomMap = { 'compact': 0.9, 'standard': 1.0, 'comfortable': 1.15, 'spacious': 1.3 };
+
+    // 1. Sync Webview Zoom Factor
+    try {
+        if (typeof wv.setZoomFactor === 'function') {
+            wv.setZoomFactor(zoomMap[currentCanvasFontSize] || 1.0);
+        }
+    } catch (e) {}
+
+    const targetFamily = styleObj.fontFamily;
+
+    // 2. High-Priority Universal Injected CSS (Chromium Style Resolver Level)
+    const universalCss = `
+        @import url('${GOOGLE_FONTS_URL}');
+        @import url('${AVENIR_FONT_URL}');
+
+        html, body, div, span, p, a, h1, h2, h3, h4, h5, h6,
+        li, ul, ol, dl, dt, dd,
+        button, input, textarea, select, label,
+        table, td, th, tr, tbody, thead, tfoot,
+        article, section, header, footer, nav, aside, main,
+        b, strong, i, em, small, sub, sup, blockquote, cite {
+            font-family: ${targetFamily} !important;
+        }
+
+        *:not(code):not(pre):not(kbd):not(samp):not([class*="icon"]):not([class*="fa"]):not([class*="fa-"]):not(.material-icons):not([class*="glyph"]):not(svg):not(path) {
+            font-family: ${targetFamily} !important;
+        }
+    `;
+
+    try {
+        if (typeof wv.insertCSS === 'function') {
+            wv.insertCSS(universalCss).catch(() => {});
+        }
+    } catch (e) {}
+
+    // 3. Direct In-Page DOM Injection via executeJavaScript
+    const domScript = `
+        (function() {
+            try {
+                // Ensure Google Fonts stylesheet link is in document head
+                var linkGoogle = document.getElementById('ag-webfonts-google');
+                if (!linkGoogle) {
+                    linkGoogle = document.createElement('link');
+                    linkGoogle.id = 'ag-webfonts-google';
+                    linkGoogle.rel = 'stylesheet';
+                    linkGoogle.href = ${JSON.stringify(GOOGLE_FONTS_URL)};
+                    (document.head || document.documentElement).appendChild(linkGoogle);
+                }
+
+                // Ensure Avenir stylesheet link is in document head
+                var linkAvenir = document.getElementById('ag-webfonts-avenir');
+                if (!linkAvenir) {
+                    linkAvenir = document.createElement('link');
+                    linkAvenir.id = 'ag-webfonts-avenir';
+                    linkAvenir.rel = 'stylesheet';
+                    linkAvenir.href = ${JSON.stringify(AVENIR_FONT_URL)};
+                    (document.head || document.documentElement).appendChild(linkAvenir);
+                }
+
+                // Append or refresh the high-priority style override at the end of head
+                var styleEl = document.getElementById('ag-typography-override');
+                if (!styleEl) {
+                    styleEl = document.createElement('style');
+                    styleEl.id = 'ag-typography-override';
+                    (document.head || document.documentElement).appendChild(styleEl);
+                } else {
+                    (document.head || document.documentElement).appendChild(styleEl);
+                }
+
+                styleEl.textContent = \`
+                    html, body, div, span, p, a, h1, h2, h3, h4, h5, h6,
+                    li, ul, ol, dl, dt, dd,
+                    button, input, textarea, select, label,
+                    table, td, th, tr, tbody, thead, tfoot,
+                    article, section, header, footer, nav, aside, main,
+                    b, strong, i, em, small, sub, sup, blockquote, cite {
+                        font-family: \${${JSON.stringify(targetFamily)}} !important;
+                    }
+
+                    *:not(code):not(pre):not(kbd):not(samp):not([class*="icon"]):not([class*="fa"]):not([class*="fa-"]):not(.material-icons):not([class*="glyph"]):not(svg):not(path) {
+                        font-family: \${${JSON.stringify(targetFamily)}} !important;
+                    }
+                \`;
+
+                if (document.body) {
+                    document.body.style.setProperty('font-family', ${JSON.stringify(targetFamily)}, 'important');
+                }
+                document.documentElement.style.setProperty('--antigravity-custom-font', ${JSON.stringify(targetFamily)});
+            } catch(e) {}
+        })();
+    `;
+
+    try {
+        if (typeof wv.executeJavaScript === 'function') {
+            wv.executeJavaScript(domScript).catch(() => {});
+        }
+    } catch (e) {}
+}
+
+function applyCanvasTypography(sizeKey, styleKey, persist = true) {
+    if (TYPOGRAPHY_FONT_SIZES[sizeKey]) currentCanvasFontSize = sizeKey;
+    if (TYPOGRAPHY_FONT_STYLES[styleKey]) currentCanvasFontStyle = styleKey;
+
+    const sizeObj = TYPOGRAPHY_FONT_SIZES[currentCanvasFontSize] || TYPOGRAPHY_FONT_SIZES['standard'];
+    const styleObj = TYPOGRAPHY_FONT_STYLES[currentCanvasFontStyle] || TYPOGRAPHY_FONT_STYLES['inter'];
+
+    // 1. Update Clean Reader Mode Canvas
+    if (readerContentBody) {
+        readerContentBody.style.fontSize = `${sizeObj.px}px`;
+        readerContentBody.style.fontFamily = styleObj.fontFamily;
+        readerContentBody.style.lineHeight = sizeObj.lineHeight.toString();
+        readerContentBody.style.letterSpacing = styleObj.letterSpacing;
+    }
+
+    // 2. Update Studio Live Preview Box
+    if (typographyPreviewCanvas) {
+        typographyPreviewCanvas.style.fontSize = `${sizeObj.px}px`;
+        typographyPreviewCanvas.style.fontFamily = styleObj.fontFamily;
+        typographyPreviewCanvas.style.lineHeight = sizeObj.lineHeight.toString();
+        typographyPreviewCanvas.style.letterSpacing = styleObj.letterSpacing;
+    }
+    if (typographySizeLabel) {
+        typographySizeLabel.textContent = sizeObj.name;
+    }
+
+    // 3. Sync Reader Header Select and Segmented Buttons
+    if (readerFontStyleSelect) {
+        readerFontStyleSelect.value = currentCanvasFontStyle;
+    }
+    if (readerFontSizeGroup) {
+        readerFontSizeGroup.querySelectorAll('.font-size-pill').forEach(pill => {
+            pill.classList.toggle('active', pill.getAttribute('data-size') === currentCanvasFontSize);
+        });
+    }
+
+    // 4. Sync Typography Studio Cards and Buttons
+    document.querySelectorAll('.font-style-card').forEach(card => {
+        card.classList.toggle('active', card.getAttribute('data-font') === currentCanvasFontStyle);
+    });
+    document.querySelectorAll('.font-size-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('data-size') === currentCanvasFontSize);
+    });
+
+    // 5. In-Process Active Webview CSS injection & zoom factor sync across all open tabs
+    if (Array.isArray(tabs)) {
+        tabs.forEach(t => {
+            if (t && t.webview) {
+                injectTypographyIntoWebview(t.webview);
+            }
+        });
+    }
+
+    // 6. Persistence
+    if (persist) {
+        localStorage.setItem('antigravity_canvas_font_size', currentCanvasFontSize);
+        localStorage.setItem('antigravity_canvas_font_style', currentCanvasFontStyle);
+        logTelemetry('act', 'TypographyEngine::Apply()', `${styleObj.name} (${sizeObj.name})`);
+    }
+}
+
+const TYPOGRAPHY_FONT_SIZE_KEYS = ['compact', 'standard', 'comfortable', 'spacious'];
+const TYPOGRAPHY_FONT_STYLE_KEYS = [
+    'gt-super',
+    'juana',
+    'playfair-display',
+    'ogg',
+    'inter',
+    'poppins',
+    'plus-jakarta-sans',
+    'avenir'
+];
+
+const FONT_SIZE_LABELS = {
+    'compact': 'Small (14px)',
+    'standard': 'Medium (16px)',
+    'comfortable': 'Large (18px)',
+    'spacious': 'Extra Large (21px)'
+};
+
+let typographyToastTimeout = null;
+
+function showTypographyToast(title, subtitle) {
+    let toast = document.getElementById('typographyToast');
+    if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'typographyToast';
+        toast.className = 'typography-toast';
+        document.body.appendChild(toast);
+    }
+
+    const icon = title.includes('🎨') ? '🎨' : '🔤';
+    const cleanTitle = title.replace(/^[🔤🎨]\s*/, '');
+
+    toast.innerHTML = `
+        <div class="typography-toast-icon">${icon}</div>
+        <div class="typography-toast-text">
+            <div class="typography-toast-title">${cleanTitle}</div>
+            ${subtitle ? `<div class="typography-toast-sub">${subtitle}</div>` : ''}
+        </div>
+    `;
+
+    toast.classList.remove('show');
+    void toast.offsetWidth; // force reflow for smooth re-trigger
+    toast.classList.add('show');
+
+    if (typographyToastTimeout) clearTimeout(typographyToastTimeout);
+    typographyToastTimeout = setTimeout(() => {
+        toast.classList.remove('show');
+    }, 1400);
+}
+
+function stepCanvasFontSize(delta) {
+    const currentIndex = TYPOGRAPHY_FONT_SIZE_KEYS.indexOf(currentCanvasFontSize);
+    const safeIndex = currentIndex === -1 ? 1 : currentIndex;
+    const nextIndex = Math.max(0, Math.min(TYPOGRAPHY_FONT_SIZE_KEYS.length - 1, safeIndex + delta));
+    const nextSize = TYPOGRAPHY_FONT_SIZE_KEYS[nextIndex];
+
+    applyCanvasTypography(nextSize, currentCanvasFontStyle, true);
+
+    const sizeObj = TYPOGRAPHY_FONT_SIZES[nextSize];
+    const friendlyName = FONT_SIZE_LABELS[nextSize] || (sizeObj ? sizeObj.name : nextSize);
+    const tierName = ['Small', 'Medium', 'Large', 'Extra Large (XL)'][nextIndex];
+    showTypographyToast('🔤 Font Size: ' + friendlyName, `${tierName} · Level ${nextIndex + 1}/4 (Ctrl +/-)`);
+    return nextSize;
+}
+
+function setCanvasFontStyleByIndex(index1Based) {
+    const styleKey = TYPOGRAPHY_FONT_STYLE_KEYS[index1Based - 1];
+    if (!styleKey) return;
+    applyCanvasTypography(currentCanvasFontSize, styleKey, true);
+
+    const styleObj = TYPOGRAPHY_FONT_STYLES[styleKey];
+    showTypographyToast('🎨 Font Style: ' + (styleObj ? styleObj.name : styleKey), `Preset [Ctrl+Alt+${index1Based}]`);
+}
+
+function openTypographyModal() {
+    if (!typographyModal) return;
+    applyCanvasTypography(currentCanvasFontSize, currentCanvasFontStyle, false);
+    typographyModal.style.display = 'flex';
+}
+
+function closeTypographyModal() {
+    if (typographyModal) typographyModal.style.display = 'none';
+}
+
+if (btnCloseTypographyModal) btnCloseTypographyModal.onclick = closeTypographyModal;
+if (btnCloseTypographyBtn) btnCloseTypographyBtn.onclick = closeTypographyModal;
+if (typographyBackdrop) typographyBackdrop.onclick = closeTypographyModal;
+
+document.querySelectorAll('.font-style-card').forEach(card => {
+    card.onclick = () => {
+        const fontKey = card.getAttribute('data-font');
+        if (fontKey) {
+            applyCanvasTypography(currentCanvasFontSize, fontKey, false);
+        }
+    };
+});
+
+document.querySelectorAll('.font-size-btn').forEach(btn => {
+    btn.onclick = () => {
+        const sizeKey = btn.getAttribute('data-size');
+        if (sizeKey) {
+            applyCanvasTypography(sizeKey, currentCanvasFontStyle, false);
+        }
+    };
+});
+
+if (btnApplyTypography) {
+    btnApplyTypography.onclick = () => {
+        applyCanvasTypography(currentCanvasFontSize, currentCanvasFontStyle, true);
+        closeTypographyModal();
+    };
+}
+
+if (btnResetTypography) {
+    btnResetTypography.onclick = () => {
+        applyCanvasTypography('standard', 'inter', true);
+    };
+}
+
+// Startup hydration: restore saved typography preferences from localStorage
+(function restoreSavedTypography() {
+    try {
+        const savedSize = localStorage.getItem('antigravity_canvas_font_size') || 'standard';
+        let savedStyle = localStorage.getItem('antigravity_canvas_font_style') || 'inter';
+        if (!TYPOGRAPHY_FONT_STYLES[savedStyle]) {
+            savedStyle = 'inter';
+        }
+        applyCanvasTypography(savedSize, savedStyle, false);
+    } catch (e) {
+        console.warn('Could not restore typography preferences on boot:', e);
+    }
+})();

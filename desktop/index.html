@@ -7,7 +7,8 @@
     <link rel="stylesheet" href="styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Fraunces:ital,opsz,wght@0,9..144,400..900;1,9..144,400..900&family=Inter:wght@400;500;600;700;800&family=Nunito+Sans:ital,wght@0,400;0,600;0,700;1,400&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.cdnfonts.com/css/avenir">
 </head>
 <body>
     <div class="native-browser-app">
@@ -100,6 +101,8 @@
                     <option value="split">◫ Dual Split View</option>
                     <option value="tldr">⚡ Page Summary (TL;DR)</option>
                     <option value="purge">🧹 Purge Memory Cache</option>
+                    <option value="wallpaper">🖼️ Wallpaper (Image / Video)</option>
+                    <option value="typography">🔤 Font & Typography Canvas</option>
                 </select>
 
                 <select id="themeSelect" class="theme-dropdown" title="Color Theme Studio">
@@ -341,7 +344,25 @@
             <div class="command-palette-header">
                 <span class="palette-icon">📖</span>
                 <span style="font-weight: 600; font-size: 13px; color: var(--accent-cyan);" id="readerModalTitle">Clean Reader Mode</span>
-                <button class="btn-small" id="btnReaderFontToggle" style="margin-left: auto; margin-right: 10px;">A+ Font Size</button>
+                <div style="margin-left: auto; display: flex; align-items: center; gap: 8px; margin-right: 12px;">
+                    <select id="readerFontStyleSelect" class="theme-dropdown" style="font-size: 11px; padding: 3px 8px; height: 26px;" title="Reader Font Style">
+                        <option value="gt-super">🏛️ GT Super</option>
+                        <option value="juana">💎 Juana</option>
+                        <option value="playfair-display">📰 Playfair Display</option>
+                        <option value="ogg">✒️ Ogg</option>
+                        <option value="inter" selected>🌐 Inter</option>
+                        <option value="poppins">🎈 Poppins (Toppins)</option>
+                        <option value="plus-jakarta-sans">⚡ Plus Jakarta Sans</option>
+                        <option value="avenir">📐 Avenir</option>
+                    </select>
+                    <div class="font-size-segmented-control" id="readerFontSizeGroup" style="display: flex; gap: 2px; background: rgba(255,255,255,0.06); padding: 2px; border-radius: 6px; border: 1px solid var(--border-bright);" title="Reader Font Size">
+                        <button class="font-size-pill" data-size="compact" title="Compact (14px)">S</button>
+                        <button class="font-size-pill active" data-size="standard" title="Standard (16px)">M</button>
+                        <button class="font-size-pill" data-size="comfortable" title="Comfortable (18px)">L</button>
+                        <button class="font-size-pill" data-size="spacious" title="Spacious (21px)">XL</button>
+                    </div>
+                    <button class="btn-small" id="btnOpenTypographyFromReader" title="Open Full Typography Studio">🔤 Studio</button>
+                </div>
                 <span class="palette-badge" id="btnCloseReaderModal" style="cursor: pointer;">ESC</span>
             </div>
             <div class="reader-content-body" id="readerContentBody" style="padding: 20px; overflow-y: auto; max-height: 70vh; font-family: 'Plus Jakarta Sans', sans-serif; line-height: 1.8; font-size: 15px; color: #e2e8f0;">
@@ -413,18 +434,26 @@
         <div class="command-palette-container" style="max-width: 520px;">
             <div class="command-palette-header">
                 <span class="palette-icon">🖼️</span>
-                <span style="font-weight: 600; font-size: 13px; color: var(--accent-cyan);">Custom Background Wallpaper</span>
+                <span style="font-weight: 600; font-size: 13px; color: var(--accent-cyan);">Custom Wallpaper (Image & Video)</span>
                 <span class="palette-badge" id="btnCloseWallpaperModal" style="cursor: pointer;">ESC</span>
             </div>
             <div class="wallpaper-modal-body">
                 <div class="wallpaper-preview-box" id="wallpaperPreviewBox">
                     <span class="wallpaper-preview-placeholder" id="wallpaperPreviewPlaceholder">No wallpaper set</span>
                     <img id="wallpaperPreviewImg" style="display:none; width:100%; height:100%; object-fit:cover; border-radius:10px;" />
-                    <video id="wallpaperPreviewVid" style="display:none; width:100%; height:100%; object-fit:cover; border-radius:10px;" muted autoplay loop></video>
+                    <video id="wallpaperPreviewVid" style="display:none; width:100%; height:100%; object-fit:cover; border-radius:10px;" muted autoplay loop playsinline></video>
                 </div>
                 <div class="wallpaper-actions">
-                    <button class="btn-wallpaper-action btn-blue" id="btnWallpaperUpload">📁 Upload Image / Video</button>
-                    <input type="file" id="wallpaperFileInput" accept="image/*,video/*" style="display:none;" />
+                    <button class="btn-wallpaper-action btn-blue" id="btnWallpaperUpload">📁 Choose Photo or Video from Gallery</button>
+                    <input type="file" id="wallpaperFileInput" accept="image/*,video/*,.mp4,.webm,.mov,.mkv,.avi" style="display:none;" />
+                    <div style="font-size: 11px; color: var(--text-muted); display: flex; align-items: center; justify-content: space-between;">
+                        <span>Supports: JPG, PNG, WebP, GIF, MP4, WebM, MOV</span>
+                        <span id="wallpaperTypeBadge" class="palette-badge" style="display:none; font-size: 10px;"></span>
+                    </div>
+                    <div class="wallpaper-audio-row" id="wallpaperAudioRow" style="display: none; align-items: center; justify-content: space-between; padding: 4px 0;">
+                        <label style="font-size:12px; color: var(--text-secondary);">Video Audio:</label>
+                        <button class="btn-wallpaper-action" id="btnToggleWallpaperAudio" style="padding: 4px 10px; font-size: 11px; background: rgba(255,255,255,0.08); border: 1px solid var(--border-bright);">🔇 Muted</button>
+                    </div>
                     <div class="wallpaper-color-row">
                         <label style="font-size:12px; color: var(--text-secondary);">Or pick a solid color:</label>
                         <input type="color" id="wallpaperColorPicker" value="#070b14" class="wallpaper-color-input" />
@@ -435,8 +464,132 @@
                         <span id="wallpaperOpacityLabel" style="font-size:11px; color: var(--text-muted); font-family: var(--font-mono);">40%</span>
                     </div>
                     <div style="display:flex; gap:8px; margin-top:8px;">
-                        <button class="btn-wallpaper-action btn-green" id="btnWallpaperApply">✅ Apply</button>
+                        <button class="btn-wallpaper-action btn-green" id="btnWallpaperApply">✅ Apply Wallpaper</button>
                         <button class="btn-wallpaper-action btn-red" id="btnWallpaperRemove">🗑️ Remove</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modern Typography & Font Canvas Studio Modal -->
+    <div class="command-palette-modal" id="typographyModal" style="display: none;">
+        <div class="command-palette-backdrop" id="typographyBackdrop"></div>
+        <div class="command-palette-container" style="max-width: 640px;">
+            <div class="command-palette-header">
+                <span class="palette-icon">🔤</span>
+                <span style="font-weight: 600; font-size: 13px; color: var(--accent-cyan);">Typography & Font Canvas Studio</span>
+                <span class="palette-badge" id="btnCloseTypographyModal" style="cursor: pointer;">ESC</span>
+            </div>
+            <div class="typography-modal-body" style="padding: 20px; display: flex; flex-direction: column; gap: 16px;">
+                <!-- Section 1: Font Style Selection (8 Curated Fonts) -->
+                <div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <label style="font-size: 12px; font-weight: 600; color: var(--text-secondary);">1. Select Typography Style (8 Curated Modern Fonts):</label>
+                        <span style="font-size: 11px; color: var(--accent-cyan); font-family: var(--font-mono);">Shortcut: Ctrl + Alt + 1..8</span>
+                    </div>
+                    <div class="font-style-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; max-height: 220px; overflow-y: auto; padding-right: 4px;">
+                        <div class="font-style-card" data-font="gt-super" id="fontCardGtSuper">
+                            <div class="font-card-header">
+                                <span class="font-card-title" style="font-family: 'GT Super', 'Georgia', serif;">GT Super</span>
+                                <span class="font-card-badge">Ctrl+Alt+1</span>
+                            </div>
+                            <div class="font-card-sub" style="font-family: 'GT Super', 'Georgia', serif;">Grilli Type • 1970s Editorial Serif</div>
+                        </div>
+                        <div class="font-style-card" data-font="juana" id="fontCardJuana">
+                            <div class="font-card-header">
+                                <span class="font-card-title" style="font-family: 'Juana', 'Bodoni Moda', 'Playfair Display', serif;">Juana</span>
+                                <span class="font-card-badge">Ctrl+Alt+2</span>
+                            </div>
+                            <div class="font-card-sub" style="font-family: 'Juana', 'Bodoni Moda', serif;">Latinotype • High-Contrast Luxury Serif</div>
+                        </div>
+                        <div class="font-style-card" data-font="playfair-display" id="fontCardPlayfair">
+                            <div class="font-card-header">
+                                <span class="font-card-title" style="font-family: 'Playfair Display', serif;">Playfair Display</span>
+                                <span class="font-card-badge">Ctrl+Alt+3</span>
+                            </div>
+                            <div class="font-card-sub" style="font-family: 'Playfair Display', serif;">Claus Sørensen • Classical Editorial</div>
+                        </div>
+                        <div class="font-style-card" data-font="ogg" id="fontCardOgg">
+                            <div class="font-card-header">
+                                <span class="font-card-title" style="font-family: 'Ogg', 'Cormorant Garamond', serif;">Ogg</span>
+                                <span class="font-card-badge">Ctrl+Alt+4</span>
+                            </div>
+                            <div class="font-card-sub" style="font-family: 'Ogg', 'Cormorant Garamond', serif;">Sharp Type • Calligraphic Book Title Serif</div>
+                        </div>
+                        <div class="font-style-card active" data-font="inter" id="fontCardInter">
+                            <div class="font-card-header">
+                                <span class="font-card-title" style="font-family: 'Inter', sans-serif;">Inter</span>
+                                <span class="font-card-badge">Ctrl+Alt+5</span>
+                            </div>
+                            <div class="font-card-sub" style="font-family: 'Inter', sans-serif;">Rasmus Andersson • Clean Neo-Grotesque</div>
+                        </div>
+                        <div class="font-style-card" data-font="poppins" id="fontCardPoppins">
+                            <div class="font-card-header">
+                                <span class="font-card-title" style="font-family: 'Poppins', 'Toppins', sans-serif;">Poppins (Toppins)</span>
+                                <span class="font-card-badge">Ctrl+Alt+6</span>
+                            </div>
+                            <div class="font-card-sub" style="font-family: 'Poppins', sans-serif;">Indian Type Foundry • Geometric Sans</div>
+                        </div>
+                        <div class="font-style-card" data-font="plus-jakarta-sans" id="fontCardPlusJakarta">
+                            <div class="font-card-header">
+                                <span class="font-card-title" style="font-family: 'Plus Jakarta Sans', sans-serif;">Plus Jakarta Sans</span>
+                                <span class="font-card-badge">Ctrl+Alt+7</span>
+                            </div>
+                            <div class="font-card-sub" style="font-family: 'Plus Jakarta Sans', sans-serif;">Tokotype • Modern Clean Typography</div>
+                        </div>
+                        <div class="font-style-card" data-font="avenir" id="fontCardAvenir">
+                            <div class="font-card-header">
+                                <span class="font-card-title" style="font-family: 'Avenir', 'Avenir Next', sans-serif;">Avenir</span>
+                                <span class="font-card-badge">Ctrl+Alt+8</span>
+                            </div>
+                            <div class="font-card-sub" style="font-family: 'Avenir', 'Avenir Next', sans-serif;">Adrian Frutiger • Humanist Geometric</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 2: Font Size Selection (4 Sizes) -->
+                <div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <label style="font-size: 12px; font-weight: 600; color: var(--text-secondary);">2. Select Font Size (Shortcuts: Ctrl +/- or Ctrl+Wheel):</label>
+                        <span id="typographySizeLabel" style="font-size: 12px; color: var(--accent-cyan); font-family: var(--font-mono); font-weight: 600;">16px (Standard)</span>
+                    </div>
+                    <div class="font-size-grid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;">
+                        <button class="font-size-btn" data-size="compact" id="sizeBtnCompact">
+                            <span class="size-letter" style="font-size: 13px;">S</span>
+                            <span class="size-name">Compact (14px)</span>
+                        </button>
+                        <button class="font-size-btn active" data-size="standard" id="sizeBtnStandard">
+                            <span class="size-letter" style="font-size: 15px;">M</span>
+                            <span class="size-name">Standard (16px)</span>
+                        </button>
+                        <button class="font-size-btn" data-size="comfortable" id="sizeBtnComfortable">
+                            <span class="size-letter" style="font-size: 17px;">L</span>
+                            <span class="size-name">Comfort (18px)</span>
+                        </button>
+                        <button class="font-size-btn" data-size="spacious" id="sizeBtnSpacious">
+                            <span class="size-letter" style="font-size: 20px;">XL</span>
+                            <span class="size-name">Spacious (21px)</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Section 3: Live Rendering Canvas Preview -->
+                <div>
+                    <label style="display: block; font-size: 12px; font-weight: 600; color: var(--text-secondary); margin-bottom: 6px;">Live Rendering Canvas Preview:</label>
+                    <div class="typography-preview-canvas" id="typographyPreviewCanvas" style="padding: 16px 20px; border-radius: 10px; background: rgba(0, 0, 0, 0.45); border: 1px solid var(--border-bright); max-height: 160px; overflow-y: auto; transition: all 0.2s ease;">
+                        <div id="previewHeadline" style="font-size: 19px; font-weight: 700; color: #fff; margin-bottom: 6px;">The Evolution of Modern Web Typography</div>
+                        <div id="previewMeta" style="font-size: 11px; color: var(--text-muted); margin-bottom: 10px;">Published by Web Standards Review • 4 min read</div>
+                        <p id="previewParagraph" style="color: #cbd5e1; margin-bottom: 0;">Typography on the modern web balances aesthetic minimalism with effortless legibility. When line height and optical letter spacing harmonize, long-form reading feels natural rather than computerized.</p>
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 4px;">
+                    <button class="btn-wallpaper-action btn-red" id="btnResetTypography" style="padding: 8px 14px;">↺ Reset Default</button>
+                    <div style="display: flex; gap: 8px;">
+                        <button class="btn-wallpaper-action" id="btnCloseTypographyBtn" style="padding: 8px 16px; background: rgba(255,255,255,0.06); border: 1px solid var(--border-bright);">Close</button>
+                        <button class="btn-wallpaper-action btn-green" id="btnApplyTypography" style="padding: 8px 18px;">✅ Apply to Browser</button>
                     </div>
                 </div>
             </div>

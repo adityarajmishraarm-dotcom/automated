@@ -86,6 +86,17 @@ function createWindow() {
         }
     });
 
+    // Strip restrictive Content-Security-Policy headers so external typography stylesheets can load on every website
+    session.defaultSession.webRequest.onHeadersReceived({ urls: ['*://*/*'] }, (details, callback) => {
+        const responseHeaders = Object.assign({}, details.responseHeaders);
+        for (const key of Object.keys(responseHeaders)) {
+            if (key.toLowerCase() === 'content-security-policy') {
+                delete responseHeaders[key];
+            }
+        }
+        callback({ cancel: false, responseHeaders });
+    });
+
     // Automated scenario verification sequence (only runs if AUTO_BENCHMARK=1)
     if (process.env.AUTO_BENCHMARK === '1') {
         mainWindow.webContents.on('did-finish-load', () => {
