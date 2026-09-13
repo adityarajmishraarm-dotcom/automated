@@ -20,4 +20,10 @@ yarn-error.log*
 .idea/
 .DS_Store
 Thumbs.db
+# Next.js build output
+.next/
+out/
+
+# Scratch and temporary files
+scratch/
 *.log

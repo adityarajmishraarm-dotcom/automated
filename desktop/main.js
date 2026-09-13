@@ -66,6 +66,16 @@ let adblockStats = {
     blockedCount: 0
 };
 
+// High-Fidelity GPU Acceleration & Smooth Image Rendering Switches
+app.commandLine.appendSwitch('enable-gpu-rasterization');
+app.commandLine.appendSwitch('enable-zero-copy');
+app.commandLine.appendSwitch('ignore-gpu-blocklist');
+app.commandLine.appendSwitch('enable-accelerated-2d-canvas');
+app.commandLine.appendSwitch('enable-accelerated-video-decode');
+app.commandLine.appendSwitch('high-dpi-support', '1');
+app.commandLine.appendSwitch('force-color-profile', 'srgb');
+app.commandLine.appendSwitch('enable-smooth-scrolling');
+
 function createWindow() {
     const { screen } = require('electron');
     const primaryDisplay = screen.getPrimaryDisplay();
@@ -85,6 +95,7 @@ function createWindow() {
         minHeight: 600,
         title: "Antigravity Browser - AI-Native React Desktop App",
         backgroundColor: "#070b14",
+        frame: false, // Removes standard OS title bar window buttons (—, ☐, ✕)
         autoHideMenuBar: true,
         frame: false, // Pure Mac-style frameless desktop window (removes Windows OS top title bar & duplicate close buttons)
         show: false, // Prevents blank screen; revealed immediately on ready-to-show

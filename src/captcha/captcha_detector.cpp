@@ -7,7 +7,7 @@ namespace ai_browser {
 namespace {
 
 std::string ExtractMatch(const std::string& text, const std::string& pattern) {
-    std::regex r(pattern, std::regex::icase);
+    std::regex r(pattern, std::regex_constants::icase);
     std::smatch m;
     if (std::regex_search(text, m, r) && m.size() > 1) {
         return m[1].str();

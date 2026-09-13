@@ -39,7 +39,7 @@ GrepResult InMemoryGrep::Search(const std::string& source_code,
     std::unique_ptr<std::regex> regex_matcher;
     if (is_regex) {
         try {
-            regex_matcher = std::make_unique<std::regex>(query, std::regex::icase);
+            regex_matcher = std::make_unique<std::regex>(query, std::regex_constants::icase);
         } catch (...) {
             return result; // Invalid regex
         }

@@ -110,8 +110,8 @@ std::vector<FormStructure> AutofillEngine::ParseForms(const std::string& html) {
     std::vector<FormStructure> forms;
 
     // Fast regex parser for <form> ... </form> and input elements
-    std::regex form_regex(R"(<form\b([^>]*)>([\s\S]*?)<\/form>)", std::regex::icase);
-    std::regex input_regex(R"(<input\b([^>]*)>)", std::regex::icase);
+    std::regex form_regex(R"(<form\b([^>]*)>([\s\S]*?)<\/form>)", std::regex_constants::icase);
+    std::regex input_regex(R"(<input\b([^>]*)>)", std::regex_constants::icase);
     std::regex attr_regex(R"((\w+)=["']([^"']*)["'])");
 
     auto form_begin = std::sregex_iterator(html.begin(), html.end(), form_regex);
@@ -179,8 +179,8 @@ bool AutofillEngine::FillForm(FormStructure& form, const AutofillProfile& profil
 
     for (auto& field : form.fields) {
         auto val = profile.Get(field.detected_type);
-        if (val.has_value()) {
-            field.value = val.value();
+        if (val) {
+            field.value = *val;
 
             // Direct in-memory simulated DOM update (matching C++ AutofillManager::FillForm)
             if (!field.id.empty()) {

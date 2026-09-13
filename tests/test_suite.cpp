@@ -14,10 +14,12 @@
 #include "hitl_controller.h"
 #include "dual_model_router.h"
 #include "closed_loop_agent.h"
+#include "native_tab_engine.h"
 
 #include <iostream>
 #include <cassert>
 #include <sstream>
+#include <cmath>
 
 using namespace ai_browser;
 
@@ -311,7 +313,7 @@ void TestInMemoryGrepWithContextAndPagination() {
 
     // Test direct index retrieval
     auto single_match = grep.GetMatchByIndex(doc_content, "target-node", 15);
-    assert(single_match.has_value());
+    assert(static_cast<bool>(single_match));
     assert(single_match->matched_line.find("Target Item 120") != std::string::npos);
 
     // Test Markdown formatting
@@ -454,6 +456,387 @@ void TestClosedLoopAgentIntegration() {
     std::cout << "PASSED\n";
 }
 
+void TestTabLifecycleAndEventBus() {
+    std::cout << "[TEST TAB-ENG 1] Tab Lifecycle & Typed Event Bus... ";
+    TabStripModel tabs;
+    auto event_bus = tabs.GetEventBus();
+
+    bool tab_created_fired = false;
+    TabId created_tid = 0;
+    event_bus->SubscribeTabCreated([&](const TabCreatedEvent& ev) {
+        tab_created_fired = true;
+        created_tid = ev.tab_id;
+    });
+
+    bool tab_activated_fired = false;
+    event_bus->SubscribeTabActivated([&](const TabActivatedEvent&) {
+        tab_activated_fired = true;
+    });
+
+    auto tab1 = tabs.SpawnTab("https://chromium.org", true);
+    assert(tab_created_fired);
+    assert(tab_activated_fired);
+    assert(created_tid == tab1->GetId());
+    assert(tabs.GetTabCount() == 1);
+    assert(tabs.GetActiveWebContents()->GetURL() == "https://chromium.org");
+
+    // Test Duplication
+    auto dup = tabs.DuplicateTab(0);
+    assert(dup != nullptr);
+    assert(tabs.GetTabCount() == 2);
+    assert(tabs.GetWebContentsAt(1)->GetURL() == "https://chromium.org");
+
+    // Test explicit destruction routine
+    bool tab_closed_fired = false;
+    event_bus->SubscribeTabClosed([&](const TabClosedEvent&) {
+        tab_closed_fired = true;
+    });
+    bool closed = tabs.CloseWebContentsAt(1);
+    assert(closed);
+    assert(tab_closed_fired);
+    assert(tabs.GetTabCount() == 1);
+
+    std::cout << "PASSED\n";
+}
+
+void TestPinnedTabIsolationAndMove() {
+    std::cout << "[TEST TAB-ENG 2] Pinned Tab Isolation & Move Boundaries... ";
+    TabStripModel tabs;
+    tabs.SpawnTab("https://site1.com", false, false);
+    tabs.SpawnTab("https://site2.com", false, false);
+    assert(tabs.GetPinnedTabCount() == 0);
+
+    // Pin a new tab
+    tabs.SpawnTab("https://pinned.com", true, true);
+    assert(tabs.GetPinnedTabCount() == 1);
+    assert(tabs.GetWebContentsAt(0)->IsPinned());
+    assert(tabs.GetWebContentsAt(0)->GetURL() == "https://pinned.com");
+
+    // Attempt to close pinned tab -> MUST fail (pinned tabs are locked)
+    bool close_pinned_attempt = tabs.CloseWebContentsAt(0);
+    assert(!close_pinned_attempt);
+    assert(tabs.GetTabCount() == 3);
+
+    // Pin unpinned tab
+    int new_pin_idx = tabs.PinTab(2, true);
+    assert(new_pin_idx == 1);
+    assert(tabs.GetPinnedTabCount() == 2);
+
+    // Test Move boundaries: pinned tab cannot move past pinned_count_
+    bool invalid_move = tabs.MoveTab(0, 2);
+    assert(!invalid_move);
+
+    // Valid reorder within pinned partition
+    bool valid_move = tabs.MoveTab(0, 1);
+    assert(valid_move);
+
+    std::cout << "PASSED\n";
+}
+
+void TestRecoverableUndoCloseStack() {
+    std::cout << "[TEST TAB-ENG 3] Recoverable Undo-Close Stack (Deep State Restoration)... ";
+    TabStripModel tabs;
+    auto tab1 = tabs.SpawnTab("https://page1.com", true);
+    tab1->SetTitle("Page 1 Title");
+    tab1->SetFaviconURL("https://page1.com/favicon.ico");
+    tab1->SetScrollPosition(120.0, 450.0);
+    tab1->PushHistoryEntry("https://page1.com/subpath");
+
+    assert(tabs.GetTabCount() == 1);
+
+    // Close the tab
+    bool closed = tabs.CloseWebContentsAt(0);
+    assert(closed);
+    assert(tabs.GetTabCount() == 0);
+    assert(tabs.GetUndoStack()->GetTotalCount() == 1);
+
+    // Restore via Ctrl+Shift+T equivalent
+    auto restored = tabs.RestoreLastClosedTab();
+    assert(restored != nullptr);
+    assert(tabs.GetTabCount() == 1);
+    assert(restored->GetURL() == "https://page1.com/subpath");
+    assert(restored->GetTitle() == "Page 1 Title");
+    assert(restored->GetFaviconURL() == "https://page1.com/favicon.ico");
+    assert(restored->GetScrollX() == 120.0);
+    assert(restored->GetScrollY() == 450.0);
+    assert(tabs.GetUndoStack()->GetTotalCount() == 0);
+
+    // Test capacity bound
+    tabs.GetUndoStack()->SetCapacity(2);
+    TabStateSnapshot s1, s2, s3;
+    s1.url = "https://s1.com";
+    s2.url = "https://s2.com";
+    s3.url = "https://s3.com";
+    tabs.GetUndoStack()->Push(s1);
+    tabs.GetUndoStack()->Push(s2);
+    tabs.GetUndoStack()->Push(s3);
+    assert(tabs.GetUndoStack()->GetTotalCount() == 2);
+    // s1 should have been evicted
+    auto popped1 = tabs.GetUndoStack()->PopGlobal();
+    assert(static_cast<bool>(popped1) && popped1->url == "https://s3.com");
+    auto popped2 = tabs.GetUndoStack()->PopGlobal();
+    assert(static_cast<bool>(popped2) && popped2->url == "https://s2.com");
+    assert(tabs.GetUndoStack()->GetTotalCount() == 0);
+
+    std::cout << "PASSED\n";
+}
+
+void TestAdaptiveTabSleepingAndExemptions() {
+    std::cout << "[TEST TAB-ENG 4] Adaptive Tab Sleeping & Auto-Exemptions... ";
+    TabStripModel tabs;
+    auto freeze_mgr = tabs.GetFreezeManager();
+    TabFreezeConfig cfg;
+    cfg.dom_freeze_timeout_seconds = 1;     // 1 sec for test
+    cfg.process_discard_timeout_seconds = 2; // 2 sec for test
+    freeze_mgr->UpdateConfig(cfg);
+
+    tabs.SpawnTab("https://active.com", true);
+    auto tab2 = tabs.SpawnTab("https://background.com", false);
+    auto tab_exempt_audio = tabs.SpawnTab("https://audio.com", false);
+    tab_exempt_audio->SetAudioPlaying(true);
+
+    auto tab_exempt_pinned = tabs.SpawnTab("https://pinned-exempt.com", false, true);
+
+    // Check exemptions
+    assert(freeze_mgr->IsExemptFromFreeze(*tab_exempt_audio));
+    assert(freeze_mgr->IsExemptFromFreeze(*tab_exempt_pinned));
+    assert(!freeze_mgr->IsExemptFromFreeze(*tab2));
+
+    // Force Tier 1 DOM Freeze
+    freeze_mgr->FreezeTabDom(*tab2);
+    assert(tab2->GetFreezeTier() == FreezeTier::kDomFrozen);
+
+    // Force Tier 2 Process Discard
+    freeze_mgr->DiscardTabProcess(*tab2);
+    assert(tab2->GetFreezeTier() == FreezeTier::kProcessDiscarded);
+
+    // Transparent Rehydration on Activation
+    int tab2_idx = tabs.GetIndexOfTab(tab2->GetId());
+    tabs.ActivateTabAt(tab2_idx);
+    assert(tab2->GetFreezeTier() == FreezeTier::kActive);
+
+    std::cout << "PASSED\n";
+}
+
+void TestWorkspacesAndTabGroups() {
+    std::cout << "[TEST TAB-ENG 5] Workspaces & Color-Coded Tab Groups... ";
+    TabStripModel tabs;
+    auto grp_mgr = tabs.GetGroupManager();
+
+    // Create Workspaces
+    assert(grp_mgr->CreateWorkspace("work", "Work Projects", "briefcase"));
+    assert(grp_mgr->CreateWorkspace("personal", "Personal Browsing", "user"));
+
+    auto tab_work = tabs.SpawnTab("https://github.com/company", true);
+    tab_work->SetWorkspaceId("work");
+    grp_mgr->AssignTabToWorkspace(tab_work->GetId(), "work");
+
+    auto tab_pers = tabs.SpawnTab("https://reddit.com", false);
+    tab_pers->SetWorkspaceId("personal");
+    grp_mgr->AssignTabToWorkspace(tab_pers->GetId(), "personal");
+
+    auto work_tabs = grp_mgr->GetTabsInWorkspace("work");
+    assert(work_tabs.size() == 1 && work_tabs[0] == tab_work->GetId());
+
+    // Switch workspace
+    assert(grp_mgr->SwitchWorkspace("work"));
+    assert(grp_mgr->GetActiveWorkspaceId() == "work");
+
+    // Color-Coded Tab Groups
+    GroupId gid = grp_mgr->CreateGroup("Core Infra", "#10B981", "work");
+    assert(!gid.empty());
+    assert(grp_mgr->AddTabToGroup(gid, tab_work->GetId()));
+    assert(grp_mgr->IsTabInGroup(tab_work->GetId()));
+    assert(grp_mgr->GetTabGroupId(tab_work->GetId()) == gid);
+
+    // Collapsible group toggle
+    assert(!grp_mgr->IsTabHiddenByCollapsedGroup(tab_work->GetId()));
+    grp_mgr->SetGroupCollapsed(gid, true);
+    assert(grp_mgr->IsTabHiddenByCollapsedGroup(tab_work->GetId()));
+
+    std::cout << "PASSED\n";
+}
+
+void TestFaultTolerantSessionPersistenceAndCrashRecovery() {
+    std::cout << "[TEST TAB-ENG 6] Session Persistence & Crash Recovery Daemon... ";
+    std::string test_dir = "./test_session_storage";
+    SessionPersistenceManager sp(test_dir);
+
+    // Crash recovery check
+    sp.InitializeAndCheckCrash();
+    // Second init without clean shutdown detects crash
+    assert(sp.InitializeAndCheckCrash());
+    sp.MarkCleanShutdown();
+
+    // Test Atomic Serialization
+    SessionManifest m;
+    m.active_tab_id = 42;
+    m.active_workspace_id = "research";
+    SessionTabRecord r;
+    r.id = 42;
+    r.url = "https://arxiv.org";
+    r.title = "AI Browser Paper";
+    r.is_pinned = false;
+    m.tabs.push_back(r);
+
+    bool saved = sp.SaveSessionAtomic(m);
+    assert(saved);
+    assert(sp.HasSavedSession());
+
+    auto loaded = sp.LoadSession();
+    assert(static_cast<bool>(loaded));
+    assert(loaded->active_tab_id == 42);
+    assert(loaded->active_workspace_id == "research");
+    assert(loaded->tabs.size() == 1);
+    assert(loaded->tabs[0].url == "https://arxiv.org");
+
+    sp.ClearSavedSession();
+    sp.MarkCleanShutdown();
+
+    std::cout << "PASSED\n";
+}
+
+void TestTabSearchIndexAndFuzzyMatching() {
+    std::cout << "[TEST TAB-ENG 7] In-Memory Tab Indexer & Fuzzy Matching... ";
+    TabSearchIndex index;
+
+    TabSearchRecord rec1;
+    rec1.tab_id = 1;
+    rec1.title = "GitHub - AI Native Browser";
+    rec1.url = "https://github.com/org/repo";
+    rec1.text_snippet = "A high-performance C++ Chromium browser";
+    index.IndexTab(rec1);
+
+    TabSearchRecord rec2;
+    rec2.tab_id = 2;
+    rec2.title = "Hacker News Front Page";
+    rec2.url = "https://news.ycombinator.com";
+    index.IndexTab(rec2);
+
+    assert(index.GetIndexedCount() == 2);
+
+    // Fuzzy matching queries
+    auto results1 = index.Search("ghub");
+    assert(!results1.empty());
+    assert(results1[0].tab_id == 1);
+
+    auto results2 = index.Search("hn");
+    assert(!results2.empty());
+    assert(results2[0].tab_id == 2);
+
+    auto results3 = index.Search("browser");
+    assert(!results3.empty());
+    assert(results3[0].tab_id == 1);
+
+    std::cout << "PASSED\n";
+}
+
+void TestSplitViewAndWindowDetachment() {
+    std::cout << "[TEST TAB-ENG 8] Split-View Tiling & Window Detachment... ";
+    SplitViewManager sm;
+
+    // Create side-by-side tile
+    bool tiled = sm.CreateSplitTile(10, 20, SplitOrientation::kLeftRight, 0.6);
+    assert(tiled);
+    assert(sm.IsTabInSplit(10));
+    assert(sm.IsTabInSplit(20));
+    assert(sm.GetSplitPartner(10) == 20);
+    assert(sm.GetSplitPartner(20) == 10);
+
+    auto tile = sm.GetSplitTileForTab(10);
+    assert(tile.orientation == SplitOrientation::kLeftRight);
+    assert(tile.split_ratio == 0.6);
+
+    // Dissolve split
+    assert(sm.RemoveSplitTile(10));
+    assert(!sm.IsTabInSplit(10));
+    assert(!sm.IsTabInSplit(20));
+
+    // Window detachment
+    WindowId new_win = sm.AllocateNewWindowId();
+    assert(new_win >= 2);
+    sm.RegisterTabWindow(30, new_win);
+    assert(sm.GetTabWindow(30) == new_win);
+
+    std::cout << "PASSED\n";
+}
+
+void TestTabResourceAndMediaController() {
+    std::cout << "[TEST TAB-ENG 9] Per-Tab Resource Tracking & Media Controller... ";
+    TabStripModel tabs;
+    auto tracker = tabs.GetResourceTracker();
+
+    // Resource telemetry
+    tracker->UpdateMetrics(100, 15.5, 600 * 1024 * 1024); // 600MB
+    auto m = tracker->GetMetrics(100);
+    assert(m.cpu_percent == 15.5);
+    assert(m.is_high_memory_usage); // > 500MB threshold
+
+    // Media and Audio controller
+    tracker->SetAudioPlaying(100, true);
+    assert(tracker->IsAudioPlaying(100));
+
+    // One-click toggle mute
+    bool is_muted = tracker->ToggleMute(100);
+    assert(is_muted);
+    assert(tracker->IsMuted(100));
+
+    bool is_unmuted = !tracker->ToggleMute(100);
+    assert(is_unmuted);
+
+    // Media capture state
+    tracker->SetMediaCapture(100, MediaCaptureState::kMicrophone);
+    assert(tracker->GetMediaCapture(100) == MediaCaptureState::kMicrophone);
+
+    std::cout << "PASSED\n";
+}
+
+void TestNativeTabEngine() {
+    std::cout << "[TEST NATIVE TAB ENGINE 10] Native OS Tab Management & Blink Suspension... ";
+    using NativeWS = antigravity::native::Workspace;
+    antigravity::native::NativeTabManager& mgr = antigravity::native::NativeTabManager::GetInstance();
+    mgr.Shutdown();
+
+    // 1. Spawning tabs in workspaces
+    antigravity::native::BrowserTab* t1 = mgr.CreateNewTab("https://news.ycombinator.com", "HN", NativeWS::DEFAULT, true);
+    assert(t1 != nullptr);
+    assert(t1->isPinned);
+    assert(t1->isActive);
+
+    antigravity::native::BrowserTab* t2 = mgr.CreateNewTab("https://github.com", "GitHub", NativeWS::WORK, false);
+    assert(t2 != nullptr);
+    assert(!t2->isPinned);
+    assert(t2->isActive);
+    assert(!t1->isActive);
+
+    antigravity::native::BrowserTab* t3 = mgr.CreateNewTab("https://store.com", "Store", NativeWS::WORK, false);
+    assert(t3 != nullptr);
+    assert(t3->isActive);
+
+    // 2. Tab switching & workspace filtering
+    mgr.SwitchWorkspace(NativeWS::WORK);
+    assert(mgr.GetCurrentWorkspace() == NativeWS::WORK);
+    std::vector<antigravity::native::BrowserTab*> workTabs = mgr.GetTabsInCurrentWorkspace();
+    assert(workTabs.size() >= 2);
+
+    // 3. Tab suspension & rehydration
+    mgr.SuspendInactiveTabs();
+    assert(t2->isSuspended);
+    assert(!t3->isSuspended);
+
+    mgr.ResumeTab(t2->id);
+    assert(t2->isActive);
+    assert(!t2->isSuspended);
+
+    // 4. Closing tabs & focus shift
+    std::string closingId = t2->id;
+    bool closed = mgr.CloseTab(closingId);
+    assert(closed);
+    assert(mgr.GetActiveTab() != nullptr);
+
+    std::cout << "PASSED\n";
+}
+
 int main() {
     std::cout << "========================================================\n";
     std::cout << "  NATIVE AI BROWSER: COMPREHENSIVE VERIFICATION SUITE   \n";
@@ -473,8 +856,22 @@ int main() {
     TestDualModelRouter();
     TestClosedLoopAgentIntegration();
 
+    // Tab Management Engine (8 Pillars) Test Suites
+    TestTabLifecycleAndEventBus();
+    TestPinnedTabIsolationAndMove();
+    TestRecoverableUndoCloseStack();
+    TestAdaptiveTabSleepingAndExemptions();
+    TestWorkspacesAndTabGroups();
+    TestFaultTolerantSessionPersistenceAndCrashRecovery();
+    TestTabSearchIndexAndFuzzyMatching();
+    TestSplitViewAndWindowDetachment();
+    TestTabResourceAndMediaController();
+
+    // Suite 23: Native OS Tab Management Engine
+    TestNativeTabEngine();
+
     std::cout << "\n========================================================\n";
-    std::cout << "  ALL 13 SUITES PASSED (100% SUCCESS)                   \n";
+    std::cout << "  ALL 23 SUITES PASSED (100% SUCCESS)                   \n";
     std::cout << "========================================================\n";
     return 0;
 }

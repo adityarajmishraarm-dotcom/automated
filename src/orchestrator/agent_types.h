@@ -2,7 +2,7 @@
 
 #include <string>
 #include <vector>
-#include <optional>
+#include "optional_compat.h"
 #include <cstdint>
 #include <map>
 

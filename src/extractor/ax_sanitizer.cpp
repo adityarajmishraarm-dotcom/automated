@@ -42,13 +42,13 @@ std::string AXSanitizer::GenerateMarkdown(const std::string& page_title,
 std::string AXSanitizer::SanitizeRawHTML(const std::string& raw_html) const {
     std::string s = raw_html;
     // Strip <script>...</script>
-    s = std::regex_replace(s, std::regex(R"(<script\b[^>]*>[\s\S]*?<\/script>)", std::regex::icase), "");
+    s = std::regex_replace(s, std::regex(R"(<script\b[^>]*>[\s\S]*?<\/script>)", std::regex_constants::icase), "");
     // Strip <style>...</style>
-    s = std::regex_replace(s, std::regex(R"(<style\b[^>]*>[\s\S]*?<\/style>)", std::regex::icase), "");
+    s = std::regex_replace(s, std::regex(R"(<style\b[^>]*>[\s\S]*?<\/style>)", std::regex_constants::icase), "");
     // Strip <svg>...</svg>
-    s = std::regex_replace(s, std::regex(R"(<svg\b[^>]*>[\s\S]*?<\/svg>)", std::regex::icase), "<svg-stripped/>");
+    s = std::regex_replace(s, std::regex(R"(<svg\b[^>]*>[\s\S]*?<\/svg>)", std::regex_constants::icase), "<svg-stripped/>");
     // Strip <noscript>...</noscript>
-    s = std::regex_replace(s, std::regex(R"(<noscript\b[^>]*>[\s\S]*?<\/noscript>)", std::regex::icase), "");
+    s = std::regex_replace(s, std::regex(R"(<noscript\b[^>]*>[\s\S]*?<\/noscript>)", std::regex_constants::icase), "");
     // Strip HTML comments
     s = std::regex_replace(s, std::regex(R"(<!--[\s\S]*?-->)"), "");
 
