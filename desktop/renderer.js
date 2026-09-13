@@ -4208,6 +4208,16 @@ if (toolsDropdown) {
     };
 }
 
+const themeSelect = document.getElementById('themeSelect');
+if (themeSelect) {
+    themeSelect.value = 'light';
+    themeSelect.onchange = (e) => {
+        const selectedTheme = e.target.value;
+        document.body.setAttribute('data-theme', selectedTheme);
+        logTelemetry('act', `ThemeEngine::SetTheme("${selectedTheme}")`);
+    };
+}
+
 // 6. Live RAM Usage & Cache Purge Monitor
 const ramMonitorPill = document.getElementById('ramMonitorPill');
 const ramUsageText = document.getElementById('ramUsageText');
