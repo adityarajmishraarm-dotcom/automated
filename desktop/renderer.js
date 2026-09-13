@@ -2221,12 +2221,11 @@ async function clickElementOnActivePage(targetText) {
 
             btnAddTab.click();
             if (txtChatInput) {
-                txtChatInput.blur();
-                txtChatInput.value = '';
+                try { txtChatInput.focus(); } catch(e) {}
             }
             return {
                 success: true,
-                message: '🎯 AI clicked the <strong>"+" New Tab button</strong> on the address bar and opened a new tab.'
+                message: '🎯 AI clicked the <strong>"+" New Tab button</strong> and opened a new tab. Typing remains in the AI Agent!'
             };
         }
     }
@@ -2636,24 +2635,41 @@ async function clickElementOnActivePage(targetText) {
             logTelemetry('act', `AiClick::ClickElement("${result.label}" <${result.tag}> [${result.matchType}])`);
             const markBadge = result.markIndex ? ` <strong>[Mark #${result.markIndex}]</strong>` : '';
 
-            // Shift focus away from AI Chat Box and pass focus directly to Webview Search Bar
-            if (txtChatInput) {
-                txtChatInput.blur();
-                txtChatInput.value = '';
-            }
-            if (document.activeElement && document.activeElement !== tab.webview && document.activeElement !== urlInput) {
-                try { document.activeElement.blur(); } catch(e) {}
-            }
-            if (tab && tab.webview) {
-                try { tab.webview.focus(); } catch(e) {}
-            }
-            setTimeout(() => {
-                if (result.isInput && tab && tab.webview) {
+            const isExplicitSearchTarget = targetLower.includes('search bar') || 
+                                           targetLower.includes('search box') || 
+                                           targetLower.includes('search input') || 
+                                           targetLower.includes('search field') || 
+                                           targetLower.includes('omnibox') || 
+                                           targetLower.includes('address bar') || 
+                                           targetLower.includes('url bar') || 
+                                           targetLower === 'sb' || 
+                                           targetLower === 's';
+
+            if (isExplicitSearchTarget) {
+                // Transfer focus to Webview Search Bar ONLY for Search Bar clicks
+                if (txtChatInput) {
+                    txtChatInput.blur();
+                    txtChatInput.value = '';
+                }
+                if (document.activeElement && document.activeElement !== tab.webview && document.activeElement !== urlInput) {
+                    try { document.activeElement.blur(); } catch(e) {}
+                }
+                if (tab && tab.webview) {
                     try { tab.webview.focus(); } catch(e) {}
                 }
-            }, 80);
+                setTimeout(() => {
+                    if (tab && tab.webview) {
+                        try { tab.webview.focus(); } catch(e) {}
+                    }
+                }, 80);
+            } else {
+                // For links, buttons, plus icon, badges, dropdowns: Keep typing default on AI Agent!
+                if (txtChatInput) {
+                    try { txtChatInput.focus(); } catch(e) {}
+                }
+            }
 
-            const focusNote = result.isInput ? ' ⌨️ <strong>Typing focus opened directly inside the Search Bar! Any key you type will now go straight into the search bar.</strong>' : '';
+            const focusNote = isExplicitSearchTarget ? ' ⌨️ <strong>Typing focus opened directly inside the Search Bar! Any key you type will now go straight into the search bar.</strong>' : ' 💬 <strong>Typing focus remains in the AI Agent!</strong>';
             return {
                 success: true,
                 message: `🎯 AI dynamically scanned screen & clicked on${markBadge} <strong>"${result.label.slice(0, 60)}"</strong> (&lt;${result.tag}&gt; element).${focusNote}`
