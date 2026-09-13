@@ -2486,7 +2486,7 @@ async function clickElementOnActivePage(targetText) {
 
                 // Comprehensive query selector covering all interactive & dynamic page elements anywhere on screen
                 const selectors = [
-                    'button', 'a', 'input', 'textarea', 'select',
+                    'button', 'a', 'input', 'textarea', 'select', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
                     '[role="button"]', '[role="link"]', '[role="searchbox"]', '[role="search"]', '[role="textbox"]', '[role="combobox"]', '[role="option"]', '[role="menuitem"]', '[role="tab"]', '[role="checkbox"]', '[role="radio"]',
                     'summary', '[tabindex]:not([tabindex="-1"])', '.btn', '.button', '[onclick]', 'img', 'svg', 'label', 'form'
                 ];
@@ -2564,7 +2564,7 @@ async function clickElementOnActivePage(targetText) {
 
                         const txtCombined = (m.txt + ' ' + m.aria + ' ' + m.title + ' ' + m.alt + ' ' + m.placeholder + ' ' + m.id).toLowerCase();
                         const valStr = m.val.toLowerCase();
-                        const hrefStr = (el.getAttribute('href') || '').toLowerCase();
+                        const hrefStr = (el.getAttribute('href') || (el.closest('a') ? el.closest('a').getAttribute('href') : '') || '').toLowerCase();
 
                         // Match query string against element text / href / value
                         const isTextMatched = txtCombined.includes(termLower) || (isLink && hrefStr.includes(termLower));
@@ -2614,6 +2614,30 @@ async function clickElementOnActivePage(targetText) {
                         filteredPool = uniqueMatches;
                     }
 
+                    // Score candidates so blue/purple destination hyperlinks are ranked highest!
+                    filteredPool.sort((a, b) => {
+                        let scoreA = 0;
+                        let scoreB = 0;
+                        const nodeA = a.node;
+                        const nodeB = b.node;
+                        const hrefA = (nodeA.href || nodeA.getAttribute('href') || '').toLowerCase();
+                        const hrefB = (nodeB.href || nodeB.getAttribute('href') || '').toLowerCase();
+
+                        if (hrefA && (hrefA.startsWith('http://') || hrefA.startsWith('https://'))) scoreA += 100;
+                        if (hrefB && (hrefB.startsWith('http://') || hrefB.startsWith('https://'))) scoreB += 100;
+
+                        if (hrefA.includes(termLower)) scoreA += 50;
+                        if (hrefB.includes(termLower)) scoreB += 50;
+
+                        if (nodeA.querySelector('h1,h2,h3,h4,h5,h6') || nodeA.tagName.toLowerCase().startsWith('h')) scoreA += 40;
+                        if (nodeB.querySelector('h1,h2,h3,h4,h5,h6') || nodeB.tagName.toLowerCase().startsWith('h')) scoreB += 40;
+
+                        if (a.isInput) scoreA -= 200;
+                        if (b.isInput) scoreB -= 200;
+
+                        return scoreB - scoreA;
+                    });
+
                     if (filteredPool.length > 0) {
                         const targetIdx = Math.min(targetOrdinal - 1, filteredPool.length - 1);
                         const chosen = filteredPool[targetIdx];
@@ -2625,7 +2649,6 @@ async function clickElementOnActivePage(targetText) {
                 if (matchedEl) {
                     // Center matched element in viewport anywhere on screen
                     matchedEl.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
-                    matchedEl.focus();
 
                     // Glowing yellow visual outline highlight (#FFE600)
                     const origOutline = matchedEl.style.outline;
@@ -2648,7 +2671,13 @@ async function clickElementOnActivePage(targetText) {
                         try { matchedEl.showPicker(); } catch(e) {}
                     }
 
-                    // Dispatch full pointer and mouse event sequence
+                    const linkNode = tag === 'a' ? matchedEl : matchedEl.closest('a');
+                    let targetHref = null;
+                    if (linkNode && linkNode.href && !linkNode.href.startsWith('javascript:')) {
+                        targetHref = linkNode.href;
+                    }
+
+                    // Dispatch full pointer and mouse event sequence to matched node & link node
                     ['pointerdown', 'mousedown', 'pointerup', 'mouseup', 'click'].forEach(evtType => {
                         const evt = new MouseEvent(evtType, {
                             view: window,
@@ -2657,24 +2686,26 @@ async function clickElementOnActivePage(targetText) {
                             composed: true
                         });
                         matchedEl.dispatchEvent(evt);
+                        if (linkNode && linkNode !== matchedEl) {
+                            linkNode.dispatchEvent(evt);
+                        }
                     });
 
                     if (typeof matchedEl.click === 'function') {
                         try { matchedEl.click(); } catch(e) {}
                     }
+                    if (linkNode && typeof linkNode.click === 'function' && linkNode !== matchedEl) {
+                        try { linkNode.click(); } catch(e) {}
+                    }
 
-                    // For links <a>, ensure navigation occurs by setting window.location.href if click() does not navigate
-                    const linkNode = tag === 'a' ? matchedEl : matchedEl.closest('a');
-                    let targetHref = null;
-                    if (linkNode && linkNode.href && !linkNode.href.startsWith('javascript:')) {
-                        targetHref = linkNode.href;
+                    if (targetHref) {
                         setTimeout(() => {
                             try {
                                 if (window.location.href !== targetHref) {
                                     window.location.href = targetHref;
                                 }
                             } catch(e) {}
-                        }, 120);
+                        }, 80);
                     }
 
                     const m = getElementMetadata(matchedEl);
@@ -2706,16 +2737,11 @@ async function clickElementOnActivePage(targetText) {
             // Host Process Direct Navigation Fallback for Hyperlinks
             if (result.url && (result.url.startsWith('http://') || result.url.startsWith('https://'))) {
                 const navUrl = result.url;
-                setTimeout(() => {
-                    try {
-                        if (tab && tab.webview) {
-                            const curUrl = tab.webview.getURL();
-                            if (!curUrl || (curUrl !== navUrl && !curUrl.includes(navUrl.replace(/^https?:\/\//, '')))) {
-                                tab.webview.loadURL(navUrl);
-                            }
-                        }
-                    } catch(e) {}
-                }, 180);
+                try {
+                    if (tab && tab.webview) {
+                        tab.webview.loadURL(navUrl);
+                    }
+                } catch(e) {}
             }
 
             const isExplicitSearchTarget = targetLower.includes('search bar') || 
