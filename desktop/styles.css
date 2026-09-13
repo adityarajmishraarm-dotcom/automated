@@ -1862,3 +1862,160 @@ outline: none;
     border-radius: 3px;
     font-family: inherit;
 }
+
+/* ── Custom Background Wallpaper ── */
+.wallpaper-layer {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    transition: opacity 0.4s ease;
+}
+
+.wallpaper-layer video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Dark scrim overlay so text stays readable over bright wallpapers */
+.wallpaper-layer::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, var(--wallpaper-overlay-opacity, 0.4));
+    pointer-events: none;
+    transition: background 0.3s ease;
+}
+
+/* When wallpaper is active, make browser chrome translucent */
+body.has-wallpaper .tab-strip-bar,
+body.has-wallpaper .navigation-toolbar,
+body.has-wallpaper .bookmarks-bar {
+    background: rgba(10, 15, 29, 0.65) !important;
+    backdrop-filter: blur(18px) saturate(1.4);
+    -webkit-backdrop-filter: blur(18px) saturate(1.4);
+}
+
+body.has-wallpaper .ai-hud-sidebar {
+    background: rgba(10, 15, 29, 0.75) !important;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+}
+
+.btn-wallpaper {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-bright);
+    color: var(--text-primary);
+    font-size: 14px;
+    padding: 4px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    line-height: 1;
+}
+
+.btn-wallpaper:hover {
+    background: rgba(0, 240, 255, 0.12);
+    border-color: var(--accent-cyan);
+    box-shadow: 0 0 10px rgba(0, 240, 255, 0.25);
+}
+
+.wallpaper-modal-body {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.wallpaper-preview-box {
+    width: 100%;
+    height: 180px;
+    border-radius: 12px;
+    border: 1px dashed rgba(0, 240, 255, 0.3);
+    background: rgba(0, 0, 0, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+}
+
+.wallpaper-preview-placeholder {
+    font-size: 13px;
+    color: var(--text-muted);
+    font-family: var(--font-sans);
+}
+
+.wallpaper-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.btn-wallpaper-action {
+    padding: 8px 14px;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    font-family: var(--font-sans);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    color: #fff;
+}
+
+.btn-wallpaper-action.btn-blue {
+    background: rgba(0, 132, 199, 0.25);
+    border-color: rgba(0, 132, 199, 0.5);
+}
+
+.btn-wallpaper-action.btn-blue:hover {
+    background: rgba(0, 132, 199, 0.4);
+}
+
+.btn-wallpaper-action.btn-green {
+    background: rgba(16, 185, 129, 0.25);
+    border-color: rgba(16, 185, 129, 0.5);
+}
+
+.btn-wallpaper-action.btn-green:hover {
+    background: rgba(16, 185, 129, 0.4);
+}
+
+.btn-wallpaper-action.btn-red {
+    background: rgba(239, 68, 68, 0.2);
+    border-color: rgba(239, 68, 68, 0.4);
+}
+
+.btn-wallpaper-action.btn-red:hover {
+    background: rgba(239, 68, 68, 0.35);
+}
+
+.wallpaper-color-row,
+.wallpaper-opacity-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.wallpaper-color-input {
+    width: 36px;
+    height: 28px;
+    border: 1px solid var(--border-bright);
+    border-radius: 6px;
+    cursor: pointer;
+    background: transparent;
+    padding: 1px;
+}
+
+.wallpaper-range {
+    flex: 1;
+    accent-color: var(--accent-cyan);
+    cursor: pointer;
+}

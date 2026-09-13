@@ -109,6 +109,7 @@
                     <option value="purple">💜 Midnight Purple</option>
                     <option value="matrix">💚 Matrix Green</option>
                 </select>
+                <button class="btn-wallpaper" id="btnWallpaper" title="Custom Background Wallpaper">🖼️</button>
             </div>
 
             <!-- Live Digital Clock Widget -->
@@ -400,6 +401,45 @@
                 <span id="tldrSummaryText">Generating instant executive summary of current page...</span>
             </div>
             <button class="btn-small" id="btnCloseTldr">✕</button>
+        </div>
+    </div>
+
+    <!-- Custom Background Wallpaper Layer -->
+    <div class="wallpaper-layer" id="wallpaperLayer"></div>
+
+    <!-- Wallpaper Settings Modal -->
+    <div class="command-palette-modal" id="wallpaperModal" style="display: none;">
+        <div class="command-palette-backdrop" id="wallpaperBackdrop"></div>
+        <div class="command-palette-container" style="max-width: 520px;">
+            <div class="command-palette-header">
+                <span class="palette-icon">🖼️</span>
+                <span style="font-weight: 600; font-size: 13px; color: var(--accent-cyan);">Custom Background Wallpaper</span>
+                <span class="palette-badge" id="btnCloseWallpaperModal" style="cursor: pointer;">ESC</span>
+            </div>
+            <div class="wallpaper-modal-body">
+                <div class="wallpaper-preview-box" id="wallpaperPreviewBox">
+                    <span class="wallpaper-preview-placeholder" id="wallpaperPreviewPlaceholder">No wallpaper set</span>
+                    <img id="wallpaperPreviewImg" style="display:none; width:100%; height:100%; object-fit:cover; border-radius:10px;" />
+                    <video id="wallpaperPreviewVid" style="display:none; width:100%; height:100%; object-fit:cover; border-radius:10px;" muted autoplay loop></video>
+                </div>
+                <div class="wallpaper-actions">
+                    <button class="btn-wallpaper-action btn-blue" id="btnWallpaperUpload">📁 Upload Image / Video</button>
+                    <input type="file" id="wallpaperFileInput" accept="image/*,video/*" style="display:none;" />
+                    <div class="wallpaper-color-row">
+                        <label style="font-size:12px; color: var(--text-secondary);">Or pick a solid color:</label>
+                        <input type="color" id="wallpaperColorPicker" value="#070b14" class="wallpaper-color-input" />
+                    </div>
+                    <div class="wallpaper-opacity-row">
+                        <label style="font-size:12px; color: var(--text-secondary);">Overlay opacity:</label>
+                        <input type="range" id="wallpaperOpacity" min="0" max="80" value="40" class="wallpaper-range" />
+                        <span id="wallpaperOpacityLabel" style="font-size:11px; color: var(--text-muted); font-family: var(--font-mono);">40%</span>
+                    </div>
+                    <div style="display:flex; gap:8px; margin-top:8px;">
+                        <button class="btn-wallpaper-action btn-green" id="btnWallpaperApply">✅ Apply</button>
+                        <button class="btn-wallpaper-action btn-red" id="btnWallpaperRemove">🗑️ Remove</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
