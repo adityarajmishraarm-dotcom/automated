@@ -628,6 +628,42 @@ function closeTab(tabId, event) {
     logTelemetry('act', `TabStripModel::CloseWebContentsAt(index: ${tabIndex})`, `Closed Tab #${tabId} (Pushed to Undo Stack)`);
 }
 
+// Helper: Parse 1-based tab number from natural language text ("2nd tab", "third tab", "tab 3", "last tab")
+function parseTabIndex(text) {
+    if (!text) return null;
+    const lower = text.toLowerCase();
+
+    const wordMap = {
+        'first': 1, '1st': 1, 'one': 1,
+        'second': 2, '2nd': 2, 'two': 2,
+        'third': 3, '3rd': 3, 'three': 3,
+        'fourth': 4, '4th': 4, 'four': 4,
+        'fifth': 5, '5th': 5, 'five': 5,
+        'sixth': 6, '6th': 6, 'six': 6,
+        'seventh': 7, '7th': 7, 'seven': 7,
+        'eighth': 8, '8th': 8, 'eight': 8,
+        'ninth': 9, '9th': 9, 'nine': 9,
+        'tenth': 10, '10th': 10, 'ten': 10,
+        'last': (typeof tabs !== 'undefined' && tabs && tabs.length) ? tabs.length : 1
+    };
+
+    for (const [key, num] of Object.entries(wordMap)) {
+        if (new RegExp('\\b' + key + '\\b', 'i').test(lower)) {
+            return num;
+        }
+    }
+
+    const digitMatch = lower.match(/(?:tab\s*#?|#)\s*(\d+)/i) || 
+                       lower.match(/\b(\d+)(?:st|nd|rd|th)?\s*tab\b/i) || 
+                       lower.match(/\b(\d+)\b/);
+    if (digitMatch) {
+        const val = parseInt(digitMatch[1], 10);
+        if (!isNaN(val)) return val;
+    }
+
+    return null;
+}
+
 // Close tab by 1-based index (e.g. 3rd tab => index 3 => tabs[2])
 function closeTabAtIndex(index1Based) {
     if (!tabs || tabs.length === 0) return null;
@@ -2868,6 +2904,118 @@ async function executeAiBrowserCommand(promptText) {
 • <code>Ctrl + / -</code> — Zoom In / Zoom Out (<code>Ctrl+0</code> to reset)<br>
 • <code>Ctrl+R</code> / <code>F5</code> — Reload Active Tab<br>
 • <code>Alt + Left / Right</code> — Go Back / Forward in History`;
+    }
+
+    // 0b. WHAT CAN I DO USING THIS AI / AI CAPABILITY DIRECTORY (SEGMENT 2)
+    if (matches('what can i do using this ai', 'what can this ai do', 'what can i do', 'ai capabilities', 'ai features', 'ai commands', 'what can ai do', 'tell me what ai can do', 'tell me what i can do using this ai', 'help ai', 'ai help', 'ai directory', 'command list')) {
+        return `🤖 <strong>Google Antigravity AI Assistant — Capability Directory:</strong><br><br>
+
+📍 <strong>Segment 1: AI Tab Management & Browser Commands</strong><br>
+• <strong>Command / Prompt:</strong> <code>go to 2nd tab</code> or <code>switch to 3rd tab</code> or <code>go to tab 2</code><br>
+  └ <em>Action:</em> Switches directly to Tab #2 or #3 in your tab strip.<br>
+• <strong>Command / Prompt:</strong> <code>close 3rd tab</code> or <code>close 2nd tab</code> or <code>close tab 3</code><br>
+  └ <em>Action:</em> Closes Tab #3 or #2 by position.<br>
+• <strong>Command / Prompt:</strong> <code>close current tab</code> / <code>close active tab</code> / <code>close tab</code><br>
+  └ <em>Action:</em> Closes the active tab.<br>
+• <strong>Command / Prompt:</strong> <code>close all tabs</code> / <code>close other tabs</code><br>
+  └ <em>Action:</em> Closes all secondary tabs, keeping only active tab.<br>
+• <strong>Command / Prompt:</strong> <code>duplicate tab</code> / <code>clone tab</code><br>
+  └ <em>Action:</em> Duplicates current tab URL into a new tab.<br>
+• <strong>Command / Prompt:</strong> <code>mute tab</code> / <code>unmute tab</code><br>
+  └ <em>Action:</em> Toggles audio muting for current tab.<br>
+• <strong>Command / Prompt:</strong> <code>most used tab</code> / <code>top tabs</code><br>
+  └ <em>Action:</em> Shows your most visited open tabs.<br>
+• <strong>Command / Prompt:</strong> <code>split view</code> / <code>side by side</code><br>
+  └ <em>Action:</em> Toggles split-screen dual view.<br><br>
+
+📍 <strong>Segment 2: Search Bar, Typing & Screen Automation Commands</strong><br>
+• <strong>Command / Prompt:</strong> <code>CLK SB</code> or <code>CLK S</code> or <code>click search bar</code><br>
+  └ <em>Action:</em> Clicks & focuses default search engine search bar.<br>
+• <strong>Command / Prompt:</strong> <code>enter; &lt;query&gt;</code> or <code>enter: &lt;query&gt;</code> or <code>enter &lt;query&gt;</code><br>
+  └ <em>Action:</em> Directly types <code>&lt;query&gt;</code> into search bar and submits search.<br>
+• <strong>Command / Prompt:</strong> <code>CLK +</code> or <code>CLK plus</code> or <code>open new tab</code><br>
+  └ <em>Action:</em> Opens a new tab (typing remains in AI Agent).<br>
+• <strong>Command / Prompt:</strong> <code>CLK #&lt;N&gt;</code> (e.g. <code>CLK #7</code> or <code>hashtag 7</code>)<br>
+  └ <em>Action:</em> Scans screen elements & clicks badge/mark #N.<br>
+• <strong>Command / Prompt:</strong> <code>S50</code> / <code>SL50</code> / <code>scroll 50</code><br>
+  └ <em>Action:</em> Scrolls web page logically to 50% scale.<br>
+• <strong>Command / Prompt:</strong> <code>S0</code> (scroll top) / <code>S1000</code> (scroll end)<br>
+  └ <em>Action:</em> Jumps to start or end of active web page.<br>
+• <strong>Command / Prompt:</strong> <code>tell me the shortcut</code><br>
+  └ <em>Action:</em> Displays all browser keyboard hotkeys and system shortcuts.`;
+    }
+
+    // 0c. NUMBERED TAB SWITCHING ("go to second tab", "switch to 2nd tab", "go to tab 2", "open 2nd tab")
+    const isSwitchTabCmd = matches('go to ', 'switch to ', 'open ', 'jump to ') && matches('tab');
+    if (isSwitchTabCmd && !matches('new tab', 'add tab', 'plus', 'close tab', 'most used')) {
+        const tabNum = parseTabIndex(raw);
+        if (tabNum !== null) {
+            if (tabNum >= 1 && tabNum <= tabs.length) {
+                const targetTab = tabs[tabNum - 1];
+                activateTab(targetTab.id);
+                return `🌐 Switched to <strong>Tab #${tabNum}</strong>: <em>${targetTab.title || targetTab.url}</em>`;
+            } else {
+                return `⚠️ Tab #${tabNum} does not exist. You currently have <strong>${tabs.length}</strong> open tabs.`;
+            }
+        }
+    }
+
+    // 0d. NUMBERED TAB CLOSING ("close 3rd tab", "close third tab", "close tab 3", "close 2nd tab")
+    const isCloseTabCmd = matches('close ') && matches('tab') && !matches('close all tabs', 'close other tabs', 'close tab', 'close active tab', 'close current tab');
+    if (isCloseTabCmd) {
+        const tabNum = parseTabIndex(raw);
+        if (tabNum !== null) {
+            if (tabNum >= 1 && tabNum <= tabs.length) {
+                const closed = closeTabAtIndex(tabNum);
+                if (closed) {
+                    return `🗑️ Closed <strong>Tab #${tabNum}</strong>: <em>${closed.title || closed.url}</em>`;
+                }
+            } else {
+                return `⚠️ Cannot close Tab #${tabNum}. You currently have <strong>${tabs.length}</strong> open tabs.`;
+            }
+        }
+    }
+
+    // 0e. GENERAL TAB & VIEW CONTROLS (Close active tab, close all, duplicate, mute, split view)
+    if (matches('close current tab', 'close active tab', 'close this tab')) {
+        const activeTab = getActiveTab();
+        if (activeTab) {
+            const title = activeTab.title || activeTab.url;
+            closeTab(activeTab.id);
+            return `🗑️ Closed active tab: <em>${title}</em>`;
+        }
+    }
+
+    if (matches('close all tabs', 'close other tabs', 'close remaining tabs')) {
+        const activeTab = getActiveTab();
+        if (activeTab) {
+            const toClose = tabs.filter(t => t.id !== activeTab.id && !t.isPinned);
+            toClose.forEach(t => closeTab(t.id));
+            return `🧹 Closed ${toClose.length} other tabs! Only active tab <em>${activeTab.title || activeTab.url}</em> remains open.`;
+        }
+    }
+
+    if (matches('duplicate tab', 'clone tab', 'copy tab')) {
+        const activeTab = getActiveTab();
+        if (activeTab) {
+            createTab(activeTab.url, activeTab.title, true);
+            return `👯 Duplicated active tab: <em>${activeTab.title || activeTab.url}</em> into a new tab!`;
+        }
+    }
+
+    if (matches('mute tab', 'unmute tab', 'mute audio', 'unmute audio', 'toggle mute')) {
+        const activeTab = getActiveTab();
+        if (activeTab && activeTab.webview) {
+            activeTab.isMuted = !activeTab.isMuted;
+            try { activeTab.webview.setAudioMuted(activeTab.isMuted); } catch(e) {}
+            renderTabStrip();
+            return activeTab.isMuted ? `🔇 Muted audio playback on active tab.` : `🔊 Unmuted audio playback on active tab.`;
+        }
+    }
+
+    if (matches('split view', 'split screen', 'side by side', 'dual view')) {
+        toggleSplitView();
+        return `📺 Toggled Split View Side-by-Side mode.`;
     }
 
     // REACT / NEXT.JS FRAMER MOTION & BROWSER ARCHITECTURE AI PROMPTS
