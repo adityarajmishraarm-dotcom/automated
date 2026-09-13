@@ -16,7 +16,7 @@ std::string ToLower(const std::string& str) {
 }
 
 std::string ExtractAttr(const std::string& attrs, const std::string& key) {
-    std::regex r(key + R"(=["']([^"']*)["'])", std::regex::icase);
+    std::regex r(key + R"(=["']([^"']*)["'])", std::regex_constants::icase);
     std::smatch m;
     if (std::regex_search(attrs, m, r)) {
         return m[1].str();
@@ -80,7 +80,7 @@ std::vector<InteractiveElement> ElementExtractor::ExtractElements(const std::str
     // Pattern matching either opening/self-closing tags or closing tags:
     // 1. Closing tag: </tag>
     // 2. Opening tag: <tag attrs>(text_after)?
-    std::regex token_regex(R"(<\s*(\/)?\s*([a-zA-Z0-9]+)\b([^>]*)>(?:([^<]*))?)", std::regex::icase);
+    std::regex token_regex(R"(<\s*(\/)?\s*([a-zA-Z0-9]+)\b([^>]*)>(?:([^<]*))?)", std::regex_constants::icase);
 
     auto begin = std::sregex_iterator(html.begin(), html.end(), token_regex);
     auto end = std::sregex_iterator();

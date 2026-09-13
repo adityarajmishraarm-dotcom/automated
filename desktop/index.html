@@ -7,25 +7,42 @@
     <link rel="stylesheet" href="styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="native-browser-app">
         <!-- Native Tab Strip (TabStripModel) -->
         <header class="tab-strip-bar">
+            <!-- macOS Traffic Light Window Action Controls (Left Side: Red, Yellow, Green) -->
+            <div class="mac-window-controls">
+                <button class="mac-btn mac-close" id="btnWinClose" title="Close Application (MacBook Red)" aria-label="Close"></button>
+                <button class="mac-btn mac-minimize" id="btnWinMinimize" title="Minimize Window (MacBook Yellow)" aria-label="Minimize"></button>
+                <button class="mac-btn mac-maximize" id="btnWinMaximize" title="Maximize / Restore Window (MacBook Green)" aria-label="Maximize"></button>
+            </div>
+
             <div class="brand-badge">
                 <span class="brand-logo">✨</span>
                 <span class="brand-title">Antigravity</span>
+            </div>
+            <div class="workspace-pill-select" title="Active Workspace">
+                <select id="workspaceSelect" class="workspace-dropdown">
+                    <option value="default">🌐 Default</option>
+                    <option value="work">🏢 Work</option>
+                    <option value="personal">👤 Personal</option>
+                    <option value="research">🔬 Research</option>
+                </select>
             </div>
             <div class="tabs-track" id="tabsTrack">
                 <!-- Dynamically rendered tabs -->
             </div>
             <button class="btn-tab-add" id="btnAddTab" title="New Tab (Ctrl+T)">+</button>
-            <div class="window-controls-placeholder">
+            <button class="btn-tab-search" id="btnTabSearch" title="Search Open Tabs (Ctrl+K)">🔍</button>
+            <div class="window-controls">
                 <span class="shield-badge" id="shieldBadge" title="Native Adblock Filter">
                     🛡️ <span id="shieldCount">0</span> Blocked
                 </span>
-                <button class="btn-toggle-hud" id="btnToggleHud" title="Toggle AI Copilot HUD">🤖 AI HUD</button>
+                <button class="btn-toggle-hud" id="btnToggleHud" title="Toggle Sidebar HUD">🤖 HUD</button>
+                <button class="btn-toggle-hud btn-popout" id="btnDetachHud" title="Detach External AI Cockpit Window">↗️ External Cockpit</button>
             </div>
         </header>
 
@@ -36,18 +53,77 @@
                 <button class="btn-nav" id="btnForward" title="Forward (Alt+Right)">›</button>
                 <button class="btn-nav" id="btnReload" title="Reload (Ctrl+R)">↻</button>
                 <button class="btn-nav" id="btnHome" title="Home">🏠</button>
+                <button class="btn-nav" id="btnHistoryNav" title="History (Ctrl+H)">📜</button>
             </div>
+            
+            <!-- Multi-Engine Search Selector -->
+            <select id="searchEngineSelect" class="search-engine-dropdown" title="Search Engine Provider">
+                <option value="google">🔍 Google</option>
+                <option value="duckduckgo">🦆 DuckDuckGo</option>
+                <option value="bing">🟦 Bing</option>
+                <option value="brave">🦁 Brave</option>
+                <option value="perplexity">🤖 Perplexity</option>
+            </select>
+
             <div class="omnibox-box">
                 <span class="lock-icon" id="lockIcon">🔒</span>
-                <input type="text" id="urlInput" class="url-input" value="https://news.ycombinator.com" placeholder="Search Google or type a URL..." spellcheck="false" />
+                <input type="text" id="urlInput" class="url-input" value="https://www.google.com" placeholder="Search Google or type a URL..." spellcheck="false" />
+                <button class="btn-bookmark" id="btnBookmark" title="Bookmark Page (Ctrl+D)">☆</button>
                 <span class="engine-tag">Blink Core</span>
+
+                <!-- Most Used Apps & Recommendations Popup Dropdown -->
+                <div class="omnibox-recommendations-popup" id="omniboxRecommendations" style="display: none;">
+                    <div class="recommendations-header">
+                        <span class="rec-title">⭐ Recommended & Most Used Apps</span>
+                        <span class="rec-subtitle">Click to quick launch</span>
+                    </div>
+                    <div class="recommendations-grid" id="recommendationsGrid">
+                        <!-- Dynamically populated app items -->
+                    </div>
+                </div>
             </div>
             <button class="btn-go" id="btnGo">Go</button>
-            <div class="status-pill">
-                <span class="dot-live"></span>
-                <span>In-Process C++</span>
+
+            <!-- Page Zoom Controls -->
+            <div class="zoom-controls-pill">
+                <button class="btn-zoom" id="btnZoomOut" title="Zoom Out">-</button>
+                <span id="zoomLevelText" title="Reset Zoom">100%</span>
+                <button class="btn-zoom" id="btnZoomIn" title="Zoom In">+</button>
+            </div>
+
+            <div class="nav-extra-tools">
+                <!-- Single Unified Browser Tools & Page Utilities Dropdown -->
+                <select id="toolsDropdown" class="tools-dropdown" title="Browser Tools & Page Utilities">
+                    <option value="" disabled selected>🛠️ Tools & Utilities</option>
+                    <option value="reader">📖 Reader Mode</option>
+                    <option value="qr">📱 Mobile QR Code</option>
+                    <option value="mute">🔊 Mute / Unmute Audio</option>
+                    <option value="screenshot">📸 Page Screenshot</option>
+                    <option value="split">◫ Dual Split View</option>
+                    <option value="tldr">⚡ Page Summary (TL;DR)</option>
+                    <option value="purge">🧹 Purge Memory Cache</option>
+                </select>
+
+                <select id="themeSelect" class="theme-dropdown" title="Color Theme Studio">
+                    <option value="oled">🖤 OLED Deep Black</option>
+                    <option value="cyberpunk">🌙 Cyberpunk Neon</option>
+                    <option value="light">☀️ Light Slate</option>
+                    <option value="purple">💜 Midnight Purple</option>
+                    <option value="matrix">💚 Matrix Green</option>
+                </select>
+            </div>
+
+            <!-- Live Digital Clock Widget -->
+            <div class="top-clock-widget" id="topClockWidget" title="Local Time">09:04 AM</div>
+
+            <div class="status-pill ram-pill" id="ramMonitorPill" title="Click to Purge Memory Cache">
+                <span class="dot-live green"></span>
+                <span id="ramUsageText">118 MB RAM</span>
             </div>
         </nav>
+
+        <!-- Bookmarks Bar -->
+        <div class="bookmarks-bar" id="bookmarksBar"></div>
 
         <!-- Main Content Area: Real Chromium Webview & AI Sidebar -->
         <main class="main-browser-workspace">
@@ -57,9 +133,9 @@
             </div>
 
             <!-- Right: AI Agent Control HUD -->
-            <aside class="ai-hud-sidebar" id="aiHudSidebar">
+            <aside class="ai-hud-sidebar" id="aiHudSidebar" style="display: none;">
                 <div class="sidebar-header">
-                    <span class="sidebar-title">⚡ AI Copilot & Core Engine</span>
+                    <span class="sidebar-title">🤖 AI Copilot Assistant</span>
                     <label class="som-toggle-label" title="Render Set-of-Marks numerical bounding boxes over elements">
                         <input type="checkbox" id="chkSoM" checked>
                         <span class="som-toggle-badge">SoM Overlay</span>
@@ -68,16 +144,45 @@
 
                 <!-- HUD Navigation Tabs -->
                 <div class="sidebar-tabs">
-                    <button class="tab-btn active" data-view="viewAx">🌲 AX Tree</button>
+                    <button class="tab-btn active" data-view="viewChat">💬 AI Chat</button>
+                    <button class="tab-btn" data-view="viewHistory" id="tabBtnHistory">📜 History</button>
+                    <button class="tab-btn" data-view="viewAx">🌲 AX Tree</button>
                     <button class="tab-btn" data-view="viewGrep">🔍 Grep</button>
                     <button class="tab-btn" data-view="viewAutofill">📝 Autofill</button>
                     <button class="tab-btn" data-view="viewCaptcha">🛡️ CAPTCHA</button>
-                    <button class="tab-btn" data-view="viewTelemetry">🔄 Closed Loop</button>
                 </div>
 
                 <div class="sidebar-body">
+                    <!-- View 0: AI Chat (Default) -->
+                    <div class="sidebar-view active" id="viewChat">
+                        <div class="chat-welcome-card">
+                            <div class="chat-welcome-title">✨ AI Browser Assistant</div>
+                            <div class="chat-welcome-subtitle">Ask anything about the page, search the web, summarize content, or automate tasks.</div>
+                            <div class="chat-quick-chips">
+                                <button class="chat-chip" data-prompt="Show most used tabs">🔥 Most Used Tabs</button>
+                                <button class="chat-chip" data-prompt="click submit">🎯 Click Submit</button>
+                                <button class="chat-chip" data-prompt="click search">🎯 Click Search</button>
+                                <button class="chat-chip" data-prompt="click login">🎯 Click Login</button>
+                                <button class="chat-chip" data-prompt="scroll 5 down">📜 Normal Wheel (5)</button>
+                                <button class="chat-chip" data-prompt="scroll 10 down">📜 Full Wheel (10)</button>
+                                <button class="chat-chip" data-prompt="scroll 50% down">📊 Scroll 50% Down</button>
+                                <button class="chat-chip" data-prompt="Show most used apps recommendations">⭐ Recommended Apps</button>
+                            </div>
+                        </div>
+                        <div class="chat-messages-area" id="chatMessageList">
+                            <div class="chat-msg ai">
+                                <span class="chat-msg-author">AI Assistant</span>
+                                <div class="chat-bubble">👋 Hello! How can I assist you with your browsing or search today?</div>
+                            </div>
+                        </div>
+                        <div class="chat-input-wrapper">
+                            <input type="text" id="txtChatInput" class="chat-input-field" placeholder="Ask AI a question or type a message..." spellcheck="false" />
+                            <button class="btn-send-chat" id="btnSendChat">Send ➔</button>
+                        </div>
+                    </div>
+
                     <!-- View 1: AX Tree -->
-                    <div class="sidebar-view active" id="viewAx">
+                    <div class="sidebar-view" id="viewAx">
                         <div class="view-header">
                             <span class="view-meta">Sanitized Accessibility Markdown (&lt;3k tokens)</span>
                             <button class="btn-small" id="btnRescanAx">Scan DOM</button>
@@ -162,6 +267,20 @@
                             <div class="log-line info">Ready. Chromium WebContents attached.</div>
                         </div>
                     </div>
+
+                    <!-- View 6: Tab & Browsing History -->
+                    <div class="sidebar-view" id="viewHistory">
+                        <div class="view-header">
+                            <span class="view-meta">Browsing History</span>
+                            <button class="btn-small" id="btnClearHistory">Clear All</button>
+                        </div>
+                        <div class="grep-search-box">
+                            <input type="text" id="txtHistoryQuery" class="input-grep" placeholder="Search history..." />
+                        </div>
+                        <div class="history-list" id="historyList">
+                            <p class="hint-text">No history entries yet.</p>
+                        </div>
+                    </div>
                 </div>
             </aside>
         </main>
@@ -176,6 +295,113 @@
                 <span>Autonomous loop paused. You have direct control of the live browser window.</span>
             </div>
             <button class="btn-small btn-green" id="btnResumeAutonomy">Resume Autonomous Agent</button>
+        </div>
+    </div>
+
+    <!-- Command Palette / Tab Search Modal (Ctrl+K) -->
+    <div class="command-palette-modal" id="tabSearchModal" style="display: none;">
+        <div class="command-palette-backdrop" id="tabSearchBackdrop"></div>
+        <div class="command-palette-container">
+            <div class="command-palette-header">
+                <span class="palette-icon">⚡</span>
+                <input type="text" id="tabSearchInput" class="palette-input" placeholder="Search open tabs, jump, pin, close... (Esc to exit)" spellcheck="false" />
+                <span class="palette-badge">ESC</span>
+            </div>
+            <div class="command-palette-results" id="tabSearchResults">
+                <!-- Dynamically populated matched tabs -->
+            </div>
+            <div class="command-palette-footer">
+                <span>Navigate <kbd>↑</kbd> <kbd>↓</kbd></span>
+                <span>Select <kbd>↵</kbd></span>
+                <span>Mute <kbd>M</kbd></span>
+                <span>Pin <kbd>P</kbd></span>
+                <span>Close <kbd>Del</kbd></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tab Specific History Modal -->
+    <div class="command-palette-modal" id="tabHistoryModal" style="display: none;">
+        <div class="command-palette-backdrop" id="tabHistoryBackdrop"></div>
+        <div class="command-palette-container" style="max-width: 550px;">
+            <div class="command-palette-header">
+                <span class="palette-icon">📜</span>
+                <span style="font-weight: 600; font-size: 13px; color: var(--accent-cyan);" id="tabHistoryModalTitle">Tab History</span>
+                <span class="palette-badge" id="btnCloseTabHistoryModal" style="cursor: pointer;">ESC</span>
+            </div>
+            <div class="command-palette-results" id="tabHistoryModalResults" style="max-height: 350px;">
+                <!-- Dynamically populated tab history -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Reader Mode Modal -->
+    <div class="command-palette-modal" id="readerModeModal" style="display: none;">
+        <div class="command-palette-backdrop" id="readerModeBackdrop"></div>
+        <div class="command-palette-container" style="max-width: 720px; max-height: 85vh;">
+            <div class="command-palette-header">
+                <span class="palette-icon">📖</span>
+                <span style="font-weight: 600; font-size: 13px; color: var(--accent-cyan);" id="readerModalTitle">Clean Reader Mode</span>
+                <button class="btn-small" id="btnReaderFontToggle" style="margin-left: auto; margin-right: 10px;">A+ Font Size</button>
+                <span class="palette-badge" id="btnCloseReaderModal" style="cursor: pointer;">ESC</span>
+            </div>
+            <div class="reader-content-body" id="readerContentBody" style="padding: 20px; overflow-y: auto; max-height: 70vh; font-family: 'Plus Jakarta Sans', sans-serif; line-height: 1.8; font-size: 15px; color: #e2e8f0;">
+                <p>Loading distraction-free reading content...</p>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- Page Screenshot Snapper Modal -->
+    <div class="command-palette-modal" id="screenshotModal" style="display: none;">
+        <div class="command-palette-backdrop" id="screenshotBackdrop"></div>
+        <div class="command-palette-container" style="max-width: 680px;">
+            <div class="command-palette-header">
+                <span class="palette-icon">📸</span>
+                <span style="font-weight: 600; font-size: 13px; color: var(--accent-cyan);">Page Visual Snapper</span>
+                <span class="palette-badge" id="btnCloseScreenshotModal" style="cursor: pointer;">ESC</span>
+            </div>
+            <div style="padding: 16px; text-align: center;">
+                <div id="screenshotPreviewContainer" style="max-height: 400px; overflow: hidden; border-radius: 8px; border: 1px solid rgba(0,240,255,0.3); background: #000;">
+                    <img id="screenshotImg" style="width: 100%; height: auto; display: block;" alt="Page Screenshot" />
+                </div>
+                <div style="margin-top: 12px; display: flex; justify-content: center; gap: 10px;">
+                    <a id="btnDownloadScreenshot" class="btn-small btn-blue" style="text-decoration: none;" download="screenshot.png">💾 Download Screenshot</a>
+                    <button class="btn-small btn-green" id="btnAnalyzeScreenshotAi">🤖 Analyze with AI</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile QR Code Generator Modal -->
+    <div class="command-palette-modal" id="qrCodeModal" style="display: none;">
+        <div class="command-palette-backdrop" id="qrCodeBackdrop"></div>
+        <div class="command-palette-container" style="max-width: 420px; text-align: center;">
+            <div class="command-palette-header">
+                <span class="palette-icon">📱</span>
+                <span style="font-weight: 600; font-size: 13px; color: var(--accent-cyan);">Scan QR Code on Phone</span>
+                <span class="palette-badge" id="btnCloseQrCodeModal" style="cursor: pointer;">ESC</span>
+            </div>
+            <div style="padding: 24px; display: flex; flex-direction: column; align-items: center; gap: 12px;">
+                <div id="qrCodeFrame" style="padding: 12px; background: #fff; border-radius: 12px; box-shadow: 0 0 20px rgba(0,240,255,0.3);">
+                    <img id="qrCodeImg" style="width: 180px; height: 180px; display: block;" alt="QR Code" />
+                </div>
+                <div style="font-size: 11px; color: #94a3b8; font-family: var(--font-mono); overflow: hidden; text-overflow: ellipsis; max-width: 320px;" id="qrCodeUrlText">https://www.google.com</div>
+                <div style="font-size: 12px; color: #f8fafc;">Point your smartphone camera to open page instantly.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI Page TL;DR Summary Floating Banner -->
+    <div class="tldr-banner" id="tldrBanner" style="display: none;">
+        <div class="tldr-content">
+            <span class="tldr-icon">⚡</span>
+            <div class="tldr-text">
+                <strong>AI TL;DR SUMMARY</strong>
+                <span id="tldrSummaryText">Generating instant executive summary of current page...</span>
+            </div>
+            <button class="btn-small" id="btnCloseTldr">✕</button>
         </div>
     </div>
 

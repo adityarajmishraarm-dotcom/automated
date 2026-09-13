@@ -19,6 +19,14 @@ include_directories(
 # Source files
 set(SOURCES
     src/core/tab_manager.cpp
+    src/core/tab_event_bus.cpp
+    src/core/undo_close_stack.cpp
+    src/core/tab_freeze_manager.cpp
+    src/core/tab_group_manager.cpp
+    src/core/session_persistence.cpp
+    src/core/tab_search_index.cpp
+    src/core/split_view_manager.cpp
+    src/core/tab_resource_tracker.cpp
     src/core/navigation.cpp
     src/core/autofill_engine.cpp
     src/core/devtools_host.cpp

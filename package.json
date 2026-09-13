@@ -1,0 +1,29 @@
+{
+  "name": "antigravity-browser-react",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Antigravity AI-Native Chromium Browser Tab Management Engine (React App)",
+  "main": "shell/public/App.jsx",
+  "scripts": {
+    "start": "launch_app.bat",
+    "launch": "launch_app.bat",
+    "app": "launch_app.bat",
+    "desktop": "launch_desktop.bat",
+    "electron": "npx.cmd -y electron desktop",
+    "test": "tests_runner.exe"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "keywords": [
+    "react",
+    "chromium",
+    "tab-management-engine",
+    "browser",
+    "ai-native",
+    "antigravity"
+  ],
+  "author": "Antigravity Core Engineering",
+  "license": "MIT"
+}
