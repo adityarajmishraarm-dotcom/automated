@@ -2665,8 +2665,9 @@ async function clickElementOnActivePage(targetText) {
 
                     // For links <a>, ensure navigation occurs by setting window.location.href if click() does not navigate
                     const linkNode = tag === 'a' ? matchedEl : matchedEl.closest('a');
+                    let targetHref = null;
                     if (linkNode && linkNode.href && !linkNode.href.startsWith('javascript:')) {
-                        const targetHref = linkNode.href;
+                        targetHref = linkNode.href;
                         setTimeout(() => {
                             try {
                                 if (window.location.href !== targetHref) {
@@ -2676,19 +2677,22 @@ async function clickElementOnActivePage(targetText) {
                         }, 120);
                     }
 
-                    // Persist guest focus inside search bar input after event dispatch
-                    setTimeout(() => {
-                        try {
-                            matchedEl.focus();
-                            if (typeof matchedEl.select === 'function') matchedEl.select();
-                        } catch(e) {}
-                    }, 50);
-
                     const m = getElementMetadata(matchedEl);
                     const foundLabel = (m.txt || m.val || m.aria || m.placeholder || m.title || matchType || targetRaw).trim();
                     const isInput = tag === 'input' || tag === 'textarea' || matchedEl.getAttribute('role') === 'searchbox';
                     const isDropdown = tag === 'select' || matchedEl.getAttribute('role') === 'combobox';
-                    return { success: true, label: foundLabel, tag: tag, matchType: matchType, markIndex: markIndex, isInput: isInput, isDropdown: isDropdown };
+
+                    // Only focus search inputs/textboxes (do NOT lock focus on <a> links)
+                    if (isInput) {
+                        setTimeout(() => {
+                            try {
+                                matchedEl.focus();
+                                if (typeof matchedEl.select === 'function') matchedEl.select();
+                            } catch(e) {}
+                        }, 50);
+                    }
+
+                    return { success: true, label: foundLabel, tag: tag, matchType: matchType, markIndex: markIndex, isInput: isInput, isDropdown: isDropdown, url: targetHref };
                 }
 
                 return { success: false, target: targetRaw };
@@ -2698,6 +2702,21 @@ async function clickElementOnActivePage(targetText) {
         if (result && result.success) {
             logTelemetry('act', `AiClick::ClickElement("${result.label}" <${result.tag}> [${result.matchType}])`);
             const markBadge = result.markIndex ? ` <strong>[Mark #${result.markIndex}]</strong>` : '';
+
+            // Host Process Direct Navigation Fallback for Hyperlinks
+            if (result.url && (result.url.startsWith('http://') || result.url.startsWith('https://'))) {
+                const navUrl = result.url;
+                setTimeout(() => {
+                    try {
+                        if (tab && tab.webview) {
+                            const curUrl = tab.webview.getURL();
+                            if (!curUrl || (curUrl !== navUrl && !curUrl.includes(navUrl.replace(/^https?:\/\//, '')))) {
+                                tab.webview.loadURL(navUrl);
+                            }
+                        }
+                    } catch(e) {}
+                }, 180);
+            }
 
             const isExplicitSearchTarget = targetLower.includes('search bar') || 
                                            targetLower.includes('search box') || 
@@ -3251,8 +3270,8 @@ async function executeAiBrowserCommand(promptText) {
     if (isClickIntent) {
         let targetText = raw
             .replace(/.*?\b(?:click\s+on\s+the\s+|click\s+on\s+these\s+|click\s+on\s+|click\s+the\s+|click\s+|press\s+|tap\s+|select\s+|focus\s+on\s+|focus\s+|go\s+to\s+|open\s+|type\s+in\s+)/i, '')
-            .replace(/\b(?:these\s+|yellow\s+gaps\s+like\s+|yellow\s+gap\s+like\s+|yellow\s+gap\s+|yellow\s+badge\s+|gaps\s+like\s+|gap\s+like\s+|gap\s+|badge\s+|anywhere\s+on\s+the\s+screen|anywhere\s+on\s+screen|on\s+screen|default\s+search\s+engines?|search\s+engine\s+)*\b/gi, '')
-            .replace(/\s+(option|element)$/i, '')
+            .replace(/\b(?:these\s+|yellow\s+gaps\s+like\s+|yellow\s+gap\s+like\s+|yellow\s+gap\s+|yellow\s+badge\s+|gaps\s+like\s+|gap\s+like\s+|gap\s+|badge\s+|anywhere\s+on\s+the\s+screen|anywhere\s+on\s+screen|on\s+screen|default\s+search\s+engines?|search\s+engine\s+|blue\s+or\s+purple\s+|blue\s+|purple\s+|colored\s+|written\s+)*\b/gi, '')
+            .replace(/\s+(option|element|segment)$/i, '')
             .trim();
 
         if (lower.includes('search bar') || lower.includes('search box') || lower.includes('search input') || lower.includes('search field') || lower.includes('search engine')) {
