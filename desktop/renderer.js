@@ -2428,6 +2428,55 @@ async function clickElementOnActivePage(targetText) {
                     return { txt, val, aria, placeholder, title, name, id, role, type, alt };
                 }
 
+                // 1. Ordinal Rank Parsing (1st/first, 2nd/second, 3rd/third, 4th/fourth, 5th/fifth, etc.)
+                const rankWordMap = {
+                    'first': 1, '1st': 1,
+                    'second': 2, '2nd': 2,
+                    'third': 3, '3rd': 3,
+                    'fourth': 4, '4th': 4,
+                    'fifth': 5, '5th': 5,
+                    'sixth': 6, '6th': 6,
+                    'seventh': 7, '7th': 7,
+                    'eighth': 8, '8th': 8,
+                    'ninth': 9, '9th': 9,
+                    'tenth': 10, '10th': 10
+                };
+
+                let targetOrdinal = 1;
+                let cleanTerm = targetRaw;
+
+                const rankRegex = /\b(1st|first|2nd|second|3rd|third|4th|fourth|5th|fifth|6th|sixth|7th|seventh|8th|eighth|9th|ninth|10th|\d+(?:st|nd|rd|th)?)\b/gi;
+                const rankMatches = Array.from(targetRaw.matchAll(rankRegex));
+
+                if (rankMatches.length > 0) {
+                    const matchedRankWord = rankMatches[0][1].toLowerCase();
+                    if (rankWordMap[matchedRankWord]) {
+                        targetOrdinal = rankWordMap[matchedRankWord];
+                    } else {
+                        const num = parseInt(matchedRankWord, 10);
+                        if (!isNaN(num) && num > 0) targetOrdinal = num;
+                    }
+                    cleanTerm = cleanTerm.replace(new RegExp('\\b' + matchedRankWord + '\\b', 'gi'), '').trim();
+                }
+
+                // 2. Type Filter Extraction ("link", "result", "button", "input")
+                let filterType = null;
+                let searchTerm = cleanTerm;
+
+                if (/\b(?:link|url|result|hyperlink|anchor)\b/i.test(cleanTerm)) {
+                    filterType = 'link';
+                    searchTerm = cleanTerm.replace(/\b(?:link|url|result|hyperlink|anchor)\b/gi, '').trim();
+                } else if (/\b(?:button|btn|action)\b/i.test(cleanTerm)) {
+                    filterType = 'button';
+                    searchTerm = cleanTerm.replace(/\b(?:button|btn|action)\b/gi, '').trim();
+                } else if (/\b(?:input|field|textbox|search\s*bar|search\s*box)\b/i.test(cleanTerm)) {
+                    filterType = 'input';
+                    searchTerm = cleanTerm.replace(/\b(?:input|field|textbox|search\s*bar|search\s*box)\b/gi, '').trim();
+                }
+
+                if (!searchTerm) searchTerm = cleanTerm || targetRaw;
+                const termLower = searchTerm.toLowerCase();
+
                 // Check for Set-of-Marks mark index (#7, hashtag 7, mark 7)
                 let markIndex = null;
                 const markMatch = targetRaw.match(/^(?:#|hashtag\s*|mark\s*|badge\s*|gap\s*|number\s*|no\.?\s*)?(\d+)$/i);
@@ -2470,41 +2519,26 @@ async function clickElementOnActivePage(targetText) {
                     }
                 }
 
-                // Tier 1: Dynamic Search Bar Detection anywhere on screen (including Google textarea, YouTube, Wikipedia, DuckDuckGo)
-                const isSearchIntent = targetLower.includes('search bar') || 
-                                       targetLower.includes('search box') || 
-                                       targetLower.includes('search input') || 
-                                       targetLower.includes('search field') || 
-                                       targetLower.includes('search') ||
-                                       targetLower.includes('find');
+                // Tier 1: Dynamic Search Bar Detection ONLY if target explicitly requests search bar
+                const isExplicitSearchIntent = targetLower === 'search bar' || 
+                                               targetLower === 'search box' || 
+                                               targetLower === 'search input' || 
+                                               targetLower === 'search field' || 
+                                               targetLower === 'omnibox' || 
+                                               targetLower === 'address bar' || 
+                                               targetLower === 'sb' || 
+                                               targetLower === 's';
 
-                if (!matchedEl && isSearchIntent) {
+                if (!matchedEl && isExplicitSearchIntent) {
                     const searchSelectors = [
-                        'textarea[name="q"]',
-                        'input[name="q"]',
-                        'textarea.gLFyf',
-                        'input.gLFyf',
-                        'textarea[title*="Search" i]',
-                        'input[title*="Search" i]',
-                        'textarea[aria-label*="Search" i]',
-                        'input[aria-label*="Search" i]',
-                        'input#search',                  // YouTube
-                        'input#searchInput',             // Wikipedia
-                        'input#searchbox_input',         // DuckDuckGo
-                        'input[type="search"]',
-                        'textarea[name*="search" i]',
-                        'input[name*="search" i]',
-                        'input[id*="search" i]',
-                        'input[placeholder*="search" i]',
-                        'textarea[placeholder*="search" i]',
-                        '[role="searchbox"]',
-                        '[role="search"] textarea',
-                        '[role="search"] input',
-                        'form[action*="search" i] textarea',
-                        'form[action*="search" i] input',
-                        'textarea:not([type="hidden"])',
-                        'input[type="text"]',
-                        'input:not([type="hidden"])'
+                        'textarea[name="q"]', 'input[name="q"]', 'textarea.gLFyf', 'input.gLFyf',
+                        'textarea[title*="Search" i]', 'input[title*="Search" i]',
+                        'textarea[aria-label*="Search" i]', 'input[aria-label*="Search" i]',
+                        'input#search', 'input#searchInput', 'input#searchbox_input', 'input[type="search"]',
+                        'textarea[name*="search" i]', 'input[name*="search" i]', 'input[id*="search" i]',
+                        'input[placeholder*="search" i]', 'textarea[placeholder*="search" i]',
+                        '[role="searchbox"]', '[role="search"] textarea', '[role="search"] input',
+                        'textarea:not([type="hidden"])', 'input[type="text"]', 'input:not([type="hidden"])'
                     ];
 
                     for (const sel of searchSelectors) {
@@ -2517,91 +2551,74 @@ async function clickElementOnActivePage(targetText) {
                     }
                 }
 
-                // Tier 1b: Dropdown Menu / Select Element Detection
-                const isDropdownIntent = targetLower.includes('dropdown') || 
-                                         targetLower.includes('select') || 
-                                         targetLower.includes('menu') || 
-                                         targetLower.includes('volume') || 
-                                         targetLower.includes('options');
-
-                if (!matchedEl && isDropdownIntent) {
-                    const dropdownSelectors = [
-                        'select',
-                        '[role="combobox"]',
-                        '[role="listbox"]',
-                        '[role="menu"]',
-                        '.dropdown',
-                        '.select-menu',
-                        '[aria-haspopup="true"]'
-                    ];
-
-                    for (const sel of dropdownSelectors) {
-                        const el = document.querySelector(sel);
-                        if (el && isVisible(el)) {
-                            matchedEl = el;
-                            matchType = 'Dropdown Menu';
-                            break;
-                        }
-                    }
-                }
-
-                // Tier 2: Exact Semantic Match (Text, Value, Aria-Label, Placeholder, Title, Name, ID)
+                // Tier 2: Dynamic Candidate Ranking & Ordinal Match
                 if (!matchedEl) {
+                    const matchesList = [];
+
                     for (const el of visibleCandidates) {
                         const m = getElementMetadata(el);
-                        if (
-                            m.txt.toLowerCase() === targetLower ||
-                            m.val.toLowerCase() === targetLower ||
-                            m.aria.toLowerCase() === targetLower ||
-                            m.placeholder.toLowerCase() === targetLower ||
-                            m.title.toLowerCase() === targetLower ||
-                            m.name.toLowerCase() === targetLower ||
-                            m.id.toLowerCase() === targetLower ||
-                            m.alt.toLowerCase() === targetLower
-                        ) {
-                            matchedEl = el;
-                            matchType = 'Exact Match';
-                            break;
+                        const tag = el.tagName.toLowerCase();
+                        const isLink = tag === 'a' || el.getAttribute('role') === 'link' || el.closest('a') !== null;
+                        const isButton = tag === 'button' || el.getAttribute('role') === 'button' || el.classList.contains('btn');
+                        const isInput = tag === 'input' || tag === 'textarea' || el.getAttribute('role') === 'searchbox';
+
+                        const txtCombined = (m.txt + ' ' + m.aria + ' ' + m.title + ' ' + m.alt + ' ' + m.placeholder + ' ' + m.id).toLowerCase();
+                        const valStr = m.val.toLowerCase();
+                        const hrefStr = (el.getAttribute('href') || '').toLowerCase();
+
+                        // Match query string against element text / href / value
+                        const isTextMatched = txtCombined.includes(termLower) || (isLink && hrefStr.includes(termLower));
+                        const isValueMatched = isInput && valStr.includes(termLower);
+
+                        if (isTextMatched || isValueMatched) {
+                            const clickNode = isLink ? (el.closest('a') || el) : el;
+                            matchesList.push({
+                                node: clickNode,
+                                metadata: m,
+                                tag: tag,
+                                isLink: isLink,
+                                isButton: isButton,
+                                isInput: isInput,
+                                isTextMatched: isTextMatched
+                            });
                         }
                     }
-                }
 
-                // Tier 3: Partial / Fuzzy Semantic Match (contains target string)
-                if (!matchedEl) {
-                    for (const el of visibleCandidates) {
-                        const m = getElementMetadata(el);
-                        const combined = (m.txt + ' ' + m.val + ' ' + m.aria + ' ' + m.placeholder + ' ' + m.title + ' ' + m.name + ' ' + m.id + ' ' + m.alt).toLowerCase();
-                        if (combined.length > 0 && combined.includes(targetLower)) {
-                            matchedEl = el;
-                            matchType = 'Partial Match';
-                            break;
+                    // Deduplicate matching nodes by DOM reference
+                    const uniqueMatches = [];
+                    const seenNodes = new Set();
+                    for (const item of matchesList) {
+                        if (!seenNodes.has(item.node)) {
+                            seenNodes.add(item.node);
+                            uniqueMatches.push(item);
                         }
                     }
-                }
 
-                // Tier 4: Nearest Clickable Parent / Container Match anywhere on screen
-                if (!matchedEl) {
-                    const allNodes = Array.from(document.querySelectorAll('*'));
-                    for (const node of allNodes) {
-                        if (!isVisible(node)) continue;
-                        const txt = (node.innerText || node.textContent || '').trim().toLowerCase();
-                        if (txt === targetLower || (txt.length > 0 && txt.includes(targetLower) && txt.length < 80)) {
-                            let parent = node;
-                            while (parent && parent !== document.body) {
-                                const tag = parent.tagName.toLowerCase();
-                                if (tag === 'button' || tag === 'a' || tag === 'input' || tag === 'select' || parent.getAttribute('role') === 'button' || parent.onclick) {
-                                    matchedEl = parent;
-                                    matchType = 'Clickable Wrapper Match';
-                                    break;
-                                }
-                                parent = parent.parentElement;
-                            }
-                            if (!matchedEl) {
-                                matchedEl = node;
-                                matchType = 'DOM Node Match';
-                            }
-                            break;
+                    // Apply type filters (link, button, input) if requested
+                    let filteredPool = uniqueMatches;
+                    if (filterType === 'link') {
+                        filteredPool = uniqueMatches.filter(m => m.isLink);
+                    } else if (filterType === 'button') {
+                        filteredPool = uniqueMatches.filter(m => m.isButton);
+                    } else if (filterType === 'input') {
+                        filteredPool = uniqueMatches.filter(m => m.isInput);
+                    } else {
+                        // Default preference: if target is not explicitly 'input', prefer actual text links/buttons over input values!
+                        const textOrLinkMatches = uniqueMatches.filter(m => m.isTextMatched || m.isLink || m.isButton);
+                        if (textOrLinkMatches.length > 0) {
+                            filteredPool = textOrLinkMatches;
                         }
+                    }
+
+                    if (filteredPool.length === 0) {
+                        filteredPool = uniqueMatches;
+                    }
+
+                    if (filteredPool.length > 0) {
+                        const targetIdx = Math.min(targetOrdinal - 1, filteredPool.length - 1);
+                        const chosen = filteredPool[targetIdx];
+                        matchedEl = chosen.node;
+                        matchType = 'Ranked Match #' + (targetIdx + 1) + ' of ' + filteredPool.length;
                     }
                 }
 
