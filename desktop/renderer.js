@@ -3018,6 +3018,26 @@ async function executeAiBrowserCommand(promptText) {
         return `📺 Toggled Split View Side-by-Side mode.`;
     }
 
+    // 0f. AI SEARCH ENGINE SWITCHER ("use duckduckgo", "use bing", "use brave", "use perplexity", "use google", "switch search engine")
+    if (matches('search engine', 'use duckduckgo', 'use bing', 'use brave', 'use perplexity', 'use google', 'open duckduckgo', 'open bing', 'open brave', 'open perplexity')) {
+        let targetEngine = null;
+        if (matches('duckduckgo', 'duck')) targetEngine = 'duckduckgo';
+        else if (matches('bing')) targetEngine = 'bing';
+        else if (matches('brave')) targetEngine = 'brave';
+        else if (matches('perplexity')) targetEngine = 'perplexity';
+        else if (matches('google')) targetEngine = 'google';
+
+        if (targetEngine) {
+            currentSearchEngine = targetEngine;
+            if (searchEngineSelect) searchEngineSelect.value = targetEngine;
+            const targetUrl = searchEngineHomepages[targetEngine] || 'https://www.google.com';
+            const name = searchEngineNames[targetEngine] || 'Google';
+            if (urlInput) urlInput.placeholder = `Search ${name} or type a URL...`;
+            navigateActiveWebview(targetUrl);
+            return `🌐 Switched Search Engine to <strong>${name}</strong> and loaded <code>${targetUrl}</code>!`;
+        }
+    }
+
     // REACT / NEXT.JS FRAMER MOTION & BROWSER ARCHITECTURE AI PROMPTS
     if (matches('framer motion', 'chrome dnd', 'reorder.group', 'reorder.item', 'zustand store', 'persist store', 'add shortcut', 'bookmark star')) {
         if (matches('tabs', 'drag', 'reorder')) {
@@ -4006,13 +4026,38 @@ if (ramMonitorPill) {
     ramMonitorPill.onclick = purgeMemoryCache;
 }
 
-// 7. Multi-Engine Search Selector
+// 7. Multi-Engine Search Selector & Dynamic Connection
 const searchEngineSelect = document.getElementById('searchEngineSelect');
 let currentSearchEngine = 'google';
+
+const searchEngineHomepages = {
+    'google': 'https://www.google.com',
+    'duckduckgo': 'https://duckduckgo.com',
+    'bing': 'https://www.bing.com',
+    'brave': 'https://search.brave.com',
+    'perplexity': 'https://www.perplexity.ai'
+};
+
+const searchEngineNames = {
+    'google': 'Google',
+    'duckduckgo': 'DuckDuckGo',
+    'bing': 'Bing',
+    'brave': 'Brave',
+    'perplexity': 'Perplexity'
+};
+
 if (searchEngineSelect) {
     searchEngineSelect.onchange = (e) => {
         currentSearchEngine = e.target.value;
-        logTelemetry('act', `SearchEngine::SetProvider("${currentSearchEngine}")`);
+        const targetUrl = searchEngineHomepages[currentSearchEngine] || 'https://www.google.com';
+        const name = searchEngineNames[currentSearchEngine] || 'Google';
+        
+        if (urlInput) {
+            urlInput.placeholder = `Search ${name} or type a URL...`;
+        }
+
+        logTelemetry('act', `SearchEngine::SetProvider("${currentSearchEngine}")`, `Navigating active tab to ${targetUrl}`);
+        navigateActiveWebview(targetUrl);
     };
 }
 
