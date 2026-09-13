@@ -2220,7 +2220,10 @@ async function clickElementOnActivePage(targetText) {
             }, 1200);
 
             btnAddTab.click();
-            if (txtChatInput) txtChatInput.blur();
+            if (txtChatInput) {
+                txtChatInput.blur();
+                txtChatInput.value = '';
+            }
             return {
                 success: true,
                 message: '🎯 AI clicked the <strong>"+" New Tab button</strong> on the address bar and opened a new tab.'
@@ -2248,7 +2251,10 @@ async function clickElementOnActivePage(targetText) {
 
         urlInput.focus();
         urlInput.select();
-        if (txtChatInput) txtChatInput.blur();
+        if (txtChatInput) {
+            txtChatInput.blur();
+            txtChatInput.value = '';
+        }
 
         return {
             success: true,
@@ -2285,7 +2291,10 @@ async function clickElementOnActivePage(targetText) {
                     } else {
                         el.click();
                     }
-                    if (txtChatInput) txtChatInput.blur();
+                    if (txtChatInput) {
+                        txtChatInput.blur();
+                        txtChatInput.value = '';
+                    }
                     return {
                         success: true,
                         message: `🎯 AI clicked and opened the <strong>${el.title || id}</strong> dropdown menu.`
@@ -2316,7 +2325,10 @@ async function clickElementOnActivePage(targetText) {
                 const el = document.getElementById(id);
                 if (el) {
                     el.click();
-                    if (txtChatInput) txtChatInput.blur();
+                    if (txtChatInput) {
+                        txtChatInput.blur();
+                        txtChatInput.value = '';
+                    }
                     return {
                         success: true,
                         message: `🎯 AI clicked the <strong>${el.title || id}</strong> toolbar button.`
@@ -2330,7 +2342,26 @@ async function clickElementOnActivePage(targetText) {
     // STEP 2: CHECK ACTIVE WEBVIEW PAGE (Screen-Wide Dynamic DOM Scan)
     // -------------------------------------------------------------------------
 
+    const isSearchIntent = targetLower.includes('search bar') || 
+                           targetLower.includes('search box') || 
+                           targetLower.includes('search input') || 
+                           targetLower.includes('search field') || 
+                           targetLower.includes('search') ||
+                           targetLower.includes('find');
+
     if (!tab || !tab.webview) {
+        if (isSearchIntent && urlInput) {
+            urlInput.focus();
+            urlInput.select();
+            if (txtChatInput) {
+                txtChatInput.blur();
+                txtChatInput.value = '';
+            }
+            return {
+                success: true,
+                message: '🎯 AI focused the <strong>Default Search Engine Bar / Omnibox</strong>. Any keys you type will now go directly into the search bar!'
+            };
+        }
         return { success: false, message: 'No active webview tab available to interact.' };
     }
 
@@ -2406,7 +2437,7 @@ async function clickElementOnActivePage(targetText) {
                     }
                 }
 
-                // Tier 1: Dynamic Search Bar Detection anywhere on screen (even if completely EMPTY!)
+                // Tier 1: Dynamic Search Bar Detection anywhere on screen (including Google textarea, YouTube, Wikipedia, DuckDuckGo)
                 const isSearchIntent = targetLower.includes('search bar') || 
                                        targetLower.includes('search box') || 
                                        targetLower.includes('search input') || 
@@ -2416,17 +2447,29 @@ async function clickElementOnActivePage(targetText) {
 
                 if (!matchedEl && isSearchIntent) {
                     const searchSelectors = [
-                        'input[type="search"]',
+                        'textarea[name="q"]',
                         'input[name="q"]',
+                        'textarea.gLFyf',
+                        'input.gLFyf',
+                        'textarea[title*="Search" i]',
+                        'input[title*="Search" i]',
+                        'textarea[aria-label*="Search" i]',
+                        'input[aria-label*="Search" i]',
+                        'input#search',                  // YouTube
+                        'input#searchInput',             // Wikipedia
+                        'input#searchbox_input',         // DuckDuckGo
+                        'input[type="search"]',
+                        'textarea[name*="search" i]',
                         'input[name*="search" i]',
                         'input[id*="search" i]',
                         'input[placeholder*="search" i]',
-                        'input[aria-label*="search" i]',
-                        'input[title*="search" i]',
-                        'textarea[name*="search" i]',
+                        'textarea[placeholder*="search" i]',
                         '[role="searchbox"]',
+                        '[role="search"] textarea',
                         '[role="search"] input',
+                        'form[action*="search" i] textarea',
                         'form[action*="search" i] input',
+                        'textarea:not([type="hidden"])',
                         'input[type="text"]',
                         'input:not([type="hidden"])'
                     ];
@@ -2538,13 +2581,18 @@ async function clickElementOnActivePage(targetText) {
                     const origOutline = matchedEl.style.outline;
                     const origBoxShadow = matchedEl.style.boxShadow;
                     matchedEl.style.outline = '3px solid #FFE600';
-                    matchedEl.style.boxShadow = '0 0 16px #FFE600';
+                    matchedEl.style.boxShadow = '0 0 20px #FFE600';
                     setTimeout(() => {
                         matchedEl.style.outline = origOutline;
                         matchedEl.style.boxShadow = origBoxShadow;
                     }, 1200);
 
-                    // If matched element is a <select> dropdown, trigger showPicker or click
+                    // Select text inside search input if possible
+                    if (typeof matchedEl.select === 'function') {
+                        try { matchedEl.select(); } catch(e) {}
+                    }
+
+                    // If matched element is a <select> dropdown, trigger showPicker
                     const tag = matchedEl.tagName.toLowerCase();
                     if (tag === 'select' && typeof matchedEl.showPicker === 'function') {
                         try { matchedEl.showPicker(); } catch(e) {}
@@ -2565,6 +2613,14 @@ async function clickElementOnActivePage(targetText) {
                         try { matchedEl.click(); } catch(e) {}
                     }
 
+                    // Persist guest focus inside search bar input after event dispatch
+                    setTimeout(() => {
+                        try {
+                            matchedEl.focus();
+                            if (typeof matchedEl.select === 'function') matchedEl.select();
+                        } catch(e) {}
+                    }, 50);
+
                     const m = getElementMetadata(matchedEl);
                     const foundLabel = (m.txt || m.val || m.aria || m.placeholder || m.title || matchType || targetRaw).trim();
                     const isInput = tag === 'input' || tag === 'textarea' || matchedEl.getAttribute('role') === 'searchbox';
@@ -2580,16 +2636,50 @@ async function clickElementOnActivePage(targetText) {
             logTelemetry('act', `AiClick::ClickElement("${result.label}" <${result.tag}> [${result.matchType}])`);
             const markBadge = result.markIndex ? ` <strong>[Mark #${result.markIndex}]</strong>` : '';
 
-            // Shift focus away from AI Chat Input so typing immediately goes into search bar / webview
-            if (txtChatInput) txtChatInput.blur();
+            // Shift focus away from AI Chat Box and pass focus directly to Webview Search Bar
+            if (txtChatInput) {
+                txtChatInput.blur();
+                txtChatInput.value = '';
+            }
+            if (document.activeElement && document.activeElement !== tab.webview && document.activeElement !== urlInput) {
+                try { document.activeElement.blur(); } catch(e) {}
+            }
             if (tab && tab.webview) {
                 try { tab.webview.focus(); } catch(e) {}
             }
+            setTimeout(() => {
+                if (result.isInput && tab && tab.webview) {
+                    try { tab.webview.focus(); } catch(e) {}
+                }
+            }, 80);
 
-            const focusNote = result.isInput ? ' Cursor and typing focus opened directly in the search bar! Type away.' : '';
+            const focusNote = result.isInput ? ' ⌨️ <strong>Typing focus opened directly inside the Search Bar! Any key you type will now go straight into the search bar.</strong>' : '';
             return {
                 success: true,
                 message: `🎯 AI dynamically scanned screen & clicked on${markBadge} <strong>"${result.label.slice(0, 60)}"</strong> (&lt;${result.tag}&gt; element).${focusNote}`
+            };
+        } else if (isSearchIntent && urlInput) {
+            // Omnibox fallback if no search input inside webview page was matched
+            urlInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            const origOutline = urlInput.style.outline;
+            const origBoxShadow = urlInput.style.boxShadow;
+            urlInput.style.outline = '3px solid #FFE600';
+            urlInput.style.boxShadow = '0 0 20px #FFE600';
+            setTimeout(() => {
+                urlInput.style.outline = origOutline;
+                urlInput.style.boxShadow = origBoxShadow;
+            }, 1200);
+
+            urlInput.focus();
+            urlInput.select();
+            if (txtChatInput) {
+                txtChatInput.blur();
+                txtChatInput.value = '';
+            }
+
+            return {
+                success: true,
+                message: '🎯 AI focused the <strong>Browser Omnibox / Search Bar</strong>. Any keys you type will now go directly into the search bar!'
             };
         } else {
             return {
@@ -2660,15 +2750,34 @@ async function executeAiBrowserCommand(promptText) {
     }
 
     // 0a. AUTOMATED DYNAMIC PAGE & TOOLBAR CLICK COMMANDS ("click search bar", "click plus icon", "click #7", "click submit", "click +")
-    const isClickIntent = (lower.includes('click') || lower.includes('press') || lower.includes('tap') || lower.includes('hashtag') || lower.includes('#') || lower.includes('plus') || lower.includes('+')) &&
-                          !matches('close tab', 'switch tab', 'next tab', 'prev tab', 'mute tab', 'move tab', 'close all tabs');
+    const isClickIntent = (
+        lower.includes('click') || 
+        lower.includes('press') || 
+        lower.includes('tap') || 
+        lower.includes('hashtag') || 
+        lower.includes('#') || 
+        lower.includes('plus') || 
+        lower.includes('+') ||
+        lower.includes('search bar') ||
+        lower.includes('search box') ||
+        lower.includes('search input') ||
+        lower.includes('search field') ||
+        lower.includes('default search engine') ||
+        lower.includes('search engine')
+    ) && !matches('close tab', 'switch tab', 'next tab', 'prev tab', 'mute tab', 'move tab', 'close all tabs');
 
     if (isClickIntent) {
         let targetText = raw
-            .replace(/.*?\b(?:click\s+on\s+the\s+|click\s+on\s+these\s+|click\s+on\s+|click\s+the\s+|click\s+|press\s+|tap\s+|select\s+)/i, '')
-            .replace(/\b(?:these\s+|yellow\s+gaps\s+like\s+|yellow\s+gap\s+like\s+|yellow\s+gap\s+|yellow\s+badge\s+|gaps\s+like\s+|gap\s+like\s+|gap\s+|badge\s+|anywhere\s+on\s+the\s+screen|anywhere\s+on\s+screen|on\s+screen)\b/gi, '')
+            .replace(/.*?\b(?:click\s+on\s+the\s+|click\s+on\s+these\s+|click\s+on\s+|click\s+the\s+|click\s+|press\s+|tap\s+|select\s+|focus\s+on\s+|focus\s+|go\s+to\s+|open\s+|type\s+in\s+)/i, '')
+            .replace(/\b(?:these\s+|yellow\s+gaps\s+like\s+|yellow\s+gap\s+like\s+|yellow\s+gap\s+|yellow\s+badge\s+|gaps\s+like\s+|gap\s+like\s+|gap\s+|badge\s+|anywhere\s+on\s+the\s+screen|anywhere\s+on\s+screen|on\s+screen|default\s+search\s+engines?|search\s+engine\s+)*\b/gi, '')
             .replace(/\s+(option|element)$/i, '')
             .trim();
+
+        if (lower.includes('search bar') || lower.includes('search box') || lower.includes('search input') || lower.includes('search field') || lower.includes('search engine')) {
+            if (!targetText || targetText.length === 0 || targetText.toLowerCase() === 's') {
+                targetText = 'search bar';
+            }
+        }
 
         if (!targetText && (lower.includes('hashtag') || lower.includes('#'))) {
             const m = raw.match(/(?:hashtag|mark|gap|badge|#)\s*\d+/i);
@@ -3667,13 +3776,16 @@ function processAiUserChat(userPrompt) {
     const cleanPrompt = userPrompt.trim();
 
     addChatMessage('You', cleanPrompt, 'user');
-    if (txtChatInput) txtChatInput.value = '';
+    if (txtChatInput) {
+        txtChatInput.value = '';
+        txtChatInput.blur();
+    }
 
     setTimeout(async () => {
         const reply = await executeAiBrowserCommand(cleanPrompt);
         addChatMessage('AI Assistant', reply, 'ai');
         logTelemetry('act', `AI Assistant executed command: "${cleanPrompt}"`);
-    }, 300);
+    }, 100);
 }
 
 if (btnSendChat) {
