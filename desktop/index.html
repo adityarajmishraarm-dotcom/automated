@@ -92,7 +92,7 @@
             <div class="nav-extra-tools">
                 <!-- Single Unified Browser Tools & Page Utilities Dropdown -->
                 <select id="toolsDropdown" class="tools-dropdown" title="Browser Tools & Page Utilities">
-                    <option value="wallpaper">🖼️ Custom Wallpaper</option>
+                    <option value="" disabled selected>🛠️ Tools & Utilities</option>
                     <option value="reader">📖 Reader Mode</option>
                     <option value="qr">📱 Mobile QR Code</option>
                     <option value="mute">🔊 Mute / Unmute Audio</option>
@@ -400,45 +400,6 @@
                 <span id="tldrSummaryText">Generating instant executive summary of current page...</span>
             </div>
             <button class="btn-small" id="btnCloseTldr">✕</button>
-        </div>
-    </div>
-
-    <!-- Custom Wallpaper Studio Modal -->
-    <div class="command-palette-modal" id="wallpaperModal" style="display: none;">
-        <div class="command-palette-backdrop" id="wallpaperBackdrop"></div>
-        <div class="command-palette-container" style="max-width: 580px; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(30px); border-radius: 16px; border: 1px solid rgba(0,0,0,0.08); box-shadow: 0 20px 40px rgba(0,0,0,0.12);">
-            <div class="command-palette-header" style="border-bottom: 1px solid rgba(0,0,0,0.06); padding: 14px 18px; display: flex; align-items: center; justify-content: space-between;">
-                <div style="display: flex; align-items: center; gap: 8px;">
-                    <span class="palette-icon" style="font-size: 18px;">🖼️</span>
-                    <span style="font-weight: 700; font-size: 14px; color: #1D1D1F;">Custom Wallpaper Studio</span>
-                </div>
-                <span class="palette-badge" id="btnCloseWallpaperModal" style="cursor: pointer; background: rgba(0,0,0,0.05); color: #1D1D1F; border-radius: 6px; padding: 3px 8px; font-size: 11px; font-weight: 600;">ESC</span>
-            </div>
-            <div style="padding: 20px; display: flex; flex-direction: column; gap: 16px;">
-                <div style="font-size: 12.5px; color: #515154; line-height: 1.5;">Personalize your homepage background. Choose a macOS preset, paste an image URL, build a color gradient, or upload an image file.</div>
-
-                <div style="font-size: 12px; font-weight: 700; color: #1D1D1F; text-transform: uppercase; letter-spacing: 0.03em;">Presets</div>
-                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;" id="wallpaperPresetsGrid">
-                    <div class="wallpaper-preset-card" data-wallpaper="default" style="height: 64px; border-radius: 10px; background: #FBFBFD; border: 2px solid #007AFF; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; color: #1D1D1F; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">Default macOS</div>
-                    <div class="wallpaper-preset-card" data-wallpaper="linear-gradient(135deg, #a8c0ff 0%, #3f2b96 100%)" style="height: 64px; border-radius: 10px; background: linear-gradient(135deg, #a8c0ff 0%, #3f2b96 100%); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,0.4);">Sonoma Waves</div>
-                    <div class="wallpaper-preset-card" data-wallpaper="linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%)" style="height: 64px; border-radius: 10px; background: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; color: #1D1D1F;">Soft Aurora</div>
-                    <div class="wallpaper-preset-card" data-wallpaper="linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%)" style="height: 64px; border-radius: 10px; background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; color: #1D1D1F;">Peach Sunset</div>
-                </div>
-
-                <div style="font-size: 12px; font-weight: 700; color: #1D1D1F; text-transform: uppercase; letter-spacing: 0.03em; margin-top: 4px;">Custom Image URL</div>
-                <div style="display: flex; gap: 8px;">
-                    <input type="text" id="txtWallpaperUrl" placeholder="Paste image URL (https://...)" style="flex: 1; padding: 8px 12px; border-radius: 10px; border: 1px solid rgba(0,0,0,0.12); font-size: 12.5px; outline: none; background: #FFFFFF; color: #1D1D1F;" />
-                    <button class="btn-small btn-blue" id="btnApplyWallpaperUrl" style="padding: 8px 14px; border-radius: 10px; font-weight: 600; background: #007AFF; color: #fff; border: none; cursor: pointer;">Apply URL</button>
-                </div>
-
-                <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 4px;">
-                    <label style="padding: 8px 14px; border-radius: 10px; background: rgba(0,0,0,0.05); color: #1D1D1F; font-size: 12px; font-weight: 600; cursor: pointer; border: 1px solid rgba(0,0,0,0.08);">
-                        📁 Upload Local Image
-                        <input type="file" id="fileWallpaperUpload" accept="image/*" style="display: none;" />
-                    </label>
-                    <button id="btnResetWallpaper" style="padding: 8px 14px; border-radius: 10px; background: rgba(255,59,48,0.1); color: #FF3B30; font-size: 12px; font-weight: 600; border: 1px solid rgba(255,59,48,0.2); cursor: pointer;">Reset Default</button>
-                </div>
-            </div>
         </div>
     </div>
 

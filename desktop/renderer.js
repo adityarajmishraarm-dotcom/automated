@@ -3154,14 +3154,6 @@ async function executeAiBrowserCommand(promptText) {
   └ <em>Action:</em> Jumps to start or end of active web page.<br>
 • <strong>Command / Prompt:</strong> <code>tell me the shortcut</code><br>
   └ <em>Action:</em> Displays all browser keyboard hotkeys and system shortcuts.`;
-    // 0bg. CUSTOM WALLPAPER STUDIO COMMANDS ("wallpaper", "change wallpaper", "set wallpaper", "custom wallpaper", "reset wallpaper")
-    if (matches('wallpaper', 'background image', 'custom background', 'change background')) {
-        if (matches('reset', 'default', 'remove', 'clear')) {
-            const msg = applyCustomWallpaper('default');
-            return msg;
-        }
-        openWallpaperModal();
-        return `🖼️ Opened <strong>Custom Wallpaper Studio</strong>. You can choose macOS presets, paste a custom image URL, or upload your own wallpaper image file!`;
     }
 
     // 0c. NUMBERED TAB SWITCHING ("go to second tab", "switch to 2nd tab", "go to tab 2", "open 2nd tab")
@@ -4210,9 +4202,6 @@ if (toolsDropdown) {
         const val = e.target.value;
         if (!val) return;
         switch (val) {
-            case 'wallpaper':
-                openWallpaperModal();
-                break;
             case 'reader':
                 openReaderMode();
                 break;
@@ -4339,114 +4328,20 @@ function closeQrCodeModal() {
 if (btnCloseQrCodeModal) btnCloseQrCodeModal.onclick = closeQrCodeModal;
 if (qrCodeBackdrop) qrCodeBackdrop.onclick = closeQrCodeModal;
 
-// 12. Custom Wallpaper Studio Engine & Local Persistence
-const wallpaperModal = document.getElementById('wallpaperModal');
-const wallpaperBackdrop = document.getElementById('wallpaperBackdrop');
-const btnCloseWallpaperModal = document.getElementById('btnCloseWallpaperModal');
-const txtWallpaperUrl = document.getElementById('txtWallpaperUrl');
-const btnApplyWallpaperUrl = document.getElementById('btnApplyWallpaperUrl');
-const fileWallpaperUpload = document.getElementById('fileWallpaperUpload');
-const btnResetWallpaper = document.getElementById('btnResetWallpaper');
-const wallpaperPresetsGrid = document.getElementById('wallpaperPresetsGrid');
-
-function applyCustomWallpaper(wallpaperValue) {
-    if (!wallpaperValue || wallpaperValue === 'default') {
-        document.body.style.background = '';
-        document.body.style.backgroundImage = '';
-        document.body.style.backgroundSize = '';
-        document.body.style.backgroundPosition = '';
-        const mainWorkspace = document.querySelector('.main-browser-workspace');
-        if (mainWorkspace) mainWorkspace.style.background = '';
-        localStorage.removeItem('antigravity_custom_wallpaper');
-        logTelemetry('act', 'WallpaperEngine::ResetDefault()');
-        return '✨ Reset wallpaper to default pristine macOS Light background.';
-    }
-
-    let bgStyle = wallpaperValue;
-    if (wallpaperValue.startsWith('http://') || wallpaperValue.startsWith('https://') || wallpaperValue.startsWith('data:image')) {
-        bgStyle = `url("${wallpaperValue}") center/cover no-repeat fixed`;
-    }
-
-    document.body.style.background = bgStyle;
-    if (bgStyle.includes('url(')) {
-        document.body.style.backgroundSize = 'cover';
-        document.body.style.backgroundPosition = 'center';
-        document.body.style.backgroundAttachment = 'fixed';
-    }
-
-    const mainWorkspace = document.querySelector('.main-browser-workspace');
-    if (mainWorkspace) {
-        mainWorkspace.style.background = 'transparent';
-    }
-
-    localStorage.setItem('antigravity_custom_wallpaper', wallpaperValue);
-    logTelemetry('act', 'WallpaperEngine::SetCustomWallpaper()');
-    return `🖼️ Applied custom wallpaper successfully!`;
-}
-
-function openWallpaperModal() {
-    if (wallpaperModal) wallpaperModal.style.display = 'flex';
-    const saved = localStorage.getItem('antigravity_custom_wallpaper');
-    if (txtWallpaperUrl && saved && (saved.startsWith('http') || saved.startsWith('data:'))) {
-        txtWallpaperUrl.value = saved;
+// 11. Split Screen Dual View Toggle
+let isSplitView = false;
+function toggleSplitScreen() {
+    const container = document.getElementById('webviewContainer');
+    if (!container) return;
+    isSplitView = !isSplitView;
+    if (isSplitView) {
+        container.classList.add('split-view-active');
+        logTelemetry('act', 'SplitScreen::EnableSideBySide()');
+    } else {
+        container.classList.remove('split-view-active');
+        logTelemetry('act', 'SplitScreen::Disable()');
     }
 }
-
-function closeWallpaperModal() {
-    if (wallpaperModal) wallpaperModal.style.display = 'none';
-}
-
-if (btnCloseWallpaperModal) btnCloseWallpaperModal.onclick = closeWallpaperModal;
-if (wallpaperBackdrop) wallpaperBackdrop.onclick = closeWallpaperModal;
-
-if (wallpaperPresetsGrid) {
-    wallpaperPresetsGrid.querySelectorAll('.wallpaper-preset-card').forEach(card => {
-        card.onclick = () => {
-            const wp = card.getAttribute('data-wallpaper');
-            applyCustomWallpaper(wp);
-            closeWallpaperModal();
-        };
-    });
-}
-
-if (btnApplyWallpaperUrl) {
-    btnApplyWallpaperUrl.onclick = () => {
-        const url = (txtWallpaperUrl ? txtWallpaperUrl.value : '').trim();
-        if (url) {
-            applyCustomWallpaper(url);
-            closeWallpaperModal();
-        }
-    };
-}
-
-if (fileWallpaperUpload) {
-    fileWallpaperUpload.onchange = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = (evt) => {
-                applyCustomWallpaper(evt.target.result);
-                closeWallpaperModal();
-            };
-            reader.readAsDataURL(file);
-        }
-    };
-}
-
-if (btnResetWallpaper) {
-    btnResetWallpaper.onclick = () => {
-        applyCustomWallpaper('default');
-        closeWallpaperModal();
-    };
-}
-
-// Load persisted custom wallpaper on app startup
-(function loadSavedCustomWallpaper() {
-    const saved = localStorage.getItem('antigravity_custom_wallpaper');
-    if (saved) {
-        applyCustomWallpaper(saved);
-    }
-})();
 
 function processAiUserChat(userPrompt) {
     if (!userPrompt || !userPrompt.trim()) return;
