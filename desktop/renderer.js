@@ -86,7 +86,7 @@ function logTelemetry(type, message, meta = '') {
                 activeTabUrl: activeTab ? activeTab.url : 'https://www.google.com',
                 adblockCount: typeof adblockCount !== 'undefined' ? adblockCount : 0
             });
-        } catch (e) {}
+        } catch (e) { }
     }
 }
 
@@ -260,14 +260,14 @@ function getIconForDomain(domain) {
 
 function trackAppUsage(url, title) {
     if (!url || url === 'about:blank' || url.startsWith('file:') || url.startsWith('data:')) return;
-    
+
     try {
         const parsedUrl = new URL(url);
         let domain = parsedUrl.hostname.replace(/^www\./, '');
         if (!domain) return;
 
         const cleanName = title && !title.includes('http') ? title.split('-')[0].trim() : domain.charAt(0).toUpperCase() + domain.slice(1);
-        
+
         let app = appUsageStore.find(a => a.domain === domain || domain.includes(a.domain) || a.domain.includes(domain));
         if (app) {
             app.count = (app.count || 0) + 1;
@@ -473,7 +473,7 @@ const tabGroups = [
 // Tab Creation (Spawn with deep state)
 function createTab(url, title = 'New Tab', shouldActivate = true, isPinned = false, workspace = 'default') {
     const tabId = nextTabId++;
-    
+
     // Create native <webview> element
     const webview = document.createElement('webview');
     webview.className = 'native-webview';
@@ -653,9 +653,9 @@ function parseTabIndex(text) {
         }
     }
 
-    const digitMatch = lower.match(/(?:tab\s*#?|#)\s*(\d+)/i) || 
-                       lower.match(/\b(\d+)(?:st|nd|rd|th)?\s*tab\b/i) || 
-                       lower.match(/\b(\d+)\b/);
+    const digitMatch = lower.match(/(?:tab\s*#?|#)\s*(\d+)/i) ||
+        lower.match(/\b(\d+)(?:st|nd|rd|th)?\s*tab\b/i) ||
+        lower.match(/\b(\d+)\b/);
     if (digitMatch) {
         const val = parseInt(digitMatch[1], 10);
         if (!isNaN(val)) return val;
@@ -695,8 +695,8 @@ function closeRandomTab() {
 function closeTabByTitleOrQuery(query) {
     if (!query || !tabs || tabs.length === 0) return null;
     const q = query.toLowerCase().trim();
-    const targetTab = tabs.find(t => 
-        (t.title && t.title.toLowerCase().includes(q)) || 
+    const targetTab = tabs.find(t =>
+        (t.title && t.title.toLowerCase().includes(q)) ||
         (t.url && t.url.toLowerCase().includes(q))
     );
     if (targetTab) {
@@ -712,7 +712,7 @@ function closeTabByTitleOrQuery(query) {
 function extractTabIndexFromPrompt(text) {
     if (!text) return null;
     const lower = text.toLowerCase();
-    
+
     const wordToNum = {
         'first': 1, '1st': 1,
         'second': 2, '2nd': 2,
@@ -789,8 +789,8 @@ function restoreClosedTabByQueryOrIndex(queryOrIdx) {
         targetIdx = queryOrIdx - 1;
     } else if (typeof queryOrIdx === 'string') {
         const q = queryOrIdx.toLowerCase().trim();
-        targetIdx = closedTabsStack.findIndex(s => 
-            (s.title && s.title.toLowerCase().includes(q)) || 
+        targetIdx = closedTabsStack.findIndex(s =>
+            (s.title && s.title.toLowerCase().includes(q)) ||
             (s.url && s.url.toLowerCase().includes(q))
         );
     }
@@ -839,7 +839,7 @@ function toggleMuteTab(tabId, event) {
         if (tab.webview && typeof tab.webview.setAudioMuted === 'function') {
             tab.webview.setAudioMuted(tab.isMuted);
         }
-    } catch (e) {}
+    } catch (e) { }
 
     renderTabStrip();
     logTelemetry('act', `TabResourceTracker::ToggleMute(${tab.isMuted})`, `Tab #${tabId}`);
@@ -856,7 +856,7 @@ function duplicateTab(tabId) {
         if (orig.webview && typeof orig.webview.getURL === 'function') {
             currentUrl = orig.webview.getURL() || orig.url;
         }
-    } catch (e) {}
+    } catch (e) { }
 
     const newTab = createTab(currentUrl, `${orig.title || 'Tab'} (Copy)`, true, orig.isPinned, orig.workspace);
     const createdIdx = tabs.findIndex(t => t.id === newTab.id);
@@ -1059,7 +1059,7 @@ function muteSite(tabId) {
         });
         renderTabStrip();
         logTelemetry('act', `MuteSite::Domain("${domain}")`);
-    } catch (e) {}
+    } catch (e) { }
 }
 
 function bookmarkAllTabs() {
@@ -1136,7 +1136,7 @@ function showTabContextMenu(tabId, x, y) {
     const createItem = (label, action, shortcut = '', disabled = false) => {
         const item = document.createElement('div');
         item.style.cssText = `padding:7px 12px;border-radius:6px;cursor:${disabled ? 'default' : 'pointer'};display:flex;justify-content:space-between;align-items:center;transition:background 0.1s;color:${disabled ? '#64748b' : '#f8fafc'};`;
-        
+
         const labelSpan = document.createElement('span');
         labelSpan.textContent = label;
         item.appendChild(labelSpan);
@@ -1202,7 +1202,7 @@ function showTabContextMenu(tabId, x, y) {
     if (!tab.isPinned) {
         createItem('Close', () => closeTab(tabId), 'Ctrl+W');
     } else {
-        createItem('Close (Pinned)', () => {}, 'Ctrl+W', true);
+        createItem('Close (Pinned)', () => { }, 'Ctrl+W', true);
     }
     createItem('Close duplicate tabs', () => closeDuplicateTabs());
     createItem('Close other tabs', () => closeOtherTabs(tabId));
@@ -1246,7 +1246,7 @@ function setupWebviewEvents(tab) {
         try {
             tab.title = wv.getTitle() || tab.title;
             tab.url = wv.getURL() || tab.url;
-        } catch (e) {}
+        } catch (e) { }
 
         renderTabStrip();
 
@@ -1270,7 +1270,7 @@ function setupWebviewEvents(tab) {
         try {
             tab.title = wv.getTitle() || tab.title;
             tab.url = wv.getURL() || tab.url;
-        } catch (e) {}
+        } catch (e) { }
 
         if (tab.id === activeTabId) {
             loadingBar.classList.remove('loading');
@@ -1525,11 +1525,13 @@ const SOM_INJECTION_SCRIPT = `
 })();
 `;
 
-// Clear SoM Markers Script
+// Clear SoM Markers & Keyword Numbering Overlays Script
 const SOM_CLEAR_SCRIPT = `
 (function() {
     const oldContainer = document.getElementById('antigravity-som-container');
     if (oldContainer) oldContainer.remove();
+    const oldKwContainer = document.getElementById('antigravity-keyword-numbering-container');
+    if (oldKwContainer) oldKwContainer.remove();
 })();
 `;
 
@@ -1696,7 +1698,7 @@ function renderGrepResults() {
             const isTarget = (l === lineIdx);
             const lineNumFormatted = String(l + 1).padStart(5, ' ');
             const escapedContent = escapeHtml(currentHtmlLines[l]);
-            
+
             if (isTarget) {
                 html += `<span class="grep-line target"><span class="line-no">${lineNumFormatted}:</span> <mark>${escapedContent}</mark></span>\n`;
             } else {
@@ -2234,11 +2236,11 @@ async function clickElementOnActivePage(targetText) {
     // -------------------------------------------------------------------------
 
     // A. Plus Icon / New Tab Button (+ button on address bar / tab strip)
-    const isPlusIntent = targetLower.includes('plus') || 
-                         targetLower.includes('+') || 
-                         targetLower.includes('add tab') || 
-                         targetLower.includes('new tab button') || 
-                         targetLower.includes('open new tab');
+    const isPlusIntent = targetLower.includes('plus') ||
+        targetLower.includes('+') ||
+        targetLower.includes('add tab') ||
+        targetLower.includes('new tab button') ||
+        targetLower.includes('open new tab');
 
     if (isPlusIntent) {
         const btnAddTab = document.getElementById('btnAddTab');
@@ -2255,7 +2257,7 @@ async function clickElementOnActivePage(targetText) {
 
             btnAddTab.click();
             if (txtChatInput) {
-                try { txtChatInput.focus(); } catch(e) {}
+                try { txtChatInput.focus(); } catch (e) { }
             }
             return {
                 success: true,
@@ -2265,11 +2267,11 @@ async function clickElementOnActivePage(targetText) {
     }
 
     // B. Address Bar / Omnibox Search Input
-    const isOmniboxIntent = targetLower.includes('address bar') || 
-                            targetLower.includes('omnibox') || 
-                            targetLower.includes('url bar') || 
-                            targetLower.includes('url input') || 
-                            targetLower.includes('browser search bar');
+    const isOmniboxIntent = targetLower.includes('address bar') ||
+        targetLower.includes('omnibox') ||
+        targetLower.includes('url bar') ||
+        targetLower.includes('url input') ||
+        targetLower.includes('browser search bar');
 
     if (isOmniboxIntent && urlInput) {
         urlInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -2320,7 +2322,7 @@ async function clickElementOnActivePage(targetText) {
 
                     el.focus();
                     if (typeof el.showPicker === 'function') {
-                        try { el.showPicker(); } catch(e) {}
+                        try { el.showPicker(); } catch (e) { }
                     } else {
                         el.click();
                     }
@@ -2375,12 +2377,12 @@ async function clickElementOnActivePage(targetText) {
     // STEP 2: CHECK ACTIVE WEBVIEW PAGE (Screen-Wide Dynamic DOM Scan)
     // -------------------------------------------------------------------------
 
-    const isSearchIntent = targetLower.includes('search bar') || 
-                           targetLower.includes('search box') || 
-                           targetLower.includes('search input') || 
-                           targetLower.includes('search field') || 
-                           targetLower.includes('search') ||
-                           targetLower.includes('find');
+    const isSearchIntent = targetLower.includes('search bar') ||
+        targetLower.includes('search box') ||
+        targetLower.includes('search input') ||
+        targetLower.includes('search field') ||
+        targetLower.includes('search') ||
+        targetLower.includes('find');
 
     if (!tab || !tab.webview) {
         if (isSearchIntent && urlInput) {
@@ -2741,18 +2743,18 @@ async function clickElementOnActivePage(targetText) {
                     if (tab && tab.webview) {
                         tab.webview.loadURL(navUrl);
                     }
-                } catch(e) {}
+                } catch (e) { }
             }
 
-            const isExplicitSearchTarget = targetLower.includes('search bar') || 
-                                           targetLower.includes('search box') || 
-                                           targetLower.includes('search input') || 
-                                           targetLower.includes('search field') || 
-                                           targetLower.includes('omnibox') || 
-                                           targetLower.includes('address bar') || 
-                                           targetLower.includes('url bar') || 
-                                           targetLower === 'sb' || 
-                                           targetLower === 's';
+            const isExplicitSearchTarget = targetLower.includes('search bar') ||
+                targetLower.includes('search box') ||
+                targetLower.includes('search input') ||
+                targetLower.includes('search field') ||
+                targetLower.includes('omnibox') ||
+                targetLower.includes('address bar') ||
+                targetLower.includes('url bar') ||
+                targetLower === 'sb' ||
+                targetLower === 's';
 
             if (isExplicitSearchTarget) {
                 // Transfer focus to Webview Search Bar ONLY for Search Bar clicks
@@ -2761,20 +2763,20 @@ async function clickElementOnActivePage(targetText) {
                     txtChatInput.value = '';
                 }
                 if (document.activeElement && document.activeElement !== tab.webview && document.activeElement !== urlInput) {
-                    try { document.activeElement.blur(); } catch(e) {}
+                    try { document.activeElement.blur(); } catch (e) { }
                 }
                 if (tab && tab.webview) {
-                    try { tab.webview.focus(); } catch(e) {}
+                    try { tab.webview.focus(); } catch (e) { }
                 }
                 setTimeout(() => {
                     if (tab && tab.webview) {
-                        try { tab.webview.focus(); } catch(e) {}
+                        try { tab.webview.focus(); } catch (e) { }
                     }
                 }, 80);
             } else {
                 // For links, buttons, plus icon, badges, dropdowns: Keep typing default on AI Agent!
                 if (txtChatInput) {
-                    try { txtChatInput.focus(); } catch(e) {}
+                    try { txtChatInput.focus(); } catch (e) { }
                 }
             }
 
@@ -2894,7 +2896,7 @@ async function typeAndSubmitInSearchBar(textToType) {
                 }
                 return `⌨️ AI typed <strong>"${text}"</strong> into the Search Bar and executed search!`;
             }
-        } catch(e) {
+        } catch (e) {
             logTelemetry('warn', `typeAndSubmitInSearchBar webview failed: ${e.message}`);
         }
     }
@@ -3011,12 +3013,30 @@ async function highlightAndNumberOccurrences(keyword) {
 
                 if (document.body) document.body.appendChild(container);
 
+                // Auto-fade and clean up yellow badges & boxes after 2.5s so they never linger on screen!
+                setTimeout(() => {
+                    if (container && container.parentNode) {
+                        container.style.transition = 'opacity 0.4s ease';
+                        container.style.opacity = '0';
+                        setTimeout(() => {
+                            if (container && container.parentNode) container.remove();
+                        }, 400);
+                    }
+                }, 2500);
+
+                // Clean up on scroll so yellow boxes never float out of position!
+                const removeOnScroll = () => {
+                    if (container && container.parentNode) container.remove();
+                    window.removeEventListener('scroll', removeOnScroll);
+                };
+                window.addEventListener('scroll', removeOnScroll, { once: true });
+
                 return { count: matchedItems.length, items: matchedItems.map((m, i) => ({ rank: i + 1, text: m.text })) };
             })();
         `);
 
         return res;
-    } catch(e) {
+    } catch (e) {
         return { success: false, count: 0 };
     }
 }
@@ -3134,6 +3154,14 @@ async function executeAiBrowserCommand(promptText) {
   └ <em>Action:</em> Jumps to start or end of active web page.<br>
 • <strong>Command / Prompt:</strong> <code>tell me the shortcut</code><br>
   └ <em>Action:</em> Displays all browser keyboard hotkeys and system shortcuts.`;
+    // 0bg. CUSTOM WALLPAPER STUDIO COMMANDS ("wallpaper", "change wallpaper", "set wallpaper", "custom wallpaper", "reset wallpaper")
+    if (matches('wallpaper', 'background image', 'custom background', 'change background')) {
+        if (matches('reset', 'default', 'remove', 'clear')) {
+            const msg = applyCustomWallpaper('default');
+            return msg;
+        }
+        openWallpaperModal();
+        return `🖼️ Opened <strong>Custom Wallpaper Studio</strong>. You can choose macOS presets, paste a custom image URL, or upload your own wallpaper image file!`;
     }
 
     // 0c. NUMBERED TAB SWITCHING ("go to second tab", "switch to 2nd tab", "go to tab 2", "open 2nd tab")
@@ -3198,7 +3226,7 @@ async function executeAiBrowserCommand(promptText) {
         const activeTab = getActiveTab();
         if (activeTab && activeTab.webview) {
             activeTab.isMuted = !activeTab.isMuted;
-            try { activeTab.webview.setAudioMuted(activeTab.isMuted); } catch(e) {}
+            try { activeTab.webview.setAudioMuted(activeTab.isMuted); } catch (e) { }
             renderTabStrip();
             return activeTab.isMuted ? `🔇 Muted audio playback on active tab.` : `🔊 Unmuted audio playback on active tab.`;
         }
@@ -3273,12 +3301,12 @@ async function executeAiBrowserCommand(promptText) {
 
     // 0a. AUTOMATED DYNAMIC PAGE & TOOLBAR CLICK COMMANDS ("click search bar", "click plus icon", "click #7", "click submit", "click on youtube link", "open second youtube")
     const isClickIntent = (
-        lower.includes('click') || 
-        lower.includes('press') || 
-        lower.includes('tap') || 
-        lower.includes('hashtag') || 
-        lower.includes('#') || 
-        lower.includes('plus') || 
+        lower.includes('click') ||
+        lower.includes('press') ||
+        lower.includes('tap') ||
+        lower.includes('hashtag') ||
+        lower.includes('#') ||
+        lower.includes('plus') ||
         lower.includes('+') ||
         lower.includes('search bar') ||
         lower.includes('search box') ||
@@ -3327,9 +3355,9 @@ async function executeAiBrowserCommand(promptText) {
 
     // 0b. PROPORTIONAL LOGICAL SCROLL COMMANDS & SHORTCUTS (scroll 50, s50, sl50, sle50, s 50, sl 50, sle 50, s0, s1000)
     const isScrollKeyword = lower.includes('scroll');
-    const isScrollShortcut = /^(?:s|sl|sle|sc)\s*\d+/i.test(lower) || 
-                             /^(?:s|sl|sle|sc)\s+(?:up|down|top|bottom|left|right|start|end)/i.test(lower) ||
-                             /\b(?:s|sl|sle|sc)(\d+)\b/i.test(lower);
+    const isScrollShortcut = /^(?:s|sl|sle|sc)\s*\d+/i.test(lower) ||
+        /^(?:s|sl|sle|sc)\s+(?:up|down|top|bottom|left|right|start|end)/i.test(lower) ||
+        /\b(?:s|sl|sle|sc)(\d+)\b/i.test(lower);
 
     if (isScrollKeyword || isScrollShortcut) {
         let direction = 'down';
@@ -3380,7 +3408,7 @@ async function executeAiBrowserCommand(promptText) {
     // 1. OPEN SPECIFIC WEBSITE (e.g. "open youtube", "open github.com", "open google", "open x")
     if (lower.startsWith('open ') && !matches('history', 'split', 'palette', 'sidebar', 'menu', 'group', 'window', 'reading list')) {
         let target = raw.substring(5).trim();
-        
+
         if (matches('new tab', 'a new tab', 'blank tab', 'tab')) {
             createTab('https://www.google.com', 'Google', true);
             return '✨ Opened a new blank Google tab.';
@@ -3697,7 +3725,7 @@ async function executeAiBrowserCommand(promptText) {
         return html;
     }
 
-// 26. THEME STUDIO COMMANDS
+    // 26. THEME STUDIO COMMANDS
     if (matches('theme', 'dark mode', 'light mode', 'cyberpunk', 'matrix mode', 'purple mode')) {
         let t = 'cyberpunk';
         if (matches('light')) t = 'light';
@@ -4039,7 +4067,7 @@ function toggleMuteAllTabs() {
     tabs.forEach(t => {
         t.isMuted = isAllMuted;
         if (t.webview) {
-            try { t.webview.setAudioMuted(isAllMuted); } catch (e) {}
+            try { t.webview.setAudioMuted(isAllMuted); } catch (e) { }
         }
     });
     if (btnMuteAll) {
@@ -4182,6 +4210,9 @@ if (toolsDropdown) {
         const val = e.target.value;
         if (!val) return;
         switch (val) {
+            case 'wallpaper':
+                openWallpaperModal();
+                break;
             case 'reader':
                 openReaderMode();
                 break;
@@ -4205,16 +4236,6 @@ if (toolsDropdown) {
                 break;
         }
         toolsDropdown.value = '';
-    };
-}
-
-const themeSelect = document.getElementById('themeSelect');
-if (themeSelect) {
-    themeSelect.value = 'light';
-    themeSelect.onchange = (e) => {
-        const selectedTheme = e.target.value;
-        document.body.setAttribute('data-theme', selectedTheme);
-        logTelemetry('act', `ThemeEngine::SetTheme("${selectedTheme}")`);
     };
 }
 
@@ -4255,7 +4276,7 @@ if (searchEngineSelect) {
         currentSearchEngine = e.target.value;
         const targetUrl = searchEngineHomepages[currentSearchEngine] || 'https://www.google.com';
         const name = searchEngineNames[currentSearchEngine] || 'Google';
-        
+
         if (urlInput) {
             urlInput.placeholder = `Search ${name} or type a URL...`;
         }
@@ -4277,7 +4298,7 @@ function setTabZoom(zoomFactor) {
     currentZoomFactor = Math.max(0.5, Math.min(2.0, zoomFactor));
     try {
         tab.webview.setZoomFactor(currentZoomFactor);
-    } catch (e) {}
+    } catch (e) { }
     if (zoomLevelText) zoomLevelText.textContent = `${Math.round(currentZoomFactor * 100)}%`;
     logTelemetry('act', `ZoomController::SetZoom(${currentZoomFactor})`);
 }
@@ -4318,20 +4339,114 @@ function closeQrCodeModal() {
 if (btnCloseQrCodeModal) btnCloseQrCodeModal.onclick = closeQrCodeModal;
 if (qrCodeBackdrop) qrCodeBackdrop.onclick = closeQrCodeModal;
 
-// 11. Split Screen Dual View Toggle
-let isSplitView = false;
-function toggleSplitScreen() {
-    const container = document.getElementById('webviewContainer');
-    if (!container) return;
-    isSplitView = !isSplitView;
-    if (isSplitView) {
-        container.classList.add('split-view-active');
-        logTelemetry('act', 'SplitScreen::EnableSideBySide()');
-    } else {
-        container.classList.remove('split-view-active');
-        logTelemetry('act', 'SplitScreen::Disable()');
+// 12. Custom Wallpaper Studio Engine & Local Persistence
+const wallpaperModal = document.getElementById('wallpaperModal');
+const wallpaperBackdrop = document.getElementById('wallpaperBackdrop');
+const btnCloseWallpaperModal = document.getElementById('btnCloseWallpaperModal');
+const txtWallpaperUrl = document.getElementById('txtWallpaperUrl');
+const btnApplyWallpaperUrl = document.getElementById('btnApplyWallpaperUrl');
+const fileWallpaperUpload = document.getElementById('fileWallpaperUpload');
+const btnResetWallpaper = document.getElementById('btnResetWallpaper');
+const wallpaperPresetsGrid = document.getElementById('wallpaperPresetsGrid');
+
+function applyCustomWallpaper(wallpaperValue) {
+    if (!wallpaperValue || wallpaperValue === 'default') {
+        document.body.style.background = '';
+        document.body.style.backgroundImage = '';
+        document.body.style.backgroundSize = '';
+        document.body.style.backgroundPosition = '';
+        const mainWorkspace = document.querySelector('.main-browser-workspace');
+        if (mainWorkspace) mainWorkspace.style.background = '';
+        localStorage.removeItem('antigravity_custom_wallpaper');
+        logTelemetry('act', 'WallpaperEngine::ResetDefault()');
+        return '✨ Reset wallpaper to default pristine macOS Light background.';
+    }
+
+    let bgStyle = wallpaperValue;
+    if (wallpaperValue.startsWith('http://') || wallpaperValue.startsWith('https://') || wallpaperValue.startsWith('data:image')) {
+        bgStyle = `url("${wallpaperValue}") center/cover no-repeat fixed`;
+    }
+
+    document.body.style.background = bgStyle;
+    if (bgStyle.includes('url(')) {
+        document.body.style.backgroundSize = 'cover';
+        document.body.style.backgroundPosition = 'center';
+        document.body.style.backgroundAttachment = 'fixed';
+    }
+
+    const mainWorkspace = document.querySelector('.main-browser-workspace');
+    if (mainWorkspace) {
+        mainWorkspace.style.background = 'transparent';
+    }
+
+    localStorage.setItem('antigravity_custom_wallpaper', wallpaperValue);
+    logTelemetry('act', 'WallpaperEngine::SetCustomWallpaper()');
+    return `🖼️ Applied custom wallpaper successfully!`;
+}
+
+function openWallpaperModal() {
+    if (wallpaperModal) wallpaperModal.style.display = 'flex';
+    const saved = localStorage.getItem('antigravity_custom_wallpaper');
+    if (txtWallpaperUrl && saved && (saved.startsWith('http') || saved.startsWith('data:'))) {
+        txtWallpaperUrl.value = saved;
     }
 }
+
+function closeWallpaperModal() {
+    if (wallpaperModal) wallpaperModal.style.display = 'none';
+}
+
+if (btnCloseWallpaperModal) btnCloseWallpaperModal.onclick = closeWallpaperModal;
+if (wallpaperBackdrop) wallpaperBackdrop.onclick = closeWallpaperModal;
+
+if (wallpaperPresetsGrid) {
+    wallpaperPresetsGrid.querySelectorAll('.wallpaper-preset-card').forEach(card => {
+        card.onclick = () => {
+            const wp = card.getAttribute('data-wallpaper');
+            applyCustomWallpaper(wp);
+            closeWallpaperModal();
+        };
+    });
+}
+
+if (btnApplyWallpaperUrl) {
+    btnApplyWallpaperUrl.onclick = () => {
+        const url = (txtWallpaperUrl ? txtWallpaperUrl.value : '').trim();
+        if (url) {
+            applyCustomWallpaper(url);
+            closeWallpaperModal();
+        }
+    };
+}
+
+if (fileWallpaperUpload) {
+    fileWallpaperUpload.onchange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (evt) => {
+                applyCustomWallpaper(evt.target.result);
+                closeWallpaperModal();
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+}
+
+if (btnResetWallpaper) {
+    btnResetWallpaper.onclick = () => {
+        applyCustomWallpaper('default');
+        closeWallpaperModal();
+    };
+}
+
+// Load persisted custom wallpaper on app startup
+(function loadSavedCustomWallpaper() {
+    const saved = localStorage.getItem('antigravity_custom_wallpaper');
+    if (saved) {
+        applyCustomWallpaper(saved);
+    }
+})();
 
 function processAiUserChat(userPrompt) {
     if (!userPrompt || !userPrompt.trim()) return;
@@ -4355,7 +4470,7 @@ function processAiUserChat(userPrompt) {
         const isSearchOrInputCmd = /^\s*(?:clk|click|focus|type|write|s|sb|enter)/i.test(cleanPrompt);
 
         if (!isSearchOrInputCmd && txtChatInput) {
-            try { txtChatInput.focus(); } catch(e) {}
+            try { txtChatInput.focus(); } catch (e) { }
         }
     }, 100);
 }
