@@ -1346,9 +1346,7 @@ function navigateActiveWebview(targetUrl) {
             const engineUrls = {
                 'google': `https://www.google.com/search?q=${encodeURIComponent(finalUrl)}`,
                 'duckduckgo': `https://duckduckgo.com/?q=${encodeURIComponent(finalUrl)}`,
-                'bing': `https://www.bing.com/search?q=${encodeURIComponent(finalUrl)}`,
-                'brave': `https://search.brave.com/search?q=${encodeURIComponent(finalUrl)}`,
-                'perplexity': `https://www.perplexity.ai/search?q=${encodeURIComponent(finalUrl)}`
+                'brave': `https://search.brave.com/search?q=${encodeURIComponent(finalUrl)}`
             };
             finalUrl = engineUrls[currentSearchEngine] || engineUrls['google'];
         }
@@ -2299,7 +2297,7 @@ async function clickElementOnActivePage(targetText) {
 
     // C. Main Window Dropdown Select Menus (Search Engine, Workspace, Theme, Tools Dropdown)
     const dropdownControls = [
-        { ids: ['searchEngineSelect'], keywords: ['search engine dropdown', 'search engine', 'google dropdown', 'duckduckgo dropdown', 'bing dropdown', 'brave dropdown', 'perplexity dropdown', 'provider dropdown'] },
+        { ids: ['searchEngineSelect'], keywords: ['search engine dropdown', 'search engine', 'google dropdown', 'duckduckgo dropdown', 'brave dropdown', 'provider dropdown'] },
         { ids: ['workspaceSelect'], keywords: ['workspace dropdown', 'workspace select', 'workspace', 'workspaces'] },
         { ids: ['themeSelect'], keywords: ['theme dropdown', 'theme select', 'color theme', 'theme studio'] },
         { ids: ['toolsDropdownBtn'], keywords: ['tools dropdown', 'tools menu', 'utilities dropdown', 'tools'] }
@@ -3018,13 +3016,11 @@ async function executeAiBrowserCommand(promptText) {
         return `📺 Toggled Split View Side-by-Side mode.`;
     }
 
-    // 0f. AI SEARCH ENGINE SWITCHER ("use duckduckgo", "use bing", "use brave", "use perplexity", "use google", "switch search engine")
-    if (matches('search engine', 'use duckduckgo', 'use bing', 'use brave', 'use perplexity', 'use google', 'open duckduckgo', 'open bing', 'open brave', 'open perplexity')) {
+    // 0f. AI SEARCH ENGINE SWITCHER ("use duckduckgo", "use brave", "use google", "switch search engine")
+    if (matches('search engine', 'use duckduckgo', 'use brave', 'use google', 'open duckduckgo', 'open brave', 'open google')) {
         let targetEngine = null;
         if (matches('duckduckgo', 'duck')) targetEngine = 'duckduckgo';
-        else if (matches('bing')) targetEngine = 'bing';
         else if (matches('brave')) targetEngine = 'brave';
-        else if (matches('perplexity')) targetEngine = 'perplexity';
         else if (matches('google')) targetEngine = 'google';
 
         if (targetEngine) {
@@ -4033,17 +4029,13 @@ let currentSearchEngine = 'google';
 const searchEngineHomepages = {
     'google': 'https://www.google.com',
     'duckduckgo': 'https://duckduckgo.com',
-    'bing': 'https://www.bing.com',
-    'brave': 'https://search.brave.com',
-    'perplexity': 'https://www.perplexity.ai'
+    'brave': 'https://search.brave.com'
 };
 
 const searchEngineNames = {
     'google': 'Google',
     'duckduckgo': 'DuckDuckGo',
-    'bing': 'Bing',
-    'brave': 'Brave',
-    'perplexity': 'Perplexity'
+    'brave': 'Brave'
 };
 
 if (searchEngineSelect) {
