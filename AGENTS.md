@@ -23,3 +23,11 @@
 - Until the user explicitly asks for it, **NEVER** run, use, or mention git commands or version control actions.
 - Focus entirely on building, verifying, and launching the application natively to achieve the user's primary goal.
 
+## 4. Mandatory Visible Full Browser UI on Every Launch
+- **Requirement:** Every launch of the browser by AI must be immediately and prominently visible to the user on their screen.
+- **Enforcement:**
+  - The browser window must never launch hidden, minimized, off-screen, or restricted to a background frame.
+  - Sizing must be the full browser (full work area / maximized display) so the user clearly sees how it operates and interacts in real time.
+  - On launch, the window must be explicitly brought to the foreground, focused, and shown (`mainWindow.show()`, `mainWindow.focus()`, `mainWindow.moveTop()`).
+  - Automated tests and AI harness actions must visually demonstrate navigation, searching, and interactions directly on screen in the active browser window.
+

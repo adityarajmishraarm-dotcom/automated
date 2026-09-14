@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { executeAiBrowserCommand } from '../ai_harness_engine.js';
 
 export default function AiHudSidebar({
     isOpen,
@@ -30,10 +31,21 @@ export default function AiHudSidebar({
     currentTab,
     onSelectTab,
     activeTab = { id: 1, title: 'New Tab', url: '' },
+    tabs = [],
+    onOpenTab,
+    onCloseTab,
     onExecuteClick,
     onExecuteScroll,
     onNavigate,
-    onExtractPageText
+    onExtractPageText,
+    onToggleBookmark,
+    onOpenReaderMode,
+    onOpenQrCode,
+    onOpenTabSearch,
+    onOpenHistory,
+    onOpenAiProviderModal,
+    onCaptureSnapshot,
+    latestSnapshot
 }) {
     // 3 Primary Segmented Tabs
     const [activeModuleTab, setActiveModuleTab] = useState('chat'); // 'chat' | 'shields' | 'tools'
@@ -247,7 +259,7 @@ export default function AiHudSidebar({
     };
 
     // Multilingual Natural Language & Chat Command Processor
-    const handleProcessNlpCommand = (query) => {
+    const handleProcessNlpCommand = async (query) => {
         if (!query || !query.trim()) return;
         const q = query.trim();
         const qLower = q.toLowerCase();
@@ -267,160 +279,63 @@ export default function AiHudSidebar({
         const isHindi = /[\u0900-\u097F]/.test(q) || /\b(karo|jao|niche|upar|bharo|chalao|roko|kholo|batao|kripya)\b/i.test(q);
         const isKorean = /[\uAC00-\uD7AF]/.test(q) || /\b(스크롤|요약|재생|정지|열어|닫아|완성)\b/i.test(q);
 
-        // 1. Scroll Down Commands
-        if (
-            qLower.includes('scroll down') || qLower === 'down' || qLower.includes('scroll next') ||
-            q.includes('नीचे') || qLower.includes('niche') || qLower.includes('scroll down karo') ||
-            q.includes('아래로') || q.includes('내려') || q.includes('스크롤 다운')
-        ) {
-            if (onExecuteScroll) onExecuteScroll('down', 500, false);
-            const reply = isHindi ? '📜 पेज नीचे 500px स्क्रॉल किया गया।' : isKorean ? '📜 페이지를 아래로 500px 스크롤했습니다.' : '📜 Scrolled down 500px on active page.';
-            addAiReply(reply);
-            speakReply(isHindi ? 'पेज नीचे स्क्रॉल किया गया' : isKorean ? '페이지를 아래로 스크롤했습니다' : 'Scrolled down.', isHindi ? 'hi' : isKorean ? 'ko' : 'en');
-            return;
-        }
-
-        // 2. Scroll Up Commands
-        if (
-            qLower.includes('scroll up') || qLower === 'up' ||
-            q.includes('ऊपर') || qLower.includes('upar') || qLower.includes('scroll up karo') ||
-            q.includes('위로') || q.includes('올려') || q.includes('스크롤 업')
-        ) {
-            if (onExecuteScroll) onExecuteScroll('up', 500, false);
-            const reply = isHindi ? '📜 पेज ऊपर 500px स्क्रॉल किया गया।' : isKorean ? '📜 페이지를 위로 500px 스크롤했습니다.' : '📜 Scrolled up 500px on active page.';
-            addAiReply(reply);
-            speakReply(isHindi ? 'पेज ऊपर स्क्रॉल किया गया' : isKorean ? '페이지를 위로 스크롤했습니다' : 'Scrolled up.', isHindi ? 'hi' : isKorean ? 'ko' : 'en');
-            return;
-        }
-
-        // 3. Scroll to Top
-        if (
-            qLower.includes('scroll to top') || qLower.includes('scroll top') || qLower === 'top' ||
-            q.includes('सबसे ऊपर') || qLower.includes('top par') || qLower.includes('sabse upar') ||
-            q.includes('맨 위로') || q.includes('상단으로')
-        ) {
-            if (onExecuteScroll) onExecuteScroll('up', 100, true);
-            const reply = isHindi ? '⬆ पेज के शीर्ष पर पहुँच गए।' : isKorean ? '⬆ 페이지 상단으로 이동했습니다.' : '⬆ Scrolled to the top of the page.';
-            addAiReply(reply);
-            speakReply(isHindi ? 'शीर्ष पर पहुँच गए' : isKorean ? '상단으로 이동했습니다' : 'Scrolled to top.', isHindi ? 'hi' : isKorean ? 'ko' : 'en');
-            return;
-        }
-
-        // 4. Scroll to Bottom
-        if (
-            qLower.includes('scroll to bottom') || qLower.includes('scroll bottom') || qLower === 'bottom' ||
-            q.includes('सबसे नीचे') || qLower.includes('bottom par') || qLower.includes('sabse niche') ||
-            q.includes('맨 아래로') || q.includes('하단으로')
-        ) {
-            if (onExecuteScroll) onExecuteScroll('down', 100, true);
-            const reply = isHindi ? '⬇ पेज के अंत में पहुँच गए।' : isKorean ? '⬇ 페이지 하단으로 이동했습니다.' : '⬇ Scrolled to the bottom of the page.';
-            addAiReply(reply);
-            speakReply(isHindi ? 'पेज के अंत में पहुँच गए' : isKorean ? '하단으로 이동했습니다' : 'Scrolled to bottom.', isHindi ? 'hi' : isKorean ? 'ko' : 'en');
-            return;
-        }
-
-        // 5. Click Play / Pause
-        if (
-            qLower.includes('click play') || qLower.includes('play video') || qLower === 'play' || qLower === 'pause' ||
-            q.includes('चलाओ') || q.includes('प्ले') || qLower.includes('chalao') ||
-            q.includes('재생') || q.includes('일시정지') || q.includes('동영상')
-        ) {
-            if (onExecuteClick) onExecuteClick('play');
-            const reply = isHindi ? '▶️ वीडियो प्ले/पॉज़ टॉगल किया गया।' : isKorean ? '▶️ 동영상 재생/일시정지를 실행했습니다.' : '▶️ Triggered Play/Pause toggle on active video.';
-            addAiReply(reply);
-            speakReply(isHindi ? 'वीडियो शुरू या रोका गया' : isKorean ? '재생 상태를 전환했습니다' : 'Toggled playback.', isHindi ? 'hi' : isKorean ? 'ko' : 'en');
-            return;
-        }
-
-        // 6. Set-of-Marks click (#1, #2)
-        const markMatch = qLower.match(/click\s*(?:element|mark|number|#)?\s*#?(\d+)/i) || q.match(/(?:#|क्लिक|선택)\s*(\d+)/i);
-        if (markMatch) {
-            const markId = markMatch[1];
-            if (onExecuteClick) onExecuteClick('#' + markId);
-            const reply = isHindi ? `🎯 Set-of-Marks लक्ष्य #${markId} पर क्लिक किया गया।` : isKorean ? `🎯 Set-of-Marks #${markId} 요소를 클릭했습니다.` : `🎯 Executed direct click on Set-of-Marks target #${markId}.`;
-            addAiReply(reply);
-            speakReply(isHindi ? `क्लिक किया गया ${markId}` : isKorean ? `${markId}번 클릭` : `Clicked element #${markId}`, isHindi ? 'hi' : isKorean ? 'ko' : 'en');
-            return;
-        }
-
-        // 7. Summarize Commands
-        if (
-            qLower.includes('summarize') || qLower.includes('summary') || qLower.includes('what is this page') || qLower === 'sum' ||
-            q.includes('सारांश') || qLower.includes('samiksha') || q.includes('संक्षेप') ||
-            q.includes('요약') || q.includes('내용 요약')
-        ) {
-            let summary = '';
-            if (isHindi) {
-                summary = `📑 **पेज सारांश: ${activeTab.title || 'सक्रिय पृष्ठ'}** (Whisper AI विश्लेषित)\n\n`;
-                if (activeTab.url && activeTab.url.includes('youtube.com')) {
-                    summary += `• **मीडिया:** यूट्यूब वीडियो स्ट्रीम।\n• **विज्ञापन स्थिति:** 0 विज्ञापन (Brave adblock-rust सक्रिय)।\n• **उपलब्ध कमांड:** "वीडियो चलाओ", "नीचे स्क्रॉल करो"।`;
-                } else if (activeTab.url && activeTab.url.includes('wikipedia.org')) {
-                    summary += `• **विश्वकोश प्रविष्टि:** ${activeTab.title}।\n• **सामग्री:** विस्तृत संदर्भ लेख उपलब्ध है।`;
-                } else {
-                    summary += `• **स्रोत URL:** \`${activeTab.url || 'नया टैब'}\`\n• **शील्ड्स:** ${shieldsStats.totalBlocked || 0} विज्ञापन ब्लॉक।`;
-                }
-            } else if (isKorean) {
-                summary = `📑 **페이지 요약: ${activeTab.title || '현재 페이지'}** (Whisper AI 분석)\n\n`;
-                if (activeTab.url && activeTab.url.includes('youtube.com')) {
-                    summary += `• **미디어:** 유튜브 비디오 스트림\n• **광고 차단:** Brave adblock-rust 가동 중 (광고 0개)\n• **음성 명령:** "동영상 재생", "아래로 스크롤"`;
-                } else if (activeTab.url && activeTab.url.includes('wikipedia.org')) {
-                    summary += `• **백과사전 항목:** ${activeTab.title}\n• **내용:** 상세 레퍼런스 문서`;
-                } else {
-                    summary += `• **URL:** \`${activeTab.url || '새 탭'}\`\n• **차단된 광고:** ${shieldsStats.totalBlocked || 0}개`;
-                }
-            } else {
-                summary = `📑 **Page Summary: ${activeTab.title || 'Active Tab'}** (Whisper AI Analyzed)\n\n`;
-                if (activeTab.url && activeTab.url.includes('youtube.com')) {
-                    summary += `• **Media:** YouTube Video Playback Stream.\n• **Adblock Status:** 0 ads playing (Brave adblock-rust + InnerTube fast-skip enabled).\n• **Available Voice Actions:** Say *"Click Play"*, *"Scroll Down"*, or *"Autofill"*.`;
-                } else if (activeTab.url && activeTab.url.includes('wikipedia.org')) {
-                    summary += `• **Encyclopedia Entry:** ${activeTab.title}.\n• **Key Content:** Comprehensive reference article with citations and section headings.`;
-                } else if (activeTab.isNewTab || !activeTab.url) {
-                    summary += `• **New Tab:** Antigravity AI Native Speed-Dial.\n• **Features:** Dual-engine search, speed-dial shortcuts, and in-process C++ tab management.`;
-                } else {
-                    summary += `• **Source URL:** \`${activeTab.url}\`\n• **Shields:** ${shieldsStats.totalBlocked || 0} ads & trackers blocked.`;
-                }
+        // Localized language shortcuts (Hindi / Korean)
+        if (isHindi || isKorean) {
+            if (q.includes('नीचे') || qLower.includes('niche') || q.includes('아래로') || q.includes('스크롤 다운')) {
+                if (onExecuteScroll) onExecuteScroll('down', 500, false);
+                const reply = isHindi ? '📜 पेज नीचे 500px स्क्रॉल किया गया।' : '📜 페이지를 아래로 500px 스크롤했습니다.';
+                addAiReply(reply);
+                speakReply(isHindi ? 'पेज नीचे स्क्रॉल किया गया' : '페이지를 아래로 스크롤했습니다', isHindi ? 'hi' : 'ko');
+                setIsAiThinking(false);
+                return;
             }
-            addAiReply(summary);
-            speakReply(isHindi ? 'पेज का सारांश तैयार है' : isKorean ? '페이지 요약이 완료되었습니다' : `Summary for ${activeTab.title || 'this page'}`, isHindi ? 'hi' : isKorean ? 'ko' : 'en');
-            return;
-        }
-
-        // 8. Autofill Commands
-        if (
-            qLower.includes('autofill') || qLower.includes('fill form') || qLower.includes('checkout') ||
-            q.includes('फॉर्म') || q.includes('ऑटोफिल') || qLower.includes('form bharo') ||
-            q.includes('자동완성') || q.includes('양식')
-        ) {
-            if (onTriggerAutofill) onTriggerAutofill();
-            const reply = isHindi ? '📝 फॉर्म ऑटोफिल सफलतापूरक निष्पादित किया गया।' : isKorean ? '📝 양식 자동완성을 실행했습니다.' : '📝 AutofillManager::FillForm() executed. Populated semantic fields on the page.';
-            addAiReply(reply);
-            speakReply(isHindi ? 'फॉर्म भर दिया गया है' : isKorean ? '자동완성이 완료되었습니다' : 'Form autofilled.', isHindi ? 'hi' : isKorean ? 'ko' : 'en');
-            return;
-        }
-
-        // 9. Navigation Commands
-        if (qLower.startsWith('open ') || qLower.startsWith('go to ') || q.includes('खोलो') || q.includes('열어줘')) {
-            const target = q.replace(/^(?:open|go to)\s+/i, '').replace(/(?:खोलो|열어줘)/i, '').trim();
-            if (onNavigate) onNavigate(target);
-            const reply = isHindi ? `🌐 ${target} पर नेविगेट किया जा रहा है...` : isKorean ? `🌐 ${target}(으)로 이동합니다...` : `🌐 Navigating active tab to "${target}"...`;
-            addAiReply(reply);
-            speakReply(isHindi ? 'नेविगेट किया जा रहा है' : isKorean ? '페이지로 이동합니다' : `Navigating to ${target}`, isHindi ? 'hi' : isKorean ? 'ko' : 'en');
-            return;
-        }
-
-        // 10. General Conversational / Q&A
-        setTimeout(() => {
-            let aiText = '';
-            if (isHindi) {
-                aiText = `✦ **Antigravity Copilot (Whisper Local)**\n\nअनुरोध प्राप्त हुआ: "${q}"\n\n• **सक्रिय टैब:** \`${activeTab.title || 'नया टैब'}\`\n• **शील्ड्स:** ${shieldsStats.totalBlocked || 0} ट्रैकर्स ब्लॉक।\n• **आदेश:** आप हिंदी में कह सकते हैं: "पेज का सारांश दो", "नीचे स्क्रॉल करो", या "वीडियो चलाओ"।`;
-            } else if (isKorean) {
-                aiText = `✦ **Antigravity Copilot (Whisper Local)**\n\n명령 접수 완료: "${q}"\n\n• **현재 탭:** \`${activeTab.title || '새 탭'}\`\n• **실드 상태:** ${shieldsStats.totalBlocked || 0}개 트래커 차단됨\n• **추천 음성 명령:** "페이지 요약", "아래로 스크롤", "동영상 재생"`;
-            } else {
-                aiText = `✦ **Antigravity Copilot (Whisper Local)**\n\nProcessed query: "${q}"\n\n• **Active Tab:** \`${activeTab.title || 'New Tab'}\`\n• **Shields:** ${shieldsStats.totalBlocked || 0} ads & trackers blocked.\n• **Voice Actions:** Say *"Summarize"*, *"Scroll Down"*, or speak in Hindi/Korean.`;
+            if (q.includes('ऊपर') || qLower.includes('upar') || q.includes('위로') || q.includes('스크롤 업')) {
+                if (onExecuteScroll) onExecuteScroll('up', 500, false);
+                const reply = isHindi ? '📜 पेज ऊपर 500px स्क्रॉल किया गया।' : '📜 페이지를 위로 500px 스크롤했습니다.';
+                addAiReply(reply);
+                speakReply(isHindi ? 'पेज ऊपर स्क्रॉल किया गया' : '페이지를 위로 스크롤했습니다', isHindi ? 'hi' : 'ko');
+                setIsAiThinking(false);
+                return;
             }
-            addAiReply(aiText);
-            speakReply(isHindi ? 'कमांड प्रोसेस हो गया' : isKorean ? '명령이 처리되었습니다' : 'Processed request.', isHindi ? 'hi' : isKorean ? 'ko' : 'en');
-        }, 300);
+            if (q.includes('सारांश') || q.includes('요약')) {
+                const summary = isHindi
+                    ? `📑 **पेज सारांश: ${activeTab.title || 'सक्रिय पृष्ठ'}**\n• URL: \`${activeTab.url || 'नया टैब'}\`\n• शील्ड्स: ${shieldsStats.totalBlocked || 0} ब्लॉक`
+                    : `📑 **페이지 요약: ${activeTab.title || '현재 페이지'}**\n• URL: \`${activeTab.url || '새 탭'}\`\n• 차단된 광고: ${shieldsStats.totalBlocked || 0}개`;
+                addAiReply(summary);
+                speakReply(isHindi ? 'पेज का सारांश तैयार है' : '페이지 요약이 완료되었습니다', isHindi ? 'hi' : 'ko');
+                setIsAiThinking(false);
+                return;
+            }
+        }
+
+        // Execute unified AI Harness Command Engine
+        try {
+            const reply = await executeAiBrowserCommand(q, {
+                tabs,
+                activeTabId: activeTab.id,
+                activeTab,
+                onOpenTab,
+                onCloseTab,
+                onSelectTab,
+                onNavigate,
+                getActiveWebview: () => document.getElementById(`wv-${activeTab.id}`),
+                onToggleBookmark,
+                onOpenReaderMode,
+                onOpenQrCode,
+                onOpenTabSearch,
+                onOpenHistory,
+                onExecuteClick,
+                onExecuteScroll
+            });
+
+            addAiReply(reply);
+            const spokenText = String(reply).replace(/<[^>]*>/g, '').substring(0, 120);
+            speakReply(spokenText, 'en');
+        } catch (err) {
+            addAiReply(`⚠️ AI Harness execution error: ${err.message}`);
+        } finally {
+            setIsAiThinking(false);
+        }
     };
 
     // Tools AX Tree Helpers
@@ -461,6 +376,14 @@ export default function AiHudSidebar({
                         />
                         <span className="som-toggle-badge">SoM</span>
                     </label>
+                    <button
+                        className="mac-pill-btn"
+                        title="AI Providers & API Keys (OpenAI, LM Studio, Ollama, OpenRouter, OpenCode, Anthropic)"
+                        onClick={onOpenAiProviderModal}
+                        style={{ color: '#00e5ff', borderColor: 'rgba(0, 229, 255, 0.35)' }}
+                    >
+                        🔑 Keys
+                    </button>
                     <button
                         className="mac-pill-btn"
                         title="Detach AI Layer into standalone external window"
@@ -567,9 +490,11 @@ export default function AiHudSidebar({
                                             </span>
                                             <span className="mac-msg-time">{msg.time}</span>
                                         </div>
-                                        <div className="mac-msg-text" style={{ whiteSpace: 'pre-wrap' }}>
-                                            {msg.text}
-                                        </div>
+                                        <div
+                                            className="mac-msg-text"
+                                            style={{ whiteSpace: 'pre-wrap' }}
+                                            dangerouslySetInnerHTML={{ __html: msg.text }}
+                                        />
                                     </div>
                                 </div>
                             ))}
@@ -583,6 +508,71 @@ export default function AiHudSidebar({
                             )}
                             <div ref={messagesEndRef} />
                         </div>
+
+                        {/* Quick AI Harness Action Chips */}
+                        <div className="ai-chips-bar">
+                            <span
+                                className="ai-chip"
+                                onClick={async () => {
+                                    if (onCaptureSnapshot) {
+                                        const res = await onCaptureSnapshot('webview');
+                                        if (res && res.success) {
+                                            handleProcessNlpCommand(`Snapshot saved to disk: "${res.path}". Analyze what is visible in the active browser.`);
+                                        }
+                                    }
+                                }}
+                                title="Capture live browser snapshot to disk for Vision-Language Models"
+                                style={{ borderColor: 'rgba(0, 229, 255, 0.4)', color: '#00e5ff' }}
+                            >
+                                📸 VLM Snapshot
+                            </span>
+                            <span className="ai-chip" onClick={() => handleProcessNlpCommand('CLK SB')} title="Click Search Bar">🔍 CLK SB</span>
+                            <span className="ai-chip" onClick={() => handleProcessNlpCommand('s50')} title="Scroll 50%">📜 S50</span>
+                            <span className="ai-chip" onClick={() => handleProcessNlpCommand('open youtube')} title="Open YouTube">▶️ YouTube</span>
+                            <span className="ai-chip" onClick={() => handleProcessNlpCommand('numbering words')} title="Number words with yellow badges">🔢 Numbers</span>
+                            <span className="ai-chip" onClick={() => handleProcessNlpCommand('shortcuts')} title="Show all shortcuts">⌨️ Shortcuts</span>
+                            <span className="ai-chip" onClick={() => handleProcessNlpCommand('close active tab')} title="Close current tab">✕ Close</span>
+                        </div>
+
+                        {/* Active VLM Snapshot Banner */}
+                        {latestSnapshot && latestSnapshot.path && (
+                            <div style={{
+                                margin: '6px 0',
+                                padding: '6px 10px',
+                                borderRadius: '6px',
+                                background: 'rgba(0, 229, 255, 0.08)',
+                                border: '1px solid rgba(0, 229, 255, 0.25)',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'space-between',
+                                fontSize: '11px',
+                                color: '#e2e8f0'
+                            }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', overflow: 'hidden' }}>
+                                    <span>📸</span>
+                                    <span style={{ fontFamily: 'monospace', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} title={latestSnapshot.path}>
+                                        {latestSnapshot.filename || latestSnapshot.path}
+                                    </span>
+                                </div>
+                                <button
+                                    onClick={() => {
+                                        if (navigator.clipboard) navigator.clipboard.writeText(latestSnapshot.path);
+                                    }}
+                                    style={{
+                                        background: 'rgba(255, 255, 255, 0.1)',
+                                        border: 'none',
+                                        color: '#00e5ff',
+                                        borderRadius: '4px',
+                                        padding: '2px 6px',
+                                        fontSize: '10px',
+                                        cursor: 'pointer'
+                                    }}
+                                    title="Copy full local path"
+                                >
+                                    Copy Path
+                                </button>
+                            </div>
+                        )}
 
                         {/* Whisper Multilingual Language Bar & Recording State */}
                         <div className="mac-whisper-bar">

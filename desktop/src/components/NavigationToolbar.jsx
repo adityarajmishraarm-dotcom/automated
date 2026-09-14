@@ -13,7 +13,12 @@ export default function NavigationToolbar({
     isBookmarked,
     onToggleBookmark,
     onOpenReaderMode,
-    onOpenQrCode
+    onOpenQrCode,
+    onOpenWallpaperStudio,
+    activeDownloadsCount = 0,
+    onOpenDownloads,
+    onOpenTypography,
+    onOpenAiProviderModal
 }) {
     const inputRef = useRef(null);
 
@@ -55,7 +60,8 @@ export default function NavigationToolbar({
     };
 
     const getLockIcon = () => {
-        if (isNewTab || !currentUrl || currentUrl.includes('newtab.html')) return '✨';
+        if (isNewTab || !currentUrl || currentUrl.includes('newtab.html')) return '📄';
+        if (currentUrl.startsWith('antigravity://') || currentUrl.startsWith('chrome://') || currentUrl.startsWith('brave://')) return '🛡️';
         if (currentUrl.startsWith('https://')) return '🔒';
         if (currentUrl.startsWith('http://')) return '🔓';
         return '📄';
@@ -139,6 +145,60 @@ export default function NavigationToolbar({
                     </button>
                 </div>
             )}
+
+            <button
+                className="btn-toolbar-tool"
+                title="Custom Background Wallpaper Studio"
+                onClick={onOpenWallpaperStudio}
+            >
+                🎨 Wallpaper
+            </button>
+
+            <button
+                className="btn-toolbar-tool"
+                id="btnToolbarTypography"
+                title="Modern Typography & Font Canvas Studio (Ctrl+Alt+1..8)"
+                onClick={onOpenTypography}
+            >
+                🔤 Typography
+            </button>
+
+            <button
+                className="btn-toolbar-tool"
+                id="btnToolbarDownloads"
+                title="Open Downloads Manager (Ctrl+J)"
+                onClick={onOpenDownloads}
+                style={{ position: 'relative' }}
+            >
+                📥 Downloads
+                {activeDownloadsCount > 0 && (
+                    <span style={{
+                        position: 'absolute',
+                        top: -4,
+                        right: -4,
+                        background: '#00e5ff',
+                        color: '#070b14',
+                        borderRadius: '10px',
+                        fontSize: '10px',
+                        fontWeight: '800',
+                        padding: '1px 5px',
+                        lineHeight: '12px',
+                        boxShadow: '0 0 6px #00e5ff'
+                    }}>
+                        {activeDownloadsCount}
+                    </span>
+                )}
+            </button>
+
+            <button
+                className="btn-toolbar-tool"
+                id="btnToolbarAiProviders"
+                title="AI Keys & Providers (OpenAI, LM Studio, Ollama, OpenRouter, OpenCode, Anthropic)"
+                onClick={onOpenAiProviderModal}
+                style={{ color: '#00e5ff', borderColor: 'rgba(0, 229, 255, 0.35)', background: 'rgba(0, 229, 255, 0.08)' }}
+            >
+                🔑 AI Keys
+            </button>
 
             <div className="status-pill">
                 <span className="dot-live"></span>

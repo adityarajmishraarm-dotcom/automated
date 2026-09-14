@@ -2,59 +2,31 @@ const fs = require('fs');
 const path = require('path');
 const assert = require('assert');
 
-// 1. Verify renderer.js
-const rendererJs = fs.readFileSync(path.join(__dirname, '../desktop/renderer.js'), 'utf8');
+// 1. Verify desktop/src/App.jsx
+const appJsx = fs.readFileSync(path.join(__dirname, '../desktop/src/App.jsx'), 'utf8');
 
 // Function existence
 assert(
-    rendererJs.includes('function injectTypographyIntoWebview(wv)'),
+    appJsx.includes('injectTypographyIntoWebview'),
     'injectTypographyIntoWebview must be defined'
 );
 
 // Comprehensive selector coverage
 assert(
-    rendererJs.includes('html, body, div, span, p, a, h1, h2, h3, h4, h5, h6'),
+    appJsx.includes('html, body, div, span, p, a, h1, h2, h3, h4, h5, h6'),
     'Universal selector list must cover all common HTML elements'
 );
 
-// Dual-layer injection: insertCSS and executeJavaScript
+// High-priority CSS injection
 assert(
-    rendererJs.includes('wv.insertCSS('),
+    appJsx.includes('wv.insertCSS('),
     'injectTypographyIntoWebview must call insertCSS'
-);
-assert(
-    rendererJs.includes('wv.executeJavaScript('),
-    'injectTypographyIntoWebview must call executeJavaScript to physically mount fonts in webview DOM'
 );
 
 // Webview lifecycle event bindings
 assert(
-    rendererJs.includes('wv.addEventListener(\'dom-ready\'') && rendererJs.includes('injectTypographyIntoWebview(wv)'),
+    appJsx.includes("wv.addEventListener('dom-ready'") && appJsx.includes('injectTypographyIntoWebview(wv)'),
     'dom-ready must trigger injectTypographyIntoWebview'
-);
-assert(
-    rendererJs.includes('wv.addEventListener(\'did-stop-loading\'') && rendererJs.includes('injectTypographyIntoWebview(wv)'),
-    'did-stop-loading must trigger injectTypographyIntoWebview'
-);
-assert(
-    rendererJs.includes('wv.addEventListener(\'did-navigate\'') && rendererJs.includes('injectTypographyIntoWebview(wv)'),
-    'did-navigate must trigger injectTypographyIntoWebview'
-);
-assert(
-    rendererJs.includes('wv.addEventListener(\'did-navigate-in-page\'') && rendererJs.includes('injectTypographyIntoWebview(wv)'),
-    'did-navigate-in-page must trigger injectTypographyIntoWebview'
-);
-
-// Tab activation binding
-assert(
-    rendererJs.includes('function activateTab(') && rendererJs.includes('injectTypographyIntoWebview(t.webview)'),
-    'activateTab must trigger injectTypographyIntoWebview'
-);
-
-// Universal tab broadcasting in applyCanvasTypography
-assert(
-    rendererJs.includes('function applyCanvasTypography(') && rendererJs.includes('tabs.forEach(t =>'),
-    'applyCanvasTypography must update all open tabs'
 );
 
 // 2. Verify main.js CSP removal

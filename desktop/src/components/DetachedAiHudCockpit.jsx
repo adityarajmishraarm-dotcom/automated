@@ -108,6 +108,13 @@ export default function DetachedAiHudCockpit() {
                 setGrepPage(1);
             } else if (data.type === 'autofill-status') {
                 setAutofillStatus(data.status || '');
+            } else if (data.type === 'ai-command-reply') {
+                addAiReply(data.reply || '');
+                setIsAiThinking(false);
+                if (data.reply) {
+                    const spokenText = String(data.reply).replace(/<[^>]*>/g, '').substring(0, 120);
+                    speakReply(spokenText, 'en');
+                }
             } else if (data.type === 'telemetry') {
                 setTelemetryLogs(prev => [
                     ...prev,
@@ -334,184 +341,8 @@ export default function DetachedAiHudCockpit() {
         setChatInput('');
         setIsAiThinking(true);
 
-        const qLower = query.toLowerCase();
-
-        // Detect language profile for feedback & speech
-        const isHindi = /[\u0900-\u097F]/.test(query) || /\b(karo|jao|niche|upar|bharo|chalao|roko|kholo|batao|kripya)\b/i.test(query);
-        const isKorean = /[\uAC00-\uD7AF]/.test(query) || /\b(스크롤|요약|재생|정지|열어|닫아|완성)\b/i.test(query);
-
-        // 1. Scroll Down Commands
-        if (
-            qLower.includes('scroll down') || qLower === 's' || qLower === 'down' ||
-            query.includes('नीचे') || qLower.includes('niche') || qLower.includes('scroll down karo') ||
-            query.includes('아래로') || query.includes('내려') || query.includes('스크롤 다운')
-        ) {
-            sendHudAction('execute-scroll', { direction: 'down', amount: 35, isPercent: true });
-            const reply = isHindi ? '📜 पेज नीचे 35% स्क्रॉल किया गया।' : isKorean ? '📜 페이지를 아래로 35% 스크롤했습니다.' : '📜 Scrolled down 35% on active tab.';
-            addAiReply(reply);
-            speakReply(isHindi ? 'पेज नीचे स्क्रॉल किया गया' : isKorean ? '페이지를 아래로 스크롤했습니다' : 'Scrolled down.', isHindi ? 'hi' : isKorean ? 'ko' : 'en');
-            return;
-        }
-
-        // 2. Scroll Up Commands
-        if (
-            qLower.includes('scroll up') || qLower === 'up' ||
-            query.includes('ऊपर') || qLower.includes('upar') || qLower.includes('scroll up karo') ||
-            query.includes('위로') || query.includes('올려') || query.includes('스크롤 업')
-        ) {
-            sendHudAction('execute-scroll', { direction: 'up', amount: 35, isPercent: true });
-            const reply = isHindi ? '📜 पेज ऊपर 35% स्क्रॉल किया गया।' : isKorean ? '📜 페이지를 위로 35% 스크롤했습니다.' : '📜 Scrolled up 35% on active tab.';
-            addAiReply(reply);
-            speakReply(isHindi ? 'पेज ऊपर स्क्रॉल किया गया' : isKorean ? '페이지를 위로 스크롤했습니다' : 'Scrolled up.', isHindi ? 'hi' : isKorean ? 'ko' : 'en');
-            return;
-        }
-
-        // 3. Scroll to Top Commands
-        if (
-            qLower.includes('scroll to top') || qLower === 's0' || qLower === 'top' ||
-            query.includes('सबसे ऊपर') || qLower.includes('top par') || qLower.includes('sabse upar') ||
-            query.includes('맨 위로') || query.includes('상단으로')
-        ) {
-            sendHudAction('execute-scroll', { direction: 'top', amount: 0 });
-            const reply = isHindi ? '📜 पेज के शीर्ष पर पहुँच गए।' : isKorean ? '📜 페이지 상단으로 이동했습니다.' : '📜 Jumped to the top of the page.';
-            addAiReply(reply);
-            speakReply(isHindi ? 'शीर्ष पर पहुँच गए' : isKorean ? '상단으로 이동했습니다' : 'Jumped to top.', isHindi ? 'hi' : isKorean ? 'ko' : 'en');
-            return;
-        }
-
-        // 4. Scroll to Bottom Commands
-        if (
-            qLower.includes('scroll to bottom') || qLower === 's1000' || qLower === 'bottom' ||
-            query.includes('सबसे नीचे') || qLower.includes('bottom par') || qLower.includes('sabse niche') ||
-            query.includes('맨 아래로') || query.includes('하단으로')
-        ) {
-            sendHudAction('execute-scroll', { direction: 'bottom', amount: 1000 });
-            const reply = isHindi ? '📜 पेज के अंत में पहुँच गए।' : isKorean ? '📜 페이지 하단으로 이동했습니다.' : '📜 Jumped to the bottom of the page.';
-            addAiReply(reply);
-            speakReply(isHindi ? 'पेज के अंत में पहुँच गए' : isKorean ? '하단으로 이동했습니다' : 'Jumped to bottom.', isHindi ? 'hi' : isKorean ? 'ko' : 'en');
-            return;
-        }
-
-        // 5. Video Play / Resume Commands
-        if (
-            qLower.includes('play') || qLower.includes('resume') ||
-            query.includes('चलाओ') || query.includes('प्ले') || qLower.includes('chalao') ||
-            query.includes('재생') || query.includes('플레이')
-        ) {
-            sendHudAction('execute-click', { target: 'play' });
-            const reply = isHindi ? '▶️ वीडियो प्ले करने का निर्देश भेजा गया।' : isKorean ? '▶️ 비디오 재생 명령을 실행했습니다.' : '▶️ Triggered play action on active media.';
-            addAiReply(reply);
-            speakReply(isHindi ? 'वीडियो शुरू किया गया' : isKorean ? '재생을 시작합니다' : 'Playing video.', isHindi ? 'hi' : isKorean ? 'ko' : 'en');
-            return;
-        }
-
-        // 6. Video Pause / Stop Commands
-        if (
-            qLower.includes('pause') || qLower.includes('stop video') ||
-            query.includes('रोको') || query.includes('पॉज़') || qLower.includes('roko') || qLower.includes('pause karo') ||
-            query.includes('일시정지') || query.includes('멈춰') || query.includes('정지')
-        ) {
-            sendHudAction('execute-click', { target: 'pause' });
-            const reply = isHindi ? '⏸️ वीडियो पॉज़ किया गया।' : isKorean ? '⏸️ 비디오를 일시정지했습니다.' : '⏸️ Paused media playback.';
-            addAiReply(reply);
-            speakReply(isHindi ? 'वीडियो पॉज़ किया गया' : isKorean ? '일시정지되었습니다' : 'Paused.', isHindi ? 'hi' : isKorean ? 'ko' : 'en');
-            return;
-        }
-
-        // 7. Autofill Commands
-        if (
-            qLower.includes('autofill') || qLower.includes('fill form') || qLower.includes('checkout') ||
-            query.includes('फॉर्म') || query.includes('ऑटोफिल') || qLower.includes('form bharo') || qLower.includes('autofill karo') ||
-            query.includes('자동완성') || query.includes('양식') || query.includes('자동 완성')
-        ) {
-            sendHudAction('trigger-autofill');
-            const reply = isHindi ? '📝 फॉर्म ऑटोफिल सफलतापूरक निष्पादित किया गया।' : isKorean ? '📝 양식 자동완성을 성공적으로 실행했습니다.' : '📝 AutofillManager::FillForm() executed.';
-            addAiReply(reply);
-            speakReply(isHindi ? 'फॉर्म भर दिया गया है' : isKorean ? '자동완성이 완료되었습니다' : 'Autofill complete.', isHindi ? 'hi' : isKorean ? 'ko' : 'en');
-            return;
-        }
-
-        // 8. Summarize Commands
-        if (
-            qLower.includes('summarize') || qLower.includes('summary') || qLower.includes('what is this page') || qLower === 'sum' ||
-            query.includes('सारांश') || qLower.includes('samiksha') || query.includes('संक्षेप') ||
-            query.includes('요약') || query.includes('내용 요약')
-        ) {
-            let summary = '';
-            if (isHindi) {
-                summary = `📑 **पेज सारांश: ${activeTab.title || 'सक्रिय पृष्ठ'}** (Whisper AI विश्लेषित)\n\n`;
-                if (activeTab.url && activeTab.url.includes('youtube.com')) {
-                    summary += `• **मीडिया:** यूट्यूब वीडियो स्ट्रीम।\n• **विज्ञापन स्थिति:** 0 विज्ञापन (Brave adblock-rust सक्रिय)।\n• **ध्वनि आदेश:** "वीडियो चलाओ", "नीचे स्क्रॉल करो"।`;
-                } else if (activeTab.url && activeTab.url.includes('wikipedia.org')) {
-                    summary += `• **विश्वकोश प्रविष्टि:** ${activeTab.title}।\n• **प्रमुख सामग्री:** विस्तृत संदर्भ लेख उपलब्ध है।`;
-                } else {
-                    summary += `• **स्रोत URL:** \`${activeTab.url || 'नया टैब'}\`\n• **सुरक्षा शील्ड्स:** ${shieldsStats.totalBlocked || 0} ट्रैकर्स ब्लॉक।\n• **क्रियाएँ:** Set-of-Marks (#1, #2) द्वारा इंटरैक्शन के लिए तैयार।`;
-                }
-            } else if (isKorean) {
-                summary = `📑 **페이지 요약: ${activeTab.title || '현재 페이지'}** (Whisper AI 분석)\n\n`;
-                if (activeTab.url && activeTab.url.includes('youtube.com')) {
-                    summary += `• **미디어:** 유튜브 비디오 스트림\n• **광고 차단:** Brave adblock-rust 가동 중 (광고 0개)\n• **음성 명령:** "동영상 재생", "아래로 스크롤"`;
-                } else if (activeTab.url && activeTab.url.includes('wikipedia.org')) {
-                    summary += `• **백과사전 항목:** ${activeTab.title}\n• **주요 내용:** 섹션별 상세 정보 및 참조 링크 탑재`;
-                } else {
-                    summary += `• **URL:** \`${activeTab.url || '새 탭'}\`\n• **실드 상태:** ${shieldsStats.totalBlocked || 0}개 트래커 차단됨`;
-                }
-            } else {
-                summary = `📑 **Page Summary: ${activeTab.title || 'Active Tab'}** (Whisper AI Analyzed)\n\n`;
-                if (activeTab.url && activeTab.url.includes('youtube.com')) {
-                    summary += `• **Media:** YouTube Video Playback Stream.\n• **Adblock Status:** 0 ads playing (Brave adblock-rust active).\n• **Available Voice Actions:** Say *"Click Play"*, *"Scroll Down"*, or *"Focus Browser"*.`;
-                } else if (activeTab.url && activeTab.url.includes('wikipedia.org')) {
-                    summary += `• **Encyclopedia Entry:** ${activeTab.title}.\n• **Key Content:** Comprehensive reference article with citations and section headings.`;
-                } else {
-                    summary += `• **Source URL:** \`${activeTab.url || 'New Tab'}\`\n• **Shields:** ${shieldsStats.totalBlocked || 0} ads & trackers blocked.\n• **Interaction:** Ready for element interaction via Set-of-Marks (#1, #2).`;
-                }
-            }
-            addAiReply(summary);
-            speakReply(isHindi ? 'पेज का सारांश तैयार है' : isKorean ? '페이지 요약이 완료되었습니다' : `Summary for ${activeTab.title || 'this page'}`, isHindi ? 'hi' : isKorean ? 'ko' : 'en');
-            return;
-        }
-
-        // 9. Click NLP Commands
-        const clickMatch = query.match(/(?:click|press|tap|select|क्लिक|눌러|선택)\s+(.+)/i) || query.match(/^(?:#|hashtag\s*|mark\s*)(\d+)$/i);
-        if (clickMatch || qLower.startsWith('click')) {
-            const target = clickMatch ? (clickMatch[1] || clickMatch[0]) : query.replace(/^click\s*/i, '');
-            sendHudAction('execute-click', { target: target.trim() });
-            const reply = isHindi ? `🎯 सक्रिय पृष्ठ पर "${target.trim()}" पर क्लिक किया गया।` : isKorean ? `🎯 페이지에서 "${target.trim()}" 요소를 클릭했습니다.` : `🎯 Clicked element matching "${target.trim()}" on active page.`;
-            addAiReply(reply);
-            speakReply(isHindi ? `क्लिक किया गया ${target}` : isKorean ? `${target} 클릭 완료` : `Clicked ${target}`, isHindi ? 'hi' : isKorean ? 'ko' : 'en');
-            return;
-        }
-
-        // 10. Navigation Commands
-        const navMatch = query.match(/(?:go to|open|navigate to|खोलो|열어줘)\s+(.+)/i);
-        if (navMatch || qLower.startsWith('open ') || qLower.startsWith('go to ')) {
-            const target = navMatch ? navMatch[1].trim() : query.replace(/^(?:open|go to)\s+/i, '').trim();
-            let targetUrl = target;
-            if (target.includes('youtube') || target.includes('यूट्यूब') || target.includes('유튜브')) targetUrl = 'https://www.youtube.com';
-            else if (target.includes('google') || target.includes('गूगल') || target.includes('구글')) targetUrl = 'https://www.google.com';
-            else if (target.includes('github') || target.includes('गिटहब')) targetUrl = 'https://github.com';
-            else if (!target.startsWith('http://') && !target.startsWith('https://')) targetUrl = 'https://www.google.com/search?q=' + encodeURIComponent(target);
-
-            sendHudAction('execute-navigate', { url: targetUrl });
-            const reply = isHindi ? `🌐 ${targetUrl} पर नेविगेट किया जा रहा है...` : isKorean ? `🌐 ${targetUrl}(으)로 이동합니다...` : `🌐 Navigating active tab to "${targetUrl}"...`;
-            addAiReply(reply);
-            speakReply(isHindi ? 'नेविगेट किया जा रहा है' : isKorean ? '페이지로 이동합니다' : `Navigating to ${target}`, isHindi ? 'hi' : isKorean ? 'ko' : 'en');
-            return;
-        }
-
-        // 11. Conversational / Q&A Assistant Response
-        setTimeout(() => {
-            let aiText = '';
-            if (isHindi) {
-                aiText = `✦ **Antigravity Copilot (Whisper ASR)**\n\nमैंने आपका संदेश समझा: "${query}"\n\n• **सक्रिय टैब:** \`${activeTab.title || 'नया टैब'}\`\n• **शील्ड्स सुरक्षा:** ${shieldsStats.totalBlocked || 0} ट्रैकर्स ब्लॉक।\n• **सुझाव:** आप कह सकते हैं: *"पेज का सारांश दो"*, *"नीचे स्क्रॉल करो"*, या *"वीडियो चलाओ"*।`;
-            } else if (isKorean) {
-                aiText = `✦ **Antigravity Copilot (Whisper ASR)**\n\n음성/명령 처리 완료: "${query}"\n\n• **현재 탭:** \`${activeTab.title || '새 탭'}\`\n• **차단된 광고:** ${shieldsStats.totalBlocked || 0}개\n• **추천 명령:** *"페이지 요약"*, *"아래로 스크롤"*, *"동영상 재생"*`;
-            } else {
-                aiText = `✦ **Antigravity Copilot (Whisper ASR)**\n\nAnalyzed request: "${query}"\n\n• **Active Tab:** \`${activeTab.title || 'New Tab'}\`\n• **Shields Protection:** ${shieldsStats.totalBlocked || 0} trackers & ads blocked.\n• **Suggested Commands:** You can say *"Summarize"*, *"Click Play"*, *"Scroll Down"*, or speak in Hindi/Korean.`;
-            }
-            addAiReply(aiText);
-            speakReply(isHindi ? 'कमांड प्रोसेस हो गया' : isKorean ? '명령이 처리되었습니다' : 'Processed request.', isHindi ? 'hi' : isKorean ? 'ko' : 'en');
-        }, 300);
+        // Forward to Main Browser Window AI Harness Engine
+        sendHudAction('ai-command', { prompt: query });
     };
 
     // Tools helpers
@@ -651,14 +482,32 @@ export default function DetachedAiHudCockpit() {
 
                         {/* Quick Interactive Multilingual NLP Action Chips */}
                         <div className="mac-quick-chips">
+                            <button className="mac-chip" onClick={() => handleProcessNlpCommand('CLK SB')} title="Click Search Bar on web page">
+                                🔍 CLK SB
+                            </button>
+                            <button className="mac-chip" onClick={() => handleProcessNlpCommand('s50')} title="Scroll down by 50%">
+                                📜 S50
+                            </button>
+                            <button className="mac-chip" onClick={() => handleProcessNlpCommand('open youtube')} title="Open YouTube tab">
+                                📺 YouTube
+                            </button>
+                            <button className="mac-chip" onClick={() => handleProcessNlpCommand('show numbers')} title="Highlight & number keywords on page">
+                                🔢 Numbers
+                            </button>
+                            <button className="mac-chip" onClick={() => handleProcessNlpCommand('help shortcuts')} title="Show all NLP commands">
+                                💡 Shortcuts
+                            </button>
+                            <button className="mac-chip" onClick={() => handleProcessNlpCommand('close tab')} title="Close active tab">
+                                ❌ Close
+                            </button>
                             <button className="mac-chip" onClick={() => handleProcessNlpCommand('summarize')}>
-                                ⚡ Summarize Page
+                                ⚡ Summarize
                             </button>
                             <button className="mac-chip" onClick={() => handleProcessNlpCommand('scroll down')}>
-                                📜 Scroll Down
+                                ⬇ Scroll
                             </button>
                             <button className="mac-chip" onClick={() => handleProcessNlpCommand('click play')}>
-                                ▶️ Click Play
+                                ▶️ Play
                             </button>
                             <button className="mac-chip" onClick={() => handleProcessNlpCommand('autofill')}>
                                 📝 Autofill
@@ -666,17 +515,8 @@ export default function DetachedAiHudCockpit() {
                             <button className="mac-chip" onClick={() => handleProcessNlpCommand('पेज का सारांश दो')}>
                                 🇮🇳 सारांश (HI)
                             </button>
-                            <button className="mac-chip" onClick={() => handleProcessNlpCommand('नीचे स्क्रॉल करो')}>
-                                🇮🇳 नीचे स्क्रॉल (HI)
-                            </button>
                             <button className="mac-chip" onClick={() => handleProcessNlpCommand('페이지 요약')}>
                                 🇰🇷 요약 (KO)
-                            </button>
-                            <button className="mac-chip" onClick={() => handleProcessNlpCommand('아래로 스크롤')}>
-                                🇰🇷 아래로 (KO)
-                            </button>
-                            <button className="mac-chip" onClick={() => handleProcessNlpCommand('scroll to top')}>
-                                ⬆ Top
                             </button>
                         </div>
 
@@ -691,9 +531,11 @@ export default function DetachedAiHudCockpit() {
                                             </span>
                                             <span className="mac-msg-time">{msg.time}</span>
                                         </div>
-                                        <div className="mac-msg-text" style={{ whiteSpace: 'pre-wrap' }}>
-                                            {msg.text}
-                                        </div>
+                                        <div
+                                            className="mac-msg-text"
+                                            style={{ whiteSpace: 'pre-wrap' }}
+                                            dangerouslySetInnerHTML={{ __html: msg.text }}
+                                        />
                                     </div>
                                 </div>
                             ))}

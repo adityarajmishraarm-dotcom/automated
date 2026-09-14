@@ -1217,12 +1217,6 @@ body {
     transition: all 0.15s ease;
 }
 
-padding: 8px 12px;
-color: var(--text-primary);
-font-size: 12px;
-outline: none;
-}
-
 .chat-input-field:focus {
     border-color: var(--accent-cyan);
     box-shadow: 0 0 8px rgba(0, 240, 255, 0.2);
@@ -3508,6 +3502,999 @@ outline: none;
     70% { transform: scale(1.1); box-shadow: 0 0 0 6px rgba(0, 240, 255, 0); }
     100% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(0, 240, 255, 0); }
 }
+
+/* ── Custom Background Wallpaper Layer ── */
+.wallpaper-layer {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    transition: opacity 0.4s ease;
+}
+
+.wallpaper-layer video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.wallpaper-layer::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, var(--wallpaper-overlay-opacity, 0.4));
+    pointer-events: none;
+    transition: background 0.3s ease;
+}
+
+/* When wallpaper is active, make chrome translucent */
+body.has-wallpaper .tab-strip-bar,
+body.has-wallpaper .navigation-toolbar,
+body.has-wallpaper .bookmarks-bar {
+    background: rgba(10, 15, 29, 0.65) !important;
+    backdrop-filter: blur(18px) saturate(1.4);
+    -webkit-backdrop-filter: blur(18px) saturate(1.4);
+}
+
+body.has-wallpaper .ai-hud-sidebar {
+    background: rgba(10, 15, 29, 0.75) !important;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+}
+
+.btn-wallpaper {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-bright);
+    color: var(--text-primary);
+    font-size: 13px;
+    padding: 4px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.btn-wallpaper:hover {
+    background: rgba(0, 240, 255, 0.12);
+    border-color: var(--accent-cyan);
+    box-shadow: 0 0 10px rgba(0, 240, 255, 0.25);
+}
+
+.wallpaper-modal-body {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.wallpaper-preview-box {
+    width: 100%;
+    height: 160px;
+    border-radius: 12px;
+    border: 1px dashed rgba(0, 240, 255, 0.3);
+    background: rgba(0, 0, 0, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+}
+
+.wallpaper-preview-placeholder {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-family: var(--font-sans);
+    text-align: center;
+    padding: 0 20px;
+}
+
+.wallpaper-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.btn-wallpaper-action {
+    padding: 8px 14px;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    font-family: var(--font-sans);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    color: #fff;
+}
+
+.btn-wallpaper-action.btn-blue {
+    background: rgba(0, 132, 199, 0.25);
+    border-color: rgba(0, 132, 199, 0.5);
+}
+
+.btn-wallpaper-action.btn-blue:hover {
+    background: rgba(0, 132, 199, 0.4);
+}
+
+.btn-wallpaper-action.btn-green {
+    background: rgba(16, 185, 129, 0.25);
+    border-color: rgba(16, 185, 129, 0.5);
+}
+
+.btn-wallpaper-action.btn-green:hover {
+    background: rgba(16, 185, 129, 0.4);
+}
+
+.btn-wallpaper-action.btn-red {
+    background: rgba(239, 68, 68, 0.2);
+    border-color: rgba(239, 68, 68, 0.4);
+}
+
+.btn-wallpaper-action.btn-red:hover {
+    background: rgba(239, 68, 68, 0.35);
+}
+
+.wallpaper-color-row,
+.wallpaper-opacity-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.wallpaper-color-input {
+    width: 36px;
+    height: 28px;
+    border: 1px solid var(--border-bright);
+    border-radius: 6px;
+    cursor: pointer;
+    background: transparent;
+    padding: 1px;
+}
+
+.wallpaper-range {
+    flex: 1;
+    accent-color: var(--accent-cyan);
+    cursor: pointer;
+}
+
+/* ── AI Harness Action Quick Chips ── */
+.ai-chips-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 8px 12px;
+    border-top: 1px solid var(--border-subtle);
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.ai-chip {
+    font-size: 11px;
+    padding: 3px 9px;
+    border-radius: 12px;
+    background: rgba(0, 240, 255, 0.08);
+    border: 1px solid rgba(0, 240, 255, 0.25);
+    color: var(--accent-cyan);
+    cursor: pointer;
+    transition: all 0.15s ease;
+    font-weight: 500;
+    user-select: none;
+}
+
+.ai-chip:hover {
+    background: rgba(0, 240, 255, 0.2);
+    box-shadow: 0 0 8px rgba(0, 240, 255, 0.35);
+    transform: translateY(-1px);
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   BRAVE-STYLE FULL-PAGE DOWNLOADS MANAGER
+   ══════════════════════════════════════════════════════════════════ */
+.downloads-page-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    background: #080c14;
+    color: #e2e8f0;
+    overflow-y: auto;
+    user-select: text;
+}
+
+.downloads-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 16px 32px;
+    background: #0b1120;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    position: sticky;
+    top: 0;
+    z-index: 20;
+}
+
+.downloads-header-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.downloads-logo-icon {
+    font-size: 28px;
+    background: rgba(0, 229, 255, 0.12);
+    border: 1px solid rgba(0, 229, 255, 0.3);
+    border-radius: 10px;
+    padding: 6px 10px;
+}
+
+.downloads-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: -0.3px;
+    margin: 0;
+}
+
+.downloads-subtitle {
+    font-size: 12px;
+    color: #94a3b8;
+    margin: 2px 0 0 0;
+}
+
+.downloads-search-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 8px;
+    padding: 6px 12px;
+    width: 320px;
+    max-width: 100%;
+    transition: border-color 0.15s ease;
+}
+
+.downloads-search-wrapper:focus-within {
+    border-color: #00e5ff;
+    box-shadow: 0 0 0 2px rgba(0, 229, 255, 0.2);
+}
+
+.downloads-search-input {
+    background: transparent;
+    border: none;
+    color: #ffffff;
+    font-size: 13px;
+    width: 100%;
+    outline: none;
+}
+
+.search-clear-btn {
+    background: transparent;
+    border: none;
+    color: #94a3b8;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.downloads-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.downloads-action-btn {
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: all 0.15s ease;
+}
+
+.downloads-action-btn.primary {
+    background: #0284c7;
+    color: #ffffff;
+}
+
+.downloads-action-btn.primary:hover {
+    background: #0369a1;
+}
+
+.downloads-action-btn.secondary {
+    background: rgba(255, 255, 255, 0.07);
+    color: #cbd5e1;
+    border-color: rgba(255, 255, 255, 0.12);
+}
+
+.downloads-action-btn.secondary:hover {
+    background: rgba(255, 255, 255, 0.12);
+    color: #ffffff;
+}
+
+.downloads-content {
+    max-width: 960px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 24px 20px 60px 20px;
+}
+
+.downloads-empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 80px 20px;
+    gap: 12px;
+}
+
+.empty-icon-circle {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    margin-bottom: 8px;
+}
+
+.downloads-empty-state h2 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #ffffff;
+    margin: 0;
+}
+
+.downloads-empty-state p {
+    font-size: 13px;
+    color: #94a3b8;
+    max-width: 380px;
+    margin: 0 0 16px 0;
+    line-height: 1.4;
+}
+
+.downloads-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.download-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 14px 18px;
+    background: #0f172a;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.download-card:hover {
+    border-color: rgba(0, 229, 255, 0.25);
+    background: #131d33;
+}
+
+.download-file-icon {
+    font-size: 28px;
+    width: 48px;
+    height: 48px;
+    background: rgba(255, 255, 255, 0.04);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.download-info {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+    gap: 6px;
+}
+
+.download-title-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.download-filename {
+    font-size: 14px;
+    font-weight: 600;
+    color: #ffffff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.download-filename.clickable {
+    cursor: pointer;
+    text-decoration: underline;
+    text-decoration-color: transparent;
+    transition: text-decoration-color 0.15s;
+}
+
+.download-filename.clickable:hover {
+    text-decoration-color: #38bdf8;
+    color: #38bdf8;
+}
+
+.download-badge {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 12px;
+    white-space: nowrap;
+}
+
+.download-badge.progressing {
+    background: rgba(0, 229, 255, 0.15);
+    color: #00e5ff;
+    border: 1px solid rgba(0, 229, 255, 0.3);
+}
+
+.download-badge.completed {
+    background: rgba(34, 197, 94, 0.15);
+    color: #4ade80;
+    border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.download-badge.cancelled,
+.download-badge.interrupted {
+    background: rgba(239, 68, 68, 0.15);
+    color: #f87171;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.download-source-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: #94a3b8;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.download-domain {
+    color: #38bdf8;
+    text-decoration: none;
+}
+
+.download-domain:hover {
+    text-decoration: underline;
+}
+
+.download-save-path {
+    color: #64748b;
+}
+
+.download-progress-track {
+    width: 100%;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 3px;
+    overflow: hidden;
+    margin: 2px 0;
+}
+
+.download-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #0284c7 0%, #00e5ff 100%);
+    border-radius: 3px;
+    transition: width 0.2s ease;
+}
+
+.download-progress-fill.fill-done {
+    background: #22c55e;
+}
+
+.download-progress-fill.fill-cancelled {
+    background: #ef4444;
+}
+
+.download-metrics-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 11px;
+    color: #94a3b8;
+}
+
+.metrics-left {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.metric-speed {
+    color: #38bdf8;
+    font-weight: 600;
+}
+
+.metric-percent {
+    font-weight: 600;
+}
+
+.download-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.dl-btn {
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.06);
+    color: #ffffff;
+    transition: all 0.12s ease;
+}
+
+.dl-btn:hover {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.25);
+}
+
+.dl-btn.open-btn {
+    background: #0284c7;
+    border-color: #0284c7;
+}
+
+.dl-btn.open-btn:hover {
+    background: #0369a1;
+}
+
+.dl-btn.cancel-btn:hover {
+    background: rgba(239, 68, 68, 0.2);
+    border-color: rgba(239, 68, 68, 0.4);
+    color: #fca5a5;
+}
+
+/* ── Custom Background Wallpaper ── */
+.wallpaper-layer {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    transition: opacity 0.4s ease;
+}
+
+.wallpaper-layer video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* Dark scrim overlay so text stays readable over bright wallpapers */
+.wallpaper-layer::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, var(--wallpaper-overlay-opacity, 0.4));
+    pointer-events: none;
+    transition: background 0.3s ease;
+    z-index: 1;
+}
+
+/* When wallpaper is active, make browser chrome translucent and body transparent */
+body.has-wallpaper {
+    background: transparent !important;
+}
+
+body.has-wallpaper .main-browser-workspace,
+body.has-wallpaper .webview-container {
+    background: transparent !important;
+}
+
+body.has-wallpaper .tab-strip-bar,
+body.has-wallpaper .navigation-toolbar,
+body.has-wallpaper .bookmarks-bar {
+    background: rgba(10, 15, 29, 0.65) !important;
+    backdrop-filter: blur(18px) saturate(1.4);
+    -webkit-backdrop-filter: blur(18px) saturate(1.4);
+}
+
+body.has-wallpaper .ai-hud-sidebar {
+    background: rgba(10, 15, 29, 0.75) !important;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+}
+
+.btn-wallpaper {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-bright);
+    color: var(--text-primary);
+    font-size: 14px;
+    padding: 4px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    line-height: 1;
+}
+
+.btn-wallpaper:hover {
+    background: rgba(0, 240, 255, 0.12);
+    border-color: var(--accent-cyan);
+    box-shadow: 0 0 10px rgba(0, 240, 255, 0.25);
+}
+
+.wallpaper-modal-body {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.wallpaper-preview-box {
+    width: 100%;
+    height: 180px;
+    border-radius: 12px;
+    border: 1px dashed rgba(0, 240, 255, 0.3);
+    background: rgba(0, 0, 0, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+}
+
+.wallpaper-preview-placeholder {
+    font-size: 13px;
+    color: var(--text-muted);
+    font-family: var(--font-sans);
+}
+
+.wallpaper-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.btn-wallpaper-action {
+    padding: 8px 14px;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    font-family: var(--font-sans);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    color: #fff;
+}
+
+.btn-wallpaper-action.btn-blue {
+    background: rgba(0, 132, 199, 0.25);
+    border-color: rgba(0, 132, 199, 0.5);
+}
+
+.btn-wallpaper-action.btn-blue:hover {
+    background: rgba(0, 132, 199, 0.4);
+}
+
+.btn-wallpaper-action.btn-green {
+    background: rgba(16, 185, 129, 0.25);
+    border-color: rgba(16, 185, 129, 0.5);
+}
+
+.btn-wallpaper-action.btn-green:hover {
+    background: rgba(16, 185, 129, 0.4);
+}
+
+.btn-wallpaper-action.btn-red {
+    background: rgba(239, 68, 68, 0.2);
+    border-color: rgba(239, 68, 68, 0.4);
+}
+
+.btn-wallpaper-action.btn-red:hover {
+    background: rgba(239, 68, 68, 0.35);
+}
+
+.wallpaper-color-row,
+.wallpaper-opacity-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.wallpaper-color-input {
+    width: 36px;
+    height: 28px;
+    border: 1px solid var(--border-bright);
+    border-radius: 6px;
+    cursor: pointer;
+    background: transparent;
+    padding: 1px;
+}
+
+.wallpaper-range {
+    flex: 1;
+    accent-color: var(--accent-cyan);
+    cursor: pointer;
+}
+
+/* ── Typography & Font Canvas Studio ── */
+.font-size-segmented-control {
+    display: flex;
+    gap: 2px;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 2px;
+    border-radius: 6px;
+    border: 1px solid var(--border-bright);
+}
+
+.font-size-pill {
+    padding: 2px 8px;
+    font-size: 11px;
+    font-weight: 700;
+    font-family: var(--font-mono);
+    color: var(--text-muted);
+    background: transparent;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.font-size-pill:hover {
+    color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.font-size-pill.active {
+    background: var(--accent-cyan);
+    color: #070b14;
+    font-weight: 800;
+}
+
+/* 8 Curated Fonts: GT Super, Juana, Playfair Display, Ogg, Inter, Poppins, Plus Jakarta Sans, Avenir */
+@font-face {
+    font-family: 'GT Super';
+    src: local('GT Super'), local('GT Super Display'), local('GT-Super'), local('Cheltenham');
+    font-weight: 400 800;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Juana';
+    src: local('Juana'), local('Juana-Regular'), local('Juana-Medium'), local('Juana-Bold');
+    font-weight: 400 800;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Ogg';
+    src: local('Ogg'), local('Ogg-Regular'), local('Ogg-Roman'), local('Ogg-Medium');
+    font-weight: 400 800;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'Avenir';
+    src: local('Avenir'), local('Avenir Next'), local('AvenirNext-Regular');
+    font-weight: 400 800;
+    font-display: swap;
+}
+
+.font-style-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    max-height: 220px;
+    overflow-y: auto;
+    padding-right: 4px;
+}
+.font-style-grid::-webkit-scrollbar {
+    width: 5px;
+}
+.font-style-grid::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.16);
+    border-radius: 4px;
+}
+
+.font-style-card {
+    padding: 10px 12px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border-bright);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.font-style-card:hover {
+    background: rgba(0, 229, 255, 0.06);
+    border-color: rgba(0, 229, 255, 0.35);
+    transform: translateY(-1px);
+}
+
+.font-style-card.active {
+    background: rgba(0, 229, 255, 0.12);
+    border-color: var(--accent-cyan);
+    box-shadow: 0 0 12px rgba(0, 229, 255, 0.2);
+}
+
+.font-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.font-card-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.font-card-badge {
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 1px 6px;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--accent-cyan);
+}
+
+.font-card-sub {
+    font-size: 11px;
+    color: var(--text-muted);
+}
+
+.font-size-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    padding: 8px 4px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--border-bright);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    color: var(--text-secondary);
+}
+
+.font-size-btn:hover {
+    background: rgba(0, 229, 255, 0.08);
+    border-color: rgba(0, 229, 255, 0.3);
+}
+
+.font-size-btn.active {
+    background: rgba(0, 229, 255, 0.16);
+    border-color: var(--accent-cyan);
+    color: #fff;
+    box-shadow: 0 0 10px rgba(0, 229, 255, 0.2);
+}
+
+.font-size-btn .size-letter {
+    font-weight: 800;
+    line-height: 1;
+}
+
+.font-size-btn .size-name {
+    font-size: 9px;
+    color: var(--text-muted);
+}
+
+.font-size-btn.active .size-name {
+    color: var(--accent-cyan);
+    font-weight: 600;
+}
+
+/* Reader Content Body Modern Minimalist Article Styling */
+.reader-content-body {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 24px 28px;
+    transition: font-size 0.2s ease, font-family 0.2s ease, line-height 0.2s ease;
+}
+
+.reader-content-body h1 {
+    font-size: 1.65em !important;
+    font-weight: 800 !important;
+    letter-spacing: -0.025em !important;
+    line-height: 1.25 !important;
+    margin-bottom: 8px !important;
+}
+
+.reader-content-body p {
+    margin-bottom: 1.3em !important;
+    letter-spacing: -0.005em !important;
+}
+
+/* Floating HUD Toast for Typography Shortcuts & Live Adjustments */
+.typography-toast {
+    position: fixed;
+    top: 52px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-16px) scale(0.94);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 9px 18px;
+    background: rgba(10, 15, 29, 0.94);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(56, 189, 248, 0.45);
+    border-radius: 9999px;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.65), 0 0 24px rgba(56, 189, 248, 0.25);
+    color: #fff;
+    font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    z-index: 10000;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.22s cubic-bezier(0.16, 1, 0.3, 1), transform 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.typography-toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1);
+}
+
+.typography-toast-icon {
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: rgba(56, 189, 248, 0.15);
+    border: 1px solid rgba(56, 189, 248, 0.35);
+    flex-shrink: 0;
+}
+
+.typography-toast-text {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+}
+
+.typography-toast-title {
+    font-size: 12.5px;
+    font-weight: 700;
+    color: #f8fafc;
+    letter-spacing: -0.01em;
+    line-height: 1.3;
+}
+
+.typography-toast-sub {
+    font-size: 10.5px;
+    color: #94a3b8;
+    font-family: var(--font-mono, monospace);
+    line-height: 1.2;
+}
+
+
 
 
 

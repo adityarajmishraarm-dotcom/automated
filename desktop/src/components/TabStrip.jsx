@@ -1,6 +1,11 @@
-import React from 'react';
+import React, { memo } from 'react';
 
-export default function TabStrip({
+const electron = typeof window !== 'undefined' && window.require
+    ? window.require('electron')
+    : (typeof require !== 'undefined' ? require('electron') : null);
+const ipcRenderer = electron ? electron.ipcRenderer : null;
+
+function TabStripComponent({
     tabs,
     activeTabId,
     onSelectTab,
@@ -17,6 +22,7 @@ export default function TabStrip({
     onOpenTabSearch
 }) {
     const getTabFavicon = (tab) => {
+        if (tab.isDownloads || tab.url === 'antigravity://downloads') return '📥';
         if (tab.isNewTab || !tab.url || tab.url.includes('newtab.html') || tab.url === 'antigravity://newtab') {
             return null;
         }
@@ -31,7 +37,14 @@ export default function TabStrip({
     };
 
     return (
-        <header className="tab-strip-bar">
+        <header 
+            className="tab-strip-bar"
+            onDoubleClick={(e) => {
+                if (e.target === e.currentTarget) {
+                    if (ipcRenderer) ipcRenderer.send('window-maximize');
+                }
+            }}
+        >
             {/* Authentic MacBook Traffic Light Window Controls */}
             <div className="mac-window-controls" title="Window Controls">
                 <button
@@ -39,25 +52,15 @@ export default function TabStrip({
                     title="Close Window"
                     aria-label="Close"
                     onClick={() => {
-                        if (typeof window !== 'undefined' && window.require) {
-                            try {
-                                const { ipcRenderer } = window.require('electron');
-                                ipcRenderer.send('window-close');
-                            } catch (e) {}
-                        }
+                        if (ipcRenderer) ipcRenderer.send('window-close');
                     }}
                 />
                 <button
                     className="mac-btn mac-minimize"
-                    title="Minimize Window"
+                    title="Minimize Window (Mini Window)"
                     aria-label="Minimize"
                     onClick={() => {
-                        if (typeof window !== 'undefined' && window.require) {
-                            try {
-                                const { ipcRenderer } = window.require('electron');
-                                ipcRenderer.send('window-minimize');
-                            } catch (e) {}
-                        }
+                        if (ipcRenderer) ipcRenderer.send('window-minimize');
                     }}
                 />
                 <button
@@ -65,18 +68,12 @@ export default function TabStrip({
                     title="Maximize / Restore Window"
                     aria-label="Maximize"
                     onClick={() => {
-                        if (typeof window !== 'undefined' && window.require) {
-                            try {
-                                const { ipcRenderer } = window.require('electron');
-                                ipcRenderer.send('window-maximize');
-                            } catch (e) {}
-                        }
+                        if (ipcRenderer) ipcRenderer.send('window-maximize');
                     }}
                 />
             </div>
 
             <div className="brand-badge">
-                <span className="brand-logo">✨</span>
                 <span className="brand-title">Antigravity</span>
             </div>
 
@@ -197,3 +194,5 @@ export default function TabStrip({
         </header>
     );
 }
+
+export default memo(TabStripComponent);

@@ -4,12 +4,24 @@ var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
 var __getOwnPropNames = Object.getOwnPropertyNames;
 var __getProtoOf = Object.getPrototypeOf;
 var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __esm = (fn, res, err) => function __init() {
+  if (err) throw err[0];
+  try {
+    return fn && (res = (0, fn[__getOwnPropNames(fn)[0]])(fn = 0)), res;
+  } catch (e) {
+    throw err = [e], e;
+  }
+};
 var __commonJS = (cb, mod) => function __require() {
   try {
     return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
   } catch (e) {
     throw mod = 0, e;
   }
+};
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
 };
 var __copyProps = (to, from, except, desc) => {
   if (from && typeof from === "object" || typeof from === "function") {
@@ -2037,7 +2049,7 @@ var require_scheduler = __commonJS({
 var require_react_dom_production = __commonJS({
   "node_modules/react-dom/cjs/react-dom.production.js"(exports2) {
     "use strict";
-    var React13 = require_react();
+    var React17 = require_react();
     function formatProdErrorMessage(code) {
       var url = "https://react.dev/errors/" + code;
       if (1 < arguments.length) {
@@ -2079,7 +2091,7 @@ var require_react_dom_production = __commonJS({
         implementation
       };
     }
-    var ReactSharedInternals = React13.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
+    var ReactSharedInternals = React17.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
     function getCrossOriginStringAs(as, input) {
       if ("font" === as) return "";
       if ("string" === typeof input)
@@ -2244,7 +2256,7 @@ var require_react_dom_development = __commonJS({
         return dispatcher;
       }
       "undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(Error());
-      var React13 = require_react(), Internals = {
+      var React17 = require_react(), Internals = {
         d: {
           f: noop,
           r: function() {
@@ -2262,7 +2274,7 @@ var require_react_dom_development = __commonJS({
         },
         p: 0,
         findDOMNode: null
-      }, REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), REACT_RECOVERABLE_TYPE = /* @__PURE__ */ Symbol.for("react.recoverable"), REACT_OPTIMISTIC_KEY = /* @__PURE__ */ Symbol.for("react.optimistic_key"), ReactSharedInternals = React13.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
+      }, REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), REACT_RECOVERABLE_TYPE = /* @__PURE__ */ Symbol.for("react.recoverable"), REACT_OPTIMISTIC_KEY = /* @__PURE__ */ Symbol.for("react.optimistic_key"), ReactSharedInternals = React17.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
       "function" === typeof Map && null != Map.prototype && "function" === typeof Map.prototype.forEach && "function" === typeof Set && null != Set.prototype && "function" === typeof Set.prototype.clear && "function" === typeof Set.prototype.forEach || console.error(
         "React depends on Map and Set built-in types. Make sure that you load a polyfill in older browsers. https://reactjs.org/link/react-polyfills"
       );
@@ -2476,7 +2488,7 @@ var require_react_dom_client_production = __commonJS({
   "node_modules/react-dom/cjs/react-dom-client.production.js"(exports2) {
     "use strict";
     var Scheduler = require_scheduler();
-    var React13 = require_react();
+    var React17 = require_react();
     var ReactDOM = require_react_dom();
     function formatProdErrorMessage(code) {
       var url = "https://react.dev/errors/" + code;
@@ -2767,7 +2779,7 @@ var require_react_dom_client_production = __commonJS({
       return null;
     }
     var isArrayImpl = Array.isArray;
-    var ReactSharedInternals = React13.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
+    var ReactSharedInternals = React17.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
     var ReactDOMSharedInternals = ReactDOM.__DOM_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
     var sharedNotPendingObject = {
       pending: false,
@@ -15916,7 +15928,7 @@ var require_react_dom_client_production = __commonJS({
         0 === i && attemptExplicitHydrationTarget(target);
       }
     };
-    var isomorphicReactPackageVersion$jscomp$inline_2043 = React13.version;
+    var isomorphicReactPackageVersion$jscomp$inline_2043 = React17.version;
     if ("19.3.0" !== isomorphicReactPackageVersion$jscomp$inline_2043)
       throw Error(
         formatProdErrorMessage(
@@ -17505,7 +17517,7 @@ var require_react_dom_client_development = __commonJS({
         node.defaultValue !== "" + value && (node.defaultValue = "" + value);
       }
       function validateOptionProps(element, props) {
-        null == props.value && ("object" === typeof props.children && null !== props.children ? React13.Children.forEach(props.children, function(child) {
+        null == props.value && ("object" === typeof props.children && null !== props.children ? React17.Children.forEach(props.children, function(child) {
           null == child || "string" === typeof child || "number" === typeof child || "bigint" === typeof child || didWarnInvalidChild || (didWarnInvalidChild = true, console.error(
             "Cannot infer the option value of complex children. Pass a `value` prop or use a plain string as children to <option>."
           ));
@@ -34653,11 +34665,11 @@ var require_react_dom_client_development = __commonJS({
         ));
       }
       "undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(Error());
-      var Scheduler = require_scheduler(), React13 = require_react(), ReactDOM = require_react_dom(), searchTarget = null, searchBoundary = null, assign = Object.assign, REACT_LEGACY_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.element"), REACT_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = /* @__PURE__ */ Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = /* @__PURE__ */ Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = /* @__PURE__ */ Symbol.for("react.profiler"), REACT_CONSUMER_TYPE = /* @__PURE__ */ Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = /* @__PURE__ */ Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = /* @__PURE__ */ Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = /* @__PURE__ */ Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = /* @__PURE__ */ Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = /* @__PURE__ */ Symbol.for("react.memo"), REACT_LAZY_TYPE = /* @__PURE__ */ Symbol.for("react.lazy");
+      var Scheduler = require_scheduler(), React17 = require_react(), ReactDOM = require_react_dom(), searchTarget = null, searchBoundary = null, assign = Object.assign, REACT_LEGACY_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.element"), REACT_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = /* @__PURE__ */ Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = /* @__PURE__ */ Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = /* @__PURE__ */ Symbol.for("react.profiler"), REACT_CONSUMER_TYPE = /* @__PURE__ */ Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = /* @__PURE__ */ Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = /* @__PURE__ */ Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = /* @__PURE__ */ Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = /* @__PURE__ */ Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = /* @__PURE__ */ Symbol.for("react.memo"), REACT_LAZY_TYPE = /* @__PURE__ */ Symbol.for("react.lazy");
       /* @__PURE__ */ Symbol.for("react.scope");
       var REACT_ACTIVITY_TYPE = /* @__PURE__ */ Symbol.for("react.activity"), REACT_LEGACY_HIDDEN_TYPE = /* @__PURE__ */ Symbol.for("react.legacy_hidden");
       /* @__PURE__ */ Symbol.for("react.tracing_marker");
-      var REACT_MEMO_CACHE_SENTINEL = /* @__PURE__ */ Symbol.for("react.memo_cache_sentinel"), REACT_VIEW_TRANSITION_TYPE = /* @__PURE__ */ Symbol.for("react.view_transition"), REACT_RECOVERABLE_TYPE = /* @__PURE__ */ Symbol.for("react.recoverable"), MAYBE_ITERATOR_SYMBOL = Symbol.iterator, REACT_CLIENT_REFERENCE = /* @__PURE__ */ Symbol.for("react.client.reference"), isArrayImpl = Array.isArray, ReactSharedInternals = React13.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, ReactDOMSharedInternals = ReactDOM.__DOM_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, NotPending = Object.freeze({
+      var REACT_MEMO_CACHE_SENTINEL = /* @__PURE__ */ Symbol.for("react.memo_cache_sentinel"), REACT_VIEW_TRANSITION_TYPE = /* @__PURE__ */ Symbol.for("react.view_transition"), REACT_RECOVERABLE_TYPE = /* @__PURE__ */ Symbol.for("react.recoverable"), MAYBE_ITERATOR_SYMBOL = Symbol.iterator, REACT_CLIENT_REFERENCE = /* @__PURE__ */ Symbol.for("react.client.reference"), isArrayImpl = Array.isArray, ReactSharedInternals = React17.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, ReactDOMSharedInternals = ReactDOM.__DOM_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, NotPending = Object.freeze({
         pending: false,
         data: null,
         method: null,
@@ -37849,7 +37861,7 @@ var require_react_dom_client_development = __commonJS({
         }
       };
       (function() {
-        var isomorphicReactPackageVersion = React13.version;
+        var isomorphicReactPackageVersion = React17.version;
         if ("19.3.0" !== isomorphicReactPackageVersion)
           throw Error(
             'Incompatible React versions: The "react" and "react-dom" packages must have the exact same version. Instead got:\n  - react:      ' + (isomorphicReactPackageVersion + "\n  - react-dom:  19.3.0\nLearn more: https://react.dev/warnings/version-mismatch")
@@ -38002,16 +38014,371 @@ var require_client = __commonJS({
   }
 });
 
+// desktop/src/services/aiProviderService.js
+var aiProviderService_exports = {};
+__export(aiProviderService_exports, {
+  DEFAULT_PROVIDERS: () => DEFAULT_PROVIDERS,
+  getActiveProviderConfig: () => getActiveProviderConfig,
+  getActiveProviderId: () => getActiveProviderId,
+  getAiProvidersConfig: () => getAiProvidersConfig,
+  saveAiProvidersConfig: () => saveAiProvidersConfig,
+  sendChatMessage: () => sendChatMessage,
+  setActiveProviderId: () => setActiveProviderId,
+  testConnection: () => testConnection
+});
+function getAiProvidersConfig() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return { ...DEFAULT_PROVIDERS };
+    const parsed = JSON.parse(raw);
+    const merged = { ...DEFAULT_PROVIDERS };
+    for (const [key, val] of Object.entries(parsed)) {
+      if (merged[key]) {
+        merged[key] = { ...merged[key], ...val };
+      } else {
+        merged[key] = val;
+      }
+    }
+    return merged;
+  } catch (e) {
+    return { ...DEFAULT_PROVIDERS };
+  }
+}
+function saveAiProvidersConfig(config) {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(config));
+    return true;
+  } catch (e) {
+    console.error("[AI Provider Service] Failed to save config:", e);
+    return false;
+  }
+}
+function getActiveProviderId() {
+  try {
+    return localStorage.getItem(ACTIVE_PROVIDER_KEY) || "openai";
+  } catch (e) {
+    return "openai";
+  }
+}
+function setActiveProviderId(id) {
+  try {
+    localStorage.setItem(ACTIVE_PROVIDER_KEY, id);
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+function getActiveProviderConfig() {
+  const configs = getAiProvidersConfig();
+  const activeId = getActiveProviderId();
+  return configs[activeId] || configs.openai || DEFAULT_PROVIDERS.openai;
+}
+async function testConnection(providerId, customConfig = null) {
+  const config = customConfig || (getAiProvidersConfig()[providerId] || DEFAULT_PROVIDERS[providerId]);
+  if (!config) return { success: false, error: "Unknown provider" };
+  const cleanBaseUrl = (config.baseUrl || "").replace(/\/+$/, "");
+  const startTime = performance.now();
+  try {
+    if (config.type === "anthropic") {
+      if (!config.apiKey) {
+        return { success: false, error: "Anthropic requires an API Key (sk-ant-...)" };
+      }
+      const res = await fetch(`${cleanBaseUrl}/messages`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-api-key": config.apiKey,
+          "anthropic-version": "2023-06-01"
+        },
+        body: JSON.stringify({
+          model: config.model || "claude-3-5-haiku-20241022",
+          max_tokens: 5,
+          messages: [{ role: "user", content: "Ping" }]
+        })
+      });
+      const latencyMs2 = Math.round(performance.now() - startTime);
+      if (res.ok) {
+        return { success: true, latencyMs: latencyMs2, provider: config.name };
+      }
+      const errData2 = await res.json().catch(() => ({}));
+      return {
+        success: false,
+        latencyMs: latencyMs2,
+        error: errData2.error?.message || `HTTP ${res.status}: ${res.statusText}`
+      };
+    }
+    const headers = { "Content-Type": "application/json" };
+    if (config.apiKey) {
+      headers["Authorization"] = `Bearer ${config.apiKey}`;
+    }
+    if (providerId === "openrouter") {
+      headers["HTTP-Referer"] = "https://antigravity.browser";
+      headers["X-Title"] = "Antigravity Native Browser";
+    }
+    try {
+      const modelsRes = await fetch(`${cleanBaseUrl}/models`, {
+        method: "GET",
+        headers
+      });
+      if (modelsRes.ok) {
+        const data = await modelsRes.json().catch(() => ({}));
+        const latencyMs2 = Math.round(performance.now() - startTime);
+        const models = Array.isArray(data.data) ? data.data.map((m) => m.id) : [];
+        return { success: true, latencyMs: latencyMs2, models, provider: config.name };
+      }
+    } catch (mErr) {
+    }
+    const chatRes = await fetch(`${cleanBaseUrl}/chat/completions`, {
+      method: "POST",
+      headers,
+      body: JSON.stringify({
+        model: config.model || "default",
+        messages: [{ role: "user", content: "ping" }],
+        max_tokens: 5
+      })
+    });
+    const latencyMs = Math.round(performance.now() - startTime);
+    if (chatRes.ok) {
+      return { success: true, latencyMs, provider: config.name };
+    }
+    const errData = await chatRes.json().catch(() => ({}));
+    return {
+      success: false,
+      latencyMs,
+      error: errData.error?.message || `HTTP ${chatRes.status}: ${chatRes.statusText}`
+    };
+  } catch (networkErr) {
+    const latencyMs = Math.round(performance.now() - startTime);
+    return {
+      success: false,
+      latencyMs,
+      error: `Connection failed: ${networkErr.message}. Ensure endpoint is running and accessible.`
+    };
+  }
+}
+async function sendChatMessage({
+  prompt,
+  imagePath = null,
+  imageBase64 = null,
+  systemPrompt = null,
+  history = []
+}) {
+  const config = getActiveProviderConfig();
+  const cleanBaseUrl = (config.baseUrl || "").replace(/\/+$/, "");
+  let augmentedPrompt = prompt || "";
+  if (imagePath) {
+    augmentedPrompt += `
+
+[Local Screenshot File Path: "${imagePath}"]
+You can inspect this snapshot to visually understand the active webview and browser UI state.`;
+  }
+  try {
+    if (config.type === "anthropic") {
+      if (!config.apiKey) throw new Error("Anthropic API key is not configured.");
+      const formattedMessages = history.map((m) => ({
+        role: m.role === "assistant" ? "assistant" : "user",
+        content: m.text || m.content
+      }));
+      let userContent;
+      if (imageBase64) {
+        const cleanB64 = imageBase64.replace(/^data:image\/\w+;base64,/, "");
+        userContent = [
+          {
+            type: "image",
+            source: {
+              type: "base64",
+              media_type: "image/png",
+              data: cleanB64
+            }
+          },
+          {
+            type: "text",
+            text: augmentedPrompt
+          }
+        ];
+      } else {
+        userContent = augmentedPrompt;
+      }
+      formattedMessages.push({ role: "user", content: userContent });
+      const payload = {
+        model: config.model || "claude-3-5-sonnet-20241022",
+        max_tokens: 1500,
+        messages: formattedMessages
+      };
+      if (systemPrompt) payload.system = systemPrompt;
+      const res2 = await fetch(`${cleanBaseUrl}/messages`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-api-key": config.apiKey,
+          "anthropic-version": "2023-06-01"
+        },
+        body: JSON.stringify(payload)
+      });
+      if (!res2.ok) {
+        const err = await res2.json().catch(() => ({}));
+        throw new Error(err.error?.message || `Anthropic HTTP ${res2.status}`);
+      }
+      const data2 = await res2.json();
+      const textReply = Array.isArray(data2.content) ? data2.content.filter((c) => c.type === "text").map((c) => c.text).join("\n") : "";
+      return {
+        success: true,
+        reply: textReply,
+        provider: config.name,
+        model: config.model
+      };
+    }
+    const headers = { "Content-Type": "application/json" };
+    if (config.apiKey) {
+      headers["Authorization"] = `Bearer ${config.apiKey}`;
+    }
+    if (config.id === "openrouter") {
+      headers["HTTP-Referer"] = "https://antigravity.browser";
+      headers["X-Title"] = "Antigravity Native Browser";
+    }
+    const messages = [];
+    if (systemPrompt) {
+      messages.push({ role: "system", content: systemPrompt });
+    }
+    for (const h of history) {
+      messages.push({
+        role: h.role === "assistant" ? "assistant" : "user",
+        content: h.text || h.content
+      });
+    }
+    if (imageBase64) {
+      const dataUrl = imageBase64.startsWith("data:") ? imageBase64 : `data:image/png;base64,${imageBase64}`;
+      messages.push({
+        role: "user",
+        content: [
+          { type: "text", text: augmentedPrompt },
+          { type: "image_url", image_url: { url: dataUrl } }
+        ]
+      });
+    } else {
+      messages.push({ role: "user", content: augmentedPrompt });
+    }
+    const res = await fetch(`${cleanBaseUrl}/chat/completions`, {
+      method: "POST",
+      headers,
+      body: JSON.stringify({
+        model: config.model || "default",
+        messages,
+        max_tokens: 1500
+      })
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error?.message || `HTTP ${res.status}: ${res.statusText}`);
+    }
+    const data = await res.json();
+    const reply = data.choices?.[0]?.message?.content || "";
+    return {
+      success: true,
+      reply,
+      provider: config.name,
+      model: config.model
+    };
+  } catch (err) {
+    console.error("[AI Provider Chat Error]", err);
+    return {
+      success: false,
+      error: err.message,
+      provider: config.name
+    };
+  }
+}
+var STORAGE_KEY, ACTIVE_PROVIDER_KEY, DEFAULT_PROVIDERS;
+var init_aiProviderService = __esm({
+  "desktop/src/services/aiProviderService.js"() {
+    STORAGE_KEY = "antigravity_ai_providers_config";
+    ACTIVE_PROVIDER_KEY = "antigravity_active_ai_provider";
+    DEFAULT_PROVIDERS = {
+      openai: {
+        id: "openai",
+        name: "OpenAI Compatible",
+        type: "openai_compatible",
+        baseUrl: "https://api.openai.com/v1",
+        apiKey: "",
+        model: "gpt-4o",
+        presetModels: ["gpt-4o", "gpt-4o-mini", "o3-mini", "chatgpt-4o-latest"]
+      },
+      lmstudio: {
+        id: "lmstudio",
+        name: "LM Studio",
+        type: "openai_compatible",
+        baseUrl: "http://localhost:1234/v1",
+        apiKey: "",
+        model: "local-model",
+        presetModels: ["local-model", "qwen2.5-coder-7b-instruct", "qwen2.5-vl-7b-instruct", "llama-3.2-3b-instruct"]
+      },
+      ollama: {
+        id: "ollama",
+        name: "Ollama",
+        type: "openai_compatible",
+        baseUrl: "http://localhost:11434/v1",
+        apiKey: "",
+        model: "llama3.2-vision",
+        presetModels: ["llama3.2-vision", "qwen2.5-coder:7b", "llava:latest", "llama3.2:latest"]
+      },
+      openrouter: {
+        id: "openrouter",
+        name: "OpenRouter",
+        type: "openai_compatible",
+        baseUrl: "https://openrouter.ai/api/v1",
+        apiKey: "",
+        model: "anthropic/claude-3.5-sonnet",
+        presetModels: [
+          "anthropic/claude-3.5-sonnet",
+          "openai/gpt-4o",
+          "google/gemini-2.0-flash-001",
+          "meta-llama/llama-3.2-11b-vision-instruct",
+          "deepseek/deepseek-chat"
+        ]
+      },
+      opencode: {
+        id: "opencode",
+        name: "OpenCode",
+        type: "openai_compatible",
+        baseUrl: "https://api.opencode.ai/v1",
+        apiKey: "",
+        model: "opencode-default",
+        presetModels: ["opencode-default", "opencode-coder-v1", "opencode-vision-v1"]
+      },
+      opencodezen: {
+        id: "opencodezen",
+        name: "OpenCode Zen",
+        type: "openai_compatible",
+        baseUrl: "https://api.opencodezen.com/v1",
+        apiKey: "",
+        model: "opencode-zen-v1",
+        presetModels: ["opencode-zen-v1", "opencode-zen-fast", "opencode-zen-vision"]
+      },
+      anthropic: {
+        id: "anthropic",
+        name: "Anthropic",
+        type: "anthropic",
+        baseUrl: "https://api.anthropic.com/v1",
+        apiKey: "",
+        model: "claude-3-5-sonnet-20241022",
+        presetModels: ["claude-3-7-sonnet-latest", "claude-3-5-sonnet-20241022", "claude-3-5-haiku-20241022"]
+      }
+    };
+  }
+});
+
 // desktop/src/index.jsx
-var import_react12 = __toESM(require_react());
+var import_react16 = __toESM(require_react());
 var import_client = __toESM(require_client());
 
 // desktop/src/App.jsx
-var import_react10 = __toESM(require_react());
+var import_react14 = __toESM(require_react());
 
 // desktop/src/components/TabStrip.jsx
 var import_react = __toESM(require_react());
-function TabStrip({
+var electron = typeof window !== "undefined" && window.require ? window.require("electron") : typeof require !== "undefined" ? require("electron") : null;
+var ipcRenderer = electron ? electron.ipcRenderer : null;
+function TabStripComponent({
   tabs,
   activeTabId,
   onSelectTab,
@@ -38028,6 +38395,7 @@ function TabStrip({
   onOpenTabSearch
 }) {
   const getTabFavicon = (tab) => {
+    if (tab.isDownloads || tab.url === "antigravity://downloads") return "\u{1F4E5}";
     if (tab.isNewTab || !tab.url || tab.url.includes("newtab.html") || tab.url === "antigravity://newtab") {
       return null;
     }
@@ -38040,138 +38408,137 @@ function TabStrip({
     if (u.startsWith("https://") || u.startsWith("http://")) return "\u{1F310}";
     return null;
   };
-  return /* @__PURE__ */ import_react.default.createElement("header", { className: "tab-strip-bar" }, /* @__PURE__ */ import_react.default.createElement("div", { className: "mac-window-controls", title: "Window Controls" }, /* @__PURE__ */ import_react.default.createElement(
-    "button",
+  return /* @__PURE__ */ import_react.default.createElement(
+    "header",
     {
-      className: "mac-btn mac-close",
-      title: "Close Window",
-      "aria-label": "Close",
-      onClick: () => {
-        if (typeof window !== "undefined" && window.require) {
-          try {
-            const { ipcRenderer: ipcRenderer3 } = window.require("electron");
-            ipcRenderer3.send("window-close");
-          } catch (e) {
-          }
+      className: "tab-strip-bar",
+      onDoubleClick: (e) => {
+        if (e.target === e.currentTarget) {
+          if (ipcRenderer) ipcRenderer.send("window-maximize");
         }
       }
-    }
-  ), /* @__PURE__ */ import_react.default.createElement(
-    "button",
-    {
-      className: "mac-btn mac-minimize",
-      title: "Minimize Window",
-      "aria-label": "Minimize",
-      onClick: () => {
-        if (typeof window !== "undefined" && window.require) {
-          try {
-            const { ipcRenderer: ipcRenderer3 } = window.require("electron");
-            ipcRenderer3.send("window-minimize");
-          } catch (e) {
-          }
+    },
+    /* @__PURE__ */ import_react.default.createElement("div", { className: "mac-window-controls", title: "Window Controls" }, /* @__PURE__ */ import_react.default.createElement(
+      "button",
+      {
+        className: "mac-btn mac-close",
+        title: "Close Window",
+        "aria-label": "Close",
+        onClick: () => {
+          if (ipcRenderer) ipcRenderer.send("window-close");
         }
       }
-    }
-  ), /* @__PURE__ */ import_react.default.createElement(
-    "button",
-    {
-      className: "mac-btn mac-maximize",
-      title: "Maximize / Restore Window",
-      "aria-label": "Maximize",
-      onClick: () => {
-        if (typeof window !== "undefined" && window.require) {
-          try {
-            const { ipcRenderer: ipcRenderer3 } = window.require("electron");
-            ipcRenderer3.send("window-maximize");
-          } catch (e) {
-          }
+    ), /* @__PURE__ */ import_react.default.createElement(
+      "button",
+      {
+        className: "mac-btn mac-minimize",
+        title: "Minimize Window (Mini Window)",
+        "aria-label": "Minimize",
+        onClick: () => {
+          if (ipcRenderer) ipcRenderer.send("window-minimize");
         }
       }
-    }
-  )), /* @__PURE__ */ import_react.default.createElement("div", { className: "brand-badge" }, /* @__PURE__ */ import_react.default.createElement("span", { className: "brand-logo" }, "\u2728"), /* @__PURE__ */ import_react.default.createElement("span", { className: "brand-title" }, "Antigravity")), /* @__PURE__ */ import_react.default.createElement("div", { className: "tabs-track", id: "tabsTrack" }, tabs.map((tab) => {
-    const isActive = tab.id === activeTabId;
-    return /* @__PURE__ */ import_react.default.createElement(
+    ), /* @__PURE__ */ import_react.default.createElement(
+      "button",
+      {
+        className: "mac-btn mac-maximize",
+        title: "Maximize / Restore Window",
+        "aria-label": "Maximize",
+        onClick: () => {
+          if (ipcRenderer) ipcRenderer.send("window-maximize");
+        }
+      }
+    )),
+    /* @__PURE__ */ import_react.default.createElement("div", { className: "brand-badge" }, /* @__PURE__ */ import_react.default.createElement("span", { className: "brand-title" }, "Antigravity")),
+    /* @__PURE__ */ import_react.default.createElement("div", { className: "tabs-track", id: "tabsTrack" }, tabs.map((tab) => {
+      const isActive = tab.id === activeTabId;
+      return /* @__PURE__ */ import_react.default.createElement(
+        "div",
+        {
+          key: tab.id,
+          className: `native-tab ${isActive ? "active" : ""}`,
+          title: tab.title ? `${tab.title}
+${tab.url}` : tab.url || "New Tab",
+          onClick: () => onSelectTab(tab.id)
+        },
+        getTabFavicon(tab) ? /* @__PURE__ */ import_react.default.createElement("span", { className: "tab-favicon" }, getTabFavicon(tab)) : null,
+        /* @__PURE__ */ import_react.default.createElement("span", { className: "tab-label" }, tab.title || "New Tab"),
+        /* @__PURE__ */ import_react.default.createElement(
+          "button",
+          {
+            className: "tab-close-btn",
+            title: "Close Tab (Ctrl+W)",
+            "aria-label": "Close Tab",
+            onClick: (e) => {
+              e.stopPropagation();
+              onCloseTab(tab.id);
+            }
+          },
+          /* @__PURE__ */ import_react.default.createElement("svg", { width: "7", height: "7", viewBox: "0 0 10 10", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round" }, /* @__PURE__ */ import_react.default.createElement("line", { x1: "1", y1: "1", x2: "9", y2: "9" }), /* @__PURE__ */ import_react.default.createElement("line", { x1: "9", y1: "1", x2: "1", y2: "9" }))
+        )
+      );
+    })),
+    /* @__PURE__ */ import_react.default.createElement(
+      "button",
+      {
+        className: "btn-mac-icon",
+        id: "btnAddTab",
+        title: "New Tab (Ctrl+T)",
+        onClick: onAddTab
+      },
+      "+"
+    ),
+    /* @__PURE__ */ import_react.default.createElement(
+      "button",
+      {
+        className: "btn-mac-icon",
+        id: "btnTabSearch",
+        title: "Search Open Tabs (Ctrl+K)",
+        onClick: onOpenTabSearch
+      },
+      "\u{1F50D}"
+    ),
+    /* @__PURE__ */ import_react.default.createElement("div", { className: "window-controls-placeholder" }, /* @__PURE__ */ import_react.default.createElement(
       "div",
       {
-        key: tab.id,
-        className: `native-tab ${isActive ? "active" : ""}`,
-        title: tab.title ? `${tab.title}
-${tab.url}` : tab.url || "New Tab",
-        onClick: () => onSelectTab(tab.id)
+        className: "mac-shield-pill",
+        id: "shieldBadge",
+        title: "Brave adblock-rust Shield (Click to view blocked trackers)",
+        onClick: onOpenShields
       },
-      getTabFavicon(tab) ? /* @__PURE__ */ import_react.default.createElement("span", { className: "tab-favicon" }, getTabFavicon(tab)) : null,
-      /* @__PURE__ */ import_react.default.createElement("span", { className: "tab-label" }, tab.title || "New Tab"),
-      /* @__PURE__ */ import_react.default.createElement(
-        "button",
-        {
-          className: "tab-close-btn",
-          title: "Close Tab (Ctrl+W)",
-          "aria-label": "Close Tab",
-          onClick: (e) => {
-            e.stopPropagation();
-            onCloseTab(tab.id);
-          }
-        },
-        /* @__PURE__ */ import_react.default.createElement("svg", { width: "7", height: "7", viewBox: "0 0 10 10", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round" }, /* @__PURE__ */ import_react.default.createElement("line", { x1: "1", y1: "1", x2: "9", y2: "9" }), /* @__PURE__ */ import_react.default.createElement("line", { x1: "9", y1: "1", x2: "1", y2: "9" }))
-      )
-    );
-  })), /* @__PURE__ */ import_react.default.createElement(
-    "button",
-    {
-      className: "btn-mac-icon",
-      id: "btnAddTab",
-      title: "New Tab (Ctrl+T)",
-      onClick: onAddTab
-    },
-    "+"
-  ), /* @__PURE__ */ import_react.default.createElement(
-    "button",
-    {
-      className: "btn-mac-icon",
-      id: "btnTabSearch",
-      title: "Search Open Tabs (Ctrl+K)",
-      onClick: onOpenTabSearch
-    },
-    "\u{1F50D}"
-  ), /* @__PURE__ */ import_react.default.createElement("div", { className: "window-controls-placeholder" }, /* @__PURE__ */ import_react.default.createElement(
-    "div",
-    {
-      className: "mac-shield-pill",
-      id: "shieldBadge",
-      title: "Brave adblock-rust Shield (Click to view blocked trackers)",
-      onClick: onOpenShields
-    },
-    /* @__PURE__ */ import_react.default.createElement("span", null, "\u{1F6E1}\uFE0F"),
-    /* @__PURE__ */ import_react.default.createElement("span", { id: "shieldCount" }, adblockCount),
-    /* @__PURE__ */ import_react.default.createElement("span", { style: { fontSize: "10px", opacity: 0.7 } }, "Blocked")
-  ), /* @__PURE__ */ import_react.default.createElement("div", { className: "mac-ai-capsule" }, /* @__PURE__ */ import_react.default.createElement(
-    "button",
-    {
-      className: `mac-ai-btn ${isExternalHudVisible ? "active-external" : ""} ${isHudOpen && !isHudDetached ? "active-docked" : ""}`,
-      title: isHudDetached ? isExternalHudVisible ? "Retract and hide external AI window" : "Open standalone AI Cockpit window" : isHudOpen ? "Close AI Layer sidebar" : "Open AI Layer sidebar",
-      onClick: isHudDetached ? onDetachToggleHud : onToggleHud
-    },
-    /* @__PURE__ */ import_react.default.createElement("span", { className: "mac-ai-icon" }, "\u2726"),
-    /* @__PURE__ */ import_react.default.createElement("span", null, isHudDetached ? isExternalHudVisible ? "AI Cockpit \u2921" : "AI Cockpit \u2197" : `AI Layer ${isHudOpen ? "\u25BE" : "\u25B8"}`),
-    isExternalHudVisible && /* @__PURE__ */ import_react.default.createElement("span", { className: "dot-live", style: { width: 5, height: 5, marginLeft: 2 } })
-  ), isHudDetached ? /* @__PURE__ */ import_react.default.createElement(
-    "button",
-    {
-      className: "mac-ai-sub-btn",
-      title: "Dock AI Layer back into the main browser window",
-      onClick: onDockHud
-    },
-    "\u{1F4E5} Dock"
-  ) : /* @__PURE__ */ import_react.default.createElement(
-    "button",
-    {
-      className: "mac-ai-sub-btn",
-      title: "Detach AI Layer into external standalone window",
-      onClick: onDetachToggleHud
-    },
-    "\u2197 Pop out"
-  ))));
+      /* @__PURE__ */ import_react.default.createElement("span", null, "\u{1F6E1}\uFE0F"),
+      /* @__PURE__ */ import_react.default.createElement("span", { id: "shieldCount" }, adblockCount),
+      /* @__PURE__ */ import_react.default.createElement("span", { style: { fontSize: "10px", opacity: 0.7 } }, "Blocked")
+    ), /* @__PURE__ */ import_react.default.createElement("div", { className: "mac-ai-capsule" }, /* @__PURE__ */ import_react.default.createElement(
+      "button",
+      {
+        className: `mac-ai-btn ${isExternalHudVisible ? "active-external" : ""} ${isHudOpen && !isHudDetached ? "active-docked" : ""}`,
+        title: isHudDetached ? isExternalHudVisible ? "Retract and hide external AI window" : "Open standalone AI Cockpit window" : isHudOpen ? "Close AI Layer sidebar" : "Open AI Layer sidebar",
+        onClick: isHudDetached ? onDetachToggleHud : onToggleHud
+      },
+      /* @__PURE__ */ import_react.default.createElement("span", { className: "mac-ai-icon" }, "\u2726"),
+      /* @__PURE__ */ import_react.default.createElement("span", null, isHudDetached ? isExternalHudVisible ? "AI Cockpit \u2921" : "AI Cockpit \u2197" : `AI Layer ${isHudOpen ? "\u25BE" : "\u25B8"}`),
+      isExternalHudVisible && /* @__PURE__ */ import_react.default.createElement("span", { className: "dot-live", style: { width: 5, height: 5, marginLeft: 2 } })
+    ), isHudDetached ? /* @__PURE__ */ import_react.default.createElement(
+      "button",
+      {
+        className: "mac-ai-sub-btn",
+        title: "Dock AI Layer back into the main browser window",
+        onClick: onDockHud
+      },
+      "\u{1F4E5} Dock"
+    ) : /* @__PURE__ */ import_react.default.createElement(
+      "button",
+      {
+        className: "mac-ai-sub-btn",
+        title: "Detach AI Layer into external standalone window",
+        onClick: onDetachToggleHud
+      },
+      "\u2197 Pop out"
+    )))
+  );
 }
+var TabStrip_default = (0, import_react.memo)(TabStripComponent);
 
 // desktop/src/components/NavigationToolbar.jsx
 var import_react2 = __toESM(require_react());
@@ -38188,7 +38555,12 @@ function NavigationToolbar({
   isBookmarked,
   onToggleBookmark,
   onOpenReaderMode,
-  onOpenQrCode
+  onOpenQrCode,
+  onOpenWallpaperStudio,
+  activeDownloadsCount = 0,
+  onOpenDownloads,
+  onOpenTypography,
+  onOpenAiProviderModal
 }) {
   const inputRef = (0, import_react2.useRef)(null);
   (0, import_react2.useEffect)(() => {
@@ -38223,7 +38595,8 @@ function NavigationToolbar({
     onNavigate(val);
   };
   const getLockIcon = () => {
-    if (isNewTab || !currentUrl || currentUrl.includes("newtab.html")) return "\u2728";
+    if (isNewTab || !currentUrl || currentUrl.includes("newtab.html")) return "\u{1F4C4}";
+    if (currentUrl.startsWith("antigravity://") || currentUrl.startsWith("chrome://") || currentUrl.startsWith("brave://")) return "\u{1F6E1}\uFE0F";
     if (currentUrl.startsWith("https://")) return "\u{1F512}";
     if (currentUrl.startsWith("http://")) return "\u{1F513}";
     return "\u{1F4C4}";
@@ -38285,7 +38658,57 @@ function NavigationToolbar({
       onClick: onOpenQrCode
     },
     "\u{1F4F1} QR"
-  )), /* @__PURE__ */ import_react2.default.createElement("div", { className: "status-pill" }, /* @__PURE__ */ import_react2.default.createElement("span", { className: "dot-live" }), /* @__PURE__ */ import_react2.default.createElement("span", null, "In-Process C++")));
+  )), /* @__PURE__ */ import_react2.default.createElement(
+    "button",
+    {
+      className: "btn-toolbar-tool",
+      title: "Custom Background Wallpaper Studio",
+      onClick: onOpenWallpaperStudio
+    },
+    "\u{1F3A8} Wallpaper"
+  ), /* @__PURE__ */ import_react2.default.createElement(
+    "button",
+    {
+      className: "btn-toolbar-tool",
+      id: "btnToolbarTypography",
+      title: "Modern Typography & Font Canvas Studio (Ctrl+Alt+1..8)",
+      onClick: onOpenTypography
+    },
+    "\u{1F524} Typography"
+  ), /* @__PURE__ */ import_react2.default.createElement(
+    "button",
+    {
+      className: "btn-toolbar-tool",
+      id: "btnToolbarDownloads",
+      title: "Open Downloads Manager (Ctrl+J)",
+      onClick: onOpenDownloads,
+      style: { position: "relative" }
+    },
+    "\u{1F4E5} Downloads",
+    activeDownloadsCount > 0 && /* @__PURE__ */ import_react2.default.createElement("span", { style: {
+      position: "absolute",
+      top: -4,
+      right: -4,
+      background: "#00e5ff",
+      color: "#070b14",
+      borderRadius: "10px",
+      fontSize: "10px",
+      fontWeight: "800",
+      padding: "1px 5px",
+      lineHeight: "12px",
+      boxShadow: "0 0 6px #00e5ff"
+    } }, activeDownloadsCount)
+  ), /* @__PURE__ */ import_react2.default.createElement(
+    "button",
+    {
+      className: "btn-toolbar-tool",
+      id: "btnToolbarAiProviders",
+      title: "AI Keys & Providers (OpenAI, LM Studio, Ollama, OpenRouter, OpenCode, Anthropic)",
+      onClick: onOpenAiProviderModal,
+      style: { color: "#00e5ff", borderColor: "rgba(0, 229, 255, 0.35)", background: "rgba(0, 229, 255, 0.08)" }
+    },
+    "\u{1F511} AI Keys"
+  ), /* @__PURE__ */ import_react2.default.createElement("div", { className: "status-pill" }, /* @__PURE__ */ import_react2.default.createElement("span", { className: "dot-live" }), /* @__PURE__ */ import_react2.default.createElement("span", null, "In-Process C++")));
 }
 
 // desktop/src/components/NewTabPage.jsx
@@ -38344,7 +38767,7 @@ function NewTabPage({
     { name: "Autofill Demo", desc: "Checkout Testbed", icon: "\u26A1", color: "#00e5ff", demo: "checkout" }
   ];
   const placeholder = activeEngine === "brave" ? "Search Brave Private Search or type a web address..." : "Search Google or type a web address...";
-  return /* @__PURE__ */ import_react3.default.createElement("div", { className: "ntp-wrapper" }, /* @__PURE__ */ import_react3.default.createElement("div", { className: "ntp-container" }, /* @__PURE__ */ import_react3.default.createElement("div", { className: "time-box" }, /* @__PURE__ */ import_react3.default.createElement("div", { className: "clock-display", id: "clockDisplay" }, timeStr || "12:00 PM"), /* @__PURE__ */ import_react3.default.createElement("div", { className: "greeting-display", id: "greetingDisplay" }, greeting, "! Where would you like to go today?")), /* @__PURE__ */ import_react3.default.createElement("div", { className: "brand-badge" }, /* @__PURE__ */ import_react3.default.createElement("span", null, "\u2728"), /* @__PURE__ */ import_react3.default.createElement("span", null, "ANTIGRAVITY NATIVE BROWSER")), /* @__PURE__ */ import_react3.default.createElement("div", { className: "engine-selector" }, /* @__PURE__ */ import_react3.default.createElement(
+  return /* @__PURE__ */ import_react3.default.createElement("div", { className: "ntp-wrapper" }, /* @__PURE__ */ import_react3.default.createElement("div", { className: "ntp-container" }, /* @__PURE__ */ import_react3.default.createElement("div", { className: "time-box" }, /* @__PURE__ */ import_react3.default.createElement("div", { className: "clock-display", id: "clockDisplay" }, timeStr || "12:00 PM"), /* @__PURE__ */ import_react3.default.createElement("div", { className: "greeting-display", id: "greetingDisplay" }, greeting, "! Where would you like to go today?")), /* @__PURE__ */ import_react3.default.createElement("div", { className: "brand-badge" }, /* @__PURE__ */ import_react3.default.createElement("span", null, "ANTIGRAVITY NATIVE BROWSER")), /* @__PURE__ */ import_react3.default.createElement("div", { className: "engine-selector" }, /* @__PURE__ */ import_react3.default.createElement(
     "button",
     {
       className: `engine-btn ${activeEngine === "google" ? "active google" : ""}`,
@@ -38393,6 +38816,1191 @@ function NewTabPage({
 
 // desktop/src/components/AiHudSidebar.jsx
 var import_react4 = __toESM(require_react());
+
+// desktop/src/ai_harness_engine.js
+function resolveTargetUrl(target) {
+  if (!target) return "https://www.google.com";
+  const trimmed = target.trim();
+  if (trimmed.startsWith("http://") || trimmed.startsWith("https://") || trimmed.startsWith("file://")) {
+    return trimmed;
+  }
+  if (trimmed.includes(".") && !trimmed.includes(" ") && !trimmed.includes("?")) {
+    return "https://" + trimmed;
+  }
+  return `https://www.google.com/search?q=${encodeURIComponent(trimmed)}`;
+}
+async function executeWebviewScroll(webview, direction = "down", amountInput = 20, isPercentage = false) {
+  if (!webview || typeof webview.executeJavaScript !== "function") {
+    return { success: false, error: "Webview is not available to scroll." };
+  }
+  const num = typeof amountInput === "number" && !isNaN(amountInput) ? amountInput : 20;
+  const isExplicitPct = !!isPercentage;
+  const dir = direction || "down";
+  try {
+    const result = await webview.executeJavaScript(`
+            (function() {
+                const viewportHeight = window.innerHeight || 800;
+                const viewportWidth = window.innerWidth || 1200;
+                const docHeight = Math.max(
+                    document.body ? document.body.scrollHeight : 0,
+                    document.documentElement ? document.documentElement.scrollHeight : 0,
+                    viewportHeight
+                );
+                const inputNum = ${num};
+                const dirStr = "${dir}";
+                const isExplicitPercent = ${isExplicitPct};
+
+                // 1. Scroll 0 / top / start -> Scroll to very top of page
+                if (inputNum === 0 || dirStr === 'top' || dirStr === 'start') {
+                    window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+                    return { action: 'top', distance: 0, num: 0 };
+                }
+
+                // 2. Scroll 1000+ / end / bottom -> Scroll to very end/bottom of page
+                if (inputNum >= 1000 || dirStr === 'end' || dirStr === 'bottom') {
+                    window.scrollTo({ top: docHeight, left: 0, behavior: 'smooth' });
+                    return { action: 'end', distance: docHeight, num: 1000 };
+                }
+
+                // 3. Proportional scale logic:
+                // - Numbers <= 100 represent percentage of window viewport height/width (10 = 10%, 50 = 50%, 100 = 100%)
+                // - Numbers > 100 (and < 1000) represent raw pixel scroll distance
+                let pixelDistance = 0;
+                if (isExplicitPercent || inputNum <= 100) {
+                    const factor = inputNum / 100;
+                    pixelDistance = (dirStr === 'left' || dirStr === 'right') ? (viewportWidth * factor) : (viewportHeight * factor);
+                } else {
+                    pixelDistance = inputNum;
+                }
+
+                let x = 0;
+                let y = 0;
+                if (dirStr === 'down') y = pixelDistance;
+                else if (dirStr === 'up') y = -pixelDistance;
+                else if (dirStr === 'right') x = pixelDistance;
+                else if (dirStr === 'left') x = -pixelDistance;
+
+                window.scrollBy({
+                    top: y,
+                    left: x,
+                    behavior: 'smooth'
+                });
+
+                return { action: 'scrollBy', distance: Math.round(pixelDistance), num: inputNum };
+            })();
+        `);
+    return { success: true, result, direction: dir, inputNum: num };
+  } catch (e) {
+    return { success: false, error: e.message };
+  }
+}
+async function executeWebviewClick(webview, targetText, fallbackNavigate) {
+  const cleanTarget = (targetText || "").trim();
+  if (!cleanTarget) {
+    return { success: false, message: "Please specify the target element, button, link, plus icon, or search bar to click." };
+  }
+  if (!webview || typeof webview.executeJavaScript !== "function") {
+    return { success: false, message: "No active webview available to interact." };
+  }
+  try {
+    const result = await webview.executeJavaScript(`
+            (function() {
+                const targetRaw = ${JSON.stringify(cleanTarget)}.trim();
+                const targetLower = targetRaw.toLowerCase();
+
+                function isVisible(el) {
+                    if (!el) return false;
+                    const style = window.getComputedStyle(el);
+                    return style.display !== 'none' && 
+                           style.visibility !== 'hidden' && 
+                           style.opacity !== '0' &&
+                           el.offsetWidth > 0 && 
+                           el.offsetHeight > 0;
+                }
+
+                function getElementMetadata(el) {
+                    const txt = (el.innerText || el.textContent || '').trim();
+                    const val = (el.value || '').trim();
+                    const aria = (el.getAttribute('aria-label') || '').trim();
+                    const placeholder = (el.getAttribute('placeholder') || '').trim();
+                    const title = (el.getAttribute('title') || '').trim();
+                    const name = (el.getAttribute('name') || '').trim();
+                    const id = (el.id || '').trim();
+                    const role = (el.getAttribute('role') || '').trim();
+                    const type = (el.getAttribute('type') || '').trim();
+                    const alt = (el.getAttribute('alt') || '').trim();
+                    return { txt, val, aria, placeholder, title, name, id, role, type, alt };
+                }
+
+                // 1. Ordinal Rank Parsing (1st/first, 2nd/second, 3rd/third, etc.)
+                const rankWordMap = {
+                    'first': 1, '1st': 1,
+                    'second': 2, '2nd': 2,
+                    'third': 3, '3rd': 3,
+                    'fourth': 4, '4th': 4,
+                    'fifth': 5, '5th': 5,
+                    'sixth': 6, '6th': 6,
+                    'seventh': 7, '7th': 7,
+                    'eighth': 8, '8th': 8,
+                    'ninth': 9, '9th': 9,
+                    'tenth': 10, '10th': 10
+                };
+
+                let targetOrdinal = 1;
+                let cleanTerm = targetRaw;
+
+                const rankRegex = /\\b(1st|first|2nd|second|3rd|third|4th|fourth|5th|fifth|6th|sixth|7th|seventh|8th|eighth|9th|ninth|10th|\\d+(?:st|nd|rd|th)?)\\b/gi;
+                const rankMatches = Array.from(targetRaw.matchAll(rankRegex));
+
+                if (rankMatches.length > 0) {
+                    const matchedRankWord = rankMatches[0][1].toLowerCase();
+                    if (rankWordMap[matchedRankWord]) {
+                        targetOrdinal = rankWordMap[matchedRankWord];
+                    } else {
+                        const num = parseInt(matchedRankWord, 10);
+                        if (!isNaN(num) && num > 0) targetOrdinal = num;
+                    }
+                    cleanTerm = cleanTerm.replace(new RegExp('\\\\b' + matchedRankWord + '\\\\b', 'gi'), '').trim();
+                }
+
+                // 2. Type Filter Extraction ("link", "button", "input")
+                let filterType = null;
+                let searchTerm = cleanTerm;
+
+                if (/\\b(?:link|url|result|hyperlink|anchor)\\b/i.test(cleanTerm)) {
+                    filterType = 'link';
+                    searchTerm = cleanTerm.replace(/\\b(?:link|url|result|hyperlink|anchor)\\b/gi, '').trim();
+                } else if (/\\b(?:button|btn|action)\\b/i.test(cleanTerm)) {
+                    filterType = 'button';
+                    searchTerm = cleanTerm.replace(/\\b(?:button|btn|action)\\b/gi, '').trim();
+                } else if (/\\b(?:input|field|textbox|search\\s*bar|search\\s*box)\\b/i.test(cleanTerm)) {
+                    filterType = 'input';
+                    searchTerm = cleanTerm.replace(/\\b(?:input|field|textbox|search\\s*bar|search\\s*box)\\b/gi, '').trim();
+                }
+
+                if (!searchTerm) searchTerm = cleanTerm || targetRaw;
+                const termLower = searchTerm.toLowerCase();
+
+                // Check for Set-of-Marks mark index (#7, hashtag 7, mark 7)
+                let markIndex = null;
+                const markMatch = targetRaw.match(/^(?:#|hashtag\\s*|mark\\s*|badge\\s*|number\\s*|no\\.?\\s*)?(\\d+)$/i);
+                if (markMatch) {
+                    markIndex = parseInt(markMatch[1], 10);
+                }
+
+                const selectors = [
+                    'button', 'a', 'input', 'textarea', 'select', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+                    '[role="button"]', '[role="link"]', '[role="searchbox"]', '[role="search"]', '[role="textbox"]',
+                    '[role="combobox"]', '[role="option"]', '[role="menuitem"]', '[role="tab"]',
+                    'summary', '[tabindex]:not([tabindex="-1"])', '.btn', '.button', '[onclick]',
+                    '*[class*="cursor-pointer" i]', '*[id*="btn" i]', '*[id*="verify" i]', '*[id*="download" i]'
+                ];
+
+                const rawCandidates = Array.from(document.querySelectorAll(selectors.join(',')));
+                const visibleCandidates = rawCandidates.filter(isVisible);
+
+                // Sort candidates by document visual position (top-to-bottom, left-to-right)
+                visibleCandidates.sort((a, b) => {
+                    const rA = a.getBoundingClientRect();
+                    const rB = b.getBoundingClientRect();
+                    if (Math.abs(rA.top - rB.top) > 8) {
+                        return rA.top - rB.top;
+                    }
+                    return rA.left - rB.left;
+                });
+
+                let matchedEl = null;
+                let matchType = '';
+
+                // Direct Selector or ID Match
+                if (!matchedEl) {
+                    try {
+                        const directEl = document.querySelector(targetRaw) || document.getElementById(targetRaw);
+                        if (directEl && isVisible(directEl)) {
+                            matchedEl = directEl;
+                            matchType = 'Direct Selector/ID Match';
+                        }
+                    } catch (e) {}
+                }
+
+                // Tier 0: Set-of-Marks Mark Index Match
+                if (!matchedEl && markIndex !== null) {
+                    const somEl = document.querySelector('[data-som-id="' + markIndex + '"]') || document.querySelector('#som-' + markIndex);
+                    if (somEl && isVisible(somEl)) {
+                        matchedEl = somEl;
+                        matchType = 'SoM Mark #' + markIndex;
+                    } else if (markIndex >= 1 && markIndex <= visibleCandidates.length) {
+                        matchedEl = visibleCandidates[markIndex - 1];
+                        matchType = 'Mark #' + markIndex;
+                    }
+                }
+
+                // Tier 1: Search Bar Detection
+                const isExplicitSearchIntent = targetLower === 'search bar' || 
+                                               targetLower === 'search box' || 
+                                               targetLower === 'search input' || 
+                                               targetLower === 'search field' || 
+                                               targetLower === 'sb' || 
+                                               targetLower === 's';
+
+                if (!matchedEl && isExplicitSearchIntent) {
+                    const searchSelectors = [
+                        'textarea[name="q"]', 'input[name="q"]', 'textarea.gLFyf', 'input.gLFyf',
+                        'textarea[title*="Search" i]', 'input[title*="Search" i]',
+                        'textarea[aria-label*="Search" i]', 'input[aria-label*="Search" i]',
+                        'input#search', 'input#searchInput', 'input#searchbox_input', 'input[type="search"]',
+                        'textarea[name*="search" i]', 'input[name*="search" i]', 'input[id*="search" i]',
+                        'input[placeholder*="search" i]', 'textarea[placeholder*="search" i]',
+                        '[role="searchbox"]', '[role="search"] textarea', '[role="search"] input',
+                        'textarea:not([type="hidden"])', 'input[type="text"]', 'input:not([type="hidden"])'
+                    ];
+
+                    for (const sel of searchSelectors) {
+                        const el = document.querySelector(sel);
+                        if (el && isVisible(el)) {
+                            matchedEl = el;
+                            matchType = 'Dynamic Search Bar';
+                            break;
+                        }
+                    }
+                }
+
+                // Tier 2: Dynamic Candidate Ranking & Ordinal Match
+                if (!matchedEl) {
+                    const matchesList = [];
+
+                    for (const el of visibleCandidates) {
+                        const m = getElementMetadata(el);
+                        const tag = el.tagName.toLowerCase();
+                        const isLink = tag === 'a' || el.getAttribute('role') === 'link' || el.closest('a') !== null;
+                        const isButton = tag === 'button' || el.getAttribute('role') === 'button' || el.classList.contains('btn');
+                        const isInput = tag === 'input' || tag === 'textarea' || el.getAttribute('role') === 'searchbox';
+
+                        const txtCombined = (m.txt + ' ' + m.aria + ' ' + m.title + ' ' + m.alt + ' ' + m.placeholder + ' ' + m.id).toLowerCase();
+                        const valStr = m.val.toLowerCase();
+                        const hrefStr = (el.getAttribute('href') || (el.closest('a') ? el.closest('a').getAttribute('href') : '') || '').toLowerCase();
+
+                        const isTextMatched = txtCombined.includes(termLower) || (isLink && hrefStr.includes(termLower));
+                        const isValueMatched = isInput && valStr.includes(termLower);
+
+                        if (isTextMatched || isValueMatched) {
+                            const clickNode = isLink ? (el.closest('a') || el) : el;
+                            matchesList.push({
+                                node: clickNode,
+                                metadata: m,
+                                tag: tag,
+                                isLink: isLink,
+                                isButton: isButton,
+                                isInput: isInput,
+                                isTextMatched: isTextMatched
+                            });
+                        }
+                    }
+
+                    // Deduplicate matching nodes
+                    const uniqueMatches = [];
+                    const seenNodes = new Set();
+                    for (const item of matchesList) {
+                        if (!seenNodes.has(item.node)) {
+                            seenNodes.add(item.node);
+                            uniqueMatches.push(item);
+                        }
+                    }
+
+                    // Apply filters
+                    let filteredPool = uniqueMatches;
+                    if (filterType === 'link') {
+                        filteredPool = uniqueMatches.filter(m => m.isLink);
+                    } else if (filterType === 'button') {
+                        filteredPool = uniqueMatches.filter(m => m.isButton);
+                    } else if (filterType === 'input') {
+                        filteredPool = uniqueMatches.filter(m => m.isInput);
+                    } else {
+                        const textOrLinkMatches = uniqueMatches.filter(m => m.isTextMatched || m.isLink || m.isButton);
+                        if (textOrLinkMatches.length > 0) {
+                            filteredPool = textOrLinkMatches;
+                        }
+                    }
+
+                    if (filteredPool.length === 0) filteredPool = uniqueMatches;
+
+                    // Score candidates so hyperlinks are prioritized
+                    filteredPool.sort((a, b) => {
+                        let scoreA = 0;
+                        let scoreB = 0;
+                        const nodeA = a.node;
+                        const nodeB = b.node;
+                        const hrefA = (nodeA.href || nodeA.getAttribute('href') || '').toLowerCase();
+                        const hrefB = (nodeB.href || nodeB.getAttribute('href') || '').toLowerCase();
+
+                        if (hrefA && (hrefA.startsWith('http://') || hrefA.startsWith('https://'))) scoreA += 100;
+                        if (hrefB && (hrefB.startsWith('http://') || hrefB.startsWith('https://'))) scoreB += 100;
+
+                        if (hrefA.includes(termLower)) scoreA += 50;
+                        if (hrefB.includes(termLower)) scoreB += 50;
+
+                        if (nodeA.querySelector('h1,h2,h3,h4,h5,h6') || nodeA.tagName.toLowerCase().startsWith('h')) scoreA += 40;
+                        if (nodeB.querySelector('h1,h2,h3,h4,h5,h6') || nodeB.tagName.toLowerCase().startsWith('h')) scoreB += 40;
+
+                        if (a.isInput) scoreA -= 200;
+                        if (b.isInput) scoreB -= 200;
+
+                        return scoreB - scoreA;
+                    });
+
+                    if (filteredPool.length > 0) {
+                        const targetIdx = Math.min(targetOrdinal - 1, filteredPool.length - 1);
+                        const chosen = filteredPool[targetIdx];
+                        matchedEl = chosen.node;
+                        matchType = 'Ranked Match #' + (targetIdx + 1) + ' of ' + filteredPool.length;
+                    }
+                }
+
+                if (matchedEl) {
+                    matchedEl.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
+
+                    // Glowing yellow outline
+                    const origOutline = matchedEl.style.outline;
+                    const origBoxShadow = matchedEl.style.boxShadow;
+                    matchedEl.style.outline = '3px solid #FFE600';
+                    matchedEl.style.boxShadow = '0 0 20px #FFE600';
+                    setTimeout(() => {
+                        matchedEl.style.outline = origOutline;
+                        matchedEl.style.boxShadow = origBoxShadow;
+                    }, 1200);
+
+                    if (typeof matchedEl.select === 'function') {
+                        try { matchedEl.select(); } catch(e) {}
+                    }
+
+                    const tag = matchedEl.tagName.toLowerCase();
+                    const linkNode = tag === 'a' ? matchedEl : matchedEl.closest('a');
+                    let targetHref = null;
+                    if (linkNode && linkNode.href && !linkNode.href.startsWith('javascript:')) {
+                        targetHref = linkNode.href;
+                    }
+
+                    ['pointerdown', 'mousedown', 'pointerup', 'mouseup', 'click'].forEach(evtType => {
+                        const evt = new MouseEvent(evtType, {
+                            view: window,
+                            bubbles: true,
+                            cancelable: true,
+                            composed: true
+                        });
+                        matchedEl.dispatchEvent(evt);
+                        if (linkNode && linkNode !== matchedEl) {
+                            linkNode.dispatchEvent(evt);
+                        }
+                    });
+
+                    if (typeof matchedEl.click === 'function') {
+                        try { matchedEl.click(); } catch(e) {}
+                    }
+                    if (linkNode && typeof linkNode.click === 'function' && linkNode !== matchedEl) {
+                        try { linkNode.click(); } catch(e) {}
+                    }
+
+                    const m = getElementMetadata(matchedEl);
+                    const foundLabel = (m.txt || m.val || m.aria || m.placeholder || m.title || matchType || targetRaw).trim();
+                    const isInput = tag === 'input' || tag === 'textarea' || matchedEl.getAttribute('role') === 'searchbox';
+
+                    if (isInput) {
+                        setTimeout(() => {
+                            try {
+                                matchedEl.focus();
+                                if (typeof matchedEl.select === 'function') matchedEl.select();
+                            } catch(e) {}
+                        }, 50);
+                    }
+
+                    return {
+                        success: true,
+                        label: foundLabel,
+                        tag: tag,
+                        matchType: matchType,
+                        markIndex: markIndex,
+                        isInput: isInput,
+                        url: targetHref
+                    };
+                }
+
+                return { success: false, target: targetRaw };
+            })();
+        `);
+    if (result && result.success) {
+      if (result.url && (result.url.startsWith("http://") || result.url.startsWith("https://"))) {
+        if (typeof fallbackNavigate === "function") {
+          fallbackNavigate(result.url);
+        } else if (typeof webview.loadURL === "function") {
+          webview.loadURL(result.url).catch(() => {
+          });
+        }
+      }
+      const markBadge = result.markIndex ? ` <strong>[Mark #${result.markIndex}]</strong>` : "";
+      if (result.isInput) {
+        return {
+          success: true,
+          message: `\u{1F3AF} AI focused and highlighted the search input${markBadge}: <strong>"${result.label}"</strong>. Typing goes directly into the search bar!`
+        };
+      }
+      return {
+        success: true,
+        message: `\u{1F3AF} AI clicked element${markBadge}: <strong>"${result.label}"</strong> &lt;${result.tag}&gt; (${result.matchType}).`
+      };
+    }
+    return {
+      success: false,
+      message: `\u26A0\uFE0F Could not find visible matching element for <strong>"${cleanTarget}"</strong> on the active page.`
+    };
+  } catch (e) {
+    return { success: false, message: `\u26A0\uFE0F Click action error: ${e.message}` };
+  }
+}
+async function typeAndSubmitInSearchBar(webview, textToType) {
+  if (!webview || typeof webview.executeJavaScript !== "function") {
+    return { success: false, message: "No active webview available for search typing." };
+  }
+  try {
+    const result = await webview.executeJavaScript(`
+            (function() {
+                const text = ${JSON.stringify(textToType)};
+                const searchSelectors = [
+                    'textarea[name="q"]', 'input[name="q"]', 'textarea.gLFyf', 'input.gLFyf',
+                    'input#search', 'input#searchInput', 'input#searchbox_input', 'input[type="search"]',
+                    'textarea[name*="search" i]', 'input[name*="search" i]', 'input[id*="search" i]',
+                    'input[placeholder*="search" i]', 'textarea[placeholder*="search" i]',
+                    '[role="searchbox"]', '[role="search"] textarea', '[role="search"] input',
+                    'textarea:not([type="hidden"])', 'input[type="text"]', 'input:not([type="hidden"])'
+                ];
+
+                let targetInput = null;
+                for (const sel of searchSelectors) {
+                    const el = document.querySelector(sel);
+                    if (el && el.offsetWidth > 0 && el.offsetHeight > 0) {
+                        targetInput = el;
+                        break;
+                    }
+                }
+
+                if (!targetInput) {
+                    return { success: false, error: 'Could not find an active search input on current page.' };
+                }
+
+                targetInput.focus();
+                targetInput.value = text;
+                targetInput.dispatchEvent(new Event('input', { bubbles: true }));
+                targetInput.dispatchEvent(new Event('change', { bubbles: true }));
+
+                // Highlight yellow
+                const origOutline = targetInput.style.outline;
+                targetInput.style.outline = '3px solid #FFE600';
+                targetInput.style.boxShadow = '0 0 16px #FFE600';
+                setTimeout(() => {
+                    targetInput.style.outline = origOutline;
+                    targetInput.style.boxShadow = '';
+                }, 1000);
+
+                // Try form submit or Enter keypress
+                let formSubmitted = false;
+                const form = targetInput.closest('form');
+                if (form) {
+                    try {
+                        const submitBtn = form.querySelector('button[type="submit"], input[type="submit"]');
+                        if (submitBtn) {
+                            submitBtn.click();
+                            formSubmitted = true;
+                        } else {
+                            form.requestSubmit ? form.requestSubmit() : form.submit();
+                            formSubmitted = true;
+                        }
+                    } catch (e) {}
+                }
+
+                if (!formSubmitted) {
+                    const enterEvt = new KeyboardEvent('keydown', {
+                        key: 'Enter',
+                        code: 'Enter',
+                        keyCode: 13,
+                        which: 13,
+                        bubbles: true,
+                        cancelable: true
+                    });
+                    targetInput.dispatchEvent(enterEvt);
+                }
+
+                return { success: true, text: text, inputTag: targetInput.tagName.toLowerCase() };
+            })();
+        `);
+    if (result && result.success) {
+      return `\u2328\uFE0F Typed <strong>"${textToType}"</strong> into search bar and submitted search.`;
+    } else {
+      return `\u26A0\uFE0F Could not find search bar on current page: ${result ? result.error : "Unknown error"}`;
+    }
+  } catch (e) {
+    return `\u26A0\uFE0F Search typing error: ${e.message}`;
+  }
+}
+async function highlightAndNumberOccurrences(webview, keyword) {
+  if (!webview || typeof webview.executeJavaScript !== "function") {
+    return { success: false, count: 0 };
+  }
+  try {
+    const res = await webview.executeJavaScript(`
+            (function() {
+                const kw = ${JSON.stringify(keyword)}.trim().toLowerCase();
+                if (!kw) return { count: 0 };
+
+                // Clean existing badges
+                document.querySelectorAll('.antigravity-num-badge').forEach(b => b.remove());
+
+                const walker = document.createTreeWalker(
+                    document.body,
+                    NodeFilter.SHOW_TEXT,
+                    null,
+                    false
+                );
+
+                let count = 0;
+                const matches = [];
+                while (walker.nextNode()) {
+                    const node = walker.currentNode;
+                    if (node.parentElement && !['SCRIPT', 'STYLE', 'NOSCRIPT'].includes(node.parentElement.tagName)) {
+                        const txt = node.textContent.toLowerCase();
+                        if (txt.includes(kw)) {
+                            const rect = node.parentElement.getBoundingClientRect();
+                            if (rect.width > 0 && rect.height > 0) {
+                                matches.push(node.parentElement);
+                            }
+                        }
+                    }
+                }
+
+                matches.slice(0, 50).forEach((el, idx) => {
+                    count++;
+                    const badge = document.createElement('span');
+                    badge.className = 'antigravity-num-badge';
+                    badge.textContent = '#' + (idx + 1);
+                    badge.style.cssText = 'background:#FFE600; color:#000; font-weight:800; font-size:11px; padding:1px 5px; border-radius:4px; margin-right:4px; display:inline-block; vertical-align:middle; z-index:999999; box-shadow:0 0 6px rgba(0,0,0,0.6);';
+                    el.prepend(badge);
+                });
+
+                // Auto remove badges after 10s
+                setTimeout(() => {
+                    document.querySelectorAll('.antigravity-num-badge').forEach(b => b.remove());
+                }, 10000);
+
+                return { count };
+            })();
+        `);
+    return res;
+  } catch (e) {
+    return { success: false, count: 0, error: e.message };
+  }
+}
+function extractTabIndexFromPrompt(raw) {
+  const lower = raw.toLowerCase();
+  const rankMap = {
+    "first": 1,
+    "1st": 1,
+    "second": 2,
+    "2nd": 2,
+    "third": 3,
+    "3rd": 3,
+    "fourth": 4,
+    "4th": 4,
+    "fifth": 5,
+    "5th": 5,
+    "sixth": 6,
+    "6th": 6,
+    "seventh": 7,
+    "7th": 7,
+    "eighth": 8,
+    "8th": 8,
+    "ninth": 9,
+    "9th": 9,
+    "tenth": 10,
+    "10th": 10
+  };
+  for (const [word, num] of Object.entries(rankMap)) {
+    if (new RegExp("\\b" + word + "\\s+tab\\b", "i").test(lower) || new RegExp("\\btab\\s+" + word + "\\b", "i").test(lower)) {
+      return num;
+    }
+  }
+  const numMatch = lower.match(/\btab\s+(\d+)\b/i) || lower.match(/\b(\d+)(?:st|nd|rd|th)?\s+tab\b/i);
+  if (numMatch) {
+    return parseInt(numMatch[1], 10);
+  }
+  return null;
+}
+async function executeAiBrowserCommand(promptText, context = {}) {
+  let raw = (promptText || "").trim();
+  if (!raw) return "Please provide an AI browser instruction.";
+  const {
+    tabs = [],
+    activeTabId = 1,
+    activeTab = null,
+    onOpenTab,
+    onCloseTab,
+    onSelectTab,
+    onNavigate,
+    getActiveWebview,
+    onToggleBookmark,
+    onOpenReaderMode,
+    onOpenQrCode,
+    onOpenTabSearch,
+    onOpenHistory,
+    onToggleMute,
+    logTelemetry = () => {
+    }
+  } = context;
+  if (/^\s*(?:clk|click)\s+(?:sb|s|search\s*bar|searchbox)\s*$/i.test(raw)) {
+    raw = "click search bar";
+  } else if (/^clk\b/i.test(raw)) {
+    raw = raw.replace(/^clk\b/i, "click");
+    raw = raw.replace(/\b(click|clk)\s+sb\b/gi, "click search bar");
+    raw = raw.replace(/\b(click|clk)\s+s\b/gi, "click search bar");
+  }
+  if (/^\s*(?:tab\s*close|tabclose|closetab|close\s*tab)\s*$/i.test(raw)) {
+    if (onCloseTab) {
+      onCloseTab(activeTabId);
+      return "\u274C Closed active tab.";
+    }
+  }
+  const directTabMatch = raw.match(/^\s*(?:tab|switch\s*to\s*tab|goto\s*tab|go\s*to\s*tab)\s*(\d+|one|two|three|four|five)\s*$/i) || raw.match(/^\s*tab(one|two|three|four|five|\d+)\s*$/i);
+  if (directTabMatch) {
+    const wordMap = { one: 1, two: 2, three: 3, four: 4, five: 5 };
+    const val = directTabMatch[1].toLowerCase();
+    const tabIdx = wordMap[val] || parseInt(val, 10);
+    if (tabIdx >= 1 && tabIdx <= tabs.length) {
+      const targetTab = tabs[tabIdx - 1];
+      if (onSelectTab && targetTab) {
+        onSelectTab(targetTab.id);
+        return `\u{1F449} Switched to tab #${tabIdx} (<strong>${targetTab.title || "Untitled"}</strong>).`;
+      }
+    } else {
+      return `\u26A0\uFE0F Tab #${tabIdx} does not exist. You currently have ${tabs.length} open tab(s).`;
+    }
+  }
+  const enterCmdMatch = raw.match(/^(?:enter|type|write|input)\s*(?:[;:|]\s*|\s+)(.+)/i);
+  if (enterCmdMatch) {
+    const textToType = enterCmdMatch[1].trim();
+    if (textToType) {
+      const wv = getActiveWebview ? getActiveWebview() : null;
+      return await typeAndSubmitInSearchBar(wv, textToType);
+    }
+  }
+  const lower = raw.toLowerCase();
+  const matches = (...patterns) => patterns.some((p) => {
+    if (p instanceof RegExp) return p.test(lower);
+    return lower.includes(p);
+  });
+  if (matches("numbering", "number words", "numbering words", "rank words", "show numbers", "number links", "number elements")) {
+    let kw = raw.replace(/.*?\b(?:numbering\s+|number\s+|rank\s+|show\s+numbers\s+for\s+|show\s+numbers\s+)/i, "").trim();
+    if (!kw || kw.toLowerCase() === "words" || kw.toLowerCase() === "links") kw = "";
+    const wv = getActiveWebview ? getActiveWebview() : null;
+    const numRes = await highlightAndNumberOccurrences(wv, kw || "a, button");
+    if (numRes && numRes.count > 0) {
+      return `\u{1F522} Numbered <strong>${numRes.count}</strong> elements on screen with visual yellow badges (#1, #2, #3...). You can now say <code>click #2</code> or <code>click 1st link</code>!`;
+    } else {
+      return `\u26A0\uFE0F Could not find visible occurrences to number on active page.`;
+    }
+  }
+  if (matches("tell me the shortcut", "tell me shortcut", "tell me shortcuts", "show shortcut", "show shortcuts", "list shortcut", "list shortcuts", "what are the shortcuts", "shortcut list", "shortcuts list", "all shortcuts", "ai shortcuts", "keyboard shortcuts", "tell me all shortcuts", "shortcut help", "help shortcut", "help shortcuts", "shortcuts help") || lower === "shortcuts" || lower === "shortcut") {
+    return `\u2328\uFE0F <strong>AI Browser Automation Shortcuts:</strong><br><br>
+\u{1F50D} <strong>AI Search Bar & Direct Typing Shortcuts:</strong><br>
+\u2022 <code>CLK SB</code> or <code>CLK S</code> \u2014 Click & focus the Search Bar directly.<br>
+\u2022 <code>enter; &lt;text&gt;</code> or <code>type &lt;text&gt;</code> \u2014 Directly type <code>&lt;text&gt;</code> into Search Bar and execute search.<br>
+\u2022 <code>CLK +</code> \u2014 Open a new browser tab.<br>
+\u2022 <code>CLK #&lt;N&gt;</code> (e.g. <code>CLK #7</code> or <code>hashtag 7</code>) \u2014 Scan screen & click badge/mark <code>#N</code>.<br><br>
+
+\u{1F4DC} <strong>Logical Page Scroll Shortcuts:</strong><br>
+\u2022 <code>S50</code> / <code>scroll 50</code> \u2014 Scroll page down to 50% scale.<br>
+\u2022 <code>S0</code> / <code>scroll 0</code> / <code>scroll top</code> \u2014 Instant scroll to start/top of page.<br>
+\u2022 <code>S1000</code> / <code>scroll 1000</code> / <code>scroll end</code> \u2014 Instant scroll to bottom/end of page.<br><br>
+
+\u{1F525} <strong>Tab Management:</strong><br>
+\u2022 <code>open &lt;site&gt;</code> \u2014 Open website in new tab (e.g. <code>open youtube</code>, <code>open github</code>).<br>
+\u2022 <code>go to 2nd tab</code> / <code>switch to 3rd tab</code> \u2014 Jump directly to tab by position.<br>
+\u2022 <code>close 2nd tab</code> / <code>close this tab</code> / <code>close all tabs</code> \u2014 Tab closing shortcuts.<br><br>
+
+\u2328\uFE0F <strong>Global Keyboard Hotkeys:</strong><br>
+\u2022 <code>Ctrl+T</code> \u2014 Open New Tab | <code>Ctrl+W</code> \u2014 Close Active Tab<br>
+\u2022 <code>Ctrl+K</code> \u2014 Tab Search & Command Palette | <code>Ctrl+D</code> \u2014 Bookmark Page<br>
+\u2022 <code>Ctrl+H</code> \u2014 Browsing History | <code>Ctrl+R</code> / <code>F5</code> \u2014 Reload Page`;
+  }
+  if (matches("what can i do using this ai", "what can this ai do", "what can i do", "ai capabilities", "ai features", "ai commands", "what can ai do", "tell me what ai can do", "help ai", "command list")) {
+    return `\u{1F916} <strong>Antigravity AI Assistant \u2014 Capability Directory:</strong><br><br>
+\u{1F4CD} <strong>1. AI Tab Management:</strong><br>
+\u2022 <code>open youtube</code> / <code>open github</code> / <code>open &lt;url&gt;</code> \u2014 Spawns new tab.<br>
+\u2022 <code>go to 2nd tab</code> / <code>switch to 3rd tab</code> \u2014 Switches active tab.<br>
+\u2022 <code>close 3rd tab</code> / <code>close this tab</code> / <code>close all tabs</code> \u2014 Instant tab closure.<br>
+\u2022 <code>duplicate tab</code> \u2014 Clones active tab.<br><br>
+\u{1F4CD} <strong>2. In-Page Grounding & Clicking:</strong><br>
+\u2022 <code>CLK SB</code> / <code>click search bar</code> \u2014 Focuses search field.<br>
+\u2022 <code>enter; &lt;query&gt;</code> \u2014 Auto-types and executes web search.<br>
+\u2022 <code>click #7</code> / <code>hashtag 7</code> \u2014 Interacts with Set-of-Marks ID.<br>
+\u2022 <code>click 1st link</code> / <code>click 2nd button</code> \u2014 Clicks element by ordinal rank.<br><br>
+\u{1F4CD} <strong>3. Navigation & Utilities:</strong><br>
+\u2022 <code>s50</code> / <code>scroll 50</code> \u2014 Proportional smooth scrolling.<br>
+\u2022 <code>reader mode</code> \u2014 Distraction-free clean article view.<br>
+\u2022 <code>qr code</code> \u2014 Mobile handoff QR generator.`;
+  }
+  const isClickIntent = (lower.startsWith("click ") || lower.startsWith("clk ") || lower.startsWith("tap ") || lower.startsWith("press ") || lower.includes("hashtag") || lower.includes("mark ") || lower.includes("badge ") || lower.includes("search bar") || lower.includes("plus") || lower.includes("+") || /\b(1st|first|2nd|second|3rd|third|4th|fourth|5th|fifth)\b/i.test(lower)) && !lower.includes("tab") && !lower.includes("window");
+  if (isClickIntent) {
+    if (matches("plus", "+", "add tab", "new tab button", "open new tab button")) {
+      if (onOpenTab) onOpenTab("", "New Tab");
+      return '\u{1F3AF} AI clicked the <strong>"+" New Tab button</strong> and opened a new tab.';
+    }
+    if (matches("search bar", "search box", "search input", "search field", "sb", "clk sb", "clk s")) {
+      const wv = getActiveWebview ? getActiveWebview() : null;
+      const res = await executeWebviewClick(wv, "search bar", onNavigate);
+      return res.message;
+    }
+    let targetText = raw.replace(/.*?\b(?:click\s+on\s+the\s+|click\s+on\s+these\s+|click\s+on\s+|click\s+the\s+|click\s+|press\s+|tap\s+|select\s+|focus\s+on\s+|focus\s+|go\s+to\s+|open\s+|type\s+in\s+)/i, "").replace(/\b(?:these\s+|yellow\s+gaps\s+like\s+|yellow\s+gap\s+|badge\s+|anywhere\s+on\s+the\s+screen|on\s+screen|default\s+search\s+engines?)*\b/gi, "").trim();
+    if (!targetText && (lower.includes("hashtag") || lower.includes("#"))) {
+      const m = raw.match(/(?:hashtag|mark|badge|#)\s*\d+/i);
+      if (m) targetText = m[0];
+    }
+    if (targetText) {
+      const wv = getActiveWebview ? getActiveWebview() : null;
+      const res = await executeWebviewClick(wv, targetText, onNavigate);
+      return res.message;
+    }
+  }
+  const isScrollKeyword = lower.includes("scroll");
+  const isScrollShortcut = /^(?:s|sl|sle|sc)\s*\d+/i.test(lower) || /^(?:s|sl|sle|sc)\s+(?:up|down|top|bottom|left|right|start|end)/i.test(lower) || /\b(?:s|sl|sle|sc)(\d+)\b/i.test(lower);
+  if (isScrollKeyword || isScrollShortcut) {
+    let direction = "down";
+    if (/\b(up|top|start|beginning)\b/i.test(raw)) direction = "up";
+    else if (/\b(left)\b/i.test(raw)) direction = "left";
+    else if (/\b(right)\b/i.test(raw)) direction = "right";
+    let amount = null;
+    let isExplicitPercent = false;
+    if (/\b(zero|0)\b/i.test(raw) || matches("top of page", "start of page", "beginning of page")) {
+      amount = 0;
+      direction = "top";
+    } else if (/\b(1000|bottom of page|end of page)\b/i.test(raw)) {
+      amount = 1e3;
+      direction = "end";
+    } else {
+      const percentMatch = raw.match(/\b(\d+)\s*(%|percent)\b/i);
+      const numMatch = raw.match(/\b(\d+)\b/);
+      if (percentMatch) {
+        isExplicitPercent = true;
+        amount = parseInt(percentMatch[1], 10);
+      } else if (numMatch) {
+        amount = parseInt(numMatch[1], 10);
+      }
+    }
+    if (amount === null) amount = 20;
+    const wv = getActiveWebview ? getActiveWebview() : null;
+    const res = await executeWebviewScroll(wv, direction, amount, isExplicitPercent);
+    if (res.success) {
+      if (amount === 0 || direction === "top") {
+        return "\u{1F4DC} Scrolled active page to the <strong>very top / starting of page</strong> (scroll 0 / s0).";
+      } else if (amount >= 1e3 || direction === "end") {
+        return "\u{1F4DC} Scrolled active page to the <strong>very bottom / end of page</strong> (scroll 1000 / s1000).";
+      } else {
+        const isScale = amount <= 100;
+        const desc = isScale ? `${amount}% viewport height` : `${amount}px`;
+        return `\u{1F4DC} Scrolled active page <strong>${direction}</strong> by scale <strong>${amount}</strong> (${desc}).`;
+      }
+    } else {
+      return `\u26A0\uFE0F Could not scroll page: ${res.error}`;
+    }
+  }
+  if (lower.startsWith("navigate to ") || lower.startsWith("go to ") && !lower.includes("tab")) {
+    const dest = raw.replace(/^(navigate to|go to)\s+/i, "").trim();
+    if (dest && onNavigate) {
+      const finalUrl = resolveTargetUrl(dest);
+      onNavigate(finalUrl);
+      return `\u{1F680} Navigating active tab to <strong>${finalUrl}</strong>.`;
+    }
+  }
+  if (lower.startsWith("open ") && !matches("history", "split", "sidebar", "reading", "reader", "qr", "palette")) {
+    const target = raw.substring(5).trim();
+    if (matches("new tab", "a new tab", "blank tab", "tab")) {
+      if (onOpenTab) onOpenTab("", "New Tab");
+      return "\u2728 Opened a new blank tab.";
+    }
+    const targetUrl = resolveTargetUrl(target);
+    const title = target;
+    if (onOpenTab) {
+      onOpenTab(targetUrl, title);
+      return `\u{1F310} Opened <strong>${title}</strong> in a new tab (<span style="color: var(--accent-cyan);">${targetUrl}</span>).`;
+    }
+  }
+  if (matches("close all tabs", "close all the tabs", "close all open tabs", "close every tab", "close all")) {
+    if (onCloseTab && tabs.length > 0) {
+      tabs.forEach((t) => onCloseTab(t.id));
+      if (onOpenTab) onOpenTab("", "New Tab");
+      return "\u274C Closed all open tabs.";
+    }
+  }
+  if (matches("close random", "randomly close", "close tab randomly", "random tab close")) {
+    if (tabs.length > 1) {
+      const otherTabs = tabs.filter((t) => t.id !== activeTabId);
+      const target = otherTabs[Math.floor(Math.random() * otherTabs.length)] || tabs[0];
+      if (onCloseTab && target) {
+        onCloseTab(target.id);
+        return `\u{1F3B2} Randomly closed tab: <strong>${target.title || "Untitled"}</strong> (Tab #${target.id}).`;
+      }
+    }
+    return "\u274C Only one tab open; cannot randomly close.";
+  }
+  const extractedCloseIdx = extractTabIndexFromPrompt(raw);
+  if (extractedCloseIdx !== null && matches("close", "delete", "remove", "kill", "shut")) {
+    if (extractedCloseIdx >= 1 && extractedCloseIdx <= tabs.length) {
+      const targetTab = tabs[extractedCloseIdx - 1];
+      if (onCloseTab && targetTab) {
+        onCloseTab(targetTab.id);
+        return `\u274C Closed tab #${extractedCloseIdx} (<strong>${targetTab.title || "Untitled"}</strong>).`;
+      }
+    } else {
+      return `\u26A0\uFE0F Tab #${extractedCloseIdx} does not exist. You currently have ${tabs.length} open tab(s).`;
+    }
+  }
+  if ((lower.startsWith("close ") || lower.endsWith(" tab")) && !matches("this", "current", "active", "all", "other", "random")) {
+    const siteQuery = raw.replace(/^(close|delete|remove)\s+/i, "").replace(/\s+tab$/i, "").trim().toLowerCase();
+    if (siteQuery.length > 1) {
+      const found = tabs.find((t) => t.title && t.title.toLowerCase().includes(siteQuery) || t.url && t.url.toLowerCase().includes(siteQuery));
+      if (found && onCloseTab) {
+        onCloseTab(found.id);
+        return `\u274C Closed tab <strong>${found.title || found.url}</strong> matching "${siteQuery}".`;
+      }
+    }
+  }
+  if (matches("close this tab", "close tab", "close current tab", "close active tab", "close page")) {
+    if (onCloseTab) {
+      onCloseTab(activeTabId);
+      return "\u274C Closed active tab.";
+    }
+  }
+  const extractedSwitchIdx = extractTabIndexFromPrompt(raw);
+  if (extractedSwitchIdx !== null && matches("go", "switch", "jump", "select", "activate", "view")) {
+    if (extractedSwitchIdx >= 1 && extractedSwitchIdx <= tabs.length) {
+      const targetTab = tabs[extractedSwitchIdx - 1];
+      if (onSelectTab && targetTab) {
+        onSelectTab(targetTab.id);
+        return `\u{1F449} Switched to tab #${extractedSwitchIdx} (<strong>${targetTab.title || "Untitled"}</strong>).`;
+      }
+    } else {
+      return `\u26A0\uFE0F Tab #${extractedSwitchIdx} does not exist. You currently have ${tabs.length} open tab(s).`;
+    }
+  }
+  if (matches("next tab", "switch to next tab")) {
+    const curIdx = tabs.findIndex((t) => t.id === activeTabId);
+    const nextTab = tabs[(curIdx + 1) % tabs.length];
+    if (onSelectTab && nextTab) {
+      onSelectTab(nextTab.id);
+      return `\u{1F449} Switched to next tab (<strong>${nextTab.title || "Untitled"}</strong>).`;
+    }
+  }
+  if (matches("previous tab", "prev tab")) {
+    const curIdx = tabs.findIndex((t) => t.id === activeTabId);
+    const prevTab = tabs[(curIdx - 1 + tabs.length) % tabs.length];
+    if (onSelectTab && prevTab) {
+      onSelectTab(prevTab.id);
+      return `\u{1F449} Switched to previous tab (<strong>${prevTab.title || "Untitled"}</strong>).`;
+    }
+  }
+  if (matches("reader mode", "reading mode", "clean view", "distraction free")) {
+    if (onOpenReaderMode) onOpenReaderMode();
+    return "\u{1F4D6} Opened Clean Reader Mode for active page.";
+  }
+  if (matches("qr code", "mobile handoff", "send to phone", "qr")) {
+    if (onOpenQrCode) onOpenQrCode();
+    return "\u{1F4F1} Opened Mobile Handoff QR Code modal.";
+  }
+  if (matches("tab search", "search tabs", "command palette")) {
+    if (onOpenTabSearch) onOpenTabSearch();
+    return "\u{1F50D} Opened Tab Search & Command Palette (Ctrl+K).";
+  }
+  if (matches("history", "browsing history", "show history")) {
+    if (onOpenHistory) onOpenHistory();
+    return "\u{1F552} Opened Browsing History panel (Ctrl+H).";
+  }
+  if (matches("bookmark", "bookmark this", "star page")) {
+    if (onToggleBookmark) onToggleBookmark();
+    return "\u2605 Bookmarked current active tab.";
+  }
+  if (matches("navigate to", "go to") && raw.length > 6) {
+    const navTarget = raw.replace(/^.*?\b(?:navigate to|go to)\s+/i, "").trim();
+    if (navTarget) {
+      if (KNOWN_SITES[navTarget.toLowerCase()]) {
+        if (onNavigate) onNavigate(KNOWN_SITES[navTarget.toLowerCase()]);
+        return `\u{1F310} Navigated active tab to <strong>${navTarget}</strong>.`;
+      } else if (onNavigate) {
+        onNavigate(navTarget);
+        return `\u{1F310} Navigated active tab to <strong>${navTarget}</strong>.`;
+      }
+    }
+  }
+  try {
+    const { getActiveProviderConfig: getActiveProviderConfig2, sendChatMessage: sendChatMessage2 } = await Promise.resolve().then(() => (init_aiProviderService(), aiProviderService_exports));
+    const activeConfig = getActiveProviderConfig2();
+    const hasKeyOrLocal = activeConfig && (activeConfig.apiKey || activeConfig.id === "lmstudio" || activeConfig.id === "ollama");
+    if (hasKeyOrLocal) {
+      const activeUrl = activeTab?.url || "";
+      const activeTitle = activeTab?.title || "";
+      const systemPrompt = `You are Antigravity Browser AI Copilot. You assist the user with web browsing and understanding.
+Active Tab: "${activeTitle}" (${activeUrl})
+Total Open Tabs: ${tabs.length}. Keep answers concise and helpful.`;
+      const aiRes = await sendChatMessage2({
+        prompt: raw,
+        systemPrompt
+      });
+      if (aiRes && aiRes.success && aiRes.reply) {
+        return `\u{1F916} <strong>[${aiRes.provider}: ${aiRes.model}]</strong><br>${aiRes.reply.replace(/\n/g, "<br>")}`;
+      }
+    }
+  } catch (e) {
+    console.warn("[AI Harness fallback error]", e.message);
+  }
+  return `\u{1F4A1} Understood instruction: "<em>${raw}</em>". Say <code>shortcuts</code> or <code>what can i do using this ai</code> for the full list of supported browser commands!`;
+}
+async function extractAdaptivePageContext(webview) {
+  if (!webview || typeof webview.executeJavaScript !== "function") {
+    return {
+      success: false,
+      error: "Webview is not available",
+      page: { url: "", title: "", domain: "", readyState: "unknown" },
+      phase: "UNKNOWN",
+      recommendation: "Wait for page to initialize"
+    };
+  }
+  try {
+    const context = await webview.executeJavaScript(`
+            (function() {
+                const doc = document;
+                const url = window.location.href || '';
+                const title = doc.title || '';
+                const readyState = doc.readyState || 'complete';
+                let domain = '';
+                try { domain = new URL(url).hostname; } catch (e) { domain = url; }
+
+                function isVisible(el) {
+                    if (!el) return false;
+                    const s = window.getComputedStyle(el);
+                    return s.display !== 'none' && s.visibility !== 'hidden' && s.opacity !== '0' && (el.offsetWidth > 0 || el.offsetHeight > 0);
+                }
+
+                // 1. Detect active countdown timers
+                const timerEls = Array.from(doc.querySelectorAll('#timer, #verify_text, [id*="timer" i], [class*="timer" i], [id*="countdown" i], [class*="countdown" i]')).filter(isVisible);
+                let activeCountdown = null;
+                for (const el of timerEls) {
+                    const txt = (el.innerText || el.textContent || '').trim();
+                    const numMatch = txt.match(/\\b(\\d+)\\s*(?:s|sec|seconds)?\\b/i);
+                    const secondsRemaining = numMatch ? parseInt(numMatch[1], 10) : null;
+                    activeCountdown = {
+                        id: el.id || '',
+                        text: txt,
+                        secondsRemaining,
+                        isComplete: secondsRemaining === 0 || txt === '0' || !secondsRemaining
+                    };
+                    break;
+                }
+
+                // 2. Detect verification forms & triggers
+                const landingForm = doc.getElementById('landing');
+                const verifyBtn = doc.getElementById('verify_button');
+                const verifyBtn2 = doc.getElementById('verify_button2');
+                const twoStepsBtn = doc.getElementById('two_steps_btn');
+
+                const verification = {
+                    hasLandingForm: !!landingForm,
+                    landingFormAction: landingForm ? (landingForm.action || '') : '',
+                    hasVerifyBtn: !!(verifyBtn && isVisible(verifyBtn)),
+                    verifyBtnText: verifyBtn ? (verifyBtn.innerText || verifyBtn.value || '') : '',
+                    hasVerifyBtn2: !!(verifyBtn2 && isVisible(verifyBtn2)),
+                    verifyBtn2Text: verifyBtn2 ? (verifyBtn2.innerText || verifyBtn2.value || '') : '',
+                    hasTwoStepsBtn: !!(twoStepsBtn && isVisible(twoStepsBtn)),
+                    twoStepsBtnText: twoStepsBtn ? (twoStepsBtn.innerText || twoStepsBtn.value || '') : ''
+                };
+
+                // 3. Detect download servers & triggers
+                const allLinks = Array.from(doc.querySelectorAll('a, button, input[type="button"], input[type="submit"]')).filter(isVisible);
+                const downloadTriggers = [];
+                const searchInputs = [];
+
+                for (const el of allLinks) {
+                    const text = (el.innerText || el.value || el.getAttribute('aria-label') || '').trim();
+                    const href = el.href || '';
+                    const id = el.id || '';
+                    const isDownloadPattern = /download|fast\\s*server|g-drive|google\\s*drive|hubcloud|direct|instant|telegram|other\\s*download|server\\s*\\d|unblockedgames|720p|480p|1080p/i.test(text + ' ' + href + ' ' + id);
+
+                    if (isDownloadPattern && text.length < 80) {
+                        downloadTriggers.push({
+                            id,
+                            text,
+                            href,
+                            tag: el.tagName.toLowerCase(),
+                            isCloudGateway: /unblockedgames|cloud\\./i.test(href),
+                            isFastServer: /fast\\s*server/i.test(text),
+                            isDirect: /direct/i.test(text)
+                        });
+                    }
+                }
+
+                // 4. Detect search inputs
+                const inputs = Array.from(doc.querySelectorAll('input, textarea')).filter(isVisible);
+                for (const inp of inputs) {
+                    const type = (inp.type || 'text').toLowerCase();
+                    const name = (inp.name || '').toLowerCase();
+                    const placeholder = (inp.placeholder || '').toLowerCase();
+                    const id = (inp.id || '').toLowerCase();
+
+                    if (type === 'search' || type === 'text' || name.includes('search') || placeholder.includes('search') || id.includes('search') || name === 's' || name === 'q') {
+                        searchInputs.push({
+                            id: inp.id || '',
+                            name: inp.name || '',
+                            placeholder: inp.placeholder || '',
+                            value: inp.value || ''
+                        });
+                    }
+                }
+
+                // 5. Gather top Set-of-Marks actionable elements (max 20)
+                const actionableElements = [];
+                let markId = 1;
+                for (const el of allLinks.slice(0, 50)) {
+                    const text = (el.innerText || el.value || el.title || '').trim();
+                    if (!text || text.length > 80) continue;
+                    const r = el.getBoundingClientRect();
+                    actionableElements.push({
+                        mark: '#' + markId++,
+                        text: text.substring(0, 60),
+                        tag: el.tagName.toLowerCase(),
+                        id: el.id || '',
+                        href: el.href || '',
+                        rect: { top: Math.round(r.top), left: Math.round(r.left), width: Math.round(r.width), height: Math.round(r.height) }
+                    });
+                    if (actionableElements.length >= 20) break;
+                }
+
+                // 6. Infer workflow phase
+                let phase = 'GENERAL_PAGE';
+                let recommendation = 'Browse or navigate to target content';
+
+                if (activeCountdown && !activeCountdown.isComplete) {
+                    phase = 'GATEWAY_COUNTDOWN';
+                    recommendation = 'Wait for countdown timer (' + (activeCountdown.secondsRemaining || 0) + 's) to finish';
+                } else if (verification.hasTwoStepsBtn) {
+                    phase = 'GATEWAY_STEP2_COMPLETE';
+                    recommendation = 'Click "GO TO DOWNLOAD" / #two_steps_btn to proceed to download host';
+                } else if (verification.hasVerifyBtn2) {
+                    phase = 'GATEWAY_STEP2_VERIFY';
+                    recommendation = 'Click "VERIFY TO CONTINUE" / #verify_button2 to begin final countdown';
+                } else if (verification.hasLandingForm || (activeCountdown && activeCountdown.isComplete)) {
+                    phase = 'GATEWAY_STEP1_VERIFY';
+                    recommendation = 'Submit #landing form or click "START VERIFICATION"';
+                } else if (downloadTriggers.length > 0) {
+                    phase = 'DOWNLOAD_SELECTION';
+                    const best = downloadTriggers.find(t => t.isFastServer) || downloadTriggers.find(t => t.isCloudGateway) || downloadTriggers[0];
+                    recommendation = 'Select download server: "' + (best ? best.text : 'First option') + '"';
+                } else if (searchInputs.length > 0 && /search|zone|mod/i.test(domain)) {
+                    phase = 'SEARCH_AVAILABLE';
+                    recommendation = 'Type query into search input';
+                }
+
+                return {
+                    success: true,
+                    page: { url, title, domain, readyState },
+                    phase,
+                    activeCountdown,
+                    verification,
+                    downloadTriggers: downloadTriggers.slice(0, 15),
+                    searchInputs: searchInputs.slice(0, 5),
+                    actionableElements,
+                    recommendation
+                };
+            })();
+        `);
+    return context;
+  } catch (err) {
+    return {
+      success: false,
+      error: err.message,
+      page: { url: "", title: "", domain: "", readyState: "error" },
+      phase: "ERROR",
+      recommendation: "Retry inspecting active page"
+    };
+  }
+}
+async function executeAdaptiveAction(webview, intent = "solve_verification", options = {}) {
+  if (!webview || typeof webview.executeJavaScript !== "function") {
+    return { success: false, error: "Webview unavailable" };
+  }
+  const context = await extractAdaptivePageContext(webview);
+  if (!context.success) return context;
+  if (intent === "solve_verification" || intent === "pass_verification") {
+    const res = await webview.executeJavaScript(`
+            (function() {
+                // Check if step 2 complete ("GO TO DOWNLOAD")
+                const twoSteps = document.getElementById('two_steps_btn');
+                if (twoSteps && window.getComputedStyle(twoSteps).display !== 'none') {
+                    twoSteps.click();
+                    return { success: true, action: 'clicked_two_steps_btn' };
+                }
+
+                // Check if step 2 verify button
+                const btn2 = document.getElementById('verify_button2');
+                if (btn2 && window.getComputedStyle(btn2).display !== 'none') {
+                    btn2.click();
+                    return { success: true, action: 'clicked_verify_button2' };
+                }
+
+                // Check if step 1 landing form
+                const landing = document.getElementById('landing');
+                if (landing && typeof landing.submit === 'function') {
+                    landing.submit();
+                    return { success: true, action: 'submitted_landing_form' };
+                }
+
+                // Check for text button matches
+                const startBtn = Array.from(document.querySelectorAll('button, a, input[type=submit]')).find(b => 
+                    /start\\s*verification|verify\\s*to\\s*continue|click\\s*here\\s*to\\s*continue/i.test(b.innerText || b.value || '')
+                );
+                if (startBtn) {
+                    startBtn.click();
+                    return { success: true, action: 'clicked_' + (startBtn.innerText || startBtn.value || 'btn').trim() };
+                }
+
+                return { success: false, message: 'No active verification trigger found on current page' };
+            })();
+        `);
+    return { ...res, currentPhase: context.phase };
+  }
+  if (intent === "select_download_server") {
+    const preferred = options.server || "fast";
+    const res = await webview.executeJavaScript(`
+            (function() {
+                const links = Array.from(document.querySelectorAll('a, button')).filter(el => {
+                    const s = window.getComputedStyle(el);
+                    return s.display !== 'none' && s.visibility !== 'hidden' && el.offsetWidth > 0;
+                });
+
+                const fast = links.find(l => /fast\\s*server/i.test(l.innerText || ''));
+                if (fast) {
+                    fast.click();
+                    return { success: true, action: 'selected_fast_server', text: fast.innerText, href: fast.href };
+                }
+
+                const server = links.find(l => /server|g-drive|direct/i.test(l.innerText || ''));
+                if (server) {
+                    server.click();
+                    return { success: true, action: 'selected_server', text: server.innerText, href: server.href };
+                }
+
+                return { success: false, message: 'No download server links matched' };
+            })();
+        `);
+    return res;
+  }
+  return { success: false, error: "Unknown adaptive action intent: " + intent };
+}
+
+// desktop/src/components/AiHudSidebar.jsx
 function AiHudSidebar({
   isOpen,
   isDetached = false,
@@ -38423,10 +40031,21 @@ function AiHudSidebar({
   currentTab,
   onSelectTab,
   activeTab = { id: 1, title: "New Tab", url: "" },
+  tabs = [],
+  onOpenTab,
+  onCloseTab,
   onExecuteClick,
   onExecuteScroll,
   onNavigate,
-  onExtractPageText
+  onExtractPageText,
+  onToggleBookmark,
+  onOpenReaderMode,
+  onOpenQrCode,
+  onOpenTabSearch,
+  onOpenHistory,
+  onOpenAiProviderModal,
+  onCaptureSnapshot,
+  latestSnapshot
 }) {
   const [activeModuleTab, setActiveModuleTab] = (0, import_react4.useState)("chat");
   const [activeToolTab, setActiveToolTab] = (0, import_react4.useState)("ax");
@@ -38463,9 +40082,9 @@ function AiHudSidebar({
   }, [chatMessages, isAiThinking]);
   (0, import_react4.useEffect)(() => {
     try {
-      const { ipcRenderer: ipcRenderer3 } = require("electron");
-      if (ipcRenderer3 && ipcRenderer3.invoke) {
-        ipcRenderer3.invoke("whisper-preload").catch(() => {
+      const { ipcRenderer: ipcRenderer4 } = require("electron");
+      if (ipcRenderer4 && ipcRenderer4.invoke) {
+        ipcRenderer4.invoke("whisper-preload").catch(() => {
         });
       }
     } catch (e) {
@@ -38503,8 +40122,8 @@ function AiHudSidebar({
             merged.set(ch, offset);
             offset += ch.length;
           }
-          const { ipcRenderer: ipcRenderer3 } = require("electron");
-          const res = await ipcRenderer3.invoke("whisper-transcribe", {
+          const { ipcRenderer: ipcRenderer4 } = require("electron");
+          const res = await ipcRenderer4.invoke("whisper-transcribe", {
             audioData: Array.from(merged),
             language: whisperLang === "auto" ? null : whisperLang
           });
@@ -38621,7 +40240,7 @@ function AiHudSidebar({
     };
     setChatMessages((prev) => [...prev, aiMsg]);
   };
-  const handleProcessNlpCommand = (query) => {
+  const handleProcessNlpCommand = async (query) => {
     if (!query || !query.trim()) return;
     const q = query.trim();
     const qLower = q.toLowerCase();
@@ -38636,150 +40255,61 @@ function AiHudSidebar({
     setIsAiThinking(true);
     const isHindi = /[\u0900-\u097F]/.test(q) || /\b(karo|jao|niche|upar|bharo|chalao|roko|kholo|batao|kripya)\b/i.test(q);
     const isKorean = /[\uAC00-\uD7AF]/.test(q) || /\b(스크롤|요약|재생|정지|열어|닫아|완성)\b/i.test(q);
-    if (qLower.includes("scroll down") || qLower === "down" || qLower.includes("scroll next") || q.includes("\u0928\u0940\u091A\u0947") || qLower.includes("niche") || qLower.includes("scroll down karo") || q.includes("\uC544\uB798\uB85C") || q.includes("\uB0B4\uB824") || q.includes("\uC2A4\uD06C\uB864 \uB2E4\uC6B4")) {
-      if (onExecuteScroll) onExecuteScroll("down", 500, false);
-      const reply = isHindi ? "\u{1F4DC} \u092A\u0947\u091C \u0928\u0940\u091A\u0947 500px \u0938\u094D\u0915\u094D\u0930\u0949\u0932 \u0915\u093F\u092F\u093E \u0917\u092F\u093E\u0964" : isKorean ? "\u{1F4DC} \uD398\uC774\uC9C0\uB97C \uC544\uB798\uB85C 500px \uC2A4\uD06C\uB864\uD588\uC2B5\uB2C8\uB2E4." : "\u{1F4DC} Scrolled down 500px on active page.";
-      addAiReply(reply);
-      speakReply(isHindi ? "\u092A\u0947\u091C \u0928\u0940\u091A\u0947 \u0938\u094D\u0915\u094D\u0930\u0949\u0932 \u0915\u093F\u092F\u093E \u0917\u092F\u093E" : isKorean ? "\uD398\uC774\uC9C0\uB97C \uC544\uB798\uB85C \uC2A4\uD06C\uB864\uD588\uC2B5\uB2C8\uB2E4" : "Scrolled down.", isHindi ? "hi" : isKorean ? "ko" : "en");
-      return;
-    }
-    if (qLower.includes("scroll up") || qLower === "up" || q.includes("\u090A\u092A\u0930") || qLower.includes("upar") || qLower.includes("scroll up karo") || q.includes("\uC704\uB85C") || q.includes("\uC62C\uB824") || q.includes("\uC2A4\uD06C\uB864 \uC5C5")) {
-      if (onExecuteScroll) onExecuteScroll("up", 500, false);
-      const reply = isHindi ? "\u{1F4DC} \u092A\u0947\u091C \u090A\u092A\u0930 500px \u0938\u094D\u0915\u094D\u0930\u0949\u0932 \u0915\u093F\u092F\u093E \u0917\u092F\u093E\u0964" : isKorean ? "\u{1F4DC} \uD398\uC774\uC9C0\uB97C \uC704\uB85C 500px \uC2A4\uD06C\uB864\uD588\uC2B5\uB2C8\uB2E4." : "\u{1F4DC} Scrolled up 500px on active page.";
-      addAiReply(reply);
-      speakReply(isHindi ? "\u092A\u0947\u091C \u090A\u092A\u0930 \u0938\u094D\u0915\u094D\u0930\u0949\u0932 \u0915\u093F\u092F\u093E \u0917\u092F\u093E" : isKorean ? "\uD398\uC774\uC9C0\uB97C \uC704\uB85C \uC2A4\uD06C\uB864\uD588\uC2B5\uB2C8\uB2E4" : "Scrolled up.", isHindi ? "hi" : isKorean ? "ko" : "en");
-      return;
-    }
-    if (qLower.includes("scroll to top") || qLower.includes("scroll top") || qLower === "top" || q.includes("\u0938\u092C\u0938\u0947 \u090A\u092A\u0930") || qLower.includes("top par") || qLower.includes("sabse upar") || q.includes("\uB9E8 \uC704\uB85C") || q.includes("\uC0C1\uB2E8\uC73C\uB85C")) {
-      if (onExecuteScroll) onExecuteScroll("up", 100, true);
-      const reply = isHindi ? "\u2B06 \u092A\u0947\u091C \u0915\u0947 \u0936\u0940\u0930\u094D\u0937 \u092A\u0930 \u092A\u0939\u0941\u0901\u091A \u0917\u090F\u0964" : isKorean ? "\u2B06 \uD398\uC774\uC9C0 \uC0C1\uB2E8\uC73C\uB85C \uC774\uB3D9\uD588\uC2B5\uB2C8\uB2E4." : "\u2B06 Scrolled to the top of the page.";
-      addAiReply(reply);
-      speakReply(isHindi ? "\u0936\u0940\u0930\u094D\u0937 \u092A\u0930 \u092A\u0939\u0941\u0901\u091A \u0917\u090F" : isKorean ? "\uC0C1\uB2E8\uC73C\uB85C \uC774\uB3D9\uD588\uC2B5\uB2C8\uB2E4" : "Scrolled to top.", isHindi ? "hi" : isKorean ? "ko" : "en");
-      return;
-    }
-    if (qLower.includes("scroll to bottom") || qLower.includes("scroll bottom") || qLower === "bottom" || q.includes("\u0938\u092C\u0938\u0947 \u0928\u0940\u091A\u0947") || qLower.includes("bottom par") || qLower.includes("sabse niche") || q.includes("\uB9E8 \uC544\uB798\uB85C") || q.includes("\uD558\uB2E8\uC73C\uB85C")) {
-      if (onExecuteScroll) onExecuteScroll("down", 100, true);
-      const reply = isHindi ? "\u2B07 \u092A\u0947\u091C \u0915\u0947 \u0905\u0902\u0924 \u092E\u0947\u0902 \u092A\u0939\u0941\u0901\u091A \u0917\u090F\u0964" : isKorean ? "\u2B07 \uD398\uC774\uC9C0 \uD558\uB2E8\uC73C\uB85C \uC774\uB3D9\uD588\uC2B5\uB2C8\uB2E4." : "\u2B07 Scrolled to the bottom of the page.";
-      addAiReply(reply);
-      speakReply(isHindi ? "\u092A\u0947\u091C \u0915\u0947 \u0905\u0902\u0924 \u092E\u0947\u0902 \u092A\u0939\u0941\u0901\u091A \u0917\u090F" : isKorean ? "\uD558\uB2E8\uC73C\uB85C \uC774\uB3D9\uD588\uC2B5\uB2C8\uB2E4" : "Scrolled to bottom.", isHindi ? "hi" : isKorean ? "ko" : "en");
-      return;
-    }
-    if (qLower.includes("click play") || qLower.includes("play video") || qLower === "play" || qLower === "pause" || q.includes("\u091A\u0932\u093E\u0913") || q.includes("\u092A\u094D\u0932\u0947") || qLower.includes("chalao") || q.includes("\uC7AC\uC0DD") || q.includes("\uC77C\uC2DC\uC815\uC9C0") || q.includes("\uB3D9\uC601\uC0C1")) {
-      if (onExecuteClick) onExecuteClick("play");
-      const reply = isHindi ? "\u25B6\uFE0F \u0935\u0940\u0921\u093F\u092F\u094B \u092A\u094D\u0932\u0947/\u092A\u0949\u091C\u093C \u091F\u0949\u0917\u0932 \u0915\u093F\u092F\u093E \u0917\u092F\u093E\u0964" : isKorean ? "\u25B6\uFE0F \uB3D9\uC601\uC0C1 \uC7AC\uC0DD/\uC77C\uC2DC\uC815\uC9C0\uB97C \uC2E4\uD589\uD588\uC2B5\uB2C8\uB2E4." : "\u25B6\uFE0F Triggered Play/Pause toggle on active video.";
-      addAiReply(reply);
-      speakReply(isHindi ? "\u0935\u0940\u0921\u093F\u092F\u094B \u0936\u0941\u0930\u0942 \u092F\u093E \u0930\u094B\u0915\u093E \u0917\u092F\u093E" : isKorean ? "\uC7AC\uC0DD \uC0C1\uD0DC\uB97C \uC804\uD658\uD588\uC2B5\uB2C8\uB2E4" : "Toggled playback.", isHindi ? "hi" : isKorean ? "ko" : "en");
-      return;
-    }
-    const markMatch = qLower.match(/click\s*(?:element|mark|number|#)?\s*#?(\d+)/i) || q.match(/(?:#|क्लिक|선택)\s*(\d+)/i);
-    if (markMatch) {
-      const markId = markMatch[1];
-      if (onExecuteClick) onExecuteClick("#" + markId);
-      const reply = isHindi ? `\u{1F3AF} Set-of-Marks \u0932\u0915\u094D\u0937\u094D\u092F #${markId} \u092A\u0930 \u0915\u094D\u0932\u093F\u0915 \u0915\u093F\u092F\u093E \u0917\u092F\u093E\u0964` : isKorean ? `\u{1F3AF} Set-of-Marks #${markId} \uC694\uC18C\uB97C \uD074\uB9AD\uD588\uC2B5\uB2C8\uB2E4.` : `\u{1F3AF} Executed direct click on Set-of-Marks target #${markId}.`;
-      addAiReply(reply);
-      speakReply(isHindi ? `\u0915\u094D\u0932\u093F\u0915 \u0915\u093F\u092F\u093E \u0917\u092F\u093E ${markId}` : isKorean ? `${markId}\uBC88 \uD074\uB9AD` : `Clicked element #${markId}`, isHindi ? "hi" : isKorean ? "ko" : "en");
-      return;
-    }
-    if (qLower.includes("summarize") || qLower.includes("summary") || qLower.includes("what is this page") || qLower === "sum" || q.includes("\u0938\u093E\u0930\u093E\u0902\u0936") || qLower.includes("samiksha") || q.includes("\u0938\u0902\u0915\u094D\u0937\u0947\u092A") || q.includes("\uC694\uC57D") || q.includes("\uB0B4\uC6A9 \uC694\uC57D")) {
-      let summary = "";
-      if (isHindi) {
-        summary = `\u{1F4D1} **\u092A\u0947\u091C \u0938\u093E\u0930\u093E\u0902\u0936: ${activeTab.title || "\u0938\u0915\u094D\u0930\u093F\u092F \u092A\u0943\u0937\u094D\u0920"}** (Whisper AI \u0935\u093F\u0936\u094D\u0932\u0947\u0937\u093F\u0924)
-
-`;
-        if (activeTab.url && activeTab.url.includes("youtube.com")) {
-          summary += `\u2022 **\u092E\u0940\u0921\u093F\u092F\u093E:** \u092F\u0942\u091F\u094D\u092F\u0942\u092C \u0935\u0940\u0921\u093F\u092F\u094B \u0938\u094D\u091F\u094D\u0930\u0940\u092E\u0964
-\u2022 **\u0935\u093F\u091C\u094D\u091E\u093E\u092A\u0928 \u0938\u094D\u0925\u093F\u0924\u093F:** 0 \u0935\u093F\u091C\u094D\u091E\u093E\u092A\u0928 (Brave adblock-rust \u0938\u0915\u094D\u0930\u093F\u092F)\u0964
-\u2022 **\u0909\u092A\u0932\u092C\u094D\u0927 \u0915\u092E\u093E\u0902\u0921:** "\u0935\u0940\u0921\u093F\u092F\u094B \u091A\u0932\u093E\u0913", "\u0928\u0940\u091A\u0947 \u0938\u094D\u0915\u094D\u0930\u0949\u0932 \u0915\u0930\u094B"\u0964`;
-        } else if (activeTab.url && activeTab.url.includes("wikipedia.org")) {
-          summary += `\u2022 **\u0935\u093F\u0936\u094D\u0935\u0915\u094B\u0936 \u092A\u094D\u0930\u0935\u093F\u0937\u094D\u091F\u093F:** ${activeTab.title}\u0964
-\u2022 **\u0938\u093E\u092E\u0917\u094D\u0930\u0940:** \u0935\u093F\u0938\u094D\u0924\u0943\u0924 \u0938\u0902\u0926\u0930\u094D\u092D \u0932\u0947\u0916 \u0909\u092A\u0932\u092C\u094D\u0927 \u0939\u0948\u0964`;
-        } else {
-          summary += `\u2022 **\u0938\u094D\u0930\u094B\u0924 URL:** \`${activeTab.url || "\u0928\u092F\u093E \u091F\u0948\u092C"}\`
-\u2022 **\u0936\u0940\u0932\u094D\u0921\u094D\u0938:** ${shieldsStats.totalBlocked || 0} \u0935\u093F\u091C\u094D\u091E\u093E\u092A\u0928 \u092C\u094D\u0932\u0949\u0915\u0964`;
-        }
-      } else if (isKorean) {
-        summary = `\u{1F4D1} **\uD398\uC774\uC9C0 \uC694\uC57D: ${activeTab.title || "\uD604\uC7AC \uD398\uC774\uC9C0"}** (Whisper AI \uBD84\uC11D)
-
-`;
-        if (activeTab.url && activeTab.url.includes("youtube.com")) {
-          summary += `\u2022 **\uBBF8\uB514\uC5B4:** \uC720\uD29C\uBE0C \uBE44\uB514\uC624 \uC2A4\uD2B8\uB9BC
-\u2022 **\uAD11\uACE0 \uCC28\uB2E8:** Brave adblock-rust \uAC00\uB3D9 \uC911 (\uAD11\uACE0 0\uAC1C)
-\u2022 **\uC74C\uC131 \uBA85\uB839:** "\uB3D9\uC601\uC0C1 \uC7AC\uC0DD", "\uC544\uB798\uB85C \uC2A4\uD06C\uB864"`;
-        } else if (activeTab.url && activeTab.url.includes("wikipedia.org")) {
-          summary += `\u2022 **\uBC31\uACFC\uC0AC\uC804 \uD56D\uBAA9:** ${activeTab.title}
-\u2022 **\uB0B4\uC6A9:** \uC0C1\uC138 \uB808\uD37C\uB7F0\uC2A4 \uBB38\uC11C`;
-        } else {
-          summary += `\u2022 **URL:** \`${activeTab.url || "\uC0C8 \uD0ED"}\`
-\u2022 **\uCC28\uB2E8\uB41C \uAD11\uACE0:** ${shieldsStats.totalBlocked || 0}\uAC1C`;
-        }
-      } else {
-        summary = `\u{1F4D1} **Page Summary: ${activeTab.title || "Active Tab"}** (Whisper AI Analyzed)
-
-`;
-        if (activeTab.url && activeTab.url.includes("youtube.com")) {
-          summary += `\u2022 **Media:** YouTube Video Playback Stream.
-\u2022 **Adblock Status:** 0 ads playing (Brave adblock-rust + InnerTube fast-skip enabled).
-\u2022 **Available Voice Actions:** Say *"Click Play"*, *"Scroll Down"*, or *"Autofill"*.`;
-        } else if (activeTab.url && activeTab.url.includes("wikipedia.org")) {
-          summary += `\u2022 **Encyclopedia Entry:** ${activeTab.title}.
-\u2022 **Key Content:** Comprehensive reference article with citations and section headings.`;
-        } else if (activeTab.isNewTab || !activeTab.url) {
-          summary += `\u2022 **New Tab:** Antigravity AI Native Speed-Dial.
-\u2022 **Features:** Dual-engine search, speed-dial shortcuts, and in-process C++ tab management.`;
-        } else {
-          summary += `\u2022 **Source URL:** \`${activeTab.url}\`
-\u2022 **Shields:** ${shieldsStats.totalBlocked || 0} ads & trackers blocked.`;
-        }
+    if (isHindi || isKorean) {
+      if (q.includes("\u0928\u0940\u091A\u0947") || qLower.includes("niche") || q.includes("\uC544\uB798\uB85C") || q.includes("\uC2A4\uD06C\uB864 \uB2E4\uC6B4")) {
+        if (onExecuteScroll) onExecuteScroll("down", 500, false);
+        const reply = isHindi ? "\u{1F4DC} \u092A\u0947\u091C \u0928\u0940\u091A\u0947 500px \u0938\u094D\u0915\u094D\u0930\u0949\u0932 \u0915\u093F\u092F\u093E \u0917\u092F\u093E\u0964" : "\u{1F4DC} \uD398\uC774\uC9C0\uB97C \uC544\uB798\uB85C 500px \uC2A4\uD06C\uB864\uD588\uC2B5\uB2C8\uB2E4.";
+        addAiReply(reply);
+        speakReply(isHindi ? "\u092A\u0947\u091C \u0928\u0940\u091A\u0947 \u0938\u094D\u0915\u094D\u0930\u0949\u0932 \u0915\u093F\u092F\u093E \u0917\u092F\u093E" : "\uD398\uC774\uC9C0\uB97C \uC544\uB798\uB85C \uC2A4\uD06C\uB864\uD588\uC2B5\uB2C8\uB2E4", isHindi ? "hi" : "ko");
+        setIsAiThinking(false);
+        return;
       }
-      addAiReply(summary);
-      speakReply(isHindi ? "\u092A\u0947\u091C \u0915\u093E \u0938\u093E\u0930\u093E\u0902\u0936 \u0924\u0948\u092F\u093E\u0930 \u0939\u0948" : isKorean ? "\uD398\uC774\uC9C0 \uC694\uC57D\uC774 \uC644\uB8CC\uB418\uC5C8\uC2B5\uB2C8\uB2E4" : `Summary for ${activeTab.title || "this page"}`, isHindi ? "hi" : isKorean ? "ko" : "en");
-      return;
-    }
-    if (qLower.includes("autofill") || qLower.includes("fill form") || qLower.includes("checkout") || q.includes("\u092B\u0949\u0930\u094D\u092E") || q.includes("\u0911\u091F\u094B\u092B\u093F\u0932") || qLower.includes("form bharo") || q.includes("\uC790\uB3D9\uC644\uC131") || q.includes("\uC591\uC2DD")) {
-      if (onTriggerAutofill) onTriggerAutofill();
-      const reply = isHindi ? "\u{1F4DD} \u092B\u0949\u0930\u094D\u092E \u0911\u091F\u094B\u092B\u093F\u0932 \u0938\u092B\u0932\u0924\u093E\u092A\u0942\u0930\u0915 \u0928\u093F\u0937\u094D\u092A\u093E\u0926\u093F\u0924 \u0915\u093F\u092F\u093E \u0917\u092F\u093E\u0964" : isKorean ? "\u{1F4DD} \uC591\uC2DD \uC790\uB3D9\uC644\uC131\uC744 \uC2E4\uD589\uD588\uC2B5\uB2C8\uB2E4." : "\u{1F4DD} AutofillManager::FillForm() executed. Populated semantic fields on the page.";
-      addAiReply(reply);
-      speakReply(isHindi ? "\u092B\u0949\u0930\u094D\u092E \u092D\u0930 \u0926\u093F\u092F\u093E \u0917\u092F\u093E \u0939\u0948" : isKorean ? "\uC790\uB3D9\uC644\uC131\uC774 \uC644\uB8CC\uB418\uC5C8\uC2B5\uB2C8\uB2E4" : "Form autofilled.", isHindi ? "hi" : isKorean ? "ko" : "en");
-      return;
-    }
-    if (qLower.startsWith("open ") || qLower.startsWith("go to ") || q.includes("\u0916\u094B\u0932\u094B") || q.includes("\uC5F4\uC5B4\uC918")) {
-      const target = q.replace(/^(?:open|go to)\s+/i, "").replace(/(?:खोलो|열어줘)/i, "").trim();
-      if (onNavigate) onNavigate(target);
-      const reply = isHindi ? `\u{1F310} ${target} \u092A\u0930 \u0928\u0947\u0935\u093F\u0917\u0947\u091F \u0915\u093F\u092F\u093E \u091C\u093E \u0930\u0939\u093E \u0939\u0948...` : isKorean ? `\u{1F310} ${target}(\uC73C)\uB85C \uC774\uB3D9\uD569\uB2C8\uB2E4...` : `\u{1F310} Navigating active tab to "${target}"...`;
-      addAiReply(reply);
-      speakReply(isHindi ? "\u0928\u0947\u0935\u093F\u0917\u0947\u091F \u0915\u093F\u092F\u093E \u091C\u093E \u0930\u0939\u093E \u0939\u0948" : isKorean ? "\uD398\uC774\uC9C0\uB85C \uC774\uB3D9\uD569\uB2C8\uB2E4" : `Navigating to ${target}`, isHindi ? "hi" : isKorean ? "ko" : "en");
-      return;
-    }
-    setTimeout(() => {
-      let aiText = "";
-      if (isHindi) {
-        aiText = `\u2726 **Antigravity Copilot (Whisper Local)**
-
-\u0905\u0928\u0941\u0930\u094B\u0927 \u092A\u094D\u0930\u093E\u092A\u094D\u0924 \u0939\u0941\u0906: "${q}"
-
-\u2022 **\u0938\u0915\u094D\u0930\u093F\u092F \u091F\u0948\u092C:** \`${activeTab.title || "\u0928\u092F\u093E \u091F\u0948\u092C"}\`
-\u2022 **\u0936\u0940\u0932\u094D\u0921\u094D\u0938:** ${shieldsStats.totalBlocked || 0} \u091F\u094D\u0930\u0948\u0915\u0930\u094D\u0938 \u092C\u094D\u0932\u0949\u0915\u0964
-\u2022 **\u0906\u0926\u0947\u0936:** \u0906\u092A \u0939\u093F\u0902\u0926\u0940 \u092E\u0947\u0902 \u0915\u0939 \u0938\u0915\u0924\u0947 \u0939\u0948\u0902: "\u092A\u0947\u091C \u0915\u093E \u0938\u093E\u0930\u093E\u0902\u0936 \u0926\u094B", "\u0928\u0940\u091A\u0947 \u0938\u094D\u0915\u094D\u0930\u0949\u0932 \u0915\u0930\u094B", \u092F\u093E "\u0935\u0940\u0921\u093F\u092F\u094B \u091A\u0932\u093E\u0913"\u0964`;
-      } else if (isKorean) {
-        aiText = `\u2726 **Antigravity Copilot (Whisper Local)**
-
-\uBA85\uB839 \uC811\uC218 \uC644\uB8CC: "${q}"
-
-\u2022 **\uD604\uC7AC \uD0ED:** \`${activeTab.title || "\uC0C8 \uD0ED"}\`
-\u2022 **\uC2E4\uB4DC \uC0C1\uD0DC:** ${shieldsStats.totalBlocked || 0}\uAC1C \uD2B8\uB798\uCEE4 \uCC28\uB2E8\uB428
-\u2022 **\uCD94\uCC9C \uC74C\uC131 \uBA85\uB839:** "\uD398\uC774\uC9C0 \uC694\uC57D", "\uC544\uB798\uB85C \uC2A4\uD06C\uB864", "\uB3D9\uC601\uC0C1 \uC7AC\uC0DD"`;
-      } else {
-        aiText = `\u2726 **Antigravity Copilot (Whisper Local)**
-
-Processed query: "${q}"
-
-\u2022 **Active Tab:** \`${activeTab.title || "New Tab"}\`
-\u2022 **Shields:** ${shieldsStats.totalBlocked || 0} ads & trackers blocked.
-\u2022 **Voice Actions:** Say *"Summarize"*, *"Scroll Down"*, or speak in Hindi/Korean.`;
+      if (q.includes("\u090A\u092A\u0930") || qLower.includes("upar") || q.includes("\uC704\uB85C") || q.includes("\uC2A4\uD06C\uB864 \uC5C5")) {
+        if (onExecuteScroll) onExecuteScroll("up", 500, false);
+        const reply = isHindi ? "\u{1F4DC} \u092A\u0947\u091C \u090A\u092A\u0930 500px \u0938\u094D\u0915\u094D\u0930\u0949\u0932 \u0915\u093F\u092F\u093E \u0917\u092F\u093E\u0964" : "\u{1F4DC} \uD398\uC774\uC9C0\uB97C \uC704\uB85C 500px \uC2A4\uD06C\uB864\uD588\uC2B5\uB2C8\uB2E4.";
+        addAiReply(reply);
+        speakReply(isHindi ? "\u092A\u0947\u091C \u090A\u092A\u0930 \u0938\u094D\u0915\u094D\u0930\u0949\u0932 \u0915\u093F\u092F\u093E \u0917\u092F\u093E" : "\uD398\uC774\uC9C0\uB97C \uC704\uB85C \uC2A4\uD06C\uB864\uD588\uC2B5\uB2C8\uB2E4", isHindi ? "hi" : "ko");
+        setIsAiThinking(false);
+        return;
       }
-      addAiReply(aiText);
-      speakReply(isHindi ? "\u0915\u092E\u093E\u0902\u0921 \u092A\u094D\u0930\u094B\u0938\u0947\u0938 \u0939\u094B \u0917\u092F\u093E" : isKorean ? "\uBA85\uB839\uC774 \uCC98\uB9AC\uB418\uC5C8\uC2B5\uB2C8\uB2E4" : "Processed request.", isHindi ? "hi" : isKorean ? "ko" : "en");
-    }, 300);
+      if (q.includes("\u0938\u093E\u0930\u093E\u0902\u0936") || q.includes("\uC694\uC57D")) {
+        const summary = isHindi ? `\u{1F4D1} **\u092A\u0947\u091C \u0938\u093E\u0930\u093E\u0902\u0936: ${activeTab.title || "\u0938\u0915\u094D\u0930\u093F\u092F \u092A\u0943\u0937\u094D\u0920"}**
+\u2022 URL: \`${activeTab.url || "\u0928\u092F\u093E \u091F\u0948\u092C"}\`
+\u2022 \u0936\u0940\u0932\u094D\u0921\u094D\u0938: ${shieldsStats.totalBlocked || 0} \u092C\u094D\u0932\u0949\u0915` : `\u{1F4D1} **\uD398\uC774\uC9C0 \uC694\uC57D: ${activeTab.title || "\uD604\uC7AC \uD398\uC774\uC9C0"}**
+\u2022 URL: \`${activeTab.url || "\uC0C8 \uD0ED"}\`
+\u2022 \uCC28\uB2E8\uB41C \uAD11\uACE0: ${shieldsStats.totalBlocked || 0}\uAC1C`;
+        addAiReply(summary);
+        speakReply(isHindi ? "\u092A\u0947\u091C \u0915\u093E \u0938\u093E\u0930\u093E\u0902\u0936 \u0924\u0948\u092F\u093E\u0930 \u0939\u0948" : "\uD398\uC774\uC9C0 \uC694\uC57D\uC774 \uC644\uB8CC\uB418\uC5C8\uC2B5\uB2C8\uB2E4", isHindi ? "hi" : "ko");
+        setIsAiThinking(false);
+        return;
+      }
+    }
+    try {
+      const reply = await executeAiBrowserCommand(q, {
+        tabs,
+        activeTabId: activeTab.id,
+        activeTab,
+        onOpenTab,
+        onCloseTab,
+        onSelectTab,
+        onNavigate,
+        getActiveWebview: () => document.getElementById(`wv-${activeTab.id}`),
+        onToggleBookmark,
+        onOpenReaderMode,
+        onOpenQrCode,
+        onOpenTabSearch,
+        onOpenHistory,
+        onExecuteClick,
+        onExecuteScroll
+      });
+      addAiReply(reply);
+      const spokenText = String(reply).replace(/<[^>]*>/g, "").substring(0, 120);
+      speakReply(spokenText, "en");
+    } catch (err) {
+      addAiReply(`\u26A0\uFE0F AI Harness execution error: ${err.message}`);
+    } finally {
+      setIsAiThinking(false);
+    }
   };
   const getFilteredAxText = () => {
     if (!axTreeMarkdown) return "Connecting to in-process Chromium core...";
@@ -38807,6 +40337,15 @@ Processed query: "${q}"
       onChange: (e) => onToggleSom && onToggleSom(e.target.checked)
     }
   ), /* @__PURE__ */ import_react4.default.createElement("span", { className: "som-toggle-badge" }, "SoM")), /* @__PURE__ */ import_react4.default.createElement(
+    "button",
+    {
+      className: "mac-pill-btn",
+      title: "AI Providers & API Keys (OpenAI, LM Studio, Ollama, OpenRouter, OpenCode, Anthropic)",
+      onClick: onOpenAiProviderModal,
+      style: { color: "#00e5ff", borderColor: "rgba(0, 229, 255, 0.35)" }
+    },
+    "\u{1F511} Keys"
+  ), /* @__PURE__ */ import_react4.default.createElement(
     "button",
     {
       className: "mac-pill-btn",
@@ -38853,7 +40392,59 @@ Processed query: "${q}"
       onClick: () => setVoiceSpeechFeedback(!voiceSpeechFeedback)
     },
     voiceSpeechFeedback ? "\u{1F50A} Speaking" : "\u{1F507} Muted"
-  )), /* @__PURE__ */ import_react4.default.createElement("div", { className: "mac-quick-chips" }, /* @__PURE__ */ import_react4.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("summarize") }, "\u26A1 Summarize Page"), /* @__PURE__ */ import_react4.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("scroll down") }, "\u{1F4DC} Scroll Down"), /* @__PURE__ */ import_react4.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("click play") }, "\u25B6\uFE0F Click Play"), /* @__PURE__ */ import_react4.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("autofill") }, "\u{1F4DD} Autofill"), /* @__PURE__ */ import_react4.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("\u092A\u0947\u091C \u0915\u093E \u0938\u093E\u0930\u093E\u0902\u0936 \u0926\u094B") }, "\u{1F1EE}\u{1F1F3} \u0938\u093E\u0930\u093E\u0902\u0936 (HI)"), /* @__PURE__ */ import_react4.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("\u0928\u0940\u091A\u0947 \u0938\u094D\u0915\u094D\u0930\u0949\u0932 \u0915\u0930\u094B") }, "\u{1F1EE}\u{1F1F3} \u0928\u0940\u091A\u0947 \u0938\u094D\u0915\u094D\u0930\u0949\u0932 (HI)"), /* @__PURE__ */ import_react4.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("\uD398\uC774\uC9C0 \uC694\uC57D") }, "\u{1F1F0}\u{1F1F7} \uC694\uC57D (KO)"), /* @__PURE__ */ import_react4.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("\uC544\uB798\uB85C \uC2A4\uD06C\uB864") }, "\u{1F1F0}\u{1F1F7} \uC544\uB798\uB85C (KO)"), /* @__PURE__ */ import_react4.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("scroll to top") }, "\u2B06 Top")), /* @__PURE__ */ import_react4.default.createElement("div", { className: "mac-messages-stream" }, chatMessages.map((msg) => /* @__PURE__ */ import_react4.default.createElement("div", { key: msg.id, className: `mac-msg-row ${msg.role}` }, /* @__PURE__ */ import_react4.default.createElement("div", { className: "mac-msg-bubble" }, /* @__PURE__ */ import_react4.default.createElement("div", { className: "mac-msg-header" }, /* @__PURE__ */ import_react4.default.createElement("span", { className: "mac-msg-author" }, msg.role === "user" ? "You" : "\u2726 Copilot"), /* @__PURE__ */ import_react4.default.createElement("span", { className: "mac-msg-time" }, msg.time)), /* @__PURE__ */ import_react4.default.createElement("div", { className: "mac-msg-text", style: { whiteSpace: "pre-wrap" } }, msg.text)))), isAiThinking && /* @__PURE__ */ import_react4.default.createElement("div", { className: "mac-msg-row assistant" }, /* @__PURE__ */ import_react4.default.createElement("div", { className: "mac-msg-bubble thinking" }, /* @__PURE__ */ import_react4.default.createElement("span", { className: "dot-live", style: { width: 6, height: 6, display: "inline-block" } }), /* @__PURE__ */ import_react4.default.createElement("span", { style: { fontSize: "12px", color: "#94a3b8" } }, "Copilot is thinking..."))), /* @__PURE__ */ import_react4.default.createElement("div", { ref: messagesEndRef })), /* @__PURE__ */ import_react4.default.createElement("div", { className: "mac-whisper-bar" }, /* @__PURE__ */ import_react4.default.createElement("div", { className: "mac-lang-chips" }, /* @__PURE__ */ import_react4.default.createElement("span", { className: "mac-whisper-badge" }, "\u{1F9E0} Whisper Local ASR"), /* @__PURE__ */ import_react4.default.createElement(
+  )), /* @__PURE__ */ import_react4.default.createElement("div", { className: "mac-quick-chips" }, /* @__PURE__ */ import_react4.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("summarize") }, "\u26A1 Summarize Page"), /* @__PURE__ */ import_react4.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("scroll down") }, "\u{1F4DC} Scroll Down"), /* @__PURE__ */ import_react4.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("click play") }, "\u25B6\uFE0F Click Play"), /* @__PURE__ */ import_react4.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("autofill") }, "\u{1F4DD} Autofill"), /* @__PURE__ */ import_react4.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("\u092A\u0947\u091C \u0915\u093E \u0938\u093E\u0930\u093E\u0902\u0936 \u0926\u094B") }, "\u{1F1EE}\u{1F1F3} \u0938\u093E\u0930\u093E\u0902\u0936 (HI)"), /* @__PURE__ */ import_react4.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("\u0928\u0940\u091A\u0947 \u0938\u094D\u0915\u094D\u0930\u0949\u0932 \u0915\u0930\u094B") }, "\u{1F1EE}\u{1F1F3} \u0928\u0940\u091A\u0947 \u0938\u094D\u0915\u094D\u0930\u0949\u0932 (HI)"), /* @__PURE__ */ import_react4.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("\uD398\uC774\uC9C0 \uC694\uC57D") }, "\u{1F1F0}\u{1F1F7} \uC694\uC57D (KO)"), /* @__PURE__ */ import_react4.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("\uC544\uB798\uB85C \uC2A4\uD06C\uB864") }, "\u{1F1F0}\u{1F1F7} \uC544\uB798\uB85C (KO)"), /* @__PURE__ */ import_react4.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("scroll to top") }, "\u2B06 Top")), /* @__PURE__ */ import_react4.default.createElement("div", { className: "mac-messages-stream" }, chatMessages.map((msg) => /* @__PURE__ */ import_react4.default.createElement("div", { key: msg.id, className: `mac-msg-row ${msg.role}` }, /* @__PURE__ */ import_react4.default.createElement("div", { className: "mac-msg-bubble" }, /* @__PURE__ */ import_react4.default.createElement("div", { className: "mac-msg-header" }, /* @__PURE__ */ import_react4.default.createElement("span", { className: "mac-msg-author" }, msg.role === "user" ? "You" : "\u2726 Copilot"), /* @__PURE__ */ import_react4.default.createElement("span", { className: "mac-msg-time" }, msg.time)), /* @__PURE__ */ import_react4.default.createElement(
+    "div",
+    {
+      className: "mac-msg-text",
+      style: { whiteSpace: "pre-wrap" },
+      dangerouslySetInnerHTML: { __html: msg.text }
+    }
+  )))), isAiThinking && /* @__PURE__ */ import_react4.default.createElement("div", { className: "mac-msg-row assistant" }, /* @__PURE__ */ import_react4.default.createElement("div", { className: "mac-msg-bubble thinking" }, /* @__PURE__ */ import_react4.default.createElement("span", { className: "dot-live", style: { width: 6, height: 6, display: "inline-block" } }), /* @__PURE__ */ import_react4.default.createElement("span", { style: { fontSize: "12px", color: "#94a3b8" } }, "Copilot is thinking..."))), /* @__PURE__ */ import_react4.default.createElement("div", { ref: messagesEndRef })), /* @__PURE__ */ import_react4.default.createElement("div", { className: "ai-chips-bar" }, /* @__PURE__ */ import_react4.default.createElement(
+    "span",
+    {
+      className: "ai-chip",
+      onClick: async () => {
+        if (onCaptureSnapshot) {
+          const res = await onCaptureSnapshot("webview");
+          if (res && res.success) {
+            handleProcessNlpCommand(`Snapshot saved to disk: "${res.path}". Analyze what is visible in the active browser.`);
+          }
+        }
+      },
+      title: "Capture live browser snapshot to disk for Vision-Language Models",
+      style: { borderColor: "rgba(0, 229, 255, 0.4)", color: "#00e5ff" }
+    },
+    "\u{1F4F8} VLM Snapshot"
+  ), /* @__PURE__ */ import_react4.default.createElement("span", { className: "ai-chip", onClick: () => handleProcessNlpCommand("CLK SB"), title: "Click Search Bar" }, "\u{1F50D} CLK SB"), /* @__PURE__ */ import_react4.default.createElement("span", { className: "ai-chip", onClick: () => handleProcessNlpCommand("s50"), title: "Scroll 50%" }, "\u{1F4DC} S50"), /* @__PURE__ */ import_react4.default.createElement("span", { className: "ai-chip", onClick: () => handleProcessNlpCommand("open youtube"), title: "Open YouTube" }, "\u25B6\uFE0F YouTube"), /* @__PURE__ */ import_react4.default.createElement("span", { className: "ai-chip", onClick: () => handleProcessNlpCommand("numbering words"), title: "Number words with yellow badges" }, "\u{1F522} Numbers"), /* @__PURE__ */ import_react4.default.createElement("span", { className: "ai-chip", onClick: () => handleProcessNlpCommand("shortcuts"), title: "Show all shortcuts" }, "\u2328\uFE0F Shortcuts"), /* @__PURE__ */ import_react4.default.createElement("span", { className: "ai-chip", onClick: () => handleProcessNlpCommand("close active tab"), title: "Close current tab" }, "\u2715 Close")), latestSnapshot && latestSnapshot.path && /* @__PURE__ */ import_react4.default.createElement("div", { style: {
+    margin: "6px 0",
+    padding: "6px 10px",
+    borderRadius: "6px",
+    background: "rgba(0, 229, 255, 0.08)",
+    border: "1px solid rgba(0, 229, 255, 0.25)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    fontSize: "11px",
+    color: "#e2e8f0"
+  } }, /* @__PURE__ */ import_react4.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: "6px", overflow: "hidden" } }, /* @__PURE__ */ import_react4.default.createElement("span", null, "\u{1F4F8}"), /* @__PURE__ */ import_react4.default.createElement("span", { style: { fontFamily: "monospace", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }, title: latestSnapshot.path }, latestSnapshot.filename || latestSnapshot.path)), /* @__PURE__ */ import_react4.default.createElement(
+    "button",
+    {
+      onClick: () => {
+        if (navigator.clipboard) navigator.clipboard.writeText(latestSnapshot.path);
+      },
+      style: {
+        background: "rgba(255, 255, 255, 0.1)",
+        border: "none",
+        color: "#00e5ff",
+        borderRadius: "4px",
+        padding: "2px 6px",
+        fontSize: "10px",
+        cursor: "pointer"
+      },
+      title: "Copy full local path"
+    },
+    "Copy Path"
+  )), /* @__PURE__ */ import_react4.default.createElement("div", { className: "mac-whisper-bar" }, /* @__PURE__ */ import_react4.default.createElement("div", { className: "mac-lang-chips" }, /* @__PURE__ */ import_react4.default.createElement("span", { className: "mac-whisper-badge" }, "\u{1F9E0} Whisper Local ASR"), /* @__PURE__ */ import_react4.default.createElement(
     "button",
     {
       className: `mac-lang-chip ${whisperLang === "auto" ? "active" : ""}`,
@@ -39141,7 +40732,7 @@ function TabSearchModal({
             onClose();
           }
         },
-        /* @__PURE__ */ import_react6.default.createElement("span", { style: { fontSize: "16px" } }, tab.url && tab.url.startsWith("https://") ? "\u{1F310}" : "\u2728"),
+        /* @__PURE__ */ import_react6.default.createElement("span", { style: { fontSize: "16px" } }, tab.url && tab.url.startsWith("https://") ? "\u{1F310}" : "\u{1F4C4}"),
         /* @__PURE__ */ import_react6.default.createElement("div", { style: { flex: 1, minWidth: 0 } }, /* @__PURE__ */ import_react6.default.createElement("div", { className: "palette-result-title" }, tab.title || "New Tab", isCurrentActive && /* @__PURE__ */ import_react6.default.createElement("span", { style: { marginLeft: 6, fontSize: 10, color: "var(--accent-cyan)", background: "rgba(0,229,255,0.15)", padding: "1px 5px", borderRadius: 4 } }, "Current")), /* @__PURE__ */ import_react6.default.createElement("div", { className: "palette-result-url" }, tab.url || "about:blank")),
         /* @__PURE__ */ import_react6.default.createElement("span", { style: { fontSize: "11px", color: "#64748b" } }, "Tab #", tab.id)
       );
@@ -39382,22 +40973,1178 @@ function HistoryModal({
   ));
 }
 
+// desktop/src/components/WallpaperStudioModal.jsx
+var import_react10 = __toESM(require_react());
+var PRESET_WALLPAPERS = [
+  {
+    id: "cosmic",
+    name: "Cosmic Nebula",
+    type: "image",
+    url: "https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?q=80&w=2070&auto=format&fit=crop"
+  },
+  {
+    id: "cyberpunk",
+    name: "Cyberpunk Neon",
+    type: "image",
+    url: "https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=2070&auto=format&fit=crop"
+  },
+  {
+    id: "ocean",
+    name: "Deep Oceanic",
+    type: "image",
+    url: "https://images.unsplash.com/photo-1518837695005-2083093ee35b?q=80&w=2070&auto=format&fit=crop"
+  },
+  {
+    id: "obsidian",
+    name: "Obsidian Flow",
+    type: "image",
+    url: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2064&auto=format&fit=crop"
+  },
+  {
+    id: "gradient",
+    name: "Aurora Gradient",
+    type: "image",
+    url: "https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=2070&auto=format&fit=crop"
+  }
+];
+function WallpaperStudioModal({
+  isOpen,
+  currentWallpaper,
+  currentWallpaperType,
+  currentOpacity = 40,
+  currentColor = "#070b14",
+  onApplyWallpaper,
+  onRemoveWallpaper,
+  onClose
+}) {
+  const [previewUrl, setPreviewUrl] = (0, import_react10.useState)(currentWallpaper || "");
+  const [previewType, setPreviewType] = (0, import_react10.useState)(currentWallpaperType || "image");
+  const [opacity, setOpacity] = (0, import_react10.useState)(currentOpacity);
+  const [color, setColor] = (0, import_react10.useState)(currentColor);
+  const [customUrlInput, setCustomUrlInput] = (0, import_react10.useState)("");
+  if (!isOpen) return null;
+  const handleFileUpload = (e) => {
+    const file = e.target.files && e.target.files[0];
+    if (!file) return;
+    const isVideo = file.type.startsWith("video/");
+    const url = URL.createObjectURL(file);
+    setPreviewUrl(url);
+    setPreviewType(isVideo ? "video" : "image");
+  };
+  const handleSelectPreset = (preset) => {
+    setPreviewUrl(preset.url);
+    setPreviewType(preset.type);
+  };
+  const handleApply = () => {
+    onApplyWallpaper({
+      url: previewUrl,
+      type: previewType,
+      opacity,
+      color
+    });
+    onClose();
+  };
+  const handleRemove = () => {
+    setPreviewUrl("");
+    onRemoveWallpaper();
+    onClose();
+  };
+  return /* @__PURE__ */ import_react10.default.createElement("div", { className: "modal-backdrop", onClick: onClose }, /* @__PURE__ */ import_react10.default.createElement(
+    "div",
+    {
+      className: "modal-container wallpaper-modal",
+      style: { width: "560px", maxHeight: "88vh", overflowY: "auto" },
+      onClick: (e) => e.stopPropagation()
+    },
+    /* @__PURE__ */ import_react10.default.createElement("div", { className: "modal-header" }, /* @__PURE__ */ import_react10.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: "8px" } }, /* @__PURE__ */ import_react10.default.createElement("span", { style: { fontSize: "18px" } }, "\u{1F3A8}"), /* @__PURE__ */ import_react10.default.createElement("h3", { style: { margin: 0, fontSize: "15px", fontWeight: 600, color: "var(--text-primary)" } }, "Custom Wallpaper Studio")), /* @__PURE__ */ import_react10.default.createElement("button", { className: "modal-close-btn", onClick: onClose, title: "Close" }, "\u2715")),
+    /* @__PURE__ */ import_react10.default.createElement("div", { className: "wallpaper-modal-body" }, /* @__PURE__ */ import_react10.default.createElement("div", { className: "wallpaper-preview-box" }, previewUrl ? previewType === "video" ? /* @__PURE__ */ import_react10.default.createElement(
+      "video",
+      {
+        src: previewUrl,
+        style: { width: "100%", height: "100%", objectFit: "cover" },
+        autoPlay: true,
+        muted: true,
+        loop: true
+      }
+    ) : /* @__PURE__ */ import_react10.default.createElement(
+      "img",
+      {
+        src: previewUrl,
+        alt: "Preview",
+        style: { width: "100%", height: "100%", objectFit: "cover" }
+      }
+    ) : /* @__PURE__ */ import_react10.default.createElement("span", { className: "wallpaper-preview-placeholder" }, "No wallpaper selected (Default browser dark theme)"), previewUrl && /* @__PURE__ */ import_react10.default.createElement(
+      "div",
+      {
+        style: {
+          position: "absolute",
+          inset: 0,
+          background: `rgba(0,0,0,${opacity / 100})`,
+          pointerEvents: "none"
+        }
+      }
+    )), /* @__PURE__ */ import_react10.default.createElement("div", null, /* @__PURE__ */ import_react10.default.createElement("label", { style: { fontSize: "12px", fontWeight: 600, color: "var(--text-secondary)", display: "block", marginBottom: "8px" } }, "Studio Presets"), /* @__PURE__ */ import_react10.default.createElement("div", { style: { display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: "8px" } }, PRESET_WALLPAPERS.map((preset) => /* @__PURE__ */ import_react10.default.createElement(
+      "div",
+      {
+        key: preset.id,
+        onClick: () => handleSelectPreset(preset),
+        title: preset.name,
+        style: {
+          height: "56px",
+          borderRadius: "8px",
+          backgroundImage: `url(${preset.url})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          cursor: "pointer",
+          border: previewUrl === preset.url ? "2px solid var(--accent-cyan)" : "1px solid var(--border-subtle)",
+          boxShadow: previewUrl === preset.url ? "0 0 10px rgba(0,240,255,0.4)" : "none",
+          transition: "all 0.15s ease"
+        }
+      }
+    )))), /* @__PURE__ */ import_react10.default.createElement("div", { className: "wallpaper-actions" }, /* @__PURE__ */ import_react10.default.createElement("div", { style: { display: "flex", gap: "8px" } }, /* @__PURE__ */ import_react10.default.createElement(
+      "input",
+      {
+        type: "text",
+        className: "search-query-input",
+        placeholder: "Paste image, GIF, or video URL...",
+        value: customUrlInput,
+        onChange: (e) => setCustomUrlInput(e.target.value),
+        style: { flex: 1 }
+      }
+    ), /* @__PURE__ */ import_react10.default.createElement(
+      "button",
+      {
+        className: "btn-wallpaper-action btn-blue",
+        onClick: () => {
+          if (customUrlInput.trim()) {
+            const isVid = customUrlInput.endsWith(".mp4") || customUrlInput.endsWith(".webm");
+            setPreviewUrl(customUrlInput.trim());
+            setPreviewType(isVid ? "video" : "image");
+          }
+        }
+      },
+      "Set URL"
+    )), /* @__PURE__ */ import_react10.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: "8px" } }, /* @__PURE__ */ import_react10.default.createElement("label", { className: "btn-wallpaper-action btn-blue", style: { cursor: "pointer", margin: 0 } }, "\u{1F4C1} Upload Local Image / Video / GIF", /* @__PURE__ */ import_react10.default.createElement(
+      "input",
+      {
+        type: "file",
+        accept: "image/*,video/mp4,video/webm",
+        style: { display: "none" },
+        onChange: handleFileUpload
+      }
+    ))), /* @__PURE__ */ import_react10.default.createElement("div", { className: "wallpaper-opacity-row" }, /* @__PURE__ */ import_react10.default.createElement("label", { style: { fontSize: "12px", color: "var(--text-secondary)" } }, "Dark Scrim Opacity:"), /* @__PURE__ */ import_react10.default.createElement(
+      "input",
+      {
+        type: "range",
+        min: "0",
+        max: "80",
+        value: opacity,
+        onChange: (e) => setOpacity(parseInt(e.target.value, 10)),
+        className: "wallpaper-range"
+      }
+    ), /* @__PURE__ */ import_react10.default.createElement("span", { style: { fontSize: "11px", color: "var(--text-muted)", fontFamily: "var(--font-mono)" } }, opacity, "%")), /* @__PURE__ */ import_react10.default.createElement("div", { className: "wallpaper-color-row" }, /* @__PURE__ */ import_react10.default.createElement("label", { style: { fontSize: "12px", color: "var(--text-secondary)" } }, "Base Underlay Color:"), /* @__PURE__ */ import_react10.default.createElement(
+      "input",
+      {
+        type: "color",
+        value: color,
+        onChange: (e) => setColor(e.target.value),
+        className: "wallpaper-color-input"
+      }
+    )), /* @__PURE__ */ import_react10.default.createElement("div", { style: { display: "flex", gap: "8px", marginTop: "10px" } }, /* @__PURE__ */ import_react10.default.createElement(
+      "button",
+      {
+        className: "btn-wallpaper-action btn-green",
+        style: { flex: 1 },
+        onClick: handleApply
+      },
+      "\u2705 Apply Wallpaper"
+    ), currentWallpaper && /* @__PURE__ */ import_react10.default.createElement(
+      "button",
+      {
+        className: "btn-wallpaper-action btn-red",
+        onClick: handleRemove
+      },
+      "\u{1F5D1}\uFE0F Remove"
+    ))))
+  ));
+}
+
+// desktop/src/components/DownloadsPage.jsx
+var import_react11 = __toESM(require_react());
+function DownloadsPage({
+  downloads = [],
+  onCancelDownload,
+  onPauseDownload,
+  onResumeDownload,
+  onShowInFolder,
+  onOpenFile,
+  onOpenDownloadsFolder,
+  onClearCompleted
+}) {
+  const [searchTerm, setSearchTerm] = (0, import_react11.useState)("");
+  const getFileIcon = (filename = "", mimeType = "") => {
+    const ext = filename.split(".").pop()?.toLowerCase() || "";
+    if (["mp4", "mkv", "avi", "mov", "webm"].includes(ext) || mimeType.includes("video")) return "\u{1F3AC}";
+    if (["mp3", "wav", "flac", "aac", "ogg"].includes(ext) || mimeType.includes("audio")) return "\u{1F3B5}";
+    if (["zip", "rar", "7z", "tar", "gz"].includes(ext) || mimeType.includes("zip") || mimeType.includes("compressed")) return "\u{1F4E6}";
+    if (["jpg", "jpeg", "png", "gif", "webp", "svg"].includes(ext) || mimeType.includes("image")) return "\u{1F5BC}\uFE0F";
+    if (["pdf", "doc", "docx", "txt", "epub"].includes(ext)) return "\u{1F4C4}";
+    if (["exe", "msi", "dmg", "iso"].includes(ext)) return "\u2699\uFE0F";
+    return "\u{1F4E5}";
+  };
+  const formatDomain = (url = "") => {
+    try {
+      const u = new URL(url);
+      return u.hostname;
+    } catch (e) {
+      return url.slice(0, 40);
+    }
+  };
+  const filteredDownloads = downloads.filter((dl) => {
+    if (!searchTerm.trim()) return true;
+    const q = searchTerm.toLowerCase();
+    return dl.filename && dl.filename.toLowerCase().includes(q) || dl.url && dl.url.toLowerCase().includes(q);
+  });
+  const activeDownloads = filteredDownloads.filter((d) => d.state === "progressing");
+  const pastDownloads = filteredDownloads.filter((d) => d.state !== "progressing");
+  return /* @__PURE__ */ import_react11.default.createElement("div", { className: "downloads-page-container" }, /* @__PURE__ */ import_react11.default.createElement("header", { className: "downloads-header" }, /* @__PURE__ */ import_react11.default.createElement("div", { className: "downloads-header-left" }, /* @__PURE__ */ import_react11.default.createElement("span", { className: "downloads-logo-icon" }, "\u{1F4E5}"), /* @__PURE__ */ import_react11.default.createElement("div", null, /* @__PURE__ */ import_react11.default.createElement("h1", { className: "downloads-title" }, "Downloads"), /* @__PURE__ */ import_react11.default.createElement("p", { className: "downloads-subtitle" }, activeDownloads.length > 0 ? `${activeDownloads.length} active download${activeDownloads.length > 1 ? "s" : ""}` : `${downloads.length} total downloads`))), /* @__PURE__ */ import_react11.default.createElement("div", { className: "downloads-search-wrapper" }, /* @__PURE__ */ import_react11.default.createElement("span", { className: "search-icon" }, "\u{1F50D}"), /* @__PURE__ */ import_react11.default.createElement(
+    "input",
+    {
+      type: "text",
+      className: "downloads-search-input",
+      placeholder: "Search downloaded files...",
+      value: searchTerm,
+      onChange: (e) => setSearchTerm(e.target.value)
+    }
+  ), searchTerm && /* @__PURE__ */ import_react11.default.createElement("button", { className: "search-clear-btn", onClick: () => setSearchTerm("") }, "\u2715")), /* @__PURE__ */ import_react11.default.createElement("div", { className: "downloads-header-actions" }, /* @__PURE__ */ import_react11.default.createElement(
+    "button",
+    {
+      className: "downloads-action-btn primary",
+      title: "Open Downloads Folder on this computer",
+      onClick: onOpenDownloadsFolder
+    },
+    "\u{1F4C1} Open Downloads Folder"
+  ), downloads.some((d) => d.state === "completed" || d.state === "cancelled") && /* @__PURE__ */ import_react11.default.createElement(
+    "button",
+    {
+      className: "downloads-action-btn secondary",
+      title: "Clear completed and cancelled downloads from history",
+      onClick: onClearCompleted
+    },
+    "\u{1F9F9} Clear Completed"
+  ))), /* @__PURE__ */ import_react11.default.createElement("main", { className: "downloads-content" }, filteredDownloads.length === 0 ? /* @__PURE__ */ import_react11.default.createElement("div", { className: "downloads-empty-state" }, /* @__PURE__ */ import_react11.default.createElement("div", { className: "empty-icon-circle" }, "\u{1F4E5}"), /* @__PURE__ */ import_react11.default.createElement("h2", null, searchTerm ? "No downloads match your search" : "No downloads yet"), /* @__PURE__ */ import_react11.default.createElement("p", null, searchTerm ? "Try searching for another filename or keyword." : "Files you download using Antigravity Browser will appear here with live speed and progress."), /* @__PURE__ */ import_react11.default.createElement("button", { className: "downloads-action-btn primary", onClick: onOpenDownloadsFolder }, "Open Downloads Folder")) : /* @__PURE__ */ import_react11.default.createElement("div", { className: "downloads-list" }, filteredDownloads.map((dl) => {
+    const isProgressing = dl.state === "progressing";
+    const isCompleted = dl.state === "completed";
+    const isPaused = dl.isPaused || dl.state === "paused";
+    const isCancelled = dl.state === "cancelled" || dl.state === "interrupted";
+    return /* @__PURE__ */ import_react11.default.createElement("div", { key: dl.id, className: `download-card ${dl.state}` }, /* @__PURE__ */ import_react11.default.createElement("div", { className: "download-file-icon" }, getFileIcon(dl.filename, dl.mimeType)), /* @__PURE__ */ import_react11.default.createElement("div", { className: "download-info" }, /* @__PURE__ */ import_react11.default.createElement("div", { className: "download-title-row" }, /* @__PURE__ */ import_react11.default.createElement(
+      "span",
+      {
+        className: `download-filename ${isCompleted ? "clickable" : ""}`,
+        title: dl.savePath || dl.filename,
+        onClick: () => {
+          if (isCompleted && onOpenFile) onOpenFile(dl.savePath);
+        }
+      },
+      dl.filename
+    ), /* @__PURE__ */ import_react11.default.createElement("span", { className: `download-badge ${dl.state}` }, isProgressing && !isPaused && "\u26A1 Downloading", isPaused && "\u23F8 Paused", isCompleted && "\u2713 Completed", isCancelled && "\u2715 Cancelled")), /* @__PURE__ */ import_react11.default.createElement("div", { className: "download-source-row" }, /* @__PURE__ */ import_react11.default.createElement(
+      "a",
+      {
+        href: dl.url,
+        target: "_blank",
+        rel: "noreferrer",
+        className: "download-domain",
+        title: dl.url
+      },
+      "\u{1F310} ",
+      formatDomain(dl.url)
+    ), dl.savePath && /* @__PURE__ */ import_react11.default.createElement("span", { className: "download-save-path", title: dl.savePath }, "\u2022 ", dl.savePath)), /* @__PURE__ */ import_react11.default.createElement("div", { className: "download-progress-track" }, /* @__PURE__ */ import_react11.default.createElement(
+      "div",
+      {
+        className: `download-progress-fill ${isCompleted ? "fill-done" : ""} ${isCancelled ? "fill-cancelled" : ""}`,
+        style: { width: `${Math.max(3, dl.percent || 0)}%` }
+      }
+    )), /* @__PURE__ */ import_react11.default.createElement("div", { className: "download-metrics-row" }, /* @__PURE__ */ import_react11.default.createElement("div", { className: "metrics-left" }, /* @__PURE__ */ import_react11.default.createElement("span", { className: "metric-bytes" }, dl.receivedBytesFormatted || "0 B", " of ", dl.totalBytesFormatted || "Unknown size"), isProgressing && !isPaused && /* @__PURE__ */ import_react11.default.createElement("span", { className: "metric-speed" }, "\u2022 \u{1F680} ", dl.speed || "0 KB/s"), /* @__PURE__ */ import_react11.default.createElement("span", { className: "metric-percent" }, "\u2022 ", dl.percent || 0, "%")), /* @__PURE__ */ import_react11.default.createElement("div", { className: "metrics-right" }, /* @__PURE__ */ import_react11.default.createElement("span", { className: "metric-time" }, new Date(dl.startTime).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" }))))), /* @__PURE__ */ import_react11.default.createElement("div", { className: "download-actions" }, isProgressing && /* @__PURE__ */ import_react11.default.createElement(import_react11.default.Fragment, null, isPaused ? /* @__PURE__ */ import_react11.default.createElement(
+      "button",
+      {
+        className: "dl-btn resume-btn",
+        title: "Resume Download",
+        onClick: () => onResumeDownload && onResumeDownload(dl.id)
+      },
+      "\u25B6 Resume"
+    ) : /* @__PURE__ */ import_react11.default.createElement(
+      "button",
+      {
+        className: "dl-btn pause-btn",
+        title: "Pause Download",
+        onClick: () => onPauseDownload && onPauseDownload(dl.id)
+      },
+      "\u23F8 Pause"
+    ), /* @__PURE__ */ import_react11.default.createElement(
+      "button",
+      {
+        className: "dl-btn cancel-btn",
+        title: "Cancel Download",
+        onClick: () => onCancelDownload && onCancelDownload(dl.id)
+      },
+      "\u2715 Cancel"
+    )), isCompleted && /* @__PURE__ */ import_react11.default.createElement(import_react11.default.Fragment, null, /* @__PURE__ */ import_react11.default.createElement(
+      "button",
+      {
+        className: "dl-btn folder-btn",
+        title: "Show file in Windows Explorer folder",
+        onClick: () => onShowInFolder && onShowInFolder(dl.savePath)
+      },
+      "\u{1F4C2} Show in Folder"
+    ), /* @__PURE__ */ import_react11.default.createElement(
+      "button",
+      {
+        className: "dl-btn open-btn",
+        title: "Open downloaded file directly",
+        onClick: () => onOpenFile && onOpenFile(dl.savePath)
+      },
+      "Open"
+    ))));
+  }))));
+}
+
+// desktop/src/components/TypographyStudioModal.jsx
+var import_react12 = __toESM(require_react());
+var TYPOGRAPHY_FONT_SIZES = {
+  "compact": { px: 14, name: "Compact (14px)", lineHeight: 1.65 },
+  "standard": { px: 16, name: "Standard (16px)", lineHeight: 1.75 },
+  "comfortable": { px: 18, name: "Comfortable (18px)", lineHeight: 1.8 },
+  "spacious": { px: 21, name: "Spacious (21px)", lineHeight: 1.85 }
+};
+var TYPOGRAPHY_FONT_STYLES = {
+  "gt-super": {
+    name: "GT Super",
+    fontFamily: "'GT Super', 'GT Super Display', 'Cheltenham', 'Georgia', serif",
+    letterSpacing: "-0.015em",
+    category: "Editorial Serif",
+    author: "No\xEBl Leu \u2022 Editorial & Headline Serif",
+    badge: "Ctrl+Alt+1"
+  },
+  "juana": {
+    name: "Juana",
+    fontFamily: "'Juana', 'Bodoni Moda', 'Didot', 'Playfair Display', serif",
+    letterSpacing: "0.005em",
+    category: "High-Contrast Luxury Serif",
+    author: "Latinotype \u2022 High-Contrast Luxury Serif",
+    badge: "Ctrl+Alt+2"
+  },
+  "playfair-display": {
+    name: "Playfair Display",
+    fontFamily: "'Playfair Display', 'Georgia', serif",
+    letterSpacing: "0.01em",
+    category: "Classical Editorial",
+    author: "Claus S\xF8rensen \u2022 Classical Editorial",
+    badge: "Ctrl+Alt+3"
+  },
+  "ogg": {
+    name: "Ogg",
+    fontFamily: "'Ogg', 'Cormorant Garamond', 'Baskerville', 'Georgia', serif",
+    letterSpacing: "-0.01em",
+    category: "Calligraphic Serif",
+    author: "Sharp Type \u2022 Calligraphic Book Title Serif",
+    badge: "Ctrl+Alt+4"
+  },
+  "inter": {
+    name: "Inter",
+    fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+    letterSpacing: "-0.011em",
+    category: "Clean Neo-Grotesque",
+    author: "Rasmus Andersson \u2022 Clean Neo-Grotesque",
+    badge: "Ctrl+Alt+5"
+  },
+  "poppins": {
+    name: "Poppins (Toppins)",
+    fontFamily: "'Poppins', 'Toppins', sans-serif",
+    letterSpacing: "-0.005em",
+    category: "Geometric Sans",
+    author: "Indian Type Foundry \u2022 Geometric Sans",
+    badge: "Ctrl+Alt+6"
+  },
+  "plus-jakarta-sans": {
+    name: "Plus Jakarta Sans",
+    fontFamily: "'Plus Jakarta Sans', 'Inter', sans-serif",
+    letterSpacing: "-0.02em",
+    category: "Modern Neo-Grotesque",
+    author: "Tokotype \u2022 Modern Clean Typography",
+    badge: "Ctrl+Alt+7"
+  },
+  "avenir": {
+    name: "Avenir",
+    fontFamily: "'Avenir', 'Avenir Next', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+    letterSpacing: "-0.01em",
+    category: "Humanist Geometric",
+    author: "Adrian Frutiger \u2022 Humanist Geometric",
+    badge: "Ctrl+Alt+8"
+  }
+};
+function TypographyStudioModal({
+  isOpen,
+  currentFontSize = "standard",
+  currentFontStyle = "inter",
+  onSelectFontSize,
+  onSelectFontStyle,
+  onApplyTypography,
+  onClose
+}) {
+  const [selectedSize, setSelectedSize] = (0, import_react12.useState)(currentFontSize);
+  const [selectedStyle, setSelectedStyle] = (0, import_react12.useState)(currentFontStyle);
+  (0, import_react12.useEffect)(() => {
+    setSelectedSize(currentFontSize);
+  }, [currentFontSize]);
+  (0, import_react12.useEffect)(() => {
+    setSelectedStyle(currentFontStyle);
+  }, [currentFontStyle]);
+  if (!isOpen) return null;
+  const styleObj = TYPOGRAPHY_FONT_STYLES[selectedStyle] || TYPOGRAPHY_FONT_STYLES["inter"];
+  const sizeObj = TYPOGRAPHY_FONT_SIZES[selectedSize] || TYPOGRAPHY_FONT_SIZES["standard"];
+  const handleApply = () => {
+    if (onSelectFontSize) onSelectFontSize(selectedSize);
+    if (onSelectFontStyle) onSelectFontStyle(selectedStyle);
+    if (onApplyTypography) onApplyTypography(selectedSize, selectedStyle);
+    onClose();
+  };
+  const handleReset = () => {
+    setSelectedSize("standard");
+    setSelectedStyle("inter");
+    if (onSelectFontSize) onSelectFontSize("standard");
+    if (onSelectFontStyle) onSelectFontStyle("inter");
+    if (onApplyTypography) onApplyTypography("standard", "inter");
+  };
+  return /* @__PURE__ */ import_react12.default.createElement("div", { className: "modal-backdrop", id: "typographyBackdrop", onClick: onClose, style: {
+    position: "fixed",
+    inset: 0,
+    backgroundColor: "rgba(3, 7, 18, 0.75)",
+    backdropFilter: "blur(8px)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    zIndex: 1e5
+  } }, /* @__PURE__ */ import_react12.default.createElement(
+    "div",
+    {
+      className: "typography-modal-container",
+      id: "typographyModal",
+      onClick: (e) => e.stopPropagation(),
+      style: {
+        background: "#0b1120",
+        border: "1px solid rgba(0, 229, 255, 0.3)",
+        boxShadow: "0 25px 60px rgba(0, 0, 0, 0.9), 0 0 30px rgba(0, 229, 255, 0.15)",
+        borderRadius: "16px",
+        width: "680px",
+        maxWidth: "92vw",
+        maxHeight: "90vh",
+        overflowY: "auto",
+        padding: "24px",
+        color: "#f8fafc",
+        fontFamily: "'Inter', sans-serif"
+      }
+    },
+    /* @__PURE__ */ import_react12.default.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "18px", borderBottom: "1px solid rgba(255, 255, 255, 0.08)", paddingBottom: "12px" } }, /* @__PURE__ */ import_react12.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: "10px" } }, /* @__PURE__ */ import_react12.default.createElement("span", { style: { fontSize: "24px" } }, "\u{1F524}"), /* @__PURE__ */ import_react12.default.createElement("div", null, /* @__PURE__ */ import_react12.default.createElement("h2", { style: { fontSize: "18px", fontWeight: "700", color: "#f8fafc", margin: 0 } }, "Modern Typography & Font Canvas Studio"), /* @__PURE__ */ import_react12.default.createElement("p", { style: { fontSize: "12px", color: "#94a3b8", margin: 0, marginTop: "2px" } }, "Curated typography engine with live font canvas, scaling & instant website injection"))), /* @__PURE__ */ import_react12.default.createElement(
+      "button",
+      {
+        id: "btnCloseTypographyModal",
+        onClick: onClose,
+        style: {
+          background: "transparent",
+          border: "none",
+          color: "#94a3b8",
+          fontSize: "18px",
+          cursor: "pointer",
+          padding: "4px 8px",
+          borderRadius: "6px"
+        }
+      },
+      "\u2715"
+    )),
+    /* @__PURE__ */ import_react12.default.createElement("div", { style: { marginBottom: "20px" } }, /* @__PURE__ */ import_react12.default.createElement("label", { style: { display: "block", fontSize: "12px", fontWeight: "700", color: "#38bdf8", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: "10px" } }, "1. Select Curated Font Style (8 Styles):"), /* @__PURE__ */ import_react12.default.createElement("div", { style: { display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "10px" } }, Object.entries(TYPOGRAPHY_FONT_STYLES).map(([key, font]) => {
+      const isSelected = selectedStyle === key;
+      return /* @__PURE__ */ import_react12.default.createElement(
+        "div",
+        {
+          key,
+          id: `fontCard-${key}`,
+          className: `font-style-card ${isSelected ? "active" : ""}`,
+          onClick: () => setSelectedStyle(key),
+          style: {
+            background: isSelected ? "rgba(0, 229, 255, 0.12)" : "rgba(255, 255, 255, 0.03)",
+            border: isSelected ? "1.5px solid #00e5ff" : "1px solid rgba(255, 255, 255, 0.08)",
+            borderRadius: "10px",
+            padding: "12px 14px",
+            cursor: "pointer",
+            transition: "all 0.15s ease",
+            boxShadow: isSelected ? "0 0 16px rgba(0, 229, 255, 0.2)" : "none"
+          }
+        },
+        /* @__PURE__ */ import_react12.default.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "4px" } }, /* @__PURE__ */ import_react12.default.createElement("span", { style: { fontSize: "16px", fontWeight: "700", fontFamily: font.fontFamily, color: isSelected ? "#00e5ff" : "#ffffff" } }, font.name), /* @__PURE__ */ import_react12.default.createElement("span", { style: { fontSize: "10px", background: "rgba(255,255,255,0.08)", padding: "2px 6px", borderRadius: "4px", color: "#94a3b8", fontFamily: "monospace" } }, font.badge)),
+        /* @__PURE__ */ import_react12.default.createElement("div", { style: { fontSize: "11px", color: "#94a3b8", fontFamily: font.fontFamily } }, font.author)
+      );
+    }))),
+    /* @__PURE__ */ import_react12.default.createElement("div", { style: { marginBottom: "20px" } }, /* @__PURE__ */ import_react12.default.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" } }, /* @__PURE__ */ import_react12.default.createElement("label", { style: { fontSize: "12px", fontWeight: "700", color: "#38bdf8", textTransform: "uppercase", letterSpacing: "0.05em" } }, "2. Select Font Size (Shortcuts: Ctrl + / - or Ctrl+Wheel):"), /* @__PURE__ */ import_react12.default.createElement("span", { id: "typographySizeLabel", style: { fontSize: "12px", color: "#00e5ff", fontFamily: "monospace", fontWeight: "700" } }, sizeObj.name)), /* @__PURE__ */ import_react12.default.createElement("div", { style: { display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "10px" } }, Object.entries(TYPOGRAPHY_FONT_SIZES).map(([key, sz]) => {
+      const isSelected = selectedSize === key;
+      return /* @__PURE__ */ import_react12.default.createElement(
+        "button",
+        {
+          key,
+          id: `sizeBtn-${key}`,
+          className: `font-size-btn ${isSelected ? "active" : ""}`,
+          onClick: () => setSelectedSize(key),
+          style: {
+            background: isSelected ? "rgba(0, 229, 255, 0.15)" : "rgba(255, 255, 255, 0.04)",
+            border: isSelected ? "1.5px solid #00e5ff" : "1px solid rgba(255, 255, 255, 0.08)",
+            borderRadius: "8px",
+            padding: "10px",
+            color: isSelected ? "#00e5ff" : "#f8fafc",
+            cursor: "pointer",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: "4px",
+            transition: "all 0.15s ease"
+          }
+        },
+        /* @__PURE__ */ import_react12.default.createElement("span", { style: { fontSize: `${sz.px}px`, fontWeight: "800" } }, "Aa"),
+        /* @__PURE__ */ import_react12.default.createElement("span", { style: { fontSize: "11px", color: isSelected ? "#38bdf8" : "#94a3b8" } }, sz.name)
+      );
+    }))),
+    /* @__PURE__ */ import_react12.default.createElement("div", { style: { marginBottom: "22px" } }, /* @__PURE__ */ import_react12.default.createElement("label", { style: { display: "block", fontSize: "12px", fontWeight: "700", color: "#38bdf8", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: "8px" } }, "Live Rendering Canvas Preview:"), /* @__PURE__ */ import_react12.default.createElement(
+      "div",
+      {
+        id: "typographyPreviewCanvas",
+        className: "typography-preview-canvas",
+        style: {
+          padding: "18px 22px",
+          borderRadius: "12px",
+          background: "rgba(0, 0, 0, 0.45)",
+          border: "1px solid rgba(255, 255, 255, 0.12)",
+          maxHeight: "170px",
+          overflowY: "auto",
+          fontFamily: styleObj.fontFamily,
+          fontSize: `${sizeObj.px}px`,
+          lineHeight: sizeObj.lineHeight,
+          letterSpacing: styleObj.letterSpacing,
+          transition: "all 0.2s ease"
+        }
+      },
+      /* @__PURE__ */ import_react12.default.createElement("div", { id: "previewHeadline", style: { fontSize: `${Math.round(sizeObj.px * 1.35)}px`, fontWeight: "700", color: "#ffffff", marginBottom: "6px" } }, "The Evolution of Modern Web Typography"),
+      /* @__PURE__ */ import_react12.default.createElement("div", { id: "previewMeta", style: { fontSize: "11px", color: "#64748b", marginBottom: "10px" } }, "Published by Web Standards Review \u2022 4 min read \u2022 Active Font: ", styleObj.name),
+      /* @__PURE__ */ import_react12.default.createElement("p", { id: "previewParagraph", style: { color: "#cbd5e1", margin: 0 } }, "Typography on the modern web balances aesthetic minimalism with effortless legibility. When line height and optical letter spacing harmonize, long-form reading feels natural rather than computerized.")
+    )),
+    /* @__PURE__ */ import_react12.default.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: "10px", borderTop: "1px solid rgba(255, 255, 255, 0.08)" } }, /* @__PURE__ */ import_react12.default.createElement(
+      "button",
+      {
+        id: "btnResetTypography",
+        onClick: handleReset,
+        style: {
+          padding: "9px 16px",
+          background: "rgba(239, 68, 68, 0.12)",
+          border: "1px solid rgba(239, 68, 68, 0.35)",
+          color: "#f87171",
+          borderRadius: "8px",
+          fontSize: "12px",
+          fontWeight: "600",
+          cursor: "pointer"
+        }
+      },
+      "\u21BA Reset Default"
+    ), /* @__PURE__ */ import_react12.default.createElement("div", { style: { display: "flex", gap: "10px" } }, /* @__PURE__ */ import_react12.default.createElement(
+      "button",
+      {
+        id: "btnCloseTypographyBtn",
+        onClick: onClose,
+        style: {
+          padding: "9px 18px",
+          background: "rgba(255, 255, 255, 0.06)",
+          border: "1px solid rgba(255, 255, 255, 0.12)",
+          color: "#cbd5e1",
+          borderRadius: "8px",
+          fontSize: "12px",
+          fontWeight: "600",
+          cursor: "pointer"
+        }
+      },
+      "Close"
+    ), /* @__PURE__ */ import_react12.default.createElement(
+      "button",
+      {
+        id: "btnApplyTypography",
+        onClick: handleApply,
+        style: {
+          padding: "9px 20px",
+          background: "linear-gradient(135deg, #00e5ff 0%, #0284c7 100%)",
+          border: "none",
+          color: "#070b14",
+          borderRadius: "8px",
+          fontSize: "12px",
+          fontWeight: "700",
+          cursor: "pointer",
+          boxShadow: "0 0 16px rgba(0, 229, 255, 0.35)"
+        }
+      },
+      "\u2705 Apply to Browser"
+    )))
+  ));
+}
+
+// desktop/src/components/AiProviderModal.jsx
+var import_react13 = __toESM(require_react());
+init_aiProviderService();
+function AiProviderModal({
+  isOpen,
+  onClose,
+  onCaptureSnapshot,
+  latestSnapshot
+}) {
+  const [configs, setConfigs] = (0, import_react13.useState)(() => getAiProvidersConfig());
+  const [selectedProviderId, setSelectedProviderId] = (0, import_react13.useState)(() => getActiveProviderId());
+  const [activeProviderId, setActiveId] = (0, import_react13.useState)(() => getActiveProviderId());
+  const [showApiKey, setShowApiKey] = (0, import_react13.useState)(false);
+  const [testStatus, setTestStatus] = (0, import_react13.useState)(null);
+  const [saveFeedback, setSaveFeedback] = (0, import_react13.useState)(false);
+  const [vlmSnapshotResult, setVlmSnapshotResult] = (0, import_react13.useState)(latestSnapshot || null);
+  const [isCapturingVlm, setIsCapturingVlm] = (0, import_react13.useState)(false);
+  const [snapshotTarget, setSnapshotTarget] = (0, import_react13.useState)("webview");
+  (0, import_react13.useEffect)(() => {
+    if (isOpen) {
+      setConfigs(getAiProvidersConfig());
+      const actId = getActiveProviderId();
+      setActiveId(actId);
+      setSelectedProviderId(actId);
+      setTestStatus(null);
+      setSaveFeedback(false);
+    }
+  }, [isOpen]);
+  (0, import_react13.useEffect)(() => {
+    if (latestSnapshot) {
+      setVlmSnapshotResult(latestSnapshot);
+    }
+  }, [latestSnapshot]);
+  if (!isOpen) return null;
+  const currentConfig = configs[selectedProviderId] || DEFAULT_PROVIDERS[selectedProviderId];
+  const handleUpdateField = (field, value) => {
+    setConfigs((prev) => ({
+      ...prev,
+      [selectedProviderId]: {
+        ...prev[selectedProviderId],
+        [field]: value
+      }
+    }));
+  };
+  const handleResetDefaultUrl = () => {
+    const def = DEFAULT_PROVIDERS[selectedProviderId];
+    if (def) {
+      handleUpdateField("baseUrl", def.baseUrl);
+    }
+  };
+  const handleSelectPresetModel = (modelName) => {
+    handleUpdateField("model", modelName);
+  };
+  const handleSetActive = () => {
+    setActiveId(selectedProviderId);
+    setActiveProviderId(selectedProviderId);
+  };
+  const handleRunTest = async () => {
+    setTestStatus({ loading: true });
+    const res = await testConnection(selectedProviderId, currentConfig);
+    if (res.success) {
+      setTestStatus({
+        loading: false,
+        success: true,
+        latencyMs: res.latencyMs,
+        message: `Connected successfully (${res.latencyMs}ms)`
+      });
+    } else {
+      setTestStatus({
+        loading: false,
+        success: false,
+        message: res.error || "Connection failed"
+      });
+    }
+  };
+  const handleSaveAndApply = () => {
+    saveAiProvidersConfig(configs);
+    setActiveProviderId(activeProviderId);
+    setSaveFeedback(true);
+    setTimeout(() => {
+      setSaveFeedback(false);
+      onClose();
+    }, 600);
+  };
+  const handleTriggerModalSnapshot = async () => {
+    if (!onCaptureSnapshot) return;
+    setIsCapturingVlm(true);
+    try {
+      const res = await onCaptureSnapshot(snapshotTarget);
+      if (res && res.success) {
+        setVlmSnapshotResult(res);
+      }
+    } catch (e) {
+      console.error("[VLM Snapshot Test Error]", e);
+    } finally {
+      setIsCapturingVlm(false);
+    }
+  };
+  const providerList = Object.values(configs);
+  return /* @__PURE__ */ import_react13.default.createElement("div", { className: "modal-backdrop", onClick: onClose, style: { zIndex: 1e5 } }, /* @__PURE__ */ import_react13.default.createElement(
+    "div",
+    {
+      className: "modal-container",
+      style: {
+        width: "840px",
+        maxWidth: "94vw",
+        height: "80vh",
+        maxHeight: "680px",
+        display: "flex",
+        flexDirection: "column",
+        padding: 0,
+        background: "rgba(11, 17, 33, 0.96)",
+        backdropFilter: "blur(24px)",
+        border: "1px solid rgba(255, 255, 255, 0.12)",
+        borderRadius: "16px",
+        boxShadow: "0 24px 60px rgba(0, 0, 0, 0.65)",
+        color: "#e2e8f0",
+        overflow: "hidden"
+      },
+      onClick: (e) => e.stopPropagation()
+    },
+    /* @__PURE__ */ import_react13.default.createElement(
+      "div",
+      {
+        style: {
+          padding: "16px 22px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
+          background: "rgba(255, 255, 255, 0.02)"
+        }
+      },
+      /* @__PURE__ */ import_react13.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: "10px" } }, /* @__PURE__ */ import_react13.default.createElement("span", { style: { fontSize: "20px" } }, "\u26A1"), /* @__PURE__ */ import_react13.default.createElement("div", null, /* @__PURE__ */ import_react13.default.createElement("h3", { style: { margin: 0, fontSize: "16px", fontWeight: 600, color: "#f8fafc" } }, "AI Provider & Key Management"), /* @__PURE__ */ import_react13.default.createElement("span", { style: { fontSize: "11px", color: "#94a3b8" } }, "Configure LLM & VLM endpoints for vision reasoning, natural language commands, and autonomous browsing"))),
+      /* @__PURE__ */ import_react13.default.createElement(
+        "button",
+        {
+          className: "modal-close-btn",
+          onClick: onClose,
+          title: "Close",
+          style: {
+            background: "transparent",
+            border: "none",
+            color: "#94a3b8",
+            fontSize: "18px",
+            cursor: "pointer",
+            padding: "4px 8px",
+            borderRadius: "6px"
+          }
+        },
+        "\u2715"
+      )
+    ),
+    /* @__PURE__ */ import_react13.default.createElement("div", { style: { display: "flex", flex: 1, overflow: "hidden" } }, /* @__PURE__ */ import_react13.default.createElement(
+      "div",
+      {
+        style: {
+          width: "240px",
+          borderRight: "1px solid rgba(255, 255, 255, 0.08)",
+          background: "rgba(7, 11, 20, 0.5)",
+          padding: "12px 8px",
+          overflowY: "auto",
+          display: "flex",
+          flexDirection: "column",
+          gap: "4px"
+        }
+      },
+      /* @__PURE__ */ import_react13.default.createElement("div", { style: { padding: "4px 10px", fontSize: "10px", fontWeight: 700, color: "#64748b", letterSpacing: "0.08em", textTransform: "uppercase" } }, "Supported Providers"),
+      providerList.map((prov) => {
+        const isSelected = prov.id === selectedProviderId;
+        const isActive = prov.id === activeProviderId;
+        const hasKeyOrLocal = prov.apiKey || prov.id === "lmstudio" || prov.id === "ollama";
+        return /* @__PURE__ */ import_react13.default.createElement(
+          "button",
+          {
+            key: prov.id,
+            onClick: () => {
+              setSelectedProviderId(prov.id);
+              setTestStatus(null);
+            },
+            style: {
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              padding: "10px 12px",
+              borderRadius: "8px",
+              border: isSelected ? "1px solid rgba(0, 229, 255, 0.35)" : "1px solid transparent",
+              background: isSelected ? "rgba(0, 229, 255, 0.12)" : "transparent",
+              color: isSelected ? "#f8fafc" : "#94a3b8",
+              fontSize: "13px",
+              fontWeight: isSelected ? 600 : 400,
+              cursor: "pointer",
+              textAlign: "left",
+              transition: "all 0.15s ease"
+            }
+          },
+          /* @__PURE__ */ import_react13.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: "8px" } }, /* @__PURE__ */ import_react13.default.createElement("span", { style: {
+            width: "8px",
+            height: "8px",
+            borderRadius: "50%",
+            background: isActive ? "#00e5ff" : hasKeyOrLocal ? "#10b981" : "#475569",
+            boxShadow: isActive ? "0 0 8px #00e5ff" : "none"
+          } }), /* @__PURE__ */ import_react13.default.createElement("span", null, prov.name)),
+          isActive && /* @__PURE__ */ import_react13.default.createElement("span", { style: {
+            fontSize: "9px",
+            fontWeight: 700,
+            background: "#00e5ff",
+            color: "#070b14",
+            padding: "1px 5px",
+            borderRadius: "4px",
+            textTransform: "uppercase"
+          } }, "Active")
+        );
+      })
+    ), /* @__PURE__ */ import_react13.default.createElement(
+      "div",
+      {
+        style: {
+          flex: 1,
+          padding: "20px 24px",
+          overflowY: "auto",
+          display: "flex",
+          flexDirection: "column",
+          gap: "18px"
+        }
+      },
+      /* @__PURE__ */ import_react13.default.createElement(
+        "div",
+        {
+          style: {
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            padding: "12px 16px",
+            borderRadius: "10px",
+            background: currentConfig.id === activeProviderId ? "rgba(0, 229, 255, 0.08)" : "rgba(255, 255, 255, 0.03)",
+            border: currentConfig.id === activeProviderId ? "1px solid rgba(0, 229, 255, 0.25)" : "1px solid rgba(255, 255, 255, 0.06)"
+          }
+        },
+        /* @__PURE__ */ import_react13.default.createElement("div", null, /* @__PURE__ */ import_react13.default.createElement("div", { style: { fontSize: "15px", fontWeight: 600, color: "#f8fafc" } }, currentConfig.name), /* @__PURE__ */ import_react13.default.createElement("div", { style: { fontSize: "12px", color: "#94a3b8" } }, currentConfig.id === activeProviderId ? "Currently designated as primary AI engine for browser commands and VLM queries." : "Click to make this the active provider for AI commands.")),
+        /* @__PURE__ */ import_react13.default.createElement(
+          "button",
+          {
+            onClick: handleSetActive,
+            disabled: currentConfig.id === activeProviderId,
+            style: {
+              padding: "6px 14px",
+              borderRadius: "6px",
+              border: "none",
+              background: currentConfig.id === activeProviderId ? "#10b981" : "rgba(0, 229, 255, 0.2)",
+              color: currentConfig.id === activeProviderId ? "#ffffff" : "#00e5ff",
+              fontSize: "12px",
+              fontWeight: 600,
+              cursor: currentConfig.id === activeProviderId ? "default" : "pointer"
+            }
+          },
+          currentConfig.id === activeProviderId ? "\u2713 Active Provider" : "Set as Active"
+        )
+      ),
+      /* @__PURE__ */ import_react13.default.createElement("div", null, /* @__PURE__ */ import_react13.default.createElement("div", { style: { display: "flex", justifyContent: "space-between", marginBottom: "6px" } }, /* @__PURE__ */ import_react13.default.createElement("label", { style: { fontSize: "12px", fontWeight: 600, color: "#cbd5e1" } }, "Base Endpoint URL"), /* @__PURE__ */ import_react13.default.createElement(
+        "button",
+        {
+          onClick: handleResetDefaultUrl,
+          style: {
+            background: "transparent",
+            border: "none",
+            color: "#38bdf8",
+            fontSize: "11px",
+            cursor: "pointer",
+            padding: 0
+          }
+        },
+        "Reset to Default"
+      )), /* @__PURE__ */ import_react13.default.createElement(
+        "input",
+        {
+          type: "text",
+          value: currentConfig.baseUrl || "",
+          onChange: (e) => handleUpdateField("baseUrl", e.target.value),
+          placeholder: "e.g. http://localhost:1234/v1 or https://api.openai.com/v1",
+          style: {
+            width: "100%",
+            padding: "9px 12px",
+            borderRadius: "8px",
+            border: "1px solid rgba(255, 255, 255, 0.12)",
+            background: "rgba(15, 23, 42, 0.6)",
+            color: "#f8fafc",
+            fontSize: "13px",
+            fontFamily: "monospace",
+            boxSizing: "border-box"
+          }
+        }
+      )),
+      /* @__PURE__ */ import_react13.default.createElement("div", null, /* @__PURE__ */ import_react13.default.createElement("div", { style: { display: "flex", justifyContent: "space-between", marginBottom: "6px" } }, /* @__PURE__ */ import_react13.default.createElement("label", { style: { fontSize: "12px", fontWeight: 600, color: "#cbd5e1" } }, "API Key ", currentConfig.id === "lmstudio" || currentConfig.id === "ollama" ? "(Optional for local)" : "(Required)"), /* @__PURE__ */ import_react13.default.createElement(
+        "button",
+        {
+          onClick: () => setShowApiKey((prev) => !prev),
+          style: {
+            background: "transparent",
+            border: "none",
+            color: "#94a3b8",
+            fontSize: "11px",
+            cursor: "pointer",
+            padding: 0
+          }
+        },
+        showApiKey ? "Hide Key" : "Show Key"
+      )), /* @__PURE__ */ import_react13.default.createElement(
+        "input",
+        {
+          type: showApiKey ? "text" : "password",
+          value: currentConfig.apiKey || "",
+          onChange: (e) => handleUpdateField("apiKey", e.target.value),
+          placeholder: currentConfig.id === "anthropic" ? "sk-ant-api03-..." : currentConfig.id === "openrouter" ? "sk-or-v1-..." : "sk-... or enter your key",
+          style: {
+            width: "100%",
+            padding: "9px 12px",
+            borderRadius: "8px",
+            border: "1px solid rgba(255, 255, 255, 0.12)",
+            background: "rgba(15, 23, 42, 0.6)",
+            color: "#f8fafc",
+            fontSize: "13px",
+            fontFamily: "monospace",
+            boxSizing: "border-box"
+          }
+        }
+      )),
+      /* @__PURE__ */ import_react13.default.createElement("div", null, /* @__PURE__ */ import_react13.default.createElement("label", { style: { display: "block", fontSize: "12px", fontWeight: 600, color: "#cbd5e1", marginBottom: "6px" } }, "Model Name"), /* @__PURE__ */ import_react13.default.createElement(
+        "input",
+        {
+          type: "text",
+          value: currentConfig.model || "",
+          onChange: (e) => handleUpdateField("model", e.target.value),
+          placeholder: "e.g. gpt-4o, claude-3-5-sonnet, llama3.2-vision",
+          style: {
+            width: "100%",
+            padding: "9px 12px",
+            borderRadius: "8px",
+            border: "1px solid rgba(255, 255, 255, 0.12)",
+            background: "rgba(15, 23, 42, 0.6)",
+            color: "#f8fafc",
+            fontSize: "13px",
+            boxSizing: "border-box"
+          }
+        }
+      ), currentConfig.presetModels && currentConfig.presetModels.length > 0 && /* @__PURE__ */ import_react13.default.createElement("div", { style: { display: "flex", flexWrap: "wrap", gap: "6px", marginTop: "8px" } }, /* @__PURE__ */ import_react13.default.createElement("span", { style: { fontSize: "11px", color: "#64748b", alignSelf: "center" } }, "Presets:"), currentConfig.presetModels.map((m) => /* @__PURE__ */ import_react13.default.createElement(
+        "button",
+        {
+          key: m,
+          onClick: () => handleSelectPresetModel(m),
+          style: {
+            padding: "3px 8px",
+            borderRadius: "4px",
+            border: currentConfig.model === m ? "1px solid #00e5ff" : "1px solid rgba(255, 255, 255, 0.08)",
+            background: currentConfig.model === m ? "rgba(0, 229, 255, 0.15)" : "rgba(255, 255, 255, 0.04)",
+            color: currentConfig.model === m ? "#00e5ff" : "#94a3b8",
+            fontSize: "11px",
+            cursor: "pointer"
+          }
+        },
+        m
+      )))),
+      /* @__PURE__ */ import_react13.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: "12px", marginTop: "4px" } }, /* @__PURE__ */ import_react13.default.createElement(
+        "button",
+        {
+          onClick: handleRunTest,
+          disabled: testStatus?.loading,
+          style: {
+            padding: "8px 16px",
+            borderRadius: "6px",
+            border: "1px solid rgba(255, 255, 255, 0.15)",
+            background: "rgba(255, 255, 255, 0.06)",
+            color: "#f8fafc",
+            fontSize: "12px",
+            fontWeight: 600,
+            cursor: testStatus?.loading ? "wait" : "pointer",
+            display: "flex",
+            alignItems: "center",
+            gap: "6px"
+          }
+        },
+        testStatus?.loading ? "\u23F3 Pinging Endpoint..." : "\u26A1 Test Connection"
+      ), testStatus && !testStatus.loading && /* @__PURE__ */ import_react13.default.createElement("span", { style: {
+        fontSize: "12px",
+        color: testStatus.success ? "#10b981" : "#ef4444",
+        fontWeight: 500
+      } }, testStatus.success ? "\u{1F7E2}" : "\u{1F534}", " ", testStatus.message)),
+      /* @__PURE__ */ import_react13.default.createElement(
+        "div",
+        {
+          style: {
+            marginTop: "10px",
+            padding: "14px 16px",
+            borderRadius: "10px",
+            background: "rgba(255, 255, 255, 0.02)",
+            border: "1px solid rgba(255, 255, 255, 0.06)"
+          }
+        },
+        /* @__PURE__ */ import_react13.default.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" } }, /* @__PURE__ */ import_react13.default.createElement("div", null, /* @__PURE__ */ import_react13.default.createElement("div", { style: { fontSize: "13px", fontWeight: 600, color: "#f8fafc" } }, "\u{1F4F8} VLM Visual Comprehension Tester"), /* @__PURE__ */ import_react13.default.createElement("div", { style: { fontSize: "11px", color: "#94a3b8" } }, "Capture the live browser webview to disk and expose the absolute file path for Vision Models")), /* @__PURE__ */ import_react13.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: "8px" } }, /* @__PURE__ */ import_react13.default.createElement(
+          "select",
+          {
+            value: snapshotTarget,
+            onChange: (e) => setSnapshotTarget(e.target.value),
+            style: {
+              padding: "4px 8px",
+              borderRadius: "6px",
+              border: "1px solid rgba(255, 255, 255, 0.12)",
+              background: "#070b14",
+              color: "#f8fafc",
+              fontSize: "11px"
+            }
+          },
+          /* @__PURE__ */ import_react13.default.createElement("option", { value: "webview" }, "Guest Webview (Page)"),
+          /* @__PURE__ */ import_react13.default.createElement("option", { value: "window" }, "Full Window (Chrome + Page)")
+        ), /* @__PURE__ */ import_react13.default.createElement(
+          "button",
+          {
+            onClick: handleTriggerModalSnapshot,
+            disabled: isCapturingVlm,
+            style: {
+              padding: "6px 12px",
+              borderRadius: "6px",
+              border: "none",
+              background: "#00e5ff",
+              color: "#070b14",
+              fontSize: "11px",
+              fontWeight: 700,
+              cursor: isCapturingVlm ? "wait" : "pointer"
+            }
+          },
+          isCapturingVlm ? "Capturing..." : "Capture Snapshot"
+        ))),
+        vlmSnapshotResult && vlmSnapshotResult.path && /* @__PURE__ */ import_react13.default.createElement("div", { style: {
+          display: "flex",
+          alignItems: "center",
+          gap: "12px",
+          padding: "8px 10px",
+          borderRadius: "6px",
+          background: "rgba(0, 0, 0, 0.3)",
+          border: "1px solid rgba(0, 229, 255, 0.2)"
+        } }, vlmSnapshotResult.dataUrl && /* @__PURE__ */ import_react13.default.createElement(
+          "img",
+          {
+            src: vlmSnapshotResult.dataUrl,
+            alt: "Preview",
+            style: {
+              width: "64px",
+              height: "40px",
+              objectFit: "cover",
+              borderRadius: "4px",
+              border: "1px solid rgba(255, 255, 255, 0.1)"
+            }
+          }
+        ), /* @__PURE__ */ import_react13.default.createElement("div", { style: { flex: 1, minWidth: 0 } }, /* @__PURE__ */ import_react13.default.createElement("div", { style: { fontSize: "10px", color: "#10b981", fontWeight: 700 } }, "\u2713 Saved to disk (", vlmSnapshotResult.width, "x", vlmSnapshotResult.height, ")"), /* @__PURE__ */ import_react13.default.createElement(
+          "div",
+          {
+            style: {
+              fontSize: "11px",
+              fontFamily: "monospace",
+              color: "#e2e8f0",
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis"
+            },
+            title: vlmSnapshotResult.path
+          },
+          vlmSnapshotResult.path
+        )), /* @__PURE__ */ import_react13.default.createElement(
+          "button",
+          {
+            onClick: () => {
+              if (navigator.clipboard) {
+                navigator.clipboard.writeText(vlmSnapshotResult.path);
+              }
+            },
+            style: {
+              padding: "4px 8px",
+              borderRadius: "4px",
+              border: "1px solid rgba(255, 255, 255, 0.12)",
+              background: "rgba(255, 255, 255, 0.05)",
+              color: "#cbd5e1",
+              fontSize: "10px",
+              cursor: "pointer"
+            }
+          },
+          "Copy Path"
+        ))
+      )
+    )),
+    /* @__PURE__ */ import_react13.default.createElement(
+      "div",
+      {
+        style: {
+          padding: "14px 22px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          borderTop: "1px solid rgba(255, 255, 255, 0.08)",
+          background: "rgba(7, 11, 20, 0.7)"
+        }
+      },
+      /* @__PURE__ */ import_react13.default.createElement("div", { style: { fontSize: "11px", color: "#64748b" } }, "Active Provider: ", /* @__PURE__ */ import_react13.default.createElement("strong", { style: { color: "#00e5ff" } }, configs[activeProviderId]?.name || "OpenAI"), " (", configs[activeProviderId]?.model || "default", ")"),
+      /* @__PURE__ */ import_react13.default.createElement("div", { style: { display: "flex", gap: "8px" } }, /* @__PURE__ */ import_react13.default.createElement(
+        "button",
+        {
+          onClick: onClose,
+          style: {
+            padding: "8px 16px",
+            borderRadius: "6px",
+            border: "1px solid rgba(255, 255, 255, 0.1)",
+            background: "transparent",
+            color: "#94a3b8",
+            fontSize: "12px",
+            cursor: "pointer"
+          }
+        },
+        "Cancel"
+      ), /* @__PURE__ */ import_react13.default.createElement(
+        "button",
+        {
+          onClick: handleSaveAndApply,
+          style: {
+            padding: "8px 20px",
+            borderRadius: "6px",
+            border: "none",
+            background: saveFeedback ? "#10b981" : "#00e5ff",
+            color: "#070b14",
+            fontSize: "12px",
+            fontWeight: 700,
+            cursor: "pointer",
+            transition: "all 0.15s ease"
+          }
+        },
+        saveFeedback ? "\u2713 Saved!" : "Save & Apply"
+      ))
+    )
+  ));
+}
+
 // desktop/src/App.jsx
-var { ipcRenderer } = window.require ? window.require("electron") : require("electron");
+var { ipcRenderer: ipcRenderer2 } = window.require ? window.require("electron") : require("electron");
 var path = window.require ? window.require("path") : require("path");
 var NEW_TAB_IDENTIFIER = "antigravity://newtab";
 function App() {
-  const [activeEngine, setActiveEngine] = (0, import_react10.useState)(() => {
+  const [activeEngine, setActiveEngine] = (0, import_react14.useState)(() => {
     return localStorage.getItem("antigravity_search_engine") || "google";
   });
-  const [tabs, setTabs] = (0, import_react10.useState)([
-    { id: 1, url: "", title: "New Tab", isNewTab: true }
+  const [tabs, setTabs] = (0, import_react14.useState)([
+    { id: 1, url: "", initialUrl: "about:blank", title: "New Tab", isNewTab: true }
   ]);
-  const [activeTabId, setActiveTabId] = (0, import_react10.useState)(1);
-  const nextTabIdRef = (0, import_react10.useRef)(2);
-  const lastOpenedTabRef = (0, import_react10.useRef)({ url: "", time: 0 });
-  const [adblockCount, setAdblockCount] = (0, import_react10.useState)(0);
-  const [shieldsStats, setShieldsStats] = (0, import_react10.useState)({
+  const [activeTabId, setActiveTabId] = (0, import_react14.useState)(1);
+  const nextTabIdRef = (0, import_react14.useRef)(2);
+  const lastOpenedTabRef = (0, import_react14.useRef)({ url: "", time: 0 });
+  const [adblockCount, setAdblockCount] = (0, import_react14.useState)(0);
+  const [shieldsStats, setShieldsStats] = (0, import_react14.useState)({
     mode: "aggressive",
     isNativeRust: true,
     totalBlocked: 0,
@@ -39407,29 +42154,31 @@ function App() {
     savedTimeMs: 0,
     recentEvents: []
   });
-  const [hudTab, setHudTab] = (0, import_react10.useState)("shields");
-  const [isHudOpen, setIsHudOpen] = (0, import_react10.useState)(false);
-  const [somEnabled, setSomEnabled] = (0, import_react10.useState)(true);
-  const [somMode, setSomMode] = (0, import_react10.useState)("summarized");
-  const [isHudDetached, setIsHudDetached] = (0, import_react10.useState)(() => {
+  const [hudTab, setHudTab] = (0, import_react14.useState)("shields");
+  const [isHudOpen, setIsHudOpen] = (0, import_react14.useState)(false);
+  const [somEnabled, setSomEnabled] = (0, import_react14.useState)(true);
+  const [somMode, setSomMode] = (0, import_react14.useState)("summarized");
+  const [isHudDetached, setIsHudDetached] = (0, import_react14.useState)(() => {
     try {
       return localStorage.getItem("antigravity_hud_detached") === "true";
     } catch (e) {
       return false;
     }
   });
-  const [isExternalHudVisible, setIsExternalHudVisible] = (0, import_react10.useState)(false);
-  const [axTreeMarkdown, setAxTreeMarkdown] = (0, import_react10.useState)("");
-  const [grepQuery, setGrepQuery] = (0, import_react10.useState)("href");
-  const [grepMatches, setGrepMatches] = (0, import_react10.useState)([]);
-  const [grepPage, setGrepPage] = (0, import_react10.useState)(1);
-  const [autofillStatus, setAutofillStatus] = (0, import_react10.useState)("Ready to autofill inputs on active page.");
-  const [isHitlActive, setIsHitlActive] = (0, import_react10.useState)(false);
-  const [telemetryLogs, setTelemetryLogs] = (0, import_react10.useState)([
+  const [isExternalHudVisible, setIsExternalHudVisible] = (0, import_react14.useState)(false);
+  const [axTreeMarkdown, setAxTreeMarkdown] = (0, import_react14.useState)("");
+  const [grepQuery, setGrepQuery] = (0, import_react14.useState)("href");
+  const [grepMatches, setGrepMatches] = (0, import_react14.useState)([]);
+  const [grepPage, setGrepPage] = (0, import_react14.useState)(1);
+  const [autofillStatus, setAutofillStatus] = (0, import_react14.useState)("Ready to autofill inputs on active page.");
+  const [isHitlActive, setIsHitlActive] = (0, import_react14.useState)(false);
+  const [isAiProviderModalOpen, setIsAiProviderModalOpen] = (0, import_react14.useState)(false);
+  const [latestSnapshot, setLatestSnapshot] = (0, import_react14.useState)(null);
+  const [telemetryLogs, setTelemetryLogs] = (0, import_react14.useState)([
     { time: (/* @__PURE__ */ new Date()).toLocaleTimeString(), type: "info", msg: "Antigravity React Native Desktop Shell initialized" },
     { time: (/* @__PURE__ */ new Date()).toLocaleTimeString(), type: "info", msg: "Brave adblock-rust engine active (EasyList + uBlock Origin)" }
   ]);
-  const [bookmarks, setBookmarks] = (0, import_react10.useState)(() => {
+  const [bookmarks, setBookmarks] = (0, import_react14.useState)(() => {
     try {
       const saved = localStorage.getItem("antigravity_bookmarks");
       if (saved) return JSON.parse(saved);
@@ -39442,13 +42191,14 @@ function App() {
       { id: "bm-4", url: "https://github.com", title: "GitHub" }
     ];
   });
-  const [isTabSearchOpen, setIsTabSearchOpen] = (0, import_react10.useState)(false);
-  const [isReaderModeOpen, setIsReaderModeOpen] = (0, import_react10.useState)(false);
-  const [readerContent, setReaderContent] = (0, import_react10.useState)("");
-  const [readerTitle, setReaderTitle] = (0, import_react10.useState)("");
-  const [isQrCodeOpen, setIsQrCodeOpen] = (0, import_react10.useState)(false);
-  const [isHistoryOpen, setIsHistoryOpen] = (0, import_react10.useState)(false);
-  const [history, setHistory] = (0, import_react10.useState)(() => {
+  const [isTabSearchOpen, setIsTabSearchOpen] = (0, import_react14.useState)(false);
+  const [isReaderModeOpen, setIsReaderModeOpen] = (0, import_react14.useState)(false);
+  const [readerContent, setReaderContent] = (0, import_react14.useState)("");
+  const [readerTitle, setReaderTitle] = (0, import_react14.useState)("");
+  const [isQrCodeOpen, setIsQrCodeOpen] = (0, import_react14.useState)(false);
+  const [isHistoryOpen, setIsHistoryOpen] = (0, import_react14.useState)(false);
+  const [aiLiveBanner, setAiLiveBanner] = (0, import_react14.useState)(null);
+  const [history, setHistory] = (0, import_react14.useState)(() => {
     try {
       const saved = localStorage.getItem("antigravity_browsing_history");
       if (saved) return JSON.parse(saved);
@@ -39460,17 +42210,213 @@ function App() {
       { id: "h-3", url: "https://www.google.com", title: "Google", timestamp: Date.now() - 108e5 }
     ];
   });
-  const activeTab = tabs.find((t) => t.id === activeTabId) || tabs[0] || { id: 1, url: "", title: "New Tab", isNewTab: true };
+  const [wallpaper, setWallpaper] = (0, import_react14.useState)(() => {
+    return localStorage.getItem("antigravity_wallpaper") || "";
+  });
+  const [wallpaperType, setWallpaperType] = (0, import_react14.useState)(() => {
+    return localStorage.getItem("antigravity_wallpaper_type") || "none";
+  });
+  const [wallpaperOpacity, setWallpaperOpacity] = (0, import_react14.useState)(() => {
+    const val = localStorage.getItem("antigravity_wallpaper_opacity");
+    return val !== null ? parseFloat(val) : 0.65;
+  });
+  const [wallpaperColor, setWallpaperColor] = (0, import_react14.useState)(() => {
+    return localStorage.getItem("antigravity_wallpaper_color") || "#0b0f19";
+  });
+  const [isWallpaperStudioOpen, setIsWallpaperStudioOpen] = (0, import_react14.useState)(false);
+  const [downloads, setDownloads] = (0, import_react14.useState)([]);
+  const [canvasFontSize, setCanvasFontSize] = (0, import_react14.useState)(() => {
+    return localStorage.getItem("antigravity_canvas_font_size") || "standard";
+  });
+  const [canvasFontStyle, setCanvasFontStyle] = (0, import_react14.useState)(() => {
+    return localStorage.getItem("antigravity_canvas_font_style") || "inter";
+  });
+  const [isTypographyOpen, setIsTypographyOpen] = (0, import_react14.useState)(false);
+  const tabsRef = (0, import_react14.useRef)(tabs);
+  tabsRef.current = tabs;
+  const activeTabIdRef = (0, import_react14.useRef)(activeTabId);
+  activeTabIdRef.current = activeTabId;
+  const activeTab = tabs.find((t) => t.id === activeTabId) || tabs[0] || { id: 1, title: "New Tab", url: "", isNewTab: true };
+  const activeTabRef = (0, import_react14.useRef)(activeTab);
+  activeTabRef.current = activeTab;
+  const canvasFontSizeRef = (0, import_react14.useRef)(canvasFontSize);
+  canvasFontSizeRef.current = canvasFontSize;
+  const canvasFontStyleRef = (0, import_react14.useRef)(canvasFontStyle);
+  canvasFontStyleRef.current = canvasFontStyle;
+  const hudStateRef = (0, import_react14.useRef)({
+    tabs,
+    activeTabId,
+    somEnabled,
+    somMode,
+    axTreeMarkdown,
+    grepMatches,
+    autofillStatus,
+    isHitlActive,
+    telemetryLogs,
+    shieldsStats
+  });
+  hudStateRef.current = {
+    tabs,
+    activeTabId,
+    somEnabled,
+    somMode,
+    axTreeMarkdown,
+    grepMatches,
+    autofillStatus,
+    isHitlActive,
+    telemetryLogs,
+    shieldsStats
+  };
+  const injectTypographyIntoWebview = (wv) => {
+    if (!wv) return;
+    const curUrl = typeof wv.getURL === "function" ? wv.getURL() : "";
+    if (!curUrl || curUrl === "about:blank") return;
+    const fontKey = canvasFontStyleRef.current;
+    const sizeKey = canvasFontSizeRef.current;
+    const styleObj = TYPOGRAPHY_FONT_STYLES[fontKey] || TYPOGRAPHY_FONT_STYLES["inter"];
+    const zoomMap = { "compact": 0.9, "standard": 1, "comfortable": 1.15, "spacious": 1.3 };
+    try {
+      if (typeof wv.setZoomFactor === "function") {
+        wv.setZoomFactor(zoomMap[sizeKey] || 1);
+      }
+    } catch (e) {
+    }
+    const targetFamily = styleObj.fontFamily;
+    const universalCss = `
+            html, body, div, span, p, a, h1, h2, h3, h4, h5, h6,
+            li, ul, ol, dl, dt, dd,
+            button, input, textarea, select, label,
+            table, td, th, tr, tbody, thead, tfoot,
+            article, section, header, footer, nav, aside, main,
+            b, strong, i, em, small, sub, sup, blockquote, cite {
+                font-family: ${targetFamily} !important;
+            }
+        `;
+    try {
+      if (typeof wv.insertCSS === "function") {
+        wv.insertCSS(universalCss).catch(() => {
+        });
+      }
+    } catch (e) {
+    }
+  };
+  (0, import_react14.useEffect)(() => {
+    if (!ipcRenderer2) return;
+    ipcRenderer2.invoke("get-downloads").then((list) => {
+      if (Array.isArray(list)) setDownloads(list);
+    }).catch(() => {
+    });
+    const handleDownloadStarted = (event, record) => {
+      setDownloads((prev) => {
+        const idx = prev.findIndex((d) => d.id === record.id);
+        if (idx !== -1) {
+          const copy = [...prev];
+          copy[idx] = record;
+          return copy;
+        }
+        return [record, ...prev];
+      });
+      logTelemetry("observe", `Download started: ${record.filename}`, record.totalBytesFormatted);
+    };
+    const handleDownloadProgress = (event, record) => {
+      setDownloads((prev) => prev.map((d) => d.id === record.id ? record : d));
+    };
+    const handleDownloadCompleted = (event, record) => {
+      setDownloads((prev) => prev.map((d) => d.id === record.id ? record : d));
+      logTelemetry("observe", `Download ${record.state}: ${record.filename}`, record.receivedBytesFormatted);
+    };
+    const handleDownloadListUpdated = (event, list) => {
+      if (Array.isArray(list)) setDownloads(list);
+    };
+    ipcRenderer2.on("download-started", handleDownloadStarted);
+    ipcRenderer2.on("download-progress", handleDownloadProgress);
+    ipcRenderer2.on("download-completed", handleDownloadCompleted);
+    ipcRenderer2.on("download-list-updated", handleDownloadListUpdated);
+    return () => {
+      ipcRenderer2.removeListener("download-started", handleDownloadStarted);
+      ipcRenderer2.removeListener("download-progress", handleDownloadProgress);
+      ipcRenderer2.removeListener("download-completed", handleDownloadCompleted);
+      ipcRenderer2.removeListener("download-list-updated", handleDownloadListUpdated);
+    };
+  }, []);
+  const handleCancelDownload = (id) => {
+    if (ipcRenderer2) ipcRenderer2.invoke("cancel-download", id);
+  };
+  const handlePauseDownload = (id) => {
+    if (ipcRenderer2) ipcRenderer2.invoke("pause-download", id);
+  };
+  const handleResumeDownload = (id) => {
+    if (ipcRenderer2) ipcRenderer2.invoke("resume-download", id);
+  };
+  const handleShowInFolder = (savePath) => {
+    if (ipcRenderer2) ipcRenderer2.invoke("show-download-in-folder", savePath);
+  };
+  const handleOpenFile = (savePath) => {
+    if (ipcRenderer2) ipcRenderer2.invoke("open-download-file", savePath);
+  };
+  const handleOpenDownloadsFolder = () => {
+    if (ipcRenderer2) ipcRenderer2.invoke("open-downloads-folder");
+  };
+  const handleClearCompletedDownloads = () => {
+    if (ipcRenderer2) {
+      ipcRenderer2.invoke("clear-completed-downloads").then((list) => {
+        if (Array.isArray(list)) setDownloads(list);
+      });
+    }
+  };
+  const handleOpenDownloadsTab = () => {
+    const existing = tabs.find((t) => t.url === "antigravity://downloads" || t.isDownloads);
+    if (existing) {
+      setActiveTabId(existing.id);
+      return;
+    }
+    const current = tabs.find((t) => t.id === activeTabId);
+    if (current && (current.isNewTab || !current.url)) {
+      setTabs((prev) => prev.map((t) => {
+        if (t.id === activeTabId) {
+          return { ...t, isNewTab: false, isDownloads: true, url: "antigravity://downloads", title: "Downloads" };
+        }
+        return t;
+      }));
+      return;
+    }
+    const newId = nextTabIdRef.current++;
+    setTabs((prev) => [...prev, {
+      id: newId,
+      url: "antigravity://downloads",
+      initialUrl: "about:blank",
+      title: "Downloads",
+      isNewTab: false,
+      isDownloads: true
+    }]);
+    setActiveTabId(newId);
+  };
+  (0, import_react14.useEffect)(() => {
+    const hasWp = wallpaperType !== "none" && !!wallpaper;
+    document.body.classList.toggle("has-wallpaper", hasWp);
+    document.body.style.setProperty("--wallpaper-overlay-opacity", String(wallpaperOpacity));
+  }, [wallpaper, wallpaperType, wallpaperOpacity]);
+  const handleSetWallpaper = (type, value, opacity, color) => {
+    setWallpaperType(type);
+    setWallpaper(value);
+    if (opacity !== void 0) setWallpaperOpacity(opacity);
+    if (color !== void 0) setWallpaperColor(color);
+    localStorage.setItem("antigravity_wallpaper_type", type);
+    localStorage.setItem("antigravity_wallpaper", value);
+    if (opacity !== void 0) localStorage.setItem("antigravity_wallpaper_opacity", String(opacity));
+    if (color !== void 0) localStorage.setItem("antigravity_wallpaper_color", color);
+    logTelemetry("act", `Wallpaper updated: ${type}`);
+  };
   const isNewTab = activeTab.isNewTab;
   const logTelemetry = (type, msg, meta = "") => {
-    setTelemetryLogs((prev) => [
-      ...prev,
-      { time: (/* @__PURE__ */ new Date()).toLocaleTimeString(), type, msg, meta }
-    ]);
+    setTelemetryLogs((prev) => {
+      const trimmed = prev.length >= 30 ? prev.slice(prev.length - 29) : prev;
+      return [...trimmed, { time: (/* @__PURE__ */ new Date()).toLocaleTimeString(), type, msg, meta }];
+    });
   };
-  (0, import_react10.useEffect)(() => {
-    if (ipcRenderer.invoke) {
-      ipcRenderer.invoke("get-adblock-stats").then((stats) => {
+  (0, import_react14.useEffect)(() => {
+    if (ipcRenderer2.invoke) {
+      ipcRenderer2.invoke("get-adblock-stats").then((stats) => {
         if (stats) {
           setShieldsStats(stats);
           setAdblockCount(stats.totalBlocked || 0);
@@ -39486,7 +42432,6 @@ function App() {
     };
     const handleAdblockCount = (event, count) => {
       setAdblockCount(count);
-      logTelemetry("verify", `Brave adblock-rust intercepted tracker/ad #${count}`, "0-byte cancel");
     };
     const handleExternalNavigate = (event, url) => {
       if (url && window.__antigravityNavigate) {
@@ -39518,19 +42463,20 @@ function App() {
     const handleHudAction = (event, data) => {
       if (!data) return;
       const { action } = data;
+      const curHudState = hudStateRef.current;
       if (action === "request-initial-state") {
-        ipcRenderer.send("sync-hud-state", {
+        ipcRenderer2.send("sync-hud-state", {
           type: "full-state",
-          tabs: tabs.map((t) => ({ id: t.id, title: t.title, url: t.url, isNewTab: t.isNewTab })),
-          activeTabId,
-          somEnabled,
-          somMode,
-          axTreeMarkdown,
-          grepMatches,
-          autofillStatus,
-          isHitlActive,
-          telemetryLogs,
-          shieldsStats
+          tabs: curHudState.tabs.map((t) => ({ id: t.id, title: t.title, url: t.url, isNewTab: t.isNewTab })),
+          activeTabId: curHudState.activeTabId,
+          somEnabled: curHudState.somEnabled,
+          somMode: curHudState.somMode,
+          axTreeMarkdown: curHudState.axTreeMarkdown,
+          grepMatches: curHudState.grepMatches,
+          autofillStatus: curHudState.autofillStatus,
+          isHitlActive: curHudState.isHitlActive,
+          telemetryLogs: curHudState.telemetryLogs,
+          shieldsStats: curHudState.shieldsStats
         });
       } else if (action === "switch-tab") {
         if (data.tabId) setActiveTabId(data.tabId);
@@ -39569,10 +42515,10 @@ function App() {
         setIsExternalHudVisible(false);
       } else if (action === "execute-click") {
         if (data.target) {
-          executeWebviewClick(data.target);
+          executeWebviewClick2(data.target);
         }
       } else if (action === "execute-scroll") {
-        executeWebviewScroll(data.direction || "down", data.amount || 30, data.isPercent);
+        executeWebviewScroll2(data.direction || "down", data.amount || 30, data.isPercent);
       } else if (action === "execute-navigate") {
         if (data.url) handleNavigate(data.url);
       } else if (action === "extract-page-text") {
@@ -39587,7 +42533,7 @@ function App() {
                         })()
                     `).then((pageInfo) => {
             if (pageInfo) {
-              ipcRenderer.send("sync-hud-state", {
+              ipcRenderer2.send("sync-hud-state", {
                 type: "page-text-extracted",
                 requestId: data.requestId,
                 pageInfo
@@ -39596,11 +42542,299 @@ function App() {
           }).catch(() => {
           });
         }
+      } else if (action === "ai-command") {
+        if (data.prompt) {
+          executeAiBrowserCommand(data.prompt, {
+            tabs,
+            activeTab,
+            activeWebview: document.getElementById(`wv-${activeTabId}`),
+            onOpenTab: openInNewTab,
+            onCloseTab: handleCloseTab,
+            onNavigate: handleNavigate,
+            onSelectTab: setActiveTabId,
+            onToggleBookmark: handleToggleBookmark,
+            onOpenReaderMode: handleOpenReaderMode,
+            onOpenQrCode: () => setIsQrCodeOpen(true),
+            onOpenTabSearch: () => setIsTabSearchOpen(true),
+            onOpenHistory: () => setIsHistoryOpen(true),
+            logTelemetry: (type, msg) => logTelemetry(type, msg)
+          }).then((reply) => {
+            ipcRenderer2.send("sync-hud-state", {
+              type: "ai-command-reply",
+              reply
+            });
+          }).catch((err) => {
+            ipcRenderer2.send("sync-hud-state", {
+              type: "ai-command-reply",
+              reply: { text: `Command error: ${err.message}` }
+            });
+          });
+        }
       }
     };
-    ipcRenderer.on("brave-shields-updated", handleShields);
-    ipcRenderer.on("adblock-count-updated", handleAdblockCount);
-    ipcRenderer.on("external-navigate", handleExternalNavigate);
+    const handleAiControlRequest = async (event, req) => {
+      const { id, action, payload = {} } = req;
+      const curActiveId = activeTabIdRef.current;
+      const wv = document.getElementById(`wv-${curActiveId}`);
+      const curTabs = tabsRef.current;
+      const curActiveTab = activeTabRef.current;
+      const triggerAiBanner = (act, text) => {
+        setAiLiveBanner({ action: act, text, time: Date.now() });
+        try {
+          if (window._aiBannerTimeout) clearTimeout(window._aiBannerTimeout);
+          window._aiBannerTimeout = setTimeout(() => setAiLiveBanner(null), 5e3);
+        } catch (e) {
+        }
+      };
+      try {
+        let result = null;
+        if (action === "get-tabs") {
+          result = {
+            tabs: curTabs.map((t) => ({ id: t.id, title: t.title, url: t.url, isNewTab: t.isNewTab })),
+            activeTabId: curActiveId
+          };
+        } else if (action === "switch-tab") {
+          let targetTab = null;
+          if (payload.id) {
+            targetTab = curTabs.find((t) => String(t.id) === String(payload.id));
+          } else if (payload.index !== void 0) {
+            const idx = parseInt(payload.index, 10);
+            if (idx >= 1 && idx <= curTabs.length) {
+              targetTab = curTabs[idx - 1];
+            } else if (idx >= 0 && idx < curTabs.length) {
+              targetTab = curTabs[idx];
+            }
+          }
+          if (targetTab) {
+            triggerAiBanner("SWITCH_TAB", `Switched to tab "${targetTab.title || targetTab.url}"`);
+            setActiveTabId(targetTab.id);
+            result = { success: true, switchedTo: targetTab.id, title: targetTab.title, url: targetTab.url };
+          } else {
+            result = { success: false, error: "Target tab not found" };
+          }
+        } else if (action === "close-tab") {
+          let targetId = payload.id;
+          if (!targetId && payload.index !== void 0) {
+            const idx = parseInt(payload.index, 10);
+            const t = idx >= 1 && idx <= curTabs.length ? curTabs[idx - 1] : curTabs[idx];
+            if (t) targetId = t.id;
+          }
+          const toClose = targetId ? String(targetId) : String(curActiveId);
+          triggerAiBanner("CLOSE_TAB", `Closed tab ${toClose}`);
+          handleCloseTab(toClose);
+          result = { success: true, closedTabId: toClose };
+        } else if (action === "new-tab") {
+          const url = payload.url || payload.target || "";
+          triggerAiBanner("NEW_TAB", `Opened new tab: ${url || "New Tab"}`);
+          openInNewTab(url);
+          result = { success: true, url };
+        } else if (action === "capture-screenshot") {
+          if (wv && typeof wv.capturePage === "function") {
+            try {
+              const img = await wv.capturePage();
+              const dataUrl = img.toDataURL();
+              const size = img.getSize();
+              const title = typeof wv.getTitle === "function" ? wv.getTitle() : curActiveTab ? curActiveTab.title : "";
+              const url = typeof wv.getURL === "function" ? wv.getURL() : curActiveTab ? curActiveTab.url : "";
+              if (ipcRenderer2 && ipcRenderer2.invoke) {
+                result = await ipcRenderer2.invoke("save-vlm-snapshot", {
+                  dataUrl,
+                  filename: payload.filename,
+                  includeBase64: payload.includeBase64,
+                  width: size.width,
+                  height: size.height,
+                  title,
+                  url
+                });
+                if (result && result.success) {
+                  setLatestSnapshot(result);
+                }
+              } else {
+                result = { success: false, error: "IPC not available" };
+              }
+            } catch (e) {
+              result = { success: false, error: e.message };
+            }
+          } else {
+            result = { success: false, error: "No active webview available to capture" };
+          }
+        } else if (action === "get-page-context") {
+          if (wv) {
+            result = await extractAdaptivePageContext(wv);
+          } else {
+            result = { success: false, error: "No active webview available" };
+          }
+        } else if (action === "site-act") {
+          if (wv) {
+            triggerAiBanner("ADAPTIVE_ACT", "Executing adaptive action: " + (payload.intent || ""));
+            result = await executeAdaptiveAction(wv, payload.intent, payload.options);
+          } else {
+            result = { success: false, error: "No active webview available" };
+          }
+        } else if (action === "navigate") {
+          const targetUrl = payload.url || payload.target || "";
+          if (targetUrl) {
+            triggerAiBanner("NAVIGATE", "Navigating to " + targetUrl);
+            handleNavigate(targetUrl);
+            result = { success: true, url: targetUrl };
+          } else {
+            result = { success: false, error: "URL required" };
+          }
+        } else if (action === "command") {
+          triggerAiBanner("COMMAND", "AI Autopilot: " + (payload.prompt || ""));
+          const reply = await executeAiBrowserCommand(payload.prompt, {
+            tabs,
+            activeTab,
+            activeWebview: wv,
+            onOpenTab: openInNewTab,
+            onCloseTab: handleCloseTab,
+            onNavigate: handleNavigate,
+            onSelectTab: setActiveTabId,
+            onToggleBookmark: handleToggleBookmark,
+            onOpenReaderMode: handleOpenReaderMode,
+            onOpenQrCode: () => setIsQrCodeOpen(true),
+            onOpenTabSearch: () => setIsTabSearchOpen(true),
+            onOpenHistory: () => setIsHistoryOpen(true),
+            logTelemetry: (type, msg) => logTelemetry(type, msg)
+          });
+          result = { success: true, reply };
+        } else if (action === "click") {
+          const target = payload.target || payload.text || "";
+          triggerAiBanner("CLICK", 'Clicking: "' + target + '"');
+          const clickRes = await executeWebviewClick2(target);
+          result = typeof clickRes === "object" && clickRes !== null ? clickRes : { success: !!clickRes, target };
+        } else if (action === "scroll") {
+          triggerAiBanner("SCROLL", "Scrolling " + (payload.direction || "down"));
+          const ok = await executeWebviewScroll2(payload.direction || "down", payload.amount || 50, payload.isPercent !== false);
+          result = { success: ok, direction: payload.direction, amount: payload.amount };
+        } else if (action === "type") {
+          if (wv && typeof wv.executeJavaScript === "function") {
+            const typeText = payload.text || "";
+            const submit = payload.submit !== false;
+            triggerAiBanner("TYPE", 'Typing "' + typeText + '" and submitting search');
+            const selector = payload.selector || null;
+            const res = await wv.executeJavaScript(`
+                            (function() {
+                                let target = null;
+                                if (${JSON.stringify(selector)}) {
+                                    target = document.querySelector(${JSON.stringify(selector)});
+                                }
+                                if (!target) {
+                                    const inputs = Array.from(document.querySelectorAll('input[type="search"], input[name*="search" i], input[id*="search" i], input[class*="search" i], input[type="text"], input:not([type]), textarea')).filter(el => {
+                                        const s = window.getComputedStyle(el);
+                                        return s.display !== 'none' && s.visibility !== 'hidden' && el.offsetWidth > 0;
+                                    });
+                                    target = inputs[0];
+                                }
+                                if (!target) return { success: false, error: 'No input found' };
+                                target.focus();
+                                target.value = ${JSON.stringify(typeText)};
+                                target.dispatchEvent(new Event('input', { bubbles: true }));
+                                target.dispatchEvent(new Event('change', { bubbles: true }));
+                                if (${submit}) {
+                                    const form = target.closest('form');
+                                    if (form) {
+                                        form.requestSubmit ? form.requestSubmit() : form.submit();
+                                    } else {
+                                        target.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', code: 'Enter', keyCode: 13, bubbles: true }));
+                                    }
+                                }
+                                return { success: true, typed: ${JSON.stringify(typeText)} };
+                            })()
+                        `);
+            result = res;
+          } else {
+            result = { success: false, error: "No active webview" };
+          }
+        } else if (action === "get-page-content") {
+          if (wv && typeof wv.executeJavaScript === "function") {
+            const execPromise = wv.executeJavaScript(`
+                            (function() {
+                                const allLinks = Array.from(document.querySelectorAll('a')).map(a => ({
+                                    text: (a.innerText || a.textContent || '').trim().replace(/\\s+/g, ' '),
+                                    href: a.href || '',
+                                    id: a.id || '',
+                                    className: String(a.className || '')
+                                })).filter(l => l.text && l.href && !l.href.startsWith('javascript:'));
+
+                                const allButtons = Array.from(document.querySelectorAll('button, input[type="submit"], input[type="button"], [role="button"], .btn, .button, [onclick]')).map(b => ({
+                                    text: (b.innerText || b.value || b.getAttribute('aria-label') || '').trim().replace(/\\s+/g, ' '),
+                                    id: b.id || '',
+                                    className: String(b.className || ''),
+                                    tag: b.tagName
+                                })).filter(b => b.text && b.text.length < 100);
+
+                                const timers = Array.from(document.querySelectorAll('*')).filter(el => {
+                                    const id = el.id || '';
+                                    const cl = String(el.className || '');
+                                    return /timer|counter|countdown|wait|second/i.test(id + ' ' + cl);
+                                }).map(el => ({
+                                    id: el.id || '',
+                                    text: (el.innerText || '').trim()
+                                })).filter(t => t.text);
+
+                                return {
+                                    title: document.title || '',
+                                    url: window.location.href || '',
+                                    text: (document.body ? document.body.innerText : '').substring(0, 15000),
+                                    links: allLinks.slice(0, 300),
+                                    buttons: allButtons.slice(0, 100),
+                                    timers: timers.slice(0, 20)
+                                };
+                            })()
+                        `);
+            const timeoutPromise = new Promise((resolve) => {
+              setTimeout(() => resolve({
+                title: activeTab.title,
+                url: activeTab.url,
+                text: "Page loading in progress...",
+                links: [],
+                buttons: [],
+                timers: []
+              }), 7e3);
+            });
+            result = await Promise.race([execPromise, timeoutPromise]);
+          } else {
+            result = {
+              title: activeTab.title,
+              url: activeTab.url,
+              text: "",
+              links: [],
+              buttons: [],
+              timers: []
+            };
+          }
+        } else if (action === "eval") {
+          if (wv && typeof wv.executeJavaScript === "function") {
+            const execPromise = wv.executeJavaScript(payload.script);
+            const timeoutPromise = new Promise((resolve) => {
+              setTimeout(() => resolve({ error: "eval timed out after 8000ms" }), 8e3);
+            });
+            result = await Promise.race([execPromise, timeoutPromise]);
+          } else {
+            result = { success: false, error: "No active webview" };
+          }
+        } else if (action === "get-page-context") {
+          if (wv && typeof wv.executeJavaScript === "function") {
+            result = await extractAdaptivePageContext(wv);
+          } else {
+            result = { success: false, error: "No active webview" };
+          }
+        } else if (action === "site-act") {
+          if (wv && typeof wv.executeJavaScript === "function") {
+            result = await executeAdaptiveAction(wv, payload.intent, payload.options);
+          } else {
+            result = { success: false, error: "No active webview" };
+          }
+        }
+        ipcRenderer2.send("ai-control-response", { id, result });
+      } catch (err) {
+        ipcRenderer2.send("ai-control-response", { id, error: err.message });
+      }
+    };
+    ipcRenderer2.on("brave-shields-updated", handleShields);
+    ipcRenderer2.on("adblock-count-updated", handleAdblockCount);
+    ipcRenderer2.on("external-navigate", handleExternalNavigate);
     const handleOpenDockedHud = () => {
       setIsHudDetached(false);
       setIsHudOpen(true);
@@ -39609,27 +42843,29 @@ function App() {
       } catch (e) {
       }
     };
-    ipcRenderer.on("open-new-tab", handleOpenNewTab);
-    ipcRenderer.on("hud-window-opened", handleHudOpened);
-    ipcRenderer.on("hud-window-hidden", handleHudHidden);
-    ipcRenderer.on("hud-window-closed", handleHudClosed);
-    ipcRenderer.on("hud-action", handleHudAction);
-    ipcRenderer.on("open-docked-hud", handleOpenDockedHud);
+    ipcRenderer2.on("open-new-tab", handleOpenNewTab);
+    ipcRenderer2.on("hud-window-opened", handleHudOpened);
+    ipcRenderer2.on("hud-window-hidden", handleHudHidden);
+    ipcRenderer2.on("hud-window-closed", handleHudClosed);
+    ipcRenderer2.on("hud-action", handleHudAction);
+    ipcRenderer2.on("open-docked-hud", handleOpenDockedHud);
+    ipcRenderer2.on("ai-control-request", handleAiControlRequest);
     return () => {
-      ipcRenderer.removeListener("brave-shields-updated", handleShields);
-      ipcRenderer.removeListener("adblock-count-updated", handleAdblockCount);
-      ipcRenderer.removeListener("external-navigate", handleExternalNavigate);
-      ipcRenderer.removeListener("open-new-tab", handleOpenNewTab);
-      ipcRenderer.removeListener("hud-window-opened", handleHudOpened);
-      ipcRenderer.removeListener("hud-window-hidden", handleHudHidden);
-      ipcRenderer.removeListener("hud-window-closed", handleHudClosed);
-      ipcRenderer.removeListener("hud-action", handleHudAction);
-      ipcRenderer.removeListener("open-docked-hud", handleOpenDockedHud);
+      ipcRenderer2.removeListener("brave-shields-updated", handleShields);
+      ipcRenderer2.removeListener("adblock-count-updated", handleAdblockCount);
+      ipcRenderer2.removeListener("external-navigate", handleExternalNavigate);
+      ipcRenderer2.removeListener("open-new-tab", handleOpenNewTab);
+      ipcRenderer2.removeListener("hud-window-opened", handleHudOpened);
+      ipcRenderer2.removeListener("hud-window-hidden", handleHudHidden);
+      ipcRenderer2.removeListener("hud-window-closed", handleHudClosed);
+      ipcRenderer2.removeListener("hud-action", handleHudAction);
+      ipcRenderer2.removeListener("open-docked-hud", handleOpenDockedHud);
     };
-  }, [tabs, activeTabId, somEnabled, somMode, axTreeMarkdown, grepMatches, autofillStatus, isHitlActive, telemetryLogs, shieldsStats]);
-  (0, import_react10.useEffect)(() => {
-    if (isHudDetached) {
-      ipcRenderer.send("sync-hud-state", {
+  }, []);
+  (0, import_react14.useEffect)(() => {
+    if (!isHudDetached || !ipcRenderer2) return;
+    const timer = setTimeout(() => {
+      ipcRenderer2.send("sync-hud-state", {
         type: "full-state",
         tabs: tabs.map((t) => ({ id: t.id, title: t.title, url: t.url, isNewTab: t.isNewTab })),
         activeTabId,
@@ -39639,14 +42875,15 @@ function App() {
         grepMatches,
         autofillStatus,
         isHitlActive,
-        telemetryLogs,
+        telemetryLogs: telemetryLogs.slice(-25),
         shieldsStats
       });
-    }
-  }, [tabs, activeTabId, somEnabled, somMode, axTreeMarkdown, grepMatches, autofillStatus, isHitlActive, telemetryLogs, shieldsStats, isHudDetached]);
+    }, 120);
+    return () => clearTimeout(timer);
+  }, [tabs, activeTabId, somEnabled, somMode, axTreeMarkdown, grepMatches, autofillStatus, isHitlActive, telemetryLogs.length, shieldsStats, isHudDetached]);
   const handleChangeShieldsMode = (mode) => {
-    if (ipcRenderer.invoke) {
-      ipcRenderer.invoke("set-adblock-mode", mode).then((stats) => {
+    if (ipcRenderer2.invoke) {
+      ipcRenderer2.invoke("set-adblock-mode", mode).then((stats) => {
         if (stats) setShieldsStats(stats);
         logTelemetry("act", `Brave Shields mode changed to ${mode.toUpperCase()}`);
       }).catch(() => {
@@ -39654,18 +42891,59 @@ function App() {
     }
   };
   const handleAddCustomRule = (rule) => {
-    if (ipcRenderer.invoke && rule) {
-      ipcRenderer.invoke("add-adblock-rule", rule).then((stats) => {
+    if (ipcRenderer2.invoke && rule) {
+      ipcRenderer2.invoke("add-adblock-rule", rule).then((stats) => {
         if (stats) setShieldsStats(stats);
         logTelemetry("act", `Added custom Brave adblock rule: "${rule}"`);
       }).catch(() => {
       });
     }
   };
+  const handleCaptureVlmSnapshot = async (target = "webview") => {
+    try {
+      if (target === "webview") {
+        const wv = document.getElementById(`wv-${activeTabIdRef.current}`);
+        if (wv && typeof wv.capturePage === "function") {
+          const img = await wv.capturePage();
+          const size = img.getSize();
+          const dataUrl = img.toDataURL();
+          const curTab = activeTabRef.current || {};
+          const title = typeof wv.getTitle === "function" ? wv.getTitle() : curTab.title || "";
+          const url = typeof wv.getURL === "function" ? wv.getURL() : curTab.url || "";
+          if (ipcRenderer2 && ipcRenderer2.invoke) {
+            const res = await ipcRenderer2.invoke("save-vlm-snapshot", {
+              dataUrl,
+              width: size.width,
+              height: size.height,
+              title,
+              url
+            });
+            if (res && res.success) {
+              setLatestSnapshot(res);
+              logTelemetry("act", `VLM webview screenshot captured: ${res.path}`);
+              return res;
+            }
+          }
+        }
+      }
+      if (ipcRenderer2 && ipcRenderer2.invoke) {
+        const res = await ipcRenderer2.invoke("capture-vlm-snapshot", { target });
+        if (res && res.success) {
+          setLatestSnapshot(res);
+          logTelemetry("act", `VLM screenshot captured: ${res.path}`);
+          return res;
+        }
+      }
+      return { success: false, error: "Snapshot capture failed" };
+    } catch (err) {
+      console.error("[Capture Snapshot Error]", err);
+      return { success: false, error: err.message };
+    }
+  };
   const handleDetachToggleHud = () => {
     if (isExternalHudVisible) {
       setIsExternalHudVisible(false);
-      if (ipcRenderer.invoke) ipcRenderer.invoke("hide-hud-window").catch(() => {
+      if (ipcRenderer2.invoke) ipcRenderer2.invoke("hide-hud-window").catch(() => {
       });
       logTelemetry("act", "AI Layer external window retracted and hidden.");
     } else {
@@ -39676,7 +42954,7 @@ function App() {
         localStorage.setItem("antigravity_hud_detached", "true");
       } catch (e) {
       }
-      if (ipcRenderer.invoke) ipcRenderer.invoke("open-hud-window").catch(() => {
+      if (ipcRenderer2.invoke) ipcRenderer2.invoke("open-hud-window").catch(() => {
       });
       logTelemetry("act", "AI Layer detached from browser into standalone window.");
     }
@@ -39690,15 +42968,15 @@ function App() {
       localStorage.setItem("antigravity_hud_detached", "false");
     } catch (e) {
     }
-    if (ipcRenderer.invoke) {
-      ipcRenderer.invoke("close-hud-window").catch(() => {
+    if (ipcRenderer2.invoke) {
+      ipcRenderer2.invoke("close-hud-window").catch(() => {
       });
     }
     logTelemetry("act", "AI Layer docked back into browser window.");
   };
   const handleToggleHud = () => {
     if (isHudDetached) {
-      if (ipcRenderer.invoke) ipcRenderer.invoke("open-hud-window").catch(() => {
+      if (ipcRenderer2.invoke) ipcRenderer2.invoke("open-hud-window").catch(() => {
       });
     } else {
       setIsHudOpen((prev) => !prev);
@@ -39706,9 +42984,9 @@ function App() {
   };
   const handleOpenShields = () => {
     if (isHudDetached) {
-      if (ipcRenderer.invoke) {
-        ipcRenderer.invoke("open-hud-window").then(() => {
-          ipcRenderer.send("hud-action", { action: "set-active-tab", tab: "shields" });
+      if (ipcRenderer2.invoke) {
+        ipcRenderer2.invoke("open-hud-window").then(() => {
+          ipcRenderer2.send("hud-action", { action: "set-active-tab", tab: "shields" });
         }).catch(() => {
         });
       }
@@ -39717,136 +42995,28 @@ function App() {
       setHudTab("shields");
     }
   };
-  const executeWebviewClick = async (targetText) => {
-    const wv = document.getElementById(`wv-${activeTabId}`);
+  const executeWebviewClick2 = async (targetText) => {
+    const wv = document.getElementById(`wv-${activeTabId}`) || document.querySelector(".native-webview");
     if (!wv || typeof wv.executeJavaScript !== "function") {
       logTelemetry("warn", "No active webview available to execute click interaction.");
       return false;
     }
-    const cleanTarget = (targetText || "").trim();
-    if (!cleanTarget) return false;
     try {
-      const result = await wv.executeJavaScript(`
-                (function() {
-                    const targetRaw = ${JSON.stringify(cleanTarget)}.trim();
-                    const targetLower = targetRaw.toLowerCase();
-
-                    function isVisible(el) {
-                        if (!el) return false;
-                        const style = window.getComputedStyle(el);
-                        return style.display !== 'none' && 
-                               style.visibility !== 'hidden' && 
-                               style.opacity !== '0' &&
-                               el.offsetWidth > 0 && 
-                               el.offsetHeight > 0;
-                    }
-
-                    // Parse mark number if target contains hashtag or mark index (e.g. "#7", "hashtag 7", "mark 7", "7")
-                    let markIndex = null;
-                    const markMatch = targetRaw.match(/^(?:#|hashtag\\s*|mark\\s*|badge\\s*|gap\\s*|number\\s*|no\\.?\\s*)?(\\d+)$/i);
-                    if (markMatch) {
-                        markIndex = parseInt(markMatch[1], 10);
-                    }
-
-                    let matchedEl = null;
-                    let matchType = '';
-
-                    // 1. Set-of-Marks badge / index lookup
-                    if (markIndex !== null) {
-                        const somEl = document.querySelector('[data-som-id="' + markIndex + '"]') || document.querySelector('#som-' + markIndex);
-                        if (somEl && isVisible(somEl)) {
-                            matchedEl = somEl;
-                            matchType = 'SoM Mark #' + markIndex;
-                        }
-                    }
-
-                    // 2. Candidate elements search
-                    if (!matchedEl) {
-                        const selectors = [
-                            'button', 'a', 'input[type="submit"]', 'input[type="button"]',
-                            '[role="button"]', '[role="link"]', '[role="tab"]', 'summary', '.btn', '.button'
-                        ];
-                        const candidates = Array.from(document.querySelectorAll(selectors.join(','))).filter(isVisible);
-                        for (const el of candidates) {
-                            const text = (el.innerText || el.textContent || el.value || el.getAttribute('aria-label') || '').toLowerCase().trim();
-                            if (text && (text === targetLower || text.includes(targetLower))) {
-                                matchedEl = el;
-                                matchType = 'Element Text: "' + text.substring(0, 30) + '"';
-                                break;
-                            }
-                        }
-                    }
-
-                    if (matchedEl) {
-                        matchedEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                        matchedEl.focus();
-                        matchedEl.click();
-                        return { success: true, matchType, tag: matchedEl.tagName };
-                    }
-                    return { success: false };
-                })()
-            `);
-      if (result && result.success) {
-        logTelemetry("act", `Page Click: Clicked ${result.matchType} (${result.tag}) on active page`);
-        return true;
-      } else {
-        logTelemetry("warn", `Page Click: No clickable element or mark found for "${cleanTarget}"`);
-        return false;
-      }
-    } catch (e) {
-      logTelemetry("warn", `Click execution error: ${e.message}`);
-      return false;
+      const clickPromise = executeWebviewClick(wv, targetText, handleNavigate, logTelemetry);
+      const timeoutPromise = new Promise((resolve) => setTimeout(() => resolve({ success: true, message: "Click action dispatched." }), 6e3));
+      return await Promise.race([clickPromise, timeoutPromise]);
+    } catch (err) {
+      return { success: false, error: err.message };
     }
   };
-  const executeWebviewScroll = async (direction = "down", amount = 20, isPercent = false) => {
-    const wv = document.getElementById(`wv-${activeTabId}`);
+  const executeWebviewScroll2 = async (direction = "down", amount = 20, isPercent = false) => {
+    const wv = document.getElementById(`wv-${activeTabId}`) || document.querySelector(".native-webview");
     if (!wv || typeof wv.executeJavaScript !== "function") return false;
-    const num = typeof amount === "number" && !isNaN(amount) ? amount : 20;
-    const dir = direction || "down";
     try {
-      await wv.executeJavaScript(`
-                (function() {
-                    const viewportHeight = window.innerHeight || 800;
-                    const viewportWidth = window.innerWidth || 1200;
-                    const docHeight = Math.max(
-                        document.body ? document.body.scrollHeight : 0,
-                        document.documentElement ? document.documentElement.scrollHeight : 0,
-                        viewportHeight
-                    );
-                    const inputNum = ${num};
-                    const dirStr = "${dir}";
-
-                    if (inputNum === 0 || dirStr === 'top' || dirStr === 'start') {
-                        window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
-                        return;
-                    }
-                    if (inputNum >= 1000 || dirStr === 'end' || dirStr === 'bottom') {
-                        window.scrollTo({ top: docHeight, left: 0, behavior: 'smooth' });
-                        return;
-                    }
-
-                    let pixelDistance = 0;
-                    if (${isPercent} || inputNum <= 100) {
-                        const factor = inputNum / 100;
-                        pixelDistance = (dirStr === 'left' || dirStr === 'right') ? (viewportWidth * factor) : (viewportHeight * factor);
-                    } else {
-                        pixelDistance = inputNum;
-                    }
-
-                    let x = 0;
-                    let y = 0;
-                    if (dirStr === 'down') y = pixelDistance;
-                    else if (dirStr === 'up') y = -pixelDistance;
-                    else if (dirStr === 'right') x = pixelDistance;
-                    else if (dirStr === 'left') x = -pixelDistance;
-
-                    window.scrollBy({ top: y, left: x, behavior: 'smooth' });
-                })()
-            `);
-      logTelemetry("act", `WebviewScroll: Scrolled "${dir}" by ${num}${isPercent || num <= 100 ? "%" : "px"}`);
-      return true;
+      const scrollPromise = executeWebviewScroll(wv, direction, amount, isPercent, logTelemetry);
+      const timeoutPromise = new Promise((resolve) => setTimeout(() => resolve(true), 4e3));
+      return await Promise.race([scrollPromise, timeoutPromise]);
     } catch (e) {
-      logTelemetry("warn", `Scroll failed: ${e.message}`);
       return false;
     }
   };
@@ -39967,7 +43137,7 @@ function App() {
     }
     logTelemetry("act", "Cleared all browsing history");
   };
-  (0, import_react10.useEffect)(() => {
+  (0, import_react14.useEffect)(() => {
     const handleKeyDown = (e) => {
       if ((e.ctrlKey || e.metaKey) && (e.key === "k" || e.key === "K")) {
         e.preventDefault();
@@ -39998,6 +43168,7 @@ function App() {
     const newTab = {
       id: newId,
       url: "",
+      initialUrl: "about:blank",
       title: "New Tab",
       isNewTab: true
     };
@@ -40015,10 +43186,10 @@ function App() {
     lastOpenedTabRef.current = { url, time: now };
     let isBlocked = false;
     try {
-      if (ipcRenderer && ipcRenderer.sendSync) {
+      if (ipcRenderer2 && ipcRenderer2.sendSync) {
         const activeWv = document.getElementById(`wv-${activeTabId}`);
         const currentUrl = activeWv && typeof activeWv.getURL === "function" ? activeWv.getURL() || "" : "";
-        isBlocked = ipcRenderer.sendSync("check-url-block-sync", { url, initiatorUrl: currentUrl });
+        isBlocked = ipcRenderer2.sendSync("check-url-block-sync", { url, initiatorUrl: currentUrl });
       }
     } catch (err) {
       isBlocked = false;
@@ -40031,40 +43202,31 @@ function App() {
     const newTab = {
       id: newId,
       url,
+      initialUrl: url,
       title: "Loading...",
       isNewTab: false
     };
     setTabs((prev) => [...prev, newTab]);
     setActiveTabId(newId);
     logTelemetry("act", `TabStripModel::InsertWebContentsAt()`, `Tab #${newId} -> ${url}`);
-    setTimeout(() => {
-      const targetWv = document.getElementById(`wv-${newId}`);
-      if (targetWv) {
-        if (typeof targetWv.loadURL === "function") {
-          targetWv.loadURL(url).catch(() => {
-          });
-        } else {
-          targetWv.src = url;
-        }
-      }
-    }, 50);
   };
   window.__antigravityOpenNewTab = openInNewTab;
   const handleCloseTab = (tabId) => {
+    const targetId = tabId !== void 0 ? tabId : activeTabId;
     if (tabs.length <= 1) {
-      setTabs([{ id: activeTab.id, url: "", title: "New Tab", isNewTab: true }]);
+      setTabs([{ id: activeTab.id, url: "", initialUrl: "about:blank", title: "New Tab", isNewTab: true }]);
       const wv = document.getElementById(`wv-${activeTab.id}`);
       if (wv && typeof wv.loadURL === "function") wv.loadURL("about:blank");
       return;
     }
-    const closeIndex = tabs.findIndex((t) => t.id === tabId);
-    const filtered = tabs.filter((t) => t.id !== tabId);
+    const closeIndex = tabs.findIndex((t) => t.id === targetId);
+    const filtered = tabs.filter((t) => t.id !== targetId);
     setTabs(filtered);
-    if (activeTabId === tabId) {
+    if (activeTabId === targetId) {
       const nextActiveIndex = Math.min(closeIndex, filtered.length - 1);
       setActiveTabId(filtered[nextActiveIndex].id);
     }
-    logTelemetry("act", `TabStripModel::CloseWebContentsAt()`, `Closed Tab #${tabId}`);
+    logTelemetry("act", `TabStripModel::CloseWebContentsAt()`, `Closed Tab #${targetId}`);
   };
   const handleNavigate = (target) => {
     const trimmed = (target || "").trim();
@@ -40072,13 +43234,25 @@ function App() {
     if (!trimmed || trimmed === NEW_TAB_IDENTIFIER || trimmed.includes("newtab.html")) {
       setTabs((prev) => prev.map((t) => {
         if (t.id === activeTabId) {
-          return { ...t, isNewTab: true, url: "", title: "New Tab" };
+          return { ...t, isNewTab: true, isDownloads: false, url: "", title: "New Tab" };
         }
         return t;
       }));
-      const wv = document.getElementById(`wv-${activeTabId}`);
-      if (wv && typeof wv.loadURL === "function") wv.loadURL("about:blank");
+      const wv2 = document.getElementById(`wv-${activeTabId}`);
+      if (wv2 && typeof wv2.loadURL === "function") wv2.loadURL("about:blank");
       logTelemetry("act", "Tab navigated to New Tab Page");
+      return;
+    }
+    if (trimmed === "antigravity://downloads" || trimmed === "brave://downloads" || trimmed === "chrome://downloads" || trimmed === "about:downloads") {
+      setTabs((prev) => prev.map((t) => {
+        if (t.id === activeTabId) {
+          return { ...t, isNewTab: false, isDownloads: true, url: "antigravity://downloads", title: "Downloads" };
+        }
+        return t;
+      }));
+      const wv2 = document.getElementById(`wv-${activeTabId}`);
+      if (wv2 && typeof wv2.loadURL === "function") wv2.loadURL("about:blank");
+      logTelemetry("act", "Navigated to Brave-style Downloads Manager");
       return;
     }
     if (trimmed.startsWith("http://") || trimmed.startsWith("https://") || trimmed.startsWith("file://") || trimmed.startsWith("data:")) {
@@ -40096,25 +43270,23 @@ function App() {
     }
     setTabs((prev) => prev.map((t) => {
       if (t.id === activeTabId) {
-        return { ...t, isNewTab: false, url: finalUrl, title: t.title || "Loading..." };
+        return { ...t, isNewTab: false, isDownloads: false, url: finalUrl, title: t.title || "Loading..." };
       }
       return t;
     }));
-    setTimeout(() => {
-      const wv = document.getElementById(`wv-${activeTabId}`);
-      if (wv && typeof wv.loadURL === "function") {
-        wv.loadURL(finalUrl).catch((err) => {
-          if (err && (err.code === "ERR_ABORTED" || String(err).includes("ERR_ABORTED"))) {
-            return;
-          }
-          console.warn("[Navigation Warning]", err);
-        });
-      }
-    }, 15);
+    const wv = document.getElementById(`wv-${activeTabId}`);
+    if (wv && typeof wv.loadURL === "function") {
+      wv.loadURL(finalUrl).catch((err) => {
+        if (err && (err.code === "ERR_ABORTED" || String(err).includes("ERR_ABORTED"))) {
+          return;
+        }
+        console.warn("[Navigation Warning]", err);
+      });
+    }
     logTelemetry("act", `WebContents::GetController().LoadURL("${finalUrl}")`);
   };
   window.__antigravityNavigate = handleNavigate;
-  (0, import_react10.useEffect)(() => {
+  (0, import_react14.useEffect)(() => {
     const handleKeyDown = (e) => {
       if (e.ctrlKey && (e.key === "t" || e.key === "T")) {
         e.preventDefault();
@@ -40122,6 +43294,9 @@ function App() {
       } else if (e.ctrlKey && (e.key === "w" || e.key === "W")) {
         e.preventDefault();
         handleCloseTab(activeTabId);
+      } else if (e.ctrlKey && (e.key === "j" || e.key === "J")) {
+        e.preventDefault();
+        handleOpenDownloadsTab();
       } else if (e.ctrlKey && (e.key === "l" || e.key === "L") || e.altKey && (e.key === "d" || e.key === "D")) {
         e.preventDefault();
         const el = document.getElementById("urlInput");
@@ -40133,6 +43308,30 @@ function App() {
         e.preventDefault();
         const wv = document.getElementById(`wv-${activeTabId}`);
         if (wv && typeof wv.reload === "function") wv.reload();
+      } else if (e.altKey && e.key === "ArrowLeft") {
+        e.preventDefault();
+        const wv = document.getElementById(`wv-${activeTabId}`);
+        if (wv) {
+          if (typeof wv.canGoBack === "function" && wv.canGoBack()) {
+            if (typeof wv.stop === "function") try {
+              wv.stop();
+            } catch (err) {
+            }
+            wv.goBack();
+          } else {
+            handleNavigate(NEW_TAB_IDENTIFIER);
+          }
+        }
+      } else if (e.altKey && e.key === "ArrowRight") {
+        e.preventDefault();
+        const wv = document.getElementById(`wv-${activeTabId}`);
+        if (wv && typeof wv.canGoForward === "function" && wv.canGoForward()) {
+          if (typeof wv.stop === "function") try {
+            wv.stop();
+          } catch (err) {
+          }
+          wv.goForward();
+        }
       }
     };
     window.addEventListener("keydown", handleKeyDown);
@@ -40140,6 +43339,7 @@ function App() {
   }, [activeTabId, tabs]);
   const attachWebviewListeners = (wv, tabId) => {
     if (!wv || wv.__listenersAttached) return;
+    wv.__listenersAttached = true;
     wv.addEventListener("new-window", (e) => {
       e.preventDefault();
       if (e.url) {
@@ -40147,57 +43347,131 @@ function App() {
       }
     });
     wv.addEventListener("did-navigate", (e) => {
-      if (e.url && e.url !== "about:blank") {
+      const rawUrl = e.url || "";
+      if (!rawUrl || rawUrl === "about:blank") {
         setTabs((prev) => prev.map((t) => {
           if (t.id === tabId) {
-            return { ...t, url: e.url, title: wv.getTitle() || t.title, isNewTab: false };
+            if (t.isNewTab && !t.url) return t;
+            return { ...t, url: "", title: "New Tab", isNewTab: true };
           }
           return t;
         }));
-        addHistoryEntry(e.url, wv.getTitle() || e.url);
+        return;
       }
+      setTabs((prev) => prev.map((t) => {
+        if (t.id === tabId) {
+          const newTitle = (typeof wv.getTitle === "function" ? wv.getTitle() : "") || t.title;
+          if (t.url === rawUrl && t.title === newTitle && !t.isNewTab) return t;
+          return { ...t, url: rawUrl, title: newTitle, isNewTab: false };
+        }
+        return t;
+      }));
+      addHistoryEntry(rawUrl, (typeof wv.getTitle === "function" ? wv.getTitle() : "") || rawUrl);
     });
     wv.addEventListener("did-navigate-in-page", (e) => {
-      if (e.url && e.url !== "about:blank") {
-        setTabs((prev) => prev.map((t) => {
-          if (t.id === tabId) {
-            return { ...t, url: e.url, title: wv.getTitle() || t.title, isNewTab: false };
-          }
-          return t;
-        }));
-        addHistoryEntry(e.url, wv.getTitle() || e.url);
-      }
+      const rawUrl = e.url || "";
+      if (!rawUrl || rawUrl === "about:blank") return;
+      setTabs((prev) => prev.map((t) => {
+        if (t.id === tabId) {
+          const newTitle = (typeof wv.getTitle === "function" ? wv.getTitle() : "") || t.title;
+          if (t.url === rawUrl && t.title === newTitle && !t.isNewTab) return t;
+          return { ...t, url: rawUrl, title: newTitle, isNewTab: false };
+        }
+        return t;
+      }));
+      addHistoryEntry(rawUrl, (typeof wv.getTitle === "function" ? wv.getTitle() : "") || rawUrl);
     });
     wv.addEventListener("page-title-updated", (e) => {
+      const curUrl = typeof wv.getURL === "function" ? wv.getURL() : "";
+      if (!curUrl || curUrl === "about:blank") return;
       setTabs((prev) => prev.map((t) => {
         if (t.id === tabId && !t.isNewTab) {
+          if (t.title === e.title) return t;
           return { ...t, title: e.title };
         }
         return t;
       }));
-      const curUrl = wv.getURL ? wv.getURL() : "";
-      if (curUrl && curUrl !== "about:blank") {
-        addHistoryEntry(curUrl, e.title);
-      }
+      addHistoryEntry(curUrl, e.title);
     });
     wv.addEventListener("dom-ready", () => {
-      const u = wv.getURL();
-      if (u && u !== "about:blank") {
+      const u = typeof wv.getURL === "function" ? wv.getURL() : "";
+      if (!u || u === "about:blank") {
         setTabs((prev) => prev.map((t) => {
-          if (t.id === tabId && !t.isNewTab) {
-            return { ...t, url: u, title: wv.getTitle() || t.title };
+          if (t.id === tabId) {
+            if (t.isNewTab && !t.url) return t;
+            return { ...t, url: "", title: "New Tab", isNewTab: true };
           }
           return t;
         }));
+        return;
       }
+      setTabs((prev) => prev.map((t) => {
+        if (t.id === tabId && !t.isNewTab) {
+          const newTitle = (typeof wv.getTitle === "function" ? wv.getTitle() : "") || t.title;
+          if (t.url === u && t.title === newTitle) return t;
+          return { ...t, url: u, title: newTitle };
+        }
+        return t;
+      }));
+      injectTypographyIntoWebview(wv);
     });
     wv.addEventListener("did-fail-load", (e) => {
       if (e.errorCode === -3) return;
       logTelemetry("alert", `Load warning (${e.errorCode}): ${e.errorDescription}`);
     });
+    wv.addEventListener("before-input-event", (event) => {
+      const input = event.input;
+      if (!input || input.type !== "keyDown") return;
+      const isCtrl = input.control || input.meta;
+      if (!isCtrl) return;
+      if (input.alt) {
+        const num = parseInt(input.key, 10);
+        const fontKeys = Object.keys(TYPOGRAPHY_FONT_STYLES);
+        if (num >= 1 && num <= fontKeys.length) {
+          const chosen = fontKeys[num - 1];
+          setCanvasFontStyle(chosen);
+          localStorage.setItem("antigravity_canvas_font_style", chosen);
+          injectTypographyIntoWebview(wv);
+          return;
+        }
+      }
+      if (input.key === "=" || input.key === "+" || input.code === "NumpadAdd") {
+        const sizes = ["compact", "standard", "comfortable", "spacious"];
+        const curIdx = sizes.indexOf(canvasFontSizeRef.current);
+        if (curIdx < sizes.length - 1) {
+          const nextSize = sizes[curIdx + 1];
+          setCanvasFontSize(nextSize);
+          localStorage.setItem("antigravity_canvas_font_size", nextSize);
+          injectTypographyIntoWebview(wv);
+        }
+        return;
+      }
+      if (input.key === "-" || input.key === "_" || input.code === "NumpadSubtract") {
+        const sizes = ["compact", "standard", "comfortable", "spacious"];
+        const curIdx = sizes.indexOf(canvasFontSizeRef.current);
+        if (curIdx > 0) {
+          const prevSize = sizes[curIdx - 1];
+          setCanvasFontSize(prevSize);
+          localStorage.setItem("antigravity_canvas_font_size", prevSize);
+          injectTypographyIntoWebview(wv);
+        }
+        return;
+      }
+    });
   };
-  return /* @__PURE__ */ import_react10.default.createElement("div", { className: "native-browser-app" }, /* @__PURE__ */ import_react10.default.createElement(
-    TabStrip,
+  return /* @__PURE__ */ import_react14.default.createElement("div", { className: "native-browser-app" }, wallpaperType !== "none" && wallpaper && /* @__PURE__ */ import_react14.default.createElement(
+    "div",
+    {
+      className: "wallpaper-layer",
+      style: {
+        backgroundColor: wallpaperColor,
+        ...wallpaperType === "image" ? { backgroundImage: `url("${wallpaper}")` } : {},
+        ...wallpaperType === "color" ? { backgroundColor: wallpaper } : {}
+      }
+    },
+    wallpaperType === "video" && /* @__PURE__ */ import_react14.default.createElement("video", { src: wallpaper, autoPlay: true, loop: true, muted: true, playsInline: true })
+  ), /* @__PURE__ */ import_react14.default.createElement(
+    TabStrip_default,
     {
       tabs,
       activeTabId,
@@ -40214,7 +43488,7 @@ function App() {
       onOpenShields: handleOpenShields,
       onOpenTabSearch: () => setIsTabSearchOpen(true)
     }
-  ), /* @__PURE__ */ import_react10.default.createElement(
+  ), /* @__PURE__ */ import_react14.default.createElement(
     NavigationToolbar,
     {
       currentUrl: activeTab.isNewTab ? "" : activeTab.url,
@@ -40223,11 +43497,31 @@ function App() {
       onNavigate: handleNavigate,
       onBack: () => {
         const wv = document.getElementById(`wv-${activeTabId}`);
-        if (wv && typeof wv.canGoBack === "function" && wv.canGoBack()) wv.goBack();
+        if (wv) {
+          if (typeof wv.canGoBack === "function" && wv.canGoBack()) {
+            if (typeof wv.stop === "function") {
+              try {
+                wv.stop();
+              } catch (e) {
+              }
+            }
+            wv.goBack();
+          } else {
+            handleNavigate(NEW_TAB_IDENTIFIER);
+          }
+        }
       },
       onForward: () => {
         const wv = document.getElementById(`wv-${activeTabId}`);
-        if (wv && typeof wv.canGoForward === "function" && wv.canGoForward()) wv.goForward();
+        if (wv && typeof wv.canGoForward === "function" && wv.canGoForward()) {
+          if (typeof wv.stop === "function") {
+            try {
+              wv.stop();
+            } catch (e) {
+            }
+          }
+          wv.goForward();
+        }
       },
       onReload: () => {
         const wv = document.getElementById(`wv-${activeTabId}`);
@@ -40238,9 +43532,14 @@ function App() {
       isBookmarked: isCurrentTabBookmarked,
       onToggleBookmark: handleToggleBookmark,
       onOpenReaderMode: handleOpenReaderMode,
-      onOpenQrCode: () => setIsQrCodeOpen(true)
+      onOpenQrCode: () => setIsQrCodeOpen(true),
+      onOpenWallpaperStudio: () => setIsWallpaperStudioOpen(true),
+      activeDownloadsCount: downloads.filter((d) => d.state === "progressing").length,
+      onOpenDownloads: handleOpenDownloadsTab,
+      onOpenTypography: () => setIsTypographyOpen(true),
+      onOpenAiProviderModal: () => setIsAiProviderModalOpen(true)
     }
-  ), /* @__PURE__ */ import_react10.default.createElement(
+  ), /* @__PURE__ */ import_react14.default.createElement(
     BookmarksBar,
     {
       bookmarks,
@@ -40249,50 +43548,73 @@ function App() {
       onRemoveBookmark: handleRemoveBookmark,
       onOpenHistory: () => setIsHistoryOpen(true)
     }
-  ), /* @__PURE__ */ import_react10.default.createElement("main", { className: "main-browser-workspace" }, /* @__PURE__ */ import_react10.default.createElement(
+  ), /* @__PURE__ */ import_react14.default.createElement("main", { className: "main-browser-workspace" }, /* @__PURE__ */ import_react14.default.createElement(
     "div",
     {
       className: "webview-container",
       id: "webviewContainer",
       style: {
         flex: !isHudDetached && isHudOpen ? 7 : 1,
-        width: !isHudDetached && isHudOpen ? "auto" : "100%"
+        width: !isHudDetached && isHudOpen ? "auto" : "100%",
+        position: "relative",
+        overflow: "hidden"
       }
     },
     tabs.map((tab) => {
       const isActive = tab.id === activeTabId;
-      return /* @__PURE__ */ import_react10.default.createElement(
+      const isDownloadsTab = tab.isDownloads || tab.url === "antigravity://downloads";
+      return /* @__PURE__ */ import_react14.default.createElement(
         "div",
         {
           key: tab.id,
           className: "tab-viewport",
           style: {
-            display: isActive ? "flex" : "none",
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
             width: "100%",
             height: "100%",
-            position: "relative",
+            visibility: isActive ? "visible" : "hidden",
+            pointerEvents: isActive ? "auto" : "none",
+            zIndex: isActive ? 1 : 0,
+            display: "flex",
             flexDirection: "column"
           }
         },
-        /* @__PURE__ */ import_react10.default.createElement(
+        /* @__PURE__ */ import_react14.default.createElement(
           "webview",
           {
             id: `wv-${tab.id}`,
             className: "native-webview",
-            src: "about:blank",
+            src: tab.initialUrl || tab.url || "about:blank",
             allowpopups: "true",
             webpreferences: "allowRunningInsecureContent=no",
             style: {
               width: "100%",
               height: "100%",
-              display: tab.isNewTab ? "none" : "flex"
+              display: tab.isNewTab || isDownloadsTab ? "none" : "flex"
             },
             ref: (el) => {
               if (el) attachWebviewListeners(el, tab.id);
             }
           }
         ),
-        tab.isNewTab && /* @__PURE__ */ import_react10.default.createElement("div", { style: { width: "100%", height: "100%", overflowY: "auto" } }, /* @__PURE__ */ import_react10.default.createElement(
+        isDownloadsTab && /* @__PURE__ */ import_react14.default.createElement("div", { style: { width: "100%", height: "100%", overflowY: "auto" } }, /* @__PURE__ */ import_react14.default.createElement(
+          DownloadsPage,
+          {
+            downloads,
+            onCancelDownload: handleCancelDownload,
+            onPauseDownload: handlePauseDownload,
+            onResumeDownload: handleResumeDownload,
+            onShowInFolder: handleShowInFolder,
+            onOpenFile: handleOpenFile,
+            onOpenDownloadsFolder: handleOpenDownloadsFolder,
+            onClearCompleted: handleClearCompletedDownloads
+          }
+        )),
+        tab.isNewTab && !isDownloadsTab && /* @__PURE__ */ import_react14.default.createElement("div", { style: { width: "100%", height: "100%", overflowY: "auto" } }, /* @__PURE__ */ import_react14.default.createElement(
           NewTabPage,
           {
             activeEngine,
@@ -40302,7 +43624,7 @@ function App() {
         ))
       );
     })
-  ), !isHudDetached && isHudOpen && /* @__PURE__ */ import_react10.default.createElement(
+  ), !isHudDetached && isHudOpen && /* @__PURE__ */ import_react14.default.createElement(
     AiHudSidebar,
     {
       isOpen: isHudOpen,
@@ -40345,12 +43667,23 @@ function App() {
       onSelectTab: setHudTab,
       onCloseHud: () => setIsHudOpen(false),
       activeTab: tabs.find((t) => t.id === activeTabId) || tabs[0] || { id: 1, title: "New Tab", url: "" },
-      onExecuteClick: executeWebviewClick,
-      onExecuteScroll: executeWebviewScroll,
+      tabs,
+      onOpenTab: openInNewTab,
+      onCloseTab: handleCloseTab,
+      onExecuteClick: executeWebviewClick2,
+      onExecuteScroll: executeWebviewScroll2,
       onNavigate: handleNavigate,
-      onExtractPageText: extractPageTextForAi
+      onExtractPageText: extractPageTextForAi,
+      onToggleBookmark: handleToggleBookmark,
+      onOpenReaderMode: handleOpenReaderMode,
+      onOpenQrCode: () => setIsQrCodeOpen(true),
+      onOpenTabSearch: () => setIsTabSearchOpen(true),
+      onOpenHistory: () => setIsHistoryOpen(true),
+      onOpenAiProviderModal: () => setIsAiProviderModalOpen(true),
+      onCaptureSnapshot: handleCaptureVlmSnapshot,
+      latestSnapshot
     }
-  )), /* @__PURE__ */ import_react10.default.createElement(
+  )), /* @__PURE__ */ import_react14.default.createElement(
     TabSearchModal,
     {
       isOpen: isTabSearchOpen,
@@ -40359,7 +43692,7 @@ function App() {
       onSelectTab: setActiveTabId,
       onClose: () => setIsTabSearchOpen(false)
     }
-  ), /* @__PURE__ */ import_react10.default.createElement(
+  ), /* @__PURE__ */ import_react14.default.createElement(
     ReaderModeModal,
     {
       isOpen: isReaderModeOpen,
@@ -40367,14 +43700,14 @@ function App() {
       content: readerContent,
       onClose: () => setIsReaderModeOpen(false)
     }
-  ), /* @__PURE__ */ import_react10.default.createElement(
+  ), /* @__PURE__ */ import_react14.default.createElement(
     QrCodeModal,
     {
       isOpen: isQrCodeOpen,
       url: activeTab.url,
       onClose: () => setIsQrCodeOpen(false)
     }
-  ), /* @__PURE__ */ import_react10.default.createElement(
+  ), /* @__PURE__ */ import_react14.default.createElement(
     HistoryModal,
     {
       isOpen: isHistoryOpen,
@@ -40384,32 +43717,99 @@ function App() {
       onClearHistory: handleClearHistory,
       onClose: () => setIsHistoryOpen(false)
     }
-  ));
+  ), /* @__PURE__ */ import_react14.default.createElement(
+    WallpaperStudioModal,
+    {
+      isOpen: isWallpaperStudioOpen,
+      currentWallpaper: wallpaper,
+      currentType: wallpaperType,
+      currentOpacity: wallpaperOpacity,
+      currentColor: wallpaperColor,
+      onSelectWallpaper: handleSetWallpaper,
+      onClose: () => setIsWallpaperStudioOpen(false)
+    }
+  ), /* @__PURE__ */ import_react14.default.createElement(
+    TypographyStudioModal,
+    {
+      isOpen: isTypographyOpen,
+      currentFontSize: canvasFontSize,
+      currentFontStyle: canvasFontStyle,
+      onSelectFontSize: (sz) => {
+        setCanvasFontSize(sz);
+        localStorage.setItem("antigravity_canvas_font_size", sz);
+      },
+      onSelectFontStyle: (st) => {
+        setCanvasFontStyle(st);
+        localStorage.setItem("antigravity_canvas_font_style", st);
+      },
+      onApplyTypography: (sz, st) => {
+        setCanvasFontSize(sz);
+        setCanvasFontStyle(st);
+        localStorage.setItem("antigravity_canvas_font_size", sz);
+        localStorage.setItem("antigravity_canvas_font_style", st);
+        const wv = document.getElementById(`wv-${activeTabId}`);
+        if (wv) injectTypographyIntoWebview(wv);
+      },
+      onClose: () => setIsTypographyOpen(false)
+    }
+  ), /* @__PURE__ */ import_react14.default.createElement(
+    AiProviderModal,
+    {
+      isOpen: isAiProviderModalOpen,
+      onClose: () => setIsAiProviderModalOpen(false),
+      onCaptureSnapshot: handleCaptureVlmSnapshot,
+      latestSnapshot
+    }
+  ), aiLiveBanner && /* @__PURE__ */ import_react14.default.createElement("div", { style: {
+    position: "fixed",
+    bottom: 24,
+    left: "50%",
+    transform: "translateX(-50%)",
+    zIndex: 999999,
+    background: "rgba(11, 17, 33, 0.94)",
+    border: "1.5px solid #00e5ff",
+    boxShadow: "0 10px 40px rgba(0, 229, 255, 0.4), 0 0 20px rgba(0, 229, 255, 0.25)",
+    borderRadius: 14,
+    padding: "14px 28px",
+    display: "flex",
+    alignItems: "center",
+    gap: 14,
+    color: "#f8fafc",
+    fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif",
+    backdropFilter: "blur(16px)",
+    pointerEvents: "none"
+  } }, /* @__PURE__ */ import_react14.default.createElement("div", { style: {
+    width: 10,
+    height: 10,
+    borderRadius: "50%",
+    background: "#00e5ff",
+    boxShadow: "0 0 12px #00e5ff"
+  } }), /* @__PURE__ */ import_react14.default.createElement("span", { style: { fontSize: 11, fontWeight: 800, color: "#00e5ff", letterSpacing: "0.1em", textTransform: "uppercase" } }, "\u26A1 AI AUTOPILOT"), /* @__PURE__ */ import_react14.default.createElement("span", { style: { fontSize: 14, fontWeight: 600, color: "#f1f5f9", letterSpacing: "-0.2px" } }, aiLiveBanner.text)));
 }
 
 // desktop/src/components/DetachedAiHudCockpit.jsx
-var import_react11 = __toESM(require_react());
-var { ipcRenderer: ipcRenderer2 } = require("electron");
+var import_react15 = __toESM(require_react());
+var { ipcRenderer: ipcRenderer3 } = require("electron");
 function DetachedAiHudCockpit() {
-  const [tabs, setTabs] = (0, import_react11.useState)([
+  const [tabs, setTabs] = (0, import_react15.useState)([
     { id: 1, title: "Tab 1: Hacker News", url: "https://news.ycombinator.com" },
     { id: 2, title: "Tab 2: Checkout Demo", url: "file:///demo_checkout.html" },
     { id: 3, title: "Tab 3: Wikipedia", url: "https://en.wikipedia.org" }
   ]);
-  const [activeTabId, setActiveTabId] = (0, import_react11.useState)(1);
-  const [activeModuleTab, setActiveModuleTab] = (0, import_react11.useState)("chat");
-  const [activeToolTab, setActiveToolTab] = (0, import_react11.useState)("ax");
-  const [somEnabled, setSomEnabled] = (0, import_react11.useState)(true);
-  const [axTreeMarkdown, setAxTreeMarkdown] = (0, import_react11.useState)("");
-  const [markFilterQuery, setMarkFilterQuery] = (0, import_react11.useState)("");
-  const [copiedAx, setCopiedAx] = (0, import_react11.useState)(false);
-  const [grepQuery, setGrepQuery] = (0, import_react11.useState)("href");
-  const [grepMatches, setGrepMatches] = (0, import_react11.useState)([]);
-  const [grepPage, setGrepPage] = (0, import_react11.useState)(1);
-  const [autofillStatus, setAutofillStatus] = (0, import_react11.useState)("Ready for autofill execution.");
-  const [isHitlActive, setIsHitlActive] = (0, import_react11.useState)(false);
-  const [telemetryLogs, setTelemetryLogs] = (0, import_react11.useState)([]);
-  const [shieldsStats, setShieldsStats] = (0, import_react11.useState)({
+  const [activeTabId, setActiveTabId] = (0, import_react15.useState)(1);
+  const [activeModuleTab, setActiveModuleTab] = (0, import_react15.useState)("chat");
+  const [activeToolTab, setActiveToolTab] = (0, import_react15.useState)("ax");
+  const [somEnabled, setSomEnabled] = (0, import_react15.useState)(true);
+  const [axTreeMarkdown, setAxTreeMarkdown] = (0, import_react15.useState)("");
+  const [markFilterQuery, setMarkFilterQuery] = (0, import_react15.useState)("");
+  const [copiedAx, setCopiedAx] = (0, import_react15.useState)(false);
+  const [grepQuery, setGrepQuery] = (0, import_react15.useState)("href");
+  const [grepMatches, setGrepMatches] = (0, import_react15.useState)([]);
+  const [grepPage, setGrepPage] = (0, import_react15.useState)(1);
+  const [autofillStatus, setAutofillStatus] = (0, import_react15.useState)("Ready for autofill execution.");
+  const [isHitlActive, setIsHitlActive] = (0, import_react15.useState)(false);
+  const [telemetryLogs, setTelemetryLogs] = (0, import_react15.useState)([]);
+  const [shieldsStats, setShieldsStats] = (0, import_react15.useState)({
     mode: "aggressive",
     isNativeRust: true,
     totalBlocked: 0,
@@ -40419,8 +43819,8 @@ function DetachedAiHudCockpit() {
     savedTimeMs: 0,
     recentEvents: []
   });
-  const [customRuleInput, setCustomRuleInput] = (0, import_react11.useState)("");
-  const [chatMessages, setChatMessages] = (0, import_react11.useState)([
+  const [customRuleInput, setCustomRuleInput] = (0, import_react15.useState)("");
+  const [chatMessages, setChatMessages] = (0, import_react15.useState)([
     {
       id: "msg-welcome",
       role: "assistant",
@@ -40428,38 +43828,38 @@ function DetachedAiHudCockpit() {
       time: (/* @__PURE__ */ new Date()).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
     }
   ]);
-  const [chatInput, setChatInput] = (0, import_react11.useState)("");
-  const [isVoiceListening, setIsVoiceListening] = (0, import_react11.useState)(false);
-  const [voiceSpeechFeedback, setVoiceSpeechFeedback] = (0, import_react11.useState)(false);
-  const [isAiThinking, setIsAiThinking] = (0, import_react11.useState)(false);
-  const [whisperLang, setWhisperLang] = (0, import_react11.useState)("auto");
-  const [isWhisperRecording, setIsWhisperRecording] = (0, import_react11.useState)(false);
-  const [isWhisperTranscribing, setIsWhisperTranscribing] = (0, import_react11.useState)(false);
-  const [recordingTimer, setRecordingTimer] = (0, import_react11.useState)(0);
-  const recognitionRef = (0, import_react11.useRef)(null);
-  const messagesEndRef = (0, import_react11.useRef)(null);
-  const timerIntervalRef = (0, import_react11.useRef)(null);
-  const audioCtxRef = (0, import_react11.useRef)(null);
-  const mediaStreamRef = (0, import_react11.useRef)(null);
-  const audioProcessorRef = (0, import_react11.useRef)(null);
-  const audioChunksRef = (0, import_react11.useRef)([]);
-  (0, import_react11.useEffect)(() => {
+  const [chatInput, setChatInput] = (0, import_react15.useState)("");
+  const [isVoiceListening, setIsVoiceListening] = (0, import_react15.useState)(false);
+  const [voiceSpeechFeedback, setVoiceSpeechFeedback] = (0, import_react15.useState)(false);
+  const [isAiThinking, setIsAiThinking] = (0, import_react15.useState)(false);
+  const [whisperLang, setWhisperLang] = (0, import_react15.useState)("auto");
+  const [isWhisperRecording, setIsWhisperRecording] = (0, import_react15.useState)(false);
+  const [isWhisperTranscribing, setIsWhisperTranscribing] = (0, import_react15.useState)(false);
+  const [recordingTimer, setRecordingTimer] = (0, import_react15.useState)(0);
+  const recognitionRef = (0, import_react15.useRef)(null);
+  const messagesEndRef = (0, import_react15.useRef)(null);
+  const timerIntervalRef = (0, import_react15.useRef)(null);
+  const audioCtxRef = (0, import_react15.useRef)(null);
+  const mediaStreamRef = (0, import_react15.useRef)(null);
+  const audioProcessorRef = (0, import_react15.useRef)(null);
+  const audioChunksRef = (0, import_react15.useRef)([]);
+  (0, import_react15.useEffect)(() => {
     try {
-      if (ipcRenderer2.invoke) {
-        ipcRenderer2.invoke("whisper-preload").catch(() => {
+      if (ipcRenderer3.invoke) {
+        ipcRenderer3.invoke("whisper-preload").catch(() => {
         });
       }
     } catch (e) {
     }
   }, []);
-  (0, import_react11.useEffect)(() => {
+  (0, import_react15.useEffect)(() => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [chatMessages, isAiThinking]);
-  (0, import_react11.useEffect)(() => {
+  (0, import_react15.useEffect)(() => {
     try {
-      ipcRenderer2.send("hud-action", { action: "request-initial-state" });
+      ipcRenderer3.send("hud-action", { action: "request-initial-state" });
     } catch (e) {
     }
     const handleUpdateHudState = (event, data) => {
@@ -40484,6 +43884,13 @@ function DetachedAiHudCockpit() {
         setGrepPage(1);
       } else if (data.type === "autofill-status") {
         setAutofillStatus(data.status || "");
+      } else if (data.type === "ai-command-reply") {
+        addAiReply(data.reply || "");
+        setIsAiThinking(false);
+        if (data.reply) {
+          const spokenText = String(data.reply).replace(/<[^>]*>/g, "").substring(0, 120);
+          speakReply(spokenText, "en");
+        }
       } else if (data.type === "telemetry") {
         setTelemetryLogs((prev) => [
           ...prev,
@@ -40495,37 +43902,37 @@ function DetachedAiHudCockpit() {
         if (data.tab) setActiveModuleTab(data.tab);
       }
     };
-    ipcRenderer2.on("update-hud-state", handleUpdateHudState);
+    ipcRenderer3.on("update-hud-state", handleUpdateHudState);
     return () => {
-      ipcRenderer2.removeListener("update-hud-state", handleUpdateHudState);
+      ipcRenderer3.removeListener("update-hud-state", handleUpdateHudState);
     };
   }, []);
   const sendHudAction = (action, payload = {}) => {
     try {
-      ipcRenderer2.send("hud-action", { action, ...payload });
+      ipcRenderer3.send("hud-action", { action, ...payload });
     } catch (e) {
       console.error("Failed to dispatch HUD action:", e);
     }
   };
   const handleFocusBrowser = () => {
-    if (ipcRenderer2.invoke) {
-      ipcRenderer2.invoke("focus-browser-window").catch(() => {
+    if (ipcRenderer3.invoke) {
+      ipcRenderer3.invoke("focus-browser-window").catch(() => {
       });
     } else {
-      ipcRenderer2.send("focus-browser-window");
+      ipcRenderer3.send("focus-browser-window");
     }
   };
   const handleDockBack = () => {
     sendHudAction("dock-to-browser");
-    if (ipcRenderer2.invoke) {
-      ipcRenderer2.invoke("close-hud-window").catch(() => {
+    if (ipcRenderer3.invoke) {
+      ipcRenderer3.invoke("close-hud-window").catch(() => {
       });
     }
   };
   const handleHideWindow = () => {
     sendHudAction("hide-hud-window");
-    if (ipcRenderer2.invoke) {
-      ipcRenderer2.invoke("hide-hud-window").catch(() => {
+    if (ipcRenderer3.invoke) {
+      ipcRenderer3.invoke("hide-hud-window").catch(() => {
       });
     }
   };
@@ -40567,7 +43974,7 @@ function DetachedAiHudCockpit() {
             offset += ch.length;
           }
           const floatArray = Array.from(merged);
-          const res = await ipcRenderer2.invoke("whisper-transcribe", {
+          const res = await ipcRenderer3.invoke("whisper-transcribe", {
             audioData: floatArray,
             language: whisperLang === "auto" ? null : whisperLang
           });
@@ -40697,165 +44104,7 @@ function DetachedAiHudCockpit() {
     setChatMessages((prev) => [...prev, userMsg]);
     setChatInput("");
     setIsAiThinking(true);
-    const qLower = query.toLowerCase();
-    const isHindi = /[\u0900-\u097F]/.test(query) || /\b(karo|jao|niche|upar|bharo|chalao|roko|kholo|batao|kripya)\b/i.test(query);
-    const isKorean = /[\uAC00-\uD7AF]/.test(query) || /\b(스크롤|요약|재생|정지|열어|닫아|완성)\b/i.test(query);
-    if (qLower.includes("scroll down") || qLower === "s" || qLower === "down" || query.includes("\u0928\u0940\u091A\u0947") || qLower.includes("niche") || qLower.includes("scroll down karo") || query.includes("\uC544\uB798\uB85C") || query.includes("\uB0B4\uB824") || query.includes("\uC2A4\uD06C\uB864 \uB2E4\uC6B4")) {
-      sendHudAction("execute-scroll", { direction: "down", amount: 35, isPercent: true });
-      const reply = isHindi ? "\u{1F4DC} \u092A\u0947\u091C \u0928\u0940\u091A\u0947 35% \u0938\u094D\u0915\u094D\u0930\u0949\u0932 \u0915\u093F\u092F\u093E \u0917\u092F\u093E\u0964" : isKorean ? "\u{1F4DC} \uD398\uC774\uC9C0\uB97C \uC544\uB798\uB85C 35% \uC2A4\uD06C\uB864\uD588\uC2B5\uB2C8\uB2E4." : "\u{1F4DC} Scrolled down 35% on active tab.";
-      addAiReply(reply);
-      speakReply(isHindi ? "\u092A\u0947\u091C \u0928\u0940\u091A\u0947 \u0938\u094D\u0915\u094D\u0930\u0949\u0932 \u0915\u093F\u092F\u093E \u0917\u092F\u093E" : isKorean ? "\uD398\uC774\uC9C0\uB97C \uC544\uB798\uB85C \uC2A4\uD06C\uB864\uD588\uC2B5\uB2C8\uB2E4" : "Scrolled down.", isHindi ? "hi" : isKorean ? "ko" : "en");
-      return;
-    }
-    if (qLower.includes("scroll up") || qLower === "up" || query.includes("\u090A\u092A\u0930") || qLower.includes("upar") || qLower.includes("scroll up karo") || query.includes("\uC704\uB85C") || query.includes("\uC62C\uB824") || query.includes("\uC2A4\uD06C\uB864 \uC5C5")) {
-      sendHudAction("execute-scroll", { direction: "up", amount: 35, isPercent: true });
-      const reply = isHindi ? "\u{1F4DC} \u092A\u0947\u091C \u090A\u092A\u0930 35% \u0938\u094D\u0915\u094D\u0930\u0949\u0932 \u0915\u093F\u092F\u093E \u0917\u092F\u093E\u0964" : isKorean ? "\u{1F4DC} \uD398\uC774\uC9C0\uB97C \uC704\uB85C 35% \uC2A4\uD06C\uB864\uD588\uC2B5\uB2C8\uB2E4." : "\u{1F4DC} Scrolled up 35% on active tab.";
-      addAiReply(reply);
-      speakReply(isHindi ? "\u092A\u0947\u091C \u090A\u092A\u0930 \u0938\u094D\u0915\u094D\u0930\u0949\u0932 \u0915\u093F\u092F\u093E \u0917\u092F\u093E" : isKorean ? "\uD398\uC774\uC9C0\uB97C \uC704\uB85C \uC2A4\uD06C\uB864\uD588\uC2B5\uB2C8\uB2E4" : "Scrolled up.", isHindi ? "hi" : isKorean ? "ko" : "en");
-      return;
-    }
-    if (qLower.includes("scroll to top") || qLower === "s0" || qLower === "top" || query.includes("\u0938\u092C\u0938\u0947 \u090A\u092A\u0930") || qLower.includes("top par") || qLower.includes("sabse upar") || query.includes("\uB9E8 \uC704\uB85C") || query.includes("\uC0C1\uB2E8\uC73C\uB85C")) {
-      sendHudAction("execute-scroll", { direction: "top", amount: 0 });
-      const reply = isHindi ? "\u{1F4DC} \u092A\u0947\u091C \u0915\u0947 \u0936\u0940\u0930\u094D\u0937 \u092A\u0930 \u092A\u0939\u0941\u0901\u091A \u0917\u090F\u0964" : isKorean ? "\u{1F4DC} \uD398\uC774\uC9C0 \uC0C1\uB2E8\uC73C\uB85C \uC774\uB3D9\uD588\uC2B5\uB2C8\uB2E4." : "\u{1F4DC} Jumped to the top of the page.";
-      addAiReply(reply);
-      speakReply(isHindi ? "\u0936\u0940\u0930\u094D\u0937 \u092A\u0930 \u092A\u0939\u0941\u0901\u091A \u0917\u090F" : isKorean ? "\uC0C1\uB2E8\uC73C\uB85C \uC774\uB3D9\uD588\uC2B5\uB2C8\uB2E4" : "Jumped to top.", isHindi ? "hi" : isKorean ? "ko" : "en");
-      return;
-    }
-    if (qLower.includes("scroll to bottom") || qLower === "s1000" || qLower === "bottom" || query.includes("\u0938\u092C\u0938\u0947 \u0928\u0940\u091A\u0947") || qLower.includes("bottom par") || qLower.includes("sabse niche") || query.includes("\uB9E8 \uC544\uB798\uB85C") || query.includes("\uD558\uB2E8\uC73C\uB85C")) {
-      sendHudAction("execute-scroll", { direction: "bottom", amount: 1e3 });
-      const reply = isHindi ? "\u{1F4DC} \u092A\u0947\u091C \u0915\u0947 \u0905\u0902\u0924 \u092E\u0947\u0902 \u092A\u0939\u0941\u0901\u091A \u0917\u090F\u0964" : isKorean ? "\u{1F4DC} \uD398\uC774\uC9C0 \uD558\uB2E8\uC73C\uB85C \uC774\uB3D9\uD588\uC2B5\uB2C8\uB2E4." : "\u{1F4DC} Jumped to the bottom of the page.";
-      addAiReply(reply);
-      speakReply(isHindi ? "\u092A\u0947\u091C \u0915\u0947 \u0905\u0902\u0924 \u092E\u0947\u0902 \u092A\u0939\u0941\u0901\u091A \u0917\u090F" : isKorean ? "\uD558\uB2E8\uC73C\uB85C \uC774\uB3D9\uD588\uC2B5\uB2C8\uB2E4" : "Jumped to bottom.", isHindi ? "hi" : isKorean ? "ko" : "en");
-      return;
-    }
-    if (qLower.includes("play") || qLower.includes("resume") || query.includes("\u091A\u0932\u093E\u0913") || query.includes("\u092A\u094D\u0932\u0947") || qLower.includes("chalao") || query.includes("\uC7AC\uC0DD") || query.includes("\uD50C\uB808\uC774")) {
-      sendHudAction("execute-click", { target: "play" });
-      const reply = isHindi ? "\u25B6\uFE0F \u0935\u0940\u0921\u093F\u092F\u094B \u092A\u094D\u0932\u0947 \u0915\u0930\u0928\u0947 \u0915\u093E \u0928\u093F\u0930\u094D\u0926\u0947\u0936 \u092D\u0947\u091C\u093E \u0917\u092F\u093E\u0964" : isKorean ? "\u25B6\uFE0F \uBE44\uB514\uC624 \uC7AC\uC0DD \uBA85\uB839\uC744 \uC2E4\uD589\uD588\uC2B5\uB2C8\uB2E4." : "\u25B6\uFE0F Triggered play action on active media.";
-      addAiReply(reply);
-      speakReply(isHindi ? "\u0935\u0940\u0921\u093F\u092F\u094B \u0936\u0941\u0930\u0942 \u0915\u093F\u092F\u093E \u0917\u092F\u093E" : isKorean ? "\uC7AC\uC0DD\uC744 \uC2DC\uC791\uD569\uB2C8\uB2E4" : "Playing video.", isHindi ? "hi" : isKorean ? "ko" : "en");
-      return;
-    }
-    if (qLower.includes("pause") || qLower.includes("stop video") || query.includes("\u0930\u094B\u0915\u094B") || query.includes("\u092A\u0949\u091C\u093C") || qLower.includes("roko") || qLower.includes("pause karo") || query.includes("\uC77C\uC2DC\uC815\uC9C0") || query.includes("\uBA48\uCDB0") || query.includes("\uC815\uC9C0")) {
-      sendHudAction("execute-click", { target: "pause" });
-      const reply = isHindi ? "\u23F8\uFE0F \u0935\u0940\u0921\u093F\u092F\u094B \u092A\u0949\u091C\u093C \u0915\u093F\u092F\u093E \u0917\u092F\u093E\u0964" : isKorean ? "\u23F8\uFE0F \uBE44\uB514\uC624\uB97C \uC77C\uC2DC\uC815\uC9C0\uD588\uC2B5\uB2C8\uB2E4." : "\u23F8\uFE0F Paused media playback.";
-      addAiReply(reply);
-      speakReply(isHindi ? "\u0935\u0940\u0921\u093F\u092F\u094B \u092A\u0949\u091C\u093C \u0915\u093F\u092F\u093E \u0917\u092F\u093E" : isKorean ? "\uC77C\uC2DC\uC815\uC9C0\uB418\uC5C8\uC2B5\uB2C8\uB2E4" : "Paused.", isHindi ? "hi" : isKorean ? "ko" : "en");
-      return;
-    }
-    if (qLower.includes("autofill") || qLower.includes("fill form") || qLower.includes("checkout") || query.includes("\u092B\u0949\u0930\u094D\u092E") || query.includes("\u0911\u091F\u094B\u092B\u093F\u0932") || qLower.includes("form bharo") || qLower.includes("autofill karo") || query.includes("\uC790\uB3D9\uC644\uC131") || query.includes("\uC591\uC2DD") || query.includes("\uC790\uB3D9 \uC644\uC131")) {
-      sendHudAction("trigger-autofill");
-      const reply = isHindi ? "\u{1F4DD} \u092B\u0949\u0930\u094D\u092E \u0911\u091F\u094B\u092B\u093F\u0932 \u0938\u092B\u0932\u0924\u093E\u092A\u0942\u0930\u0915 \u0928\u093F\u0937\u094D\u092A\u093E\u0926\u093F\u0924 \u0915\u093F\u092F\u093E \u0917\u092F\u093E\u0964" : isKorean ? "\u{1F4DD} \uC591\uC2DD \uC790\uB3D9\uC644\uC131\uC744 \uC131\uACF5\uC801\uC73C\uB85C \uC2E4\uD589\uD588\uC2B5\uB2C8\uB2E4." : "\u{1F4DD} AutofillManager::FillForm() executed.";
-      addAiReply(reply);
-      speakReply(isHindi ? "\u092B\u0949\u0930\u094D\u092E \u092D\u0930 \u0926\u093F\u092F\u093E \u0917\u092F\u093E \u0939\u0948" : isKorean ? "\uC790\uB3D9\uC644\uC131\uC774 \uC644\uB8CC\uB418\uC5C8\uC2B5\uB2C8\uB2E4" : "Autofill complete.", isHindi ? "hi" : isKorean ? "ko" : "en");
-      return;
-    }
-    if (qLower.includes("summarize") || qLower.includes("summary") || qLower.includes("what is this page") || qLower === "sum" || query.includes("\u0938\u093E\u0930\u093E\u0902\u0936") || qLower.includes("samiksha") || query.includes("\u0938\u0902\u0915\u094D\u0937\u0947\u092A") || query.includes("\uC694\uC57D") || query.includes("\uB0B4\uC6A9 \uC694\uC57D")) {
-      let summary = "";
-      if (isHindi) {
-        summary = `\u{1F4D1} **\u092A\u0947\u091C \u0938\u093E\u0930\u093E\u0902\u0936: ${activeTab.title || "\u0938\u0915\u094D\u0930\u093F\u092F \u092A\u0943\u0937\u094D\u0920"}** (Whisper AI \u0935\u093F\u0936\u094D\u0932\u0947\u0937\u093F\u0924)
-
-`;
-        if (activeTab.url && activeTab.url.includes("youtube.com")) {
-          summary += `\u2022 **\u092E\u0940\u0921\u093F\u092F\u093E:** \u092F\u0942\u091F\u094D\u092F\u0942\u092C \u0935\u0940\u0921\u093F\u092F\u094B \u0938\u094D\u091F\u094D\u0930\u0940\u092E\u0964
-\u2022 **\u0935\u093F\u091C\u094D\u091E\u093E\u092A\u0928 \u0938\u094D\u0925\u093F\u0924\u093F:** 0 \u0935\u093F\u091C\u094D\u091E\u093E\u092A\u0928 (Brave adblock-rust \u0938\u0915\u094D\u0930\u093F\u092F)\u0964
-\u2022 **\u0927\u094D\u0935\u0928\u093F \u0906\u0926\u0947\u0936:** "\u0935\u0940\u0921\u093F\u092F\u094B \u091A\u0932\u093E\u0913", "\u0928\u0940\u091A\u0947 \u0938\u094D\u0915\u094D\u0930\u0949\u0932 \u0915\u0930\u094B"\u0964`;
-        } else if (activeTab.url && activeTab.url.includes("wikipedia.org")) {
-          summary += `\u2022 **\u0935\u093F\u0936\u094D\u0935\u0915\u094B\u0936 \u092A\u094D\u0930\u0935\u093F\u0937\u094D\u091F\u093F:** ${activeTab.title}\u0964
-\u2022 **\u092A\u094D\u0930\u092E\u0941\u0916 \u0938\u093E\u092E\u0917\u094D\u0930\u0940:** \u0935\u093F\u0938\u094D\u0924\u0943\u0924 \u0938\u0902\u0926\u0930\u094D\u092D \u0932\u0947\u0916 \u0909\u092A\u0932\u092C\u094D\u0927 \u0939\u0948\u0964`;
-        } else {
-          summary += `\u2022 **\u0938\u094D\u0930\u094B\u0924 URL:** \`${activeTab.url || "\u0928\u092F\u093E \u091F\u0948\u092C"}\`
-\u2022 **\u0938\u0941\u0930\u0915\u094D\u0937\u093E \u0936\u0940\u0932\u094D\u0921\u094D\u0938:** ${shieldsStats.totalBlocked || 0} \u091F\u094D\u0930\u0948\u0915\u0930\u094D\u0938 \u092C\u094D\u0932\u0949\u0915\u0964
-\u2022 **\u0915\u094D\u0930\u093F\u092F\u093E\u090F\u0901:** Set-of-Marks (#1, #2) \u0926\u094D\u0935\u093E\u0930\u093E \u0907\u0902\u091F\u0930\u0948\u0915\u094D\u0936\u0928 \u0915\u0947 \u0932\u093F\u090F \u0924\u0948\u092F\u093E\u0930\u0964`;
-        }
-      } else if (isKorean) {
-        summary = `\u{1F4D1} **\uD398\uC774\uC9C0 \uC694\uC57D: ${activeTab.title || "\uD604\uC7AC \uD398\uC774\uC9C0"}** (Whisper AI \uBD84\uC11D)
-
-`;
-        if (activeTab.url && activeTab.url.includes("youtube.com")) {
-          summary += `\u2022 **\uBBF8\uB514\uC5B4:** \uC720\uD29C\uBE0C \uBE44\uB514\uC624 \uC2A4\uD2B8\uB9BC
-\u2022 **\uAD11\uACE0 \uCC28\uB2E8:** Brave adblock-rust \uAC00\uB3D9 \uC911 (\uAD11\uACE0 0\uAC1C)
-\u2022 **\uC74C\uC131 \uBA85\uB839:** "\uB3D9\uC601\uC0C1 \uC7AC\uC0DD", "\uC544\uB798\uB85C \uC2A4\uD06C\uB864"`;
-        } else if (activeTab.url && activeTab.url.includes("wikipedia.org")) {
-          summary += `\u2022 **\uBC31\uACFC\uC0AC\uC804 \uD56D\uBAA9:** ${activeTab.title}
-\u2022 **\uC8FC\uC694 \uB0B4\uC6A9:** \uC139\uC158\uBCC4 \uC0C1\uC138 \uC815\uBCF4 \uBC0F \uCC38\uC870 \uB9C1\uD06C \uD0D1\uC7AC`;
-        } else {
-          summary += `\u2022 **URL:** \`${activeTab.url || "\uC0C8 \uD0ED"}\`
-\u2022 **\uC2E4\uB4DC \uC0C1\uD0DC:** ${shieldsStats.totalBlocked || 0}\uAC1C \uD2B8\uB798\uCEE4 \uCC28\uB2E8\uB428`;
-        }
-      } else {
-        summary = `\u{1F4D1} **Page Summary: ${activeTab.title || "Active Tab"}** (Whisper AI Analyzed)
-
-`;
-        if (activeTab.url && activeTab.url.includes("youtube.com")) {
-          summary += `\u2022 **Media:** YouTube Video Playback Stream.
-\u2022 **Adblock Status:** 0 ads playing (Brave adblock-rust active).
-\u2022 **Available Voice Actions:** Say *"Click Play"*, *"Scroll Down"*, or *"Focus Browser"*.`;
-        } else if (activeTab.url && activeTab.url.includes("wikipedia.org")) {
-          summary += `\u2022 **Encyclopedia Entry:** ${activeTab.title}.
-\u2022 **Key Content:** Comprehensive reference article with citations and section headings.`;
-        } else {
-          summary += `\u2022 **Source URL:** \`${activeTab.url || "New Tab"}\`
-\u2022 **Shields:** ${shieldsStats.totalBlocked || 0} ads & trackers blocked.
-\u2022 **Interaction:** Ready for element interaction via Set-of-Marks (#1, #2).`;
-        }
-      }
-      addAiReply(summary);
-      speakReply(isHindi ? "\u092A\u0947\u091C \u0915\u093E \u0938\u093E\u0930\u093E\u0902\u0936 \u0924\u0948\u092F\u093E\u0930 \u0939\u0948" : isKorean ? "\uD398\uC774\uC9C0 \uC694\uC57D\uC774 \uC644\uB8CC\uB418\uC5C8\uC2B5\uB2C8\uB2E4" : `Summary for ${activeTab.title || "this page"}`, isHindi ? "hi" : isKorean ? "ko" : "en");
-      return;
-    }
-    const clickMatch = query.match(/(?:click|press|tap|select|क्लिक|눌러|선택)\s+(.+)/i) || query.match(/^(?:#|hashtag\s*|mark\s*)(\d+)$/i);
-    if (clickMatch || qLower.startsWith("click")) {
-      const target = clickMatch ? clickMatch[1] || clickMatch[0] : query.replace(/^click\s*/i, "");
-      sendHudAction("execute-click", { target: target.trim() });
-      const reply = isHindi ? `\u{1F3AF} \u0938\u0915\u094D\u0930\u093F\u092F \u092A\u0943\u0937\u094D\u0920 \u092A\u0930 "${target.trim()}" \u092A\u0930 \u0915\u094D\u0932\u093F\u0915 \u0915\u093F\u092F\u093E \u0917\u092F\u093E\u0964` : isKorean ? `\u{1F3AF} \uD398\uC774\uC9C0\uC5D0\uC11C "${target.trim()}" \uC694\uC18C\uB97C \uD074\uB9AD\uD588\uC2B5\uB2C8\uB2E4.` : `\u{1F3AF} Clicked element matching "${target.trim()}" on active page.`;
-      addAiReply(reply);
-      speakReply(isHindi ? `\u0915\u094D\u0932\u093F\u0915 \u0915\u093F\u092F\u093E \u0917\u092F\u093E ${target}` : isKorean ? `${target} \uD074\uB9AD \uC644\uB8CC` : `Clicked ${target}`, isHindi ? "hi" : isKorean ? "ko" : "en");
-      return;
-    }
-    const navMatch = query.match(/(?:go to|open|navigate to|खोलो|열어줘)\s+(.+)/i);
-    if (navMatch || qLower.startsWith("open ") || qLower.startsWith("go to ")) {
-      const target = navMatch ? navMatch[1].trim() : query.replace(/^(?:open|go to)\s+/i, "").trim();
-      let targetUrl = target;
-      if (target.includes("youtube") || target.includes("\u092F\u0942\u091F\u094D\u092F\u0942\u092C") || target.includes("\uC720\uD29C\uBE0C")) targetUrl = "https://www.youtube.com";
-      else if (target.includes("google") || target.includes("\u0917\u0942\u0917\u0932") || target.includes("\uAD6C\uAE00")) targetUrl = "https://www.google.com";
-      else if (target.includes("github") || target.includes("\u0917\u093F\u091F\u0939\u092C")) targetUrl = "https://github.com";
-      else if (!target.startsWith("http://") && !target.startsWith("https://")) targetUrl = "https://www.google.com/search?q=" + encodeURIComponent(target);
-      sendHudAction("execute-navigate", { url: targetUrl });
-      const reply = isHindi ? `\u{1F310} ${targetUrl} \u092A\u0930 \u0928\u0947\u0935\u093F\u0917\u0947\u091F \u0915\u093F\u092F\u093E \u091C\u093E \u0930\u0939\u093E \u0939\u0948...` : isKorean ? `\u{1F310} ${targetUrl}(\uC73C)\uB85C \uC774\uB3D9\uD569\uB2C8\uB2E4...` : `\u{1F310} Navigating active tab to "${targetUrl}"...`;
-      addAiReply(reply);
-      speakReply(isHindi ? "\u0928\u0947\u0935\u093F\u0917\u0947\u091F \u0915\u093F\u092F\u093E \u091C\u093E \u0930\u0939\u093E \u0939\u0948" : isKorean ? "\uD398\uC774\uC9C0\uB85C \uC774\uB3D9\uD569\uB2C8\uB2E4" : `Navigating to ${target}`, isHindi ? "hi" : isKorean ? "ko" : "en");
-      return;
-    }
-    setTimeout(() => {
-      let aiText = "";
-      if (isHindi) {
-        aiText = `\u2726 **Antigravity Copilot (Whisper ASR)**
-
-\u092E\u0948\u0902\u0928\u0947 \u0906\u092A\u0915\u093E \u0938\u0902\u0926\u0947\u0936 \u0938\u092E\u091D\u093E: "${query}"
-
-\u2022 **\u0938\u0915\u094D\u0930\u093F\u092F \u091F\u0948\u092C:** \`${activeTab.title || "\u0928\u092F\u093E \u091F\u0948\u092C"}\`
-\u2022 **\u0936\u0940\u0932\u094D\u0921\u094D\u0938 \u0938\u0941\u0930\u0915\u094D\u0937\u093E:** ${shieldsStats.totalBlocked || 0} \u091F\u094D\u0930\u0948\u0915\u0930\u094D\u0938 \u092C\u094D\u0932\u0949\u0915\u0964
-\u2022 **\u0938\u0941\u091D\u093E\u0935:** \u0906\u092A \u0915\u0939 \u0938\u0915\u0924\u0947 \u0939\u0948\u0902: *"\u092A\u0947\u091C \u0915\u093E \u0938\u093E\u0930\u093E\u0902\u0936 \u0926\u094B"*, *"\u0928\u0940\u091A\u0947 \u0938\u094D\u0915\u094D\u0930\u0949\u0932 \u0915\u0930\u094B"*, \u092F\u093E *"\u0935\u0940\u0921\u093F\u092F\u094B \u091A\u0932\u093E\u0913"*\u0964`;
-      } else if (isKorean) {
-        aiText = `\u2726 **Antigravity Copilot (Whisper ASR)**
-
-\uC74C\uC131/\uBA85\uB839 \uCC98\uB9AC \uC644\uB8CC: "${query}"
-
-\u2022 **\uD604\uC7AC \uD0ED:** \`${activeTab.title || "\uC0C8 \uD0ED"}\`
-\u2022 **\uCC28\uB2E8\uB41C \uAD11\uACE0:** ${shieldsStats.totalBlocked || 0}\uAC1C
-\u2022 **\uCD94\uCC9C \uBA85\uB839:** *"\uD398\uC774\uC9C0 \uC694\uC57D"*, *"\uC544\uB798\uB85C \uC2A4\uD06C\uB864"*, *"\uB3D9\uC601\uC0C1 \uC7AC\uC0DD"*`;
-      } else {
-        aiText = `\u2726 **Antigravity Copilot (Whisper ASR)**
-
-Analyzed request: "${query}"
-
-\u2022 **Active Tab:** \`${activeTab.title || "New Tab"}\`
-\u2022 **Shields Protection:** ${shieldsStats.totalBlocked || 0} trackers & ads blocked.
-\u2022 **Suggested Commands:** You can say *"Summarize"*, *"Click Play"*, *"Scroll Down"*, or speak in Hindi/Korean.`;
-      }
-      addAiReply(aiText);
-      speakReply(isHindi ? "\u0915\u092E\u093E\u0902\u0921 \u092A\u094D\u0930\u094B\u0938\u0947\u0938 \u0939\u094B \u0917\u092F\u093E" : isKorean ? "\uBA85\uB839\uC774 \uCC98\uB9AC\uB418\uC5C8\uC2B5\uB2C8\uB2E4" : "Processed request.", isHindi ? "hi" : isKorean ? "ko" : "en");
-    }, 300);
+    sendHudAction("ai-command", { prompt: query });
   };
   const getFilteredAxContent = () => {
     if (!axTreeMarkdown) return "Connecting to in-process Chromium core...";
@@ -40876,36 +44125,36 @@ Analyzed request: "${query}"
       });
     }
   };
-  return /* @__PURE__ */ import_react11.default.createElement("div", { className: "mac-cockpit-window" }, /* @__PURE__ */ import_react11.default.createElement("header", { className: "mac-cockpit-header" }, /* @__PURE__ */ import_react11.default.createElement("div", { className: "mac-window-controls" }, /* @__PURE__ */ import_react11.default.createElement(
+  return /* @__PURE__ */ import_react15.default.createElement("div", { className: "mac-cockpit-window" }, /* @__PURE__ */ import_react15.default.createElement("header", { className: "mac-cockpit-header" }, /* @__PURE__ */ import_react15.default.createElement("div", { className: "mac-window-controls" }, /* @__PURE__ */ import_react15.default.createElement(
     "button",
     {
       className: "mac-btn mac-close",
       title: "Retract & Hide AI Window",
       onClick: handleHideWindow
     }
-  ), /* @__PURE__ */ import_react11.default.createElement(
+  ), /* @__PURE__ */ import_react15.default.createElement(
     "button",
     {
       className: "mac-btn mac-minimize",
       title: "Minimize Window",
-      onClick: () => ipcRenderer2.send("hud-window-minimize")
+      onClick: () => ipcRenderer3.send("hud-window-minimize")
     }
-  ), /* @__PURE__ */ import_react11.default.createElement(
+  ), /* @__PURE__ */ import_react15.default.createElement(
     "button",
     {
       className: "mac-btn mac-maximize",
       title: "Maximize / Restore",
-      onClick: () => ipcRenderer2.send("hud-window-maximize")
+      onClick: () => ipcRenderer3.send("hud-window-maximize")
     }
-  )), /* @__PURE__ */ import_react11.default.createElement("div", { className: "mac-cockpit-brand" }, /* @__PURE__ */ import_react11.default.createElement("span", { className: "mac-brand-sparkle" }, "\u2726"), /* @__PURE__ */ import_react11.default.createElement("span", { className: "mac-brand-name" }, "Antigravity Copilot")), /* @__PURE__ */ import_react11.default.createElement("div", { className: "mac-target-pill", title: "Current active tab in main browser" }, /* @__PURE__ */ import_react11.default.createElement("span", { style: { fontSize: "11px", opacity: 0.65 } }, "Target:"), /* @__PURE__ */ import_react11.default.createElement(
+  )), /* @__PURE__ */ import_react15.default.createElement("div", { className: "mac-cockpit-brand" }, /* @__PURE__ */ import_react15.default.createElement("span", { className: "mac-brand-sparkle" }, "\u2726"), /* @__PURE__ */ import_react15.default.createElement("span", { className: "mac-brand-name" }, "Antigravity Copilot")), /* @__PURE__ */ import_react15.default.createElement("div", { className: "mac-target-pill", title: "Current active tab in main browser" }, /* @__PURE__ */ import_react15.default.createElement("span", { style: { fontSize: "11px", opacity: 0.65 } }, "Target:"), /* @__PURE__ */ import_react15.default.createElement(
     "select",
     {
       className: "mac-target-select",
       value: activeTabId,
       onChange: (e) => handleTabChange(e.target.value)
     },
-    tabs.map((tab) => /* @__PURE__ */ import_react11.default.createElement("option", { key: tab.id, value: tab.id }, "Tab ", tab.id, ": ", tab.title ? tab.title.length > 22 ? tab.title.substring(0, 22) + "..." : tab.title : "New Tab"))
-  )), /* @__PURE__ */ import_react11.default.createElement("div", { className: "mac-header-actions" }, /* @__PURE__ */ import_react11.default.createElement(
+    tabs.map((tab) => /* @__PURE__ */ import_react15.default.createElement("option", { key: tab.id, value: tab.id }, "Tab ", tab.id, ": ", tab.title ? tab.title.length > 22 ? tab.title.substring(0, 22) + "..." : tab.title : "New Tab"))
+  )), /* @__PURE__ */ import_react15.default.createElement("div", { className: "mac-header-actions" }, /* @__PURE__ */ import_react15.default.createElement(
     "button",
     {
       className: "mac-pill-btn",
@@ -40913,7 +44162,7 @@ Analyzed request: "${query}"
       onClick: handleDockBack
     },
     "\u{1F4E5} Dock"
-  ), /* @__PURE__ */ import_react11.default.createElement(
+  ), /* @__PURE__ */ import_react15.default.createElement(
     "button",
     {
       className: "mac-pill-btn",
@@ -40921,7 +44170,7 @@ Analyzed request: "${query}"
       onClick: handleFocusBrowser
     },
     "\u2197 Focus"
-  ), /* @__PURE__ */ import_react11.default.createElement(
+  ), /* @__PURE__ */ import_react15.default.createElement(
     "button",
     {
       className: "mac-pill-btn close-x",
@@ -40929,14 +44178,14 @@ Analyzed request: "${query}"
       onClick: handleHideWindow
     },
     "\u2715"
-  ))), /* @__PURE__ */ import_react11.default.createElement("nav", { className: "mac-cockpit-nav" }, /* @__PURE__ */ import_react11.default.createElement(
+  ))), /* @__PURE__ */ import_react15.default.createElement("nav", { className: "mac-cockpit-nav" }, /* @__PURE__ */ import_react15.default.createElement(
     "button",
     {
       className: `mac-nav-tab ${activeModuleTab === "chat" ? "active" : ""}`,
       onClick: () => setActiveModuleTab("chat")
     },
     "\u{1F4AC} AI Chat & Voice"
-  ), /* @__PURE__ */ import_react11.default.createElement(
+  ), /* @__PURE__ */ import_react15.default.createElement(
     "button",
     {
       className: `mac-nav-tab ${activeModuleTab === "shields" ? "active" : ""}`,
@@ -40945,14 +44194,14 @@ Analyzed request: "${query}"
     "\u{1F981} Shields (",
     shieldsStats.totalBlocked || 0,
     ")"
-  ), /* @__PURE__ */ import_react11.default.createElement(
+  ), /* @__PURE__ */ import_react15.default.createElement(
     "button",
     {
       className: `mac-nav-tab ${activeModuleTab === "tools" ? "active" : ""}`,
       onClick: () => setActiveModuleTab("tools")
     },
     "\u{1F6E0}\uFE0F Core Tools"
-  )), /* @__PURE__ */ import_react11.default.createElement("main", { className: "mac-cockpit-body" }, activeModuleTab === "chat" && /* @__PURE__ */ import_react11.default.createElement("div", { className: "mac-chat-view" }, /* @__PURE__ */ import_react11.default.createElement("div", { className: "mac-context-bar" }, /* @__PURE__ */ import_react11.default.createElement("span", { style: { fontSize: "13px" } }, "\u{1F310}"), /* @__PURE__ */ import_react11.default.createElement("span", { className: "mac-context-title" }, activeTab.title || "New Tab"), /* @__PURE__ */ import_react11.default.createElement("span", { className: "mac-context-badge" }, "\u{1F6E1}\uFE0F ", shieldsStats.totalBlocked || 0, " Blocked"), /* @__PURE__ */ import_react11.default.createElement(
+  )), /* @__PURE__ */ import_react15.default.createElement("main", { className: "mac-cockpit-body" }, activeModuleTab === "chat" && /* @__PURE__ */ import_react15.default.createElement("div", { className: "mac-chat-view" }, /* @__PURE__ */ import_react15.default.createElement("div", { className: "mac-context-bar" }, /* @__PURE__ */ import_react15.default.createElement("span", { style: { fontSize: "13px" } }, "\u{1F310}"), /* @__PURE__ */ import_react15.default.createElement("span", { className: "mac-context-title" }, activeTab.title || "New Tab"), /* @__PURE__ */ import_react15.default.createElement("span", { className: "mac-context-badge" }, "\u{1F6E1}\uFE0F ", shieldsStats.totalBlocked || 0, " Blocked"), /* @__PURE__ */ import_react15.default.createElement(
     "button",
     {
       className: `mac-speech-toggle ${voiceSpeechFeedback ? "active" : ""}`,
@@ -40960,7 +44209,14 @@ Analyzed request: "${query}"
       onClick: () => setVoiceSpeechFeedback(!voiceSpeechFeedback)
     },
     voiceSpeechFeedback ? "\u{1F50A} Speaking" : "\u{1F507} Muted"
-  )), /* @__PURE__ */ import_react11.default.createElement("div", { className: "mac-quick-chips" }, /* @__PURE__ */ import_react11.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("summarize") }, "\u26A1 Summarize Page"), /* @__PURE__ */ import_react11.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("scroll down") }, "\u{1F4DC} Scroll Down"), /* @__PURE__ */ import_react11.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("click play") }, "\u25B6\uFE0F Click Play"), /* @__PURE__ */ import_react11.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("autofill") }, "\u{1F4DD} Autofill"), /* @__PURE__ */ import_react11.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("\u092A\u0947\u091C \u0915\u093E \u0938\u093E\u0930\u093E\u0902\u0936 \u0926\u094B") }, "\u{1F1EE}\u{1F1F3} \u0938\u093E\u0930\u093E\u0902\u0936 (HI)"), /* @__PURE__ */ import_react11.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("\u0928\u0940\u091A\u0947 \u0938\u094D\u0915\u094D\u0930\u0949\u0932 \u0915\u0930\u094B") }, "\u{1F1EE}\u{1F1F3} \u0928\u0940\u091A\u0947 \u0938\u094D\u0915\u094D\u0930\u0949\u0932 (HI)"), /* @__PURE__ */ import_react11.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("\uD398\uC774\uC9C0 \uC694\uC57D") }, "\u{1F1F0}\u{1F1F7} \uC694\uC57D (KO)"), /* @__PURE__ */ import_react11.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("\uC544\uB798\uB85C \uC2A4\uD06C\uB864") }, "\u{1F1F0}\u{1F1F7} \uC544\uB798\uB85C (KO)"), /* @__PURE__ */ import_react11.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("scroll to top") }, "\u2B06 Top")), /* @__PURE__ */ import_react11.default.createElement("div", { className: "mac-messages-stream" }, chatMessages.map((msg) => /* @__PURE__ */ import_react11.default.createElement("div", { key: msg.id, className: `mac-msg-row ${msg.role}` }, /* @__PURE__ */ import_react11.default.createElement("div", { className: "mac-msg-bubble" }, /* @__PURE__ */ import_react11.default.createElement("div", { className: "mac-msg-header" }, /* @__PURE__ */ import_react11.default.createElement("span", { className: "mac-msg-author" }, msg.role === "user" ? "You" : "\u2726 Copilot"), /* @__PURE__ */ import_react11.default.createElement("span", { className: "mac-msg-time" }, msg.time)), /* @__PURE__ */ import_react11.default.createElement("div", { className: "mac-msg-text", style: { whiteSpace: "pre-wrap" } }, msg.text)))), isAiThinking && /* @__PURE__ */ import_react11.default.createElement("div", { className: "mac-msg-row assistant" }, /* @__PURE__ */ import_react11.default.createElement("div", { className: "mac-msg-bubble thinking" }, /* @__PURE__ */ import_react11.default.createElement("span", { className: "dot-live", style: { width: 6, height: 6, display: "inline-block" } }), /* @__PURE__ */ import_react11.default.createElement("span", { style: { fontSize: "12px", color: "#94a3b8" } }, "Copilot is thinking..."))), /* @__PURE__ */ import_react11.default.createElement("div", { ref: messagesEndRef })), /* @__PURE__ */ import_react11.default.createElement("div", { className: "mac-whisper-bar" }, /* @__PURE__ */ import_react11.default.createElement("div", { className: "mac-lang-chips" }, /* @__PURE__ */ import_react11.default.createElement("span", { className: "mac-whisper-badge" }, "\u{1F9E0} Whisper Local ASR"), /* @__PURE__ */ import_react11.default.createElement(
+  )), /* @__PURE__ */ import_react15.default.createElement("div", { className: "mac-quick-chips" }, /* @__PURE__ */ import_react15.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("CLK SB"), title: "Click Search Bar on web page" }, "\u{1F50D} CLK SB"), /* @__PURE__ */ import_react15.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("s50"), title: "Scroll down by 50%" }, "\u{1F4DC} S50"), /* @__PURE__ */ import_react15.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("open youtube"), title: "Open YouTube tab" }, "\u{1F4FA} YouTube"), /* @__PURE__ */ import_react15.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("show numbers"), title: "Highlight & number keywords on page" }, "\u{1F522} Numbers"), /* @__PURE__ */ import_react15.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("help shortcuts"), title: "Show all NLP commands" }, "\u{1F4A1} Shortcuts"), /* @__PURE__ */ import_react15.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("close tab"), title: "Close active tab" }, "\u274C Close"), /* @__PURE__ */ import_react15.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("summarize") }, "\u26A1 Summarize"), /* @__PURE__ */ import_react15.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("scroll down") }, "\u2B07 Scroll"), /* @__PURE__ */ import_react15.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("click play") }, "\u25B6\uFE0F Play"), /* @__PURE__ */ import_react15.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("autofill") }, "\u{1F4DD} Autofill"), /* @__PURE__ */ import_react15.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("\u092A\u0947\u091C \u0915\u093E \u0938\u093E\u0930\u093E\u0902\u0936 \u0926\u094B") }, "\u{1F1EE}\u{1F1F3} \u0938\u093E\u0930\u093E\u0902\u0936 (HI)"), /* @__PURE__ */ import_react15.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("\uD398\uC774\uC9C0 \uC694\uC57D") }, "\u{1F1F0}\u{1F1F7} \uC694\uC57D (KO)")), /* @__PURE__ */ import_react15.default.createElement("div", { className: "mac-messages-stream" }, chatMessages.map((msg) => /* @__PURE__ */ import_react15.default.createElement("div", { key: msg.id, className: `mac-msg-row ${msg.role}` }, /* @__PURE__ */ import_react15.default.createElement("div", { className: "mac-msg-bubble" }, /* @__PURE__ */ import_react15.default.createElement("div", { className: "mac-msg-header" }, /* @__PURE__ */ import_react15.default.createElement("span", { className: "mac-msg-author" }, msg.role === "user" ? "You" : "\u2726 Copilot"), /* @__PURE__ */ import_react15.default.createElement("span", { className: "mac-msg-time" }, msg.time)), /* @__PURE__ */ import_react15.default.createElement(
+    "div",
+    {
+      className: "mac-msg-text",
+      style: { whiteSpace: "pre-wrap" },
+      dangerouslySetInnerHTML: { __html: msg.text }
+    }
+  )))), isAiThinking && /* @__PURE__ */ import_react15.default.createElement("div", { className: "mac-msg-row assistant" }, /* @__PURE__ */ import_react15.default.createElement("div", { className: "mac-msg-bubble thinking" }, /* @__PURE__ */ import_react15.default.createElement("span", { className: "dot-live", style: { width: 6, height: 6, display: "inline-block" } }), /* @__PURE__ */ import_react15.default.createElement("span", { style: { fontSize: "12px", color: "#94a3b8" } }, "Copilot is thinking..."))), /* @__PURE__ */ import_react15.default.createElement("div", { ref: messagesEndRef })), /* @__PURE__ */ import_react15.default.createElement("div", { className: "mac-whisper-bar" }, /* @__PURE__ */ import_react15.default.createElement("div", { className: "mac-lang-chips" }, /* @__PURE__ */ import_react15.default.createElement("span", { className: "mac-whisper-badge" }, "\u{1F9E0} Whisper Local ASR"), /* @__PURE__ */ import_react15.default.createElement(
     "button",
     {
       className: `mac-lang-chip ${whisperLang === "auto" ? "active" : ""}`,
@@ -40968,7 +44224,7 @@ Analyzed request: "${query}"
       onClick: () => setWhisperLang("auto")
     },
     "\u{1F310} Auto"
-  ), /* @__PURE__ */ import_react11.default.createElement(
+  ), /* @__PURE__ */ import_react15.default.createElement(
     "button",
     {
       className: `mac-lang-chip ${whisperLang === "en" ? "active" : ""}`,
@@ -40976,7 +44232,7 @@ Analyzed request: "${query}"
       onClick: () => setWhisperLang("en")
     },
     "\u{1F1FA}\u{1F1F8} English"
-  ), /* @__PURE__ */ import_react11.default.createElement(
+  ), /* @__PURE__ */ import_react15.default.createElement(
     "button",
     {
       className: `mac-lang-chip ${whisperLang === "hi" ? "active" : ""}`,
@@ -40984,7 +44240,7 @@ Analyzed request: "${query}"
       onClick: () => setWhisperLang("hi")
     },
     "\u{1F1EE}\u{1F1F3} \u0939\u093F\u0928\u094D\u0926\u0940"
-  ), /* @__PURE__ */ import_react11.default.createElement(
+  ), /* @__PURE__ */ import_react15.default.createElement(
     "button",
     {
       className: `mac-lang-chip ${whisperLang === "ko" ? "active" : ""}`,
@@ -40992,7 +44248,7 @@ Analyzed request: "${query}"
       onClick: () => setWhisperLang("ko")
     },
     "\u{1F1F0}\u{1F1F7} \uD55C\uAD6D\uC5B4"
-  )), isWhisperRecording && /* @__PURE__ */ import_react11.default.createElement("div", { className: "mac-recording-indicator" }, /* @__PURE__ */ import_react11.default.createElement("span", { className: "pulse-red-dot" }), /* @__PURE__ */ import_react11.default.createElement("span", null, "Recording 16kHz PCM (", recordingTimer, "s)...")), isWhisperTranscribing && /* @__PURE__ */ import_react11.default.createElement("div", { className: "mac-transcribing-indicator" }, /* @__PURE__ */ import_react11.default.createElement("span", { className: "pulse-cyan-dot" }), /* @__PURE__ */ import_react11.default.createElement("span", null, "Whisper transcribing speech..."))), /* @__PURE__ */ import_react11.default.createElement("div", { className: "mac-chat-input-bar" }, /* @__PURE__ */ import_react11.default.createElement("div", { className: "mac-mic-group" }, /* @__PURE__ */ import_react11.default.createElement(
+  )), isWhisperRecording && /* @__PURE__ */ import_react15.default.createElement("div", { className: "mac-recording-indicator" }, /* @__PURE__ */ import_react15.default.createElement("span", { className: "pulse-red-dot" }), /* @__PURE__ */ import_react15.default.createElement("span", null, "Recording 16kHz PCM (", recordingTimer, "s)...")), isWhisperTranscribing && /* @__PURE__ */ import_react15.default.createElement("div", { className: "mac-transcribing-indicator" }, /* @__PURE__ */ import_react15.default.createElement("span", { className: "pulse-cyan-dot" }), /* @__PURE__ */ import_react15.default.createElement("span", null, "Whisper transcribing speech..."))), /* @__PURE__ */ import_react15.default.createElement("div", { className: "mac-chat-input-bar" }, /* @__PURE__ */ import_react15.default.createElement("div", { className: "mac-mic-group" }, /* @__PURE__ */ import_react15.default.createElement(
     "button",
     {
       className: `mac-mic-btn ${isWhisperRecording || isVoiceListening ? "listening" : ""}`,
@@ -41000,7 +44256,7 @@ Analyzed request: "${query}"
       onClick: toggleWhisperRecording
     },
     isWhisperRecording ? "\u{1F534}" : isWhisperTranscribing ? "\u23F3" : "\u{1F399}\uFE0F"
-  ), /* @__PURE__ */ import_react11.default.createElement(
+  ), /* @__PURE__ */ import_react15.default.createElement(
     "button",
     {
       className: "mac-mic-lang-badge",
@@ -41012,7 +44268,7 @@ Analyzed request: "${query}"
       }
     },
     whisperLang === "auto" ? "\u{1F310} Auto" : whisperLang === "en" ? "\u{1F1FA}\u{1F1F8} EN" : whisperLang === "hi" ? "\u{1F1EE}\u{1F1F3} HI" : "\u{1F1F0}\u{1F1F7} KO"
-  )), /* @__PURE__ */ import_react11.default.createElement(
+  )), /* @__PURE__ */ import_react15.default.createElement(
     "input",
     {
       type: "text",
@@ -41024,7 +44280,7 @@ Analyzed request: "${query}"
         if (e.key === "Enter") handleProcessNlpCommand(chatInput);
       }
     }
-  ), /* @__PURE__ */ import_react11.default.createElement(
+  ), /* @__PURE__ */ import_react15.default.createElement(
     "button",
     {
       className: "mac-send-btn",
@@ -41032,7 +44288,7 @@ Analyzed request: "${query}"
       onClick: () => handleProcessNlpCommand(chatInput)
     },
     "\u27A4"
-  ))), activeModuleTab === "shields" && /* @__PURE__ */ import_react11.default.createElement("div", { className: "mac-shields-view" }, /* @__PURE__ */ import_react11.default.createElement("div", { className: "mac-shields-hero" }, /* @__PURE__ */ import_react11.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: 10 } }, /* @__PURE__ */ import_react11.default.createElement("span", { style: { fontSize: "24px" } }, "\u{1F981}"), /* @__PURE__ */ import_react11.default.createElement("div", null, /* @__PURE__ */ import_react11.default.createElement("h3", { style: { fontSize: "15px", color: "#fff", margin: 0 } }, "Brave Shields Protection"), /* @__PURE__ */ import_react11.default.createElement("span", { style: { fontSize: "11px", color: "#94a3b8" } }, "EasyList + uBlock Origin \u2022 Sub-Microsecond Rust Engine"))), /* @__PURE__ */ import_react11.default.createElement("span", { style: { fontSize: "11px", color: "#10b981", fontWeight: 600 } }, "\u25CF Native Active")), /* @__PURE__ */ import_react11.default.createElement("div", { className: "mac-metrics-grid" }, /* @__PURE__ */ import_react11.default.createElement("div", { className: "mac-metric-card" }, /* @__PURE__ */ import_react11.default.createElement("span", { className: "metric-val" }, shieldsStats.totalBlocked || 0), /* @__PURE__ */ import_react11.default.createElement("span", { className: "metric-lbl" }, "TOTAL BLOCKED")), /* @__PURE__ */ import_react11.default.createElement("div", { className: "mac-metric-card" }, /* @__PURE__ */ import_react11.default.createElement("span", { className: "metric-val" }, shieldsStats.trackersBlocked || 0), /* @__PURE__ */ import_react11.default.createElement("span", { className: "metric-lbl" }, "TRACKERS")), /* @__PURE__ */ import_react11.default.createElement("div", { className: "mac-metric-card" }, /* @__PURE__ */ import_react11.default.createElement("span", { className: "metric-val" }, shieldsStats.savedBytes ? Math.round(shieldsStats.savedBytes / 1024) + " KB" : "0 KB"), /* @__PURE__ */ import_react11.default.createElement("span", { className: "metric-lbl" }, "DATA SAVED")), /* @__PURE__ */ import_react11.default.createElement("div", { className: "mac-metric-card" }, /* @__PURE__ */ import_react11.default.createElement("span", { className: "metric-val" }, shieldsStats.savedTimeMs ? (shieldsStats.savedTimeMs / 1e3).toFixed(2) + "s" : "0.00s"), /* @__PURE__ */ import_react11.default.createElement("span", { className: "metric-lbl" }, "TIME SAVED"))), /* @__PURE__ */ import_react11.default.createElement("div", { className: "mac-rule-bar" }, /* @__PURE__ */ import_react11.default.createElement(
+  ))), activeModuleTab === "shields" && /* @__PURE__ */ import_react15.default.createElement("div", { className: "mac-shields-view" }, /* @__PURE__ */ import_react15.default.createElement("div", { className: "mac-shields-hero" }, /* @__PURE__ */ import_react15.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: 10 } }, /* @__PURE__ */ import_react15.default.createElement("span", { style: { fontSize: "24px" } }, "\u{1F981}"), /* @__PURE__ */ import_react15.default.createElement("div", null, /* @__PURE__ */ import_react15.default.createElement("h3", { style: { fontSize: "15px", color: "#fff", margin: 0 } }, "Brave Shields Protection"), /* @__PURE__ */ import_react15.default.createElement("span", { style: { fontSize: "11px", color: "#94a3b8" } }, "EasyList + uBlock Origin \u2022 Sub-Microsecond Rust Engine"))), /* @__PURE__ */ import_react15.default.createElement("span", { style: { fontSize: "11px", color: "#10b981", fontWeight: 600 } }, "\u25CF Native Active")), /* @__PURE__ */ import_react15.default.createElement("div", { className: "mac-metrics-grid" }, /* @__PURE__ */ import_react15.default.createElement("div", { className: "mac-metric-card" }, /* @__PURE__ */ import_react15.default.createElement("span", { className: "metric-val" }, shieldsStats.totalBlocked || 0), /* @__PURE__ */ import_react15.default.createElement("span", { className: "metric-lbl" }, "TOTAL BLOCKED")), /* @__PURE__ */ import_react15.default.createElement("div", { className: "mac-metric-card" }, /* @__PURE__ */ import_react15.default.createElement("span", { className: "metric-val" }, shieldsStats.trackersBlocked || 0), /* @__PURE__ */ import_react15.default.createElement("span", { className: "metric-lbl" }, "TRACKERS")), /* @__PURE__ */ import_react15.default.createElement("div", { className: "mac-metric-card" }, /* @__PURE__ */ import_react15.default.createElement("span", { className: "metric-val" }, shieldsStats.savedBytes ? Math.round(shieldsStats.savedBytes / 1024) + " KB" : "0 KB"), /* @__PURE__ */ import_react15.default.createElement("span", { className: "metric-lbl" }, "DATA SAVED")), /* @__PURE__ */ import_react15.default.createElement("div", { className: "mac-metric-card" }, /* @__PURE__ */ import_react15.default.createElement("span", { className: "metric-val" }, shieldsStats.savedTimeMs ? (shieldsStats.savedTimeMs / 1e3).toFixed(2) + "s" : "0.00s"), /* @__PURE__ */ import_react15.default.createElement("span", { className: "metric-lbl" }, "TIME SAVED"))), /* @__PURE__ */ import_react15.default.createElement("div", { className: "mac-rule-bar" }, /* @__PURE__ */ import_react15.default.createElement(
     "input",
     {
       type: "text",
@@ -41047,7 +44303,7 @@ Analyzed request: "${query}"
         }
       }
     }
-  ), /* @__PURE__ */ import_react11.default.createElement(
+  ), /* @__PURE__ */ import_react15.default.createElement(
     "button",
     {
       className: "mac-pill-btn",
@@ -41059,35 +44315,35 @@ Analyzed request: "${query}"
       }
     },
     "+ Add Rule"
-  )), /* @__PURE__ */ import_react11.default.createElement("div", { className: "mac-events-container" }, /* @__PURE__ */ import_react11.default.createElement("span", { style: { fontSize: "11px", fontWeight: 700, color: "#94a3b8", textTransform: "uppercase" } }, "Recent Zero-Byte Interceptions"), /* @__PURE__ */ import_react11.default.createElement("div", { className: "mac-events-list" }, !shieldsStats.recentEvents || shieldsStats.recentEvents.length === 0 ? /* @__PURE__ */ import_react11.default.createElement("div", { style: { padding: "16px", textAlign: "center", color: "#64748b", fontSize: "12px" } }, "No tracking requests detected yet.") : shieldsStats.recentEvents.map((ev, i) => /* @__PURE__ */ import_react11.default.createElement("div", { key: i, className: "mac-event-item" }, /* @__PURE__ */ import_react11.default.createElement("span", { className: "event-tag" }, "BLOCKED"), /* @__PURE__ */ import_react11.default.createElement("span", { className: "event-url", title: ev.url }, ev.url)))))), activeModuleTab === "tools" && /* @__PURE__ */ import_react11.default.createElement("div", { className: "mac-tools-view" }, /* @__PURE__ */ import_react11.default.createElement("div", { className: "mac-sub-nav" }, /* @__PURE__ */ import_react11.default.createElement(
+  )), /* @__PURE__ */ import_react15.default.createElement("div", { className: "mac-events-container" }, /* @__PURE__ */ import_react15.default.createElement("span", { style: { fontSize: "11px", fontWeight: 700, color: "#94a3b8", textTransform: "uppercase" } }, "Recent Zero-Byte Interceptions"), /* @__PURE__ */ import_react15.default.createElement("div", { className: "mac-events-list" }, !shieldsStats.recentEvents || shieldsStats.recentEvents.length === 0 ? /* @__PURE__ */ import_react15.default.createElement("div", { style: { padding: "16px", textAlign: "center", color: "#64748b", fontSize: "12px" } }, "No tracking requests detected yet.") : shieldsStats.recentEvents.map((ev, i) => /* @__PURE__ */ import_react15.default.createElement("div", { key: i, className: "mac-event-item" }, /* @__PURE__ */ import_react15.default.createElement("span", { className: "event-tag" }, "BLOCKED"), /* @__PURE__ */ import_react15.default.createElement("span", { className: "event-url", title: ev.url }, ev.url)))))), activeModuleTab === "tools" && /* @__PURE__ */ import_react15.default.createElement("div", { className: "mac-tools-view" }, /* @__PURE__ */ import_react15.default.createElement("div", { className: "mac-sub-nav" }, /* @__PURE__ */ import_react15.default.createElement(
     "button",
     {
       className: `sub-btn ${activeToolTab === "ax" ? "active" : ""}`,
       onClick: () => setActiveToolTab("ax")
     },
     "\u{1F332} AX Tree & Grounding"
-  ), /* @__PURE__ */ import_react11.default.createElement(
+  ), /* @__PURE__ */ import_react15.default.createElement(
     "button",
     {
       className: `sub-btn ${activeToolTab === "grep" ? "active" : ""}`,
       onClick: () => setActiveToolTab("grep")
     },
     "\u{1F50D} In-Memory Grep"
-  ), /* @__PURE__ */ import_react11.default.createElement(
+  ), /* @__PURE__ */ import_react15.default.createElement(
     "button",
     {
       className: `sub-btn ${activeToolTab === "autofill" ? "active" : ""}`,
       onClick: () => setActiveToolTab("autofill")
     },
     "\u{1F4DD} Autofill"
-  ), /* @__PURE__ */ import_react11.default.createElement(
+  ), /* @__PURE__ */ import_react15.default.createElement(
     "button",
     {
       className: `sub-btn ${activeToolTab === "telemetry" ? "active" : ""}`,
       onClick: () => setActiveToolTab("telemetry")
     },
     "\u{1F504} Telemetry"
-  )), activeToolTab === "ax" && /* @__PURE__ */ import_react11.default.createElement("div", { className: "mac-tool-panel" }, /* @__PURE__ */ import_react11.default.createElement("div", { style: { display: "flex", gap: 8, marginBottom: 8 } }, /* @__PURE__ */ import_react11.default.createElement(
+  )), activeToolTab === "ax" && /* @__PURE__ */ import_react15.default.createElement("div", { className: "mac-tool-panel" }, /* @__PURE__ */ import_react15.default.createElement("div", { style: { display: "flex", gap: 8, marginBottom: 8 } }, /* @__PURE__ */ import_react15.default.createElement(
     "input",
     {
       type: "text",
@@ -41096,7 +44352,7 @@ Analyzed request: "${query}"
       value: markFilterQuery,
       onChange: (e) => setMarkFilterQuery(e.target.value)
     }
-  ), /* @__PURE__ */ import_react11.default.createElement("button", { className: "mac-pill-btn", onClick: handleCopyAx }, copiedAx ? "\u2713 Copied" : "\u{1F4CB} Copy"), /* @__PURE__ */ import_react11.default.createElement("button", { className: "mac-pill-btn", onClick: () => sendHudAction("rescan-ax", { tabId: activeTabId }) }, "\u{1F504} Rescan")), /* @__PURE__ */ import_react11.default.createElement("pre", { className: "mac-code-box" }, getFilteredAxContent())), activeToolTab === "grep" && /* @__PURE__ */ import_react11.default.createElement("div", { className: "mac-tool-panel" }, /* @__PURE__ */ import_react11.default.createElement("div", { style: { display: "flex", gap: 8, marginBottom: 8 } }, /* @__PURE__ */ import_react11.default.createElement(
+  ), /* @__PURE__ */ import_react15.default.createElement("button", { className: "mac-pill-btn", onClick: handleCopyAx }, copiedAx ? "\u2713 Copied" : "\u{1F4CB} Copy"), /* @__PURE__ */ import_react15.default.createElement("button", { className: "mac-pill-btn", onClick: () => sendHudAction("rescan-ax", { tabId: activeTabId }) }, "\u{1F504} Rescan")), /* @__PURE__ */ import_react15.default.createElement("pre", { className: "mac-code-box" }, getFilteredAxContent())), activeToolTab === "grep" && /* @__PURE__ */ import_react15.default.createElement("div", { className: "mac-tool-panel" }, /* @__PURE__ */ import_react15.default.createElement("div", { style: { display: "flex", gap: 8, marginBottom: 8 } }, /* @__PURE__ */ import_react15.default.createElement(
     "input",
     {
       type: "text",
@@ -41110,7 +44366,7 @@ Analyzed request: "${query}"
         }
       }
     }
-  ), /* @__PURE__ */ import_react11.default.createElement(
+  ), /* @__PURE__ */ import_react15.default.createElement(
     "button",
     {
       className: "mac-pill-btn",
@@ -41119,7 +44375,7 @@ Analyzed request: "${query}"
       }
     },
     "Execute Grep"
-  )), /* @__PURE__ */ import_react11.default.createElement("div", { className: "mac-code-box" }, grepMatches.length === 0 ? /* @__PURE__ */ import_react11.default.createElement("div", { style: { color: "#64748b", textAlign: "center", padding: "16px" } }, "No grep matches found. Type a query above.") : grepMatches.map((m, i) => /* @__PURE__ */ import_react11.default.createElement("div", { key: i, style: { padding: "4px 0", borderBottom: "1px solid rgba(255,255,255,0.05)", fontFamily: "var(--font-mono)" } }, typeof m === "object" ? JSON.stringify(m) : String(m))))), activeToolTab === "autofill" && /* @__PURE__ */ import_react11.default.createElement("div", { className: "mac-tool-panel" }, /* @__PURE__ */ import_react11.default.createElement("div", { style: { padding: "12px", background: "rgba(255,255,255,0.03)", borderRadius: 8, marginBottom: 12 } }, /* @__PURE__ */ import_react11.default.createElement("h4", { style: { color: "#fff", fontSize: "13px", marginBottom: 4 } }, "Autofill Engine (`components/autofill`)"), /* @__PURE__ */ import_react11.default.createElement("p", { style: { color: "#94a3b8", fontSize: "11px", margin: 0 } }, "Populate checkout and login fields using in-process C++ AutofillProfile heuristics.")), /* @__PURE__ */ import_react11.default.createElement("div", { style: { display: "flex", gap: 8 } }, /* @__PURE__ */ import_react11.default.createElement("button", { className: "mac-pill-btn", onClick: () => sendHudAction("trigger-autofill", { tabId: activeTabId }) }, "\u26A1 Execute Autofill Now"), /* @__PURE__ */ import_react11.default.createElement("button", { className: "mac-pill-btn", onClick: () => sendHudAction("load-demo", { demoType: "checkout" }) }, "Load Checkout Demo")), /* @__PURE__ */ import_react11.default.createElement("div", { style: { marginTop: 12, padding: "10px", background: "rgba(0,0,0,0.3)", borderRadius: 6, fontSize: "11px", color: "#10b981", fontFamily: "var(--font-mono)" } }, autofillStatus)), activeToolTab === "telemetry" && /* @__PURE__ */ import_react11.default.createElement("div", { className: "mac-tool-panel" }, /* @__PURE__ */ import_react11.default.createElement("div", { style: { display: "flex", justifyContent: "space-between", marginBottom: 8 } }, /* @__PURE__ */ import_react11.default.createElement("span", { style: { fontSize: "11px", color: "#94a3b8" } }, "Live In-Process Event Bus"), /* @__PURE__ */ import_react11.default.createElement("button", { className: "mac-pill-btn", onClick: () => setTelemetryLogs([]) }, "Clear Logs")), /* @__PURE__ */ import_react11.default.createElement("div", { className: "mac-code-box" }, telemetryLogs.length === 0 ? /* @__PURE__ */ import_react11.default.createElement("div", { style: { color: "#64748b", textAlign: "center", padding: "16px" } }, "No events logged yet.") : [...telemetryLogs].reverse().map((log, i) => /* @__PURE__ */ import_react11.default.createElement("div", { key: i, style: { padding: "3px 0", fontSize: "11px", fontFamily: "var(--font-mono)" } }, /* @__PURE__ */ import_react11.default.createElement("span", { style: { color: "#64748b" } }, "[", log.time, "] "), /* @__PURE__ */ import_react11.default.createElement("span", { style: { color: log.type === "act" ? "#00e5ff" : log.type === "verify" ? "#10b981" : "#e2e8f0" } }, log.msg))))))));
+  )), /* @__PURE__ */ import_react15.default.createElement("div", { className: "mac-code-box" }, grepMatches.length === 0 ? /* @__PURE__ */ import_react15.default.createElement("div", { style: { color: "#64748b", textAlign: "center", padding: "16px" } }, "No grep matches found. Type a query above.") : grepMatches.map((m, i) => /* @__PURE__ */ import_react15.default.createElement("div", { key: i, style: { padding: "4px 0", borderBottom: "1px solid rgba(255,255,255,0.05)", fontFamily: "var(--font-mono)" } }, typeof m === "object" ? JSON.stringify(m) : String(m))))), activeToolTab === "autofill" && /* @__PURE__ */ import_react15.default.createElement("div", { className: "mac-tool-panel" }, /* @__PURE__ */ import_react15.default.createElement("div", { style: { padding: "12px", background: "rgba(255,255,255,0.03)", borderRadius: 8, marginBottom: 12 } }, /* @__PURE__ */ import_react15.default.createElement("h4", { style: { color: "#fff", fontSize: "13px", marginBottom: 4 } }, "Autofill Engine (`components/autofill`)"), /* @__PURE__ */ import_react15.default.createElement("p", { style: { color: "#94a3b8", fontSize: "11px", margin: 0 } }, "Populate checkout and login fields using in-process C++ AutofillProfile heuristics.")), /* @__PURE__ */ import_react15.default.createElement("div", { style: { display: "flex", gap: 8 } }, /* @__PURE__ */ import_react15.default.createElement("button", { className: "mac-pill-btn", onClick: () => sendHudAction("trigger-autofill", { tabId: activeTabId }) }, "\u26A1 Execute Autofill Now"), /* @__PURE__ */ import_react15.default.createElement("button", { className: "mac-pill-btn", onClick: () => sendHudAction("load-demo", { demoType: "checkout" }) }, "Load Checkout Demo")), /* @__PURE__ */ import_react15.default.createElement("div", { style: { marginTop: 12, padding: "10px", background: "rgba(0,0,0,0.3)", borderRadius: 6, fontSize: "11px", color: "#10b981", fontFamily: "var(--font-mono)" } }, autofillStatus)), activeToolTab === "telemetry" && /* @__PURE__ */ import_react15.default.createElement("div", { className: "mac-tool-panel" }, /* @__PURE__ */ import_react15.default.createElement("div", { style: { display: "flex", justifyContent: "space-between", marginBottom: 8 } }, /* @__PURE__ */ import_react15.default.createElement("span", { style: { fontSize: "11px", color: "#94a3b8" } }, "Live In-Process Event Bus"), /* @__PURE__ */ import_react15.default.createElement("button", { className: "mac-pill-btn", onClick: () => setTelemetryLogs([]) }, "Clear Logs")), /* @__PURE__ */ import_react15.default.createElement("div", { className: "mac-code-box" }, telemetryLogs.length === 0 ? /* @__PURE__ */ import_react15.default.createElement("div", { style: { color: "#64748b", textAlign: "center", padding: "16px" } }, "No events logged yet.") : [...telemetryLogs].reverse().map((log, i) => /* @__PURE__ */ import_react15.default.createElement("div", { key: i, style: { padding: "3px 0", fontSize: "11px", fontFamily: "var(--font-mono)" } }, /* @__PURE__ */ import_react15.default.createElement("span", { style: { color: "#64748b" } }, "[", log.time, "] "), /* @__PURE__ */ import_react15.default.createElement("span", { style: { color: log.type === "act" ? "#00e5ff" : log.type === "verify" ? "#10b981" : "#e2e8f0" } }, log.msg))))))));
 }
 
 // desktop/src/index.jsx
@@ -41129,10 +44385,10 @@ if (container) {
   const params = new URLSearchParams(window.location.search);
   const isDetached = params.get("view") === "detached-hud" || window.location.hash === "#detached-hud";
   if (isDetached) {
-    root.render(/* @__PURE__ */ import_react12.default.createElement(DetachedAiHudCockpit, null));
+    root.render(/* @__PURE__ */ import_react16.default.createElement(DetachedAiHudCockpit, null));
     console.log("[Antigravity] React Detached AI Cockpit mounted successfully.");
   } else {
-    root.render(/* @__PURE__ */ import_react12.default.createElement(App, null));
+    root.render(/* @__PURE__ */ import_react16.default.createElement(App, null));
     console.log("[Antigravity] React Desktop App mounted successfully.");
   }
 } else {

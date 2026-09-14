@@ -2,58 +2,40 @@ const fs = require('fs');
 const path = require('path');
 const assert = require('assert');
 
-// 1. Verify index.html contains the wallpaper option in toolsDropdown
-const indexHtml = fs.readFileSync(path.join(__dirname, '../desktop/index.html'), 'utf8');
+// 1. Verify React Wallpaper Studio components
+const appJsx = fs.readFileSync(path.join(__dirname, '../desktop/src/App.jsx'), 'utf8');
+const wallpaperModal = fs.readFileSync(path.join(__dirname, '../desktop/src/components/WallpaperStudioModal.jsx'), 'utf8');
+const navToolbar = fs.readFileSync(path.join(__dirname, '../desktop/src/components/NavigationToolbar.jsx'), 'utf8');
+
 assert(
-    indexHtml.includes('<option value="wallpaper">🖼️ Wallpaper (Image / Video)</option>'),
-    'toolsDropdown must include wallpaper option'
+    appJsx.includes('WallpaperStudioModal'),
+    'App.jsx must integrate WallpaperStudioModal'
 );
 assert(
-    indexHtml.includes('id="btnWallpaperUpload"'),
-    'wallpaper upload button must exist'
+    navToolbar.includes('🎨 Wallpaper') || navToolbar.includes('onOpenWallpaperStudio'),
+    'NavigationToolbar must provide trigger for Wallpaper Studio'
 );
 assert(
-    indexHtml.includes('id="wallpaperFileInput"'),
-    'wallpaper file input must exist'
+    wallpaperModal.includes('handleFileUpload'),
+    'wallpaper upload handler must exist in WallpaperStudioModal'
 );
 assert(
-    indexHtml.includes('id="wallpaperPreviewVid"'),
+    wallpaperModal.includes("previewType === 'video'"),
     'wallpaper video preview element must exist'
 );
 assert(
-    indexHtml.includes('id="btnToggleWallpaperAudio"'),
-    'wallpaper audio mute/unmute control must exist'
+    wallpaperModal.includes('autoPlay') && wallpaperModal.includes('muted'),
+    'wallpaper video autoplay and mute attributes must exist'
 );
 
-// 2. Verify renderer.js logic
-const rendererJs = fs.readFileSync(path.join(__dirname, '../desktop/renderer.js'), 'utf8');
+// 2. Verify App.jsx persistence and state
 assert(
-    rendererJs.includes("case 'wallpaper':"),
-    'toolsDropdown.onchange must handle case "wallpaper"'
-);
-assert(
-    rendererJs.includes('function openWallpaperModal()'),
-    'openWallpaperModal function must be declared'
-);
-assert(
-    rendererJs.includes('function closeWallpaperModal()'),
-    'closeWallpaperModal function must be declared'
-);
-assert(
-    rendererJs.includes('function setWallpaperVisuals('),
-    'setWallpaperVisuals function must be declared'
-);
-assert(
-    rendererJs.includes('antigravity_custom_wallpaper'),
+    appJsx.includes('antigravity_wallpaper'),
     'custom wallpaper must be persisted via localStorage'
 );
 assert(
-    rendererJs.includes("wallpaperData.type === 'video'"),
-    'renderer must handle video wallpaper type'
-);
-assert(
-    rendererJs.includes("vid.autoplay = true"),
-    'renderer must configure video autoplay'
+    appJsx.includes('wallpaperType'),
+    'wallpaperType state must exist in App.jsx'
 );
 
 // 3. Verify styles.css

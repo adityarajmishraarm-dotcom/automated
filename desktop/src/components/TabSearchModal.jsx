@@ -93,7 +93,7 @@ export default function TabSearchModal({
                                     }}
                                 >
                                     <span style={{ fontSize: '16px' }}>
-                                        {tab.url && tab.url.startsWith('https://') ? '🌐' : '✨'}
+                                        {tab.url && tab.url.startsWith('https://') ? '🌐' : '📄'}
                                     </span>
                                     <div style={{ flex: 1, minWidth: 0 }}>
                                         <div className="palette-result-title">

@@ -77,7 +77,6 @@ export default function NewTabPage({
 
                 {/* Brand Badge */}
                 <div className="brand-badge">
-                    <span>✨</span>
                     <span>ANTIGRAVITY NATIVE BROWSER</span>
                 </div>
 

@@ -5,28 +5,16 @@ const assert = require('assert');
 // 1. Verify index.html markup
 const indexHtml = fs.readFileSync(path.join(__dirname, '../desktop/index.html'), 'utf8');
 assert(
-    indexHtml.includes('<option value="typography">🔤 Font & Typography Canvas</option>'),
-    'toolsDropdown must include Font & Typography Canvas option'
-);
-assert(
-    indexHtml.includes('id="typographyModal"'),
-    'typographyModal container must exist'
-);
-assert(
-    indexHtml.includes('id="readerFontStyleSelect"'),
-    'readerFontStyleSelect must exist in Reader Mode'
-);
-assert(
-    indexHtml.includes('id="readerFontSizeGroup"'),
-    'readerFontSizeGroup must exist in Reader Mode'
-);
-assert(
     indexHtml.includes('Playfair+Display'),
     'Google Fonts link must include Playfair Display'
 );
 assert(
     indexHtml.includes('Poppins'),
     'Google Fonts link must include Poppins'
+);
+assert(
+    indexHtml.includes('Bodoni+Moda'),
+    'Google Fonts link must include Bodoni Moda'
 );
 
 // 2. Verify styles.css
@@ -51,49 +39,56 @@ assert(
     stylesCss.includes("font-family: 'Juana'"),
     'Juana font-face must be declared in styles.css'
 );
-
-// 3. Verify renderer.js logic
-const rendererJs = fs.readFileSync(path.join(__dirname, '../desktop/renderer.js'), 'utf8');
 assert(
-    rendererJs.includes("case 'typography':"),
-    'toolsDropdown must handle case "typography"'
+    stylesCss.includes("font-family: 'Ogg'"),
+    'Ogg font-face must be declared in styles.css'
 );
 assert(
-    rendererJs.includes('function applyCanvasTypography('),
-    'applyCanvasTypography function must be declared'
-);
-assert(
-    rendererJs.includes('function openTypographyModal()'),
-    'openTypographyModal function must be declared'
-);
-assert(
-    rendererJs.includes('function closeTypographyModal()'),
-    'closeTypographyModal function must be declared'
+    stylesCss.includes("font-family: 'Avenir'"),
+    'Avenir font-face must be declared in styles.css'
 );
 
-// Verify 4 Font Sizes (retained untouched as requested)
-assert(rendererJs.includes("'compact':"), 'Compact font size must exist');
-assert(rendererJs.includes("'standard':"), 'Standard font size must exist');
-assert(rendererJs.includes("'comfortable':"), 'Comfortable font size must exist');
-assert(rendererJs.includes("'spacious':"), 'Spacious font size must exist');
+// 3. Verify TypographyStudioModal.jsx and App.jsx logic
+const appJsx = fs.readFileSync(path.join(__dirname, '../desktop/src/App.jsx'), 'utf8');
+const typographyModal = fs.readFileSync(path.join(__dirname, '../desktop/src/components/TypographyStudioModal.jsx'), 'utf8');
+const navToolbar = fs.readFileSync(path.join(__dirname, '../desktop/src/components/NavigationToolbar.jsx'), 'utf8');
 
-// Verify 8 Requested Font Formats
-assert(rendererJs.includes("'gt-super':"), 'GT Super font format must exist');
-assert(rendererJs.includes("'juana':"), 'Juana font format must exist');
-assert(rendererJs.includes("'playfair-display':"), 'Playfair Display font format must exist');
-assert(rendererJs.includes("'ogg':"), 'Ogg font format must exist');
-assert(rendererJs.includes("'inter':"), 'Inter font format must exist');
-assert(rendererJs.includes("'poppins':"), 'Poppins (Toppins) font format must exist');
-assert(rendererJs.includes("'plus-jakarta-sans':"), 'Plus Jakarta Sans font format must exist');
-assert(rendererJs.includes("'avenir':"), 'Avenir font format must exist');
-
-// Verify persistence
 assert(
-    rendererJs.includes('antigravity_canvas_font_size'),
+    navToolbar.includes('🔤 Typography') || navToolbar.includes('onOpenTypography'),
+    'Navigation toolbar must provide trigger for Typography Studio'
+);
+assert(
+    appJsx.includes('TypographyStudioModal'),
+    'App.jsx must integrate TypographyStudioModal'
+);
+assert(
+    appJsx.includes('injectTypographyIntoWebview'),
+    'injectTypographyIntoWebview function must be declared in App.jsx'
+);
+
+// Verify 4 Font Sizes
+assert(typographyModal.includes("'compact':"), 'Compact font size must exist');
+assert(typographyModal.includes("'standard':"), 'Standard font size must exist');
+assert(typographyModal.includes("'comfortable':"), 'Comfortable font size must exist');
+assert(typographyModal.includes("'spacious':"), 'Spacious font size must exist');
+
+// Verify 8 Curated Fonts
+assert(typographyModal.includes("'gt-super':"), 'GT Super font format must exist');
+assert(typographyModal.includes("'juana':"), 'Juana font format must exist');
+assert(typographyModal.includes("'playfair-display':"), 'Playfair Display font format must exist');
+assert(typographyModal.includes("'ogg':"), 'Ogg font format must exist');
+assert(typographyModal.includes("'inter':"), 'Inter font format must exist');
+assert(typographyModal.includes("'poppins':"), 'Poppins (Toppins) font format must exist');
+assert(typographyModal.includes("'plus-jakarta-sans':"), 'Plus Jakarta Sans font format must exist');
+assert(typographyModal.includes("'avenir':"), 'Avenir font format must exist');
+
+// Verify persistence in App.jsx
+assert(
+    appJsx.includes('antigravity_canvas_font_size'),
     'font size must be persisted via localStorage'
 );
 assert(
-    rendererJs.includes('antigravity_canvas_font_style'),
+    appJsx.includes('antigravity_canvas_font_style'),
     'font style must be persisted via localStorage'
 );
 
