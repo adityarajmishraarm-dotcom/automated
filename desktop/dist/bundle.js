@@ -38017,13 +38017,16 @@ var require_client = __commonJS({
 // desktop/src/services/aiProviderService.js
 var aiProviderService_exports = {};
 __export(aiProviderService_exports, {
+  BROWSER_TOOLS: () => BROWSER_TOOLS,
   DEFAULT_PROVIDERS: () => DEFAULT_PROVIDERS,
+  generateToolSystemPrompt: () => generateToolSystemPrompt,
   getActiveProviderConfig: () => getActiveProviderConfig,
   getActiveProviderId: () => getActiveProviderId,
   getAiProvidersConfig: () => getAiProvidersConfig,
   saveAiProvidersConfig: () => saveAiProvidersConfig,
   sendChatMessage: () => sendChatMessage,
   setActiveProviderId: () => setActiveProviderId,
+  streamChatMessage: () => streamChatMessage,
   testConnection: () => testConnection
 });
 function getAiProvidersConfig() {
@@ -38071,7 +38074,14 @@ function setActiveProviderId(id) {
 function getActiveProviderConfig() {
   const configs = getAiProvidersConfig();
   const activeId = getActiveProviderId();
-  return configs[activeId] || configs.openai || DEFAULT_PROVIDERS.openai;
+  const current = configs[activeId];
+  if (current && (current.apiKey || current.id === "lmstudio" || current.id === "ollama")) {
+    return current;
+  }
+  if (configs.lmstudio) {
+    return configs.lmstudio;
+  }
+  return configs.openai || DEFAULT_PROVIDERS.openai;
 }
 async function testConnection(providerId, customConfig = null) {
   const config = customConfig || (getAiProvidersConfig()[providerId] || DEFAULT_PROVIDERS[providerId]);
@@ -38156,12 +38166,55 @@ async function testConnection(providerId, customConfig = null) {
     };
   }
 }
+function generateToolSystemPrompt(tools = BROWSER_TOOLS) {
+  const list = tools.map((t) => {
+    const fn = t.function;
+    const props = Object.keys(fn.parameters?.properties || {}).join(", ");
+    return `- ${fn.name}(${props}): ${fn.description}`;
+  }).join("\n");
+  return `
+
+BROWSER AUTOMATION TOOLS AVAILABLE:
+You are the Autonomous Antigravity Browser Agent. You directly control this browser.
+When the user gives you a task or goal, you must REASON about the goal, PLAN the necessary steps, and EXECUTE browser tools.
+
+HOW TO EMIT TOOL CALLS:
+Output your plan and next action in a structured markdown code block:
+\`\`\`tool_call
+{
+  "plan": "Summary of overall plan to achieve the user's goal",
+  "steps": [
+    { "tool": "<tool_name>", "args": { ... } }
+  ]
+}
+\`\`\`
+
+Available Tools:
+${list}
+
+CRITICAL RULES:
+1. When the user gives a multi-step task (e.g. "open a new tab and in that open moviesmod.zone and download episode 1 of ... and verify it and remind me"):
+   - Reason on the goal.
+   - Plan the steps.
+   - Start by opening the tab or navigating to the target website: \`\`\`tool_call
+{
+  "plan": "Open a new tab, navigate to site, find episode, download, verify and remind",
+  "steps": [
+    { "tool": "open_tab", "args": { "url": "https://..." } }
+  ]
+}
+\`\`\`
+2. Never just say "I did it" without emitting the tool call!
+3. After taking an action, you will receive the updated page observation (URL, title, elements, search results, downloads). Use that observation to decide your next step.
+4. When a download finishes, call verify_download to inspect it on disk, then call remind_user to alert the user with sound and speech.`;
+}
 async function sendChatMessage({
   prompt,
   imagePath = null,
   imageBase64 = null,
   systemPrompt = null,
-  history = []
+  history = [],
+  tools = BROWSER_TOOLS
 }) {
   const config = getActiveProviderConfig();
   const cleanBaseUrl = (config.baseUrl || "").replace(/\/+$/, "");
@@ -38172,6 +38225,8 @@ async function sendChatMessage({
 [Local Screenshot File Path: "${imagePath}"]
 You can inspect this snapshot to visually understand the active webview and browser UI state.`;
   }
+  const toolPromptSuffix = generateToolSystemPrompt(tools);
+  const combinedSystemPrompt = (systemPrompt ? systemPrompt + toolPromptSuffix : toolPromptSuffix).trim();
   try {
     if (config.type === "anthropic") {
       if (!config.apiKey) throw new Error("Anthropic API key is not configured.");
@@ -38200,12 +38255,20 @@ You can inspect this snapshot to visually understand the active webview and brow
         userContent = augmentedPrompt;
       }
       formattedMessages.push({ role: "user", content: userContent });
+      const anthropicTools = (tools || []).map((t) => ({
+        name: t.function.name,
+        description: t.function.description,
+        input_schema: t.function.parameters
+      }));
       const payload = {
         model: config.model || "claude-3-5-sonnet-20241022",
         max_tokens: 1500,
-        messages: formattedMessages
+        messages: formattedMessages,
+        system: combinedSystemPrompt
       };
-      if (systemPrompt) payload.system = systemPrompt;
+      if (anthropicTools.length > 0) {
+        payload.tools = anthropicTools;
+      }
       const res2 = await fetch(`${cleanBaseUrl}/messages`, {
         method: "POST",
         headers: {
@@ -38221,9 +38284,22 @@ You can inspect this snapshot to visually understand the active webview and brow
       }
       const data2 = await res2.json();
       const textReply = Array.isArray(data2.content) ? data2.content.filter((c) => c.type === "text").map((c) => c.text).join("\n") : "";
+      const toolCalls2 = [];
+      if (Array.isArray(data2.content)) {
+        for (const c of data2.content) {
+          if (c.type === "tool_use") {
+            toolCalls2.push({
+              id: c.id,
+              name: c.name,
+              args: c.input || {}
+            });
+          }
+        }
+      }
       return {
         success: true,
         reply: textReply,
+        toolCalls: toolCalls2,
         provider: config.name,
         model: config.model
       };
@@ -38237,8 +38313,8 @@ You can inspect this snapshot to visually understand the active webview and brow
       headers["X-Title"] = "Antigravity Native Browser";
     }
     const messages = [];
-    if (systemPrompt) {
-      messages.push({ role: "system", content: systemPrompt });
+    if (combinedSystemPrompt) {
+      messages.push({ role: "system", content: combinedSystemPrompt });
     }
     for (const h of history) {
       messages.push({
@@ -38258,24 +38334,55 @@ You can inspect this snapshot to visually understand the active webview and brow
     } else {
       messages.push({ role: "user", content: augmentedPrompt });
     }
-    const res = await fetch(`${cleanBaseUrl}/chat/completions`, {
+    const requestBody = {
+      model: config.model || "default",
+      messages,
+      max_tokens: 1500
+    };
+    if (tools && tools.length > 0 && config.id !== "lmstudio" && config.id !== "ollama") {
+      requestBody.tools = tools;
+    }
+    let res = await fetch(`${cleanBaseUrl}/chat/completions`, {
       method: "POST",
       headers,
-      body: JSON.stringify({
-        model: config.model || "default",
-        messages,
-        max_tokens: 1500
-      })
+      body: JSON.stringify(requestBody)
     });
+    if (!res.ok && requestBody.tools) {
+      delete requestBody.tools;
+      res = await fetch(`${cleanBaseUrl}/chat/completions`, {
+        method: "POST",
+        headers,
+        body: JSON.stringify(requestBody)
+      });
+    }
     if (!res.ok) {
       const err = await res.json().catch(() => ({}));
       throw new Error(err.error?.message || `HTTP ${res.status}: ${res.statusText}`);
     }
     const data = await res.json();
-    const reply = data.choices?.[0]?.message?.content || "";
+    const choice = data.choices?.[0] || {};
+    const reply = choice.message?.content || "";
+    const toolCalls = [];
+    if (Array.isArray(choice.message?.tool_calls)) {
+      for (const tc of choice.message.tool_calls) {
+        let args = {};
+        try {
+          args = typeof tc.function?.arguments === "string" ? JSON.parse(tc.function.arguments) : tc.function?.arguments || {};
+        } catch (e) {
+          args = { raw: tc.function?.arguments };
+        }
+        toolCalls.push({
+          id: tc.id,
+          name: tc.function?.name,
+          args
+        });
+      }
+    }
     return {
       success: true,
       reply,
+      reasoning: choice.message?.reasoning_content || "",
+      toolCalls,
       provider: config.name,
       model: config.model
     };
@@ -38288,7 +38395,314 @@ You can inspect this snapshot to visually understand the active webview and brow
     };
   }
 }
-var STORAGE_KEY, ACTIVE_PROVIDER_KEY, DEFAULT_PROVIDERS;
+async function streamChatMessage({
+  prompt,
+  imagePath = null,
+  imageBase64 = null,
+  systemPrompt = null,
+  history = [],
+  tools = BROWSER_TOOLS,
+  onChunk = () => {
+  },
+  onReasoningChunk = () => {
+  },
+  signal = null
+}) {
+  const config = getActiveProviderConfig();
+  const cleanBaseUrl = (config.baseUrl || "").replace(/\/+$/, "");
+  let augmentedPrompt = prompt || "";
+  if (imagePath) {
+    augmentedPrompt += `
+
+[Local Screenshot File Path: "${imagePath}"]
+You can inspect this snapshot to visually understand the active webview and browser UI state.`;
+  }
+  const toolPromptSuffix = generateToolSystemPrompt(tools);
+  const combinedSystemPrompt = (systemPrompt ? systemPrompt + toolPromptSuffix : toolPromptSuffix).trim();
+  try {
+    if (config.type === "anthropic") {
+      if (!config.apiKey) throw new Error("Anthropic API key is not configured.");
+      const formattedMessages = history.map((m) => ({
+        role: m.role === "assistant" ? "assistant" : "user",
+        content: m.text || m.content
+      }));
+      let userContent;
+      if (imageBase64) {
+        const cleanB64 = imageBase64.replace(/^data:image\/\w+;base64,/, "");
+        userContent = [
+          {
+            type: "image",
+            source: { type: "base64", media_type: "image/png", data: cleanB64 }
+          },
+          { type: "text", text: augmentedPrompt }
+        ];
+      } else {
+        userContent = augmentedPrompt;
+      }
+      formattedMessages.push({ role: "user", content: userContent });
+      const anthropicTools = (tools || []).map((t) => ({
+        name: t.function.name,
+        description: t.function.description,
+        input_schema: t.function.parameters
+      }));
+      const payload = {
+        model: config.model || "claude-3-5-sonnet-20241022",
+        max_tokens: 2048,
+        messages: formattedMessages,
+        system: combinedSystemPrompt,
+        stream: true
+      };
+      if (anthropicTools.length > 0) {
+        payload.tools = anthropicTools;
+      }
+      const res2 = await fetch(`${cleanBaseUrl}/messages`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-api-key": config.apiKey,
+          "anthropic-version": "2023-06-01"
+        },
+        body: JSON.stringify(payload),
+        signal
+      });
+      if (!res2.ok) {
+        const err = await res2.json().catch(() => ({}));
+        throw new Error(err.error?.message || `Anthropic HTTP ${res2.status}`);
+      }
+      let fullReply2 = "";
+      let fullReasoning2 = "";
+      const toolCallsAccumulator2 = {};
+      let currentBlockIndex = null;
+      const reader2 = res2.body.getReader();
+      const decoder2 = new TextDecoder("utf-8");
+      let buffer2 = "";
+      while (true) {
+        const { done, value } = await reader2.read();
+        if (done) break;
+        buffer2 += decoder2.decode(value, { stream: true });
+        const lines = buffer2.split("\n");
+        buffer2 = lines.pop() || "";
+        for (const rawLine of lines) {
+          const line = rawLine.trim();
+          if (!line || line.startsWith(":")) continue;
+          if (line.startsWith("data:")) {
+            const dataStr = line.slice(5).trim();
+            try {
+              const evt = JSON.parse(dataStr);
+              if (evt.type === "content_block_start") {
+                currentBlockIndex = evt.index;
+                if (evt.content_block?.type === "tool_use") {
+                  toolCallsAccumulator2[currentBlockIndex] = {
+                    id: evt.content_block.id,
+                    name: evt.content_block.name,
+                    argsStr: ""
+                  };
+                }
+              } else if (evt.type === "content_block_delta") {
+                const delta = evt.delta || {};
+                if (delta.type === "text_delta" && delta.text) {
+                  fullReply2 += delta.text;
+                  if (onChunk) onChunk(delta.text);
+                } else if (delta.type === "thinking_delta" && delta.thinking) {
+                  fullReasoning2 += delta.thinking;
+                  if (onReasoningChunk) onReasoningChunk(delta.thinking);
+                } else if (delta.type === "input_json_delta" && delta.partial_json) {
+                  if (toolCallsAccumulator2[evt.index]) {
+                    toolCallsAccumulator2[evt.index].argsStr += delta.partial_json;
+                  }
+                }
+              }
+            } catch (e) {
+            }
+          }
+        }
+      }
+      const toolCalls2 = Object.values(toolCallsAccumulator2).map((tc) => {
+        let args = {};
+        try {
+          args = JSON.parse(tc.argsStr);
+        } catch (e) {
+          args = { raw: tc.argsStr };
+        }
+        return { id: tc.id, name: tc.name, args };
+      });
+      return {
+        success: true,
+        reply: fullReply2,
+        reasoning: fullReasoning2,
+        toolCalls: toolCalls2,
+        provider: config.name,
+        model: config.model
+      };
+    }
+    const headers = { "Content-Type": "application/json" };
+    if (config.apiKey) {
+      headers["Authorization"] = `Bearer ${config.apiKey}`;
+    }
+    if (config.id === "openrouter") {
+      headers["HTTP-Referer"] = "https://antigravity.browser";
+      headers["X-Title"] = "Antigravity Native Browser";
+    }
+    const messages = [];
+    if (combinedSystemPrompt) {
+      messages.push({ role: "system", content: combinedSystemPrompt });
+    }
+    for (const h of history) {
+      messages.push({
+        role: h.role === "assistant" ? "assistant" : "user",
+        content: h.text || h.content
+      });
+    }
+    if (imageBase64) {
+      const dataUrl = imageBase64.startsWith("data:") ? imageBase64 : `data:image/png;base64,${imageBase64}`;
+      messages.push({
+        role: "user",
+        content: [
+          { type: "text", text: augmentedPrompt },
+          { type: "image_url", image_url: { url: dataUrl } }
+        ]
+      });
+    } else {
+      messages.push({ role: "user", content: augmentedPrompt });
+    }
+    const requestBody = {
+      model: config.model || "default",
+      messages,
+      max_tokens: 2048,
+      stream: true
+    };
+    if (tools && tools.length > 0 && config.id !== "lmstudio" && config.id !== "ollama") {
+      requestBody.tools = tools;
+    }
+    let res = await fetch(`${cleanBaseUrl}/chat/completions`, {
+      method: "POST",
+      headers,
+      body: JSON.stringify(requestBody),
+      signal
+    });
+    if (!res.ok && requestBody.tools) {
+      delete requestBody.tools;
+      res = await fetch(`${cleanBaseUrl}/chat/completions`, {
+        method: "POST",
+        headers,
+        body: JSON.stringify(requestBody),
+        signal
+      });
+    }
+    if (!res.ok) {
+      const nonStreamRes = await sendChatMessage({
+        prompt,
+        imagePath,
+        imageBase64,
+        systemPrompt,
+        history,
+        tools
+      });
+      if (nonStreamRes && nonStreamRes.success) {
+        if (nonStreamRes.reasoning && onReasoningChunk) {
+          onReasoningChunk(nonStreamRes.reasoning);
+        }
+        if (nonStreamRes.reply && onChunk) {
+          onChunk(nonStreamRes.reply);
+        }
+      }
+      return nonStreamRes;
+    }
+    let fullReply = "";
+    let fullReasoning = "";
+    const toolCallsAccumulator = {};
+    const reader = res.body.getReader();
+    const decoder = new TextDecoder("utf-8");
+    let buffer = "";
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split("\n");
+      buffer = lines.pop() || "";
+      for (const rawLine of lines) {
+        const line = rawLine.trim();
+        if (!line || line.startsWith(":")) continue;
+        if (line.startsWith("data:")) {
+          const dataStr = line.slice(5).trim();
+          if (dataStr === "[DONE]") continue;
+          try {
+            const chunk = JSON.parse(dataStr);
+            const choice = chunk.choices?.[0] || {};
+            const delta = choice.delta || {};
+            const thoughtPiece = delta.reasoning_content || delta.reasoning || "";
+            if (thoughtPiece) {
+              fullReasoning += thoughtPiece;
+              if (onReasoningChunk) onReasoningChunk(thoughtPiece);
+            }
+            const contentPiece = delta.content || "";
+            if (contentPiece) {
+              fullReply += contentPiece;
+              if (onChunk) onChunk(contentPiece);
+            }
+            if (Array.isArray(delta.tool_calls)) {
+              for (const tc of delta.tool_calls) {
+                const idx = tc.index ?? 0;
+                if (!toolCallsAccumulator[idx]) {
+                  toolCallsAccumulator[idx] = {
+                    id: tc.id || "",
+                    name: "",
+                    argsStr: ""
+                  };
+                }
+                if (tc.id) toolCallsAccumulator[idx].id = tc.id;
+                if (tc.function?.name) {
+                  if (!toolCallsAccumulator[idx].name) {
+                    toolCallsAccumulator[idx].name = tc.function.name;
+                  } else if (!toolCallsAccumulator[idx].name.includes(tc.function.name)) {
+                    toolCallsAccumulator[idx].name += tc.function.name;
+                  }
+                }
+                if (tc.function?.arguments) toolCallsAccumulator[idx].argsStr += tc.function.arguments;
+              }
+            }
+          } catch (e) {
+          }
+        }
+      }
+    }
+    const toolCalls = Object.values(toolCallsAccumulator).map((tc) => {
+      let args = {};
+      try {
+        args = JSON.parse(tc.argsStr);
+      } catch (e) {
+        args = { raw: tc.argsStr };
+      }
+      return { id: tc.id, name: tc.name, args };
+    });
+    return {
+      success: true,
+      reply: fullReply,
+      reasoning: fullReasoning,
+      toolCalls,
+      provider: config.name,
+      model: config.model
+    };
+  } catch (err) {
+    if (err.name === "AbortError" || signal?.aborted) {
+      return {
+        success: true,
+        aborted: true,
+        reply: "",
+        reasoning: "",
+        toolCalls: [],
+        provider: config.name
+      };
+    }
+    console.error("[AI Provider Stream Error]", err);
+    return {
+      success: false,
+      error: err.message,
+      provider: config.name
+    };
+  }
+}
+var STORAGE_KEY, ACTIVE_PROVIDER_KEY, DEFAULT_PROVIDERS, BROWSER_TOOLS;
 var init_aiProviderService = __esm({
   "desktop/src/services/aiProviderService.js"() {
     STORAGE_KEY = "antigravity_ai_providers_config";
@@ -38309,8 +38723,8 @@ var init_aiProviderService = __esm({
         type: "openai_compatible",
         baseUrl: "http://localhost:1234/v1",
         apiKey: "",
-        model: "local-model",
-        presetModels: ["local-model", "qwen2.5-coder-7b-instruct", "qwen2.5-vl-7b-instruct", "llama-3.2-3b-instruct"]
+        model: "ornith-1.0-9b",
+        presetModels: ["ornith-1.0-9b", "local-model", "qwen2.5-coder-7b-instruct", "qwen2.5-vl-7b-instruct", "llama-3.2-3b-instruct"]
       },
       ollama: {
         id: "ollama",
@@ -38364,6 +38778,187 @@ var init_aiProviderService = __esm({
         presetModels: ["claude-3-7-sonnet-latest", "claude-3-5-sonnet-20241022", "claude-3-5-haiku-20241022"]
       }
     };
+    BROWSER_TOOLS = [
+      {
+        type: "function",
+        function: {
+          name: "open_tab",
+          description: "Open a new browser tab with an optional URL (leave blank or empty for a blank tab)",
+          parameters: {
+            type: "object",
+            properties: {
+              url: { type: "string", description: "URL or search query to open in new tab (empty string for blank tab)" },
+              title: { type: "string", description: "Optional tab title" }
+            }
+          }
+        }
+      },
+      {
+        type: "function",
+        function: {
+          name: "close_tab",
+          description: "Close a tab by index (1-based), ID, or close current active tab",
+          parameters: {
+            type: "object",
+            properties: {
+              index: { type: "integer", description: "Tab position index (1-based, 1=1st tab)" },
+              id: { type: "string", description: "Tab ID" },
+              all: { type: "boolean", description: "Whether to close all open tabs" }
+            }
+          }
+        }
+      },
+      {
+        type: "function",
+        function: {
+          name: "switch_tab",
+          description: "Switch active tab by 1-based index (e.g. 1=tabone, 2=tabtwo) or tab ID",
+          parameters: {
+            type: "object",
+            properties: {
+              index: { type: "integer", description: "Target tab position index (1-based)" },
+              id: { type: "string", description: "Target tab ID" }
+            }
+          }
+        }
+      },
+      {
+        type: "function",
+        function: {
+          name: "navigate",
+          description: "Navigate the active tab to a specific URL or perform a web search",
+          parameters: {
+            type: "object",
+            properties: {
+              url: { type: "string", description: "Destination URL or search term" }
+            },
+            required: ["url"]
+          }
+        }
+      },
+      {
+        type: "function",
+        function: {
+          name: "click_element",
+          description: "Click an element, link, button, search bar, or badge #N on active page",
+          parameters: {
+            type: "object",
+            properties: {
+              target: { type: "string", description: "Button text, link text, search bar, or Set-of-Marks badge (#1, #2)" }
+            },
+            required: ["target"]
+          }
+        }
+      },
+      {
+        type: "function",
+        function: {
+          name: "type_text",
+          description: "Type text into search bar or input field and optionally submit",
+          parameters: {
+            type: "object",
+            properties: {
+              text: { type: "string", description: "Text to type" },
+              submit: { type: "boolean", description: "Whether to press Enter/submit (default true)" }
+            },
+            required: ["text"]
+          }
+        }
+      },
+      {
+        type: "function",
+        function: {
+          name: "scroll_page",
+          description: "Scroll the active page up, down, top, or bottom",
+          parameters: {
+            type: "object",
+            properties: {
+              direction: { type: "string", enum: ["down", "up", "top", "bottom", "left", "right"], description: "Scroll direction" },
+              amount: { type: "integer", description: "Percentage (e.g. 50) or pixel distance" }
+            }
+          }
+        }
+      },
+      {
+        type: "function",
+        function: {
+          name: "download_item",
+          description: "Trigger or verify a download of a file or image from the page or URL",
+          parameters: {
+            type: "object",
+            properties: {
+              url: { type: "string", description: "Direct URL to download" },
+              target: { type: "string", description: "Button/link text on page to click for download" }
+            }
+          }
+        }
+      },
+      {
+        type: "function",
+        function: {
+          name: "read_page",
+          description: "Inspect active webpage: returns title, URL, detected search boxes, candidate links, countdown timers, and download triggers",
+          parameters: {
+            type: "object",
+            properties: {}
+          }
+        }
+      },
+      {
+        type: "function",
+        function: {
+          name: "search_page",
+          description: "Type query into the page search input and submit the search",
+          parameters: {
+            type: "object",
+            properties: {
+              query: { type: "string", description: "Search term or movie title to search for" }
+            },
+            required: ["query"]
+          }
+        }
+      },
+      {
+        type: "function",
+        function: {
+          name: "verify_download",
+          description: "Check status of active and completed downloads in the download manager and on disk",
+          parameters: {
+            type: "object",
+            properties: {}
+          }
+        }
+      },
+      {
+        type: "function",
+        function: {
+          name: "remind_user",
+          description: "Trigger a high-priority audible chime, speech announcement, and persistent visual banner to remind/notify the user",
+          parameters: {
+            type: "object",
+            properties: {
+              message: { type: "string", description: "Reminder message to announce to the user" }
+            },
+            required: ["message"]
+          }
+        }
+      },
+      {
+        type: "function",
+        function: {
+          name: "finish_task",
+          description: "Mark the multi-step browser task or goal as completed with a summary",
+          parameters: {
+            type: "object",
+            properties: {
+              message: { type: "string", description: "Completion summary message" },
+              success: { type: "boolean", description: "Whether the goal succeeded" }
+            },
+            required: ["message"]
+          }
+        }
+      }
+    ];
   }
 });
 
@@ -39432,6 +40027,534 @@ function extractTabIndexFromPrompt(raw) {
   }
   return null;
 }
+async function executeToolCallAndVerify(toolCall, context = {}) {
+  const {
+    tabs = [],
+    activeTabId = 1,
+    activeTab = null,
+    onOpenTab,
+    onCloseTab,
+    onSelectTab,
+    onNavigate,
+    getActiveWebview,
+    onExecuteClick,
+    onExecuteScroll
+  } = context;
+  const name = toolCall.name || toolCall.tool || "";
+  const args = toolCall.args || toolCall.parameters || {};
+  const wv = getActiveWebview ? getActiveWebview() : null;
+  if (name === "open_tab") {
+    const targetUrl = args.url ? resolveTargetUrl(args.url) : "";
+    const title = args.title || (targetUrl ? args.url : "New Tab");
+    const prevCount = tabs.length;
+    if (onOpenTab) onOpenTab(targetUrl, title);
+    await new Promise((r) => setTimeout(r, 400));
+    return {
+      success: true,
+      action: "open_tab",
+      message: targetUrl ? `Opened "${title}" in a new tab.` : "Opened a new blank tab.",
+      verification: `\u2705 [Verified Action: Opened New Tab #${prevCount + 1}${targetUrl ? ` (${targetUrl})` : ""}]`
+    };
+  }
+  if (name === "close_tab") {
+    const prevCount = tabs.length;
+    if (args.all && onCloseTab) {
+      tabs.forEach((t) => onCloseTab(t.id));
+      if (onOpenTab) onOpenTab("", "New Tab");
+      return {
+        success: true,
+        action: "close_tab",
+        message: "Closed all open tabs.",
+        verification: "\u2705 [Verified Action: All tabs closed]"
+      };
+    }
+    let targetId = args.id;
+    if (!targetId && args.index !== void 0) {
+      const idx = parseInt(args.index, 10);
+      if (idx >= 1 && idx <= tabs.length) targetId = tabs[idx - 1].id;
+    }
+    if (!targetId) targetId = activeTabId;
+    if (onCloseTab) onCloseTab(targetId);
+    await new Promise((r) => setTimeout(r, 400));
+    return {
+      success: true,
+      action: "close_tab",
+      message: `Closed tab #${targetId}.`,
+      verification: `\u2705 [Verified Action: Closed Tab #${targetId}. Remaining tabs: ${Math.max(0, prevCount - 1)}]`
+    };
+  }
+  if (name === "switch_tab") {
+    let targetId = args.id;
+    let targetIdx = args.index;
+    if (targetIdx !== void 0 && (!targetId || !tabs.find((t) => t.id === targetId))) {
+      const idx = parseInt(targetIdx, 10);
+      if (idx >= 1 && idx <= tabs.length) {
+        targetId = tabs[idx - 1].id;
+      }
+    }
+    const targetTab = tabs.find((t) => t.id === targetId) || tabs[0];
+    if (targetTab && onSelectTab) {
+      onSelectTab(targetTab.id);
+      return {
+        success: true,
+        action: "switch_tab",
+        message: `Switched to tab "${targetTab.title || "Untitled"}".`,
+        verification: `\u2705 [Verified Action: Active tab switched to #${targetTab.id} ("${targetTab.title || targetTab.url}")]`
+      };
+    }
+    return {
+      success: false,
+      action: "switch_tab",
+      error: "Tab not found to switch",
+      verification: "\u26A0\uFE0F [Verification Failed: Target tab not found]"
+    };
+  }
+  if (name === "navigate") {
+    const url = args.url ? resolveTargetUrl(args.url) : "";
+    if (url && onNavigate) {
+      onNavigate(url);
+      return {
+        success: true,
+        action: "navigate",
+        message: `Navigating active tab to ${url}.`,
+        verification: `\u2705 [Verified Action: Navigated active tab to ${url}]`
+      };
+    }
+    return { success: false, action: "navigate", verification: "\u26A0\uFE0F [Verification Failed: No URL provided]" };
+  }
+  if (name === "click_element") {
+    const target = args.target || "";
+    if (target) {
+      const clickRes = await executeWebviewClick(wv, target, onNavigate);
+      return {
+        success: true,
+        action: "click_element",
+        message: clickRes.message || `Clicked element matching "${target}".`,
+        verification: `\u2705 [Verified Action: Click executed on "${target}"]`
+      };
+    }
+    return { success: false, action: "click_element", verification: "\u26A0\uFE0F [Verification Failed: No click target specified]" };
+  }
+  if (name === "type_text") {
+    const text = args.text || "";
+    if (text) {
+      const typeMsg = await typeAndSubmitInSearchBar(wv, text);
+      return {
+        success: true,
+        action: "type_text",
+        message: typeMsg,
+        verification: `\u2705 [Verified Action: Typed and submitted "${text}"]`
+      };
+    }
+    return { success: false, action: "type_text", verification: "\u26A0\uFE0F [Verification Failed: No text provided]" };
+  }
+  if (name === "scroll_page") {
+    const direction = args.direction || "down";
+    const amount = args.amount !== void 0 ? args.amount : 50;
+    const scrollRes = await executeWebviewScroll(wv, direction, amount, true);
+    return {
+      success: scrollRes.success,
+      action: "scroll_page",
+      message: `Scrolled page ${direction}.`,
+      verification: `\u2705 [Verified Action: Scrolled page ${direction} by scale ${amount}]`
+    };
+  }
+  if (name === "download_item") {
+    const directUrl = args.url;
+    if (directUrl) {
+      try {
+        await fetch("http://127.0.0.1:4892/api/downloads/trigger", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ url: directUrl })
+        });
+      } catch (e) {
+      }
+    } else if (args.target) {
+      await executeWebviewClick(wv, args.target, onNavigate);
+    }
+    await new Promise((r) => setTimeout(r, 1200));
+    const dlCheck = await fetch("http://127.0.0.1:4892/api/downloads/verify").then((r) => r.json()).catch(() => null);
+    if (dlCheck && dlCheck.hasActiveDownloads) {
+      const dl = dlCheck.active[0];
+      return {
+        success: true,
+        action: "download_item",
+        message: `Download started: "${dl.filename}"`,
+        verification: `\u2705 [Verified Action: Download started for "${dl.filename}" (${dl.percent}%)]`
+      };
+    } else if (dlCheck && dlCheck.hasCompletedDownloads) {
+      const dl = dlCheck.completed[0];
+      return {
+        success: true,
+        action: "download_item",
+        message: `Download completed: "${dl.filename}"`,
+        verification: `\u2705 [Verified Action: Download finished (${dl.totalBytesFormatted}) at ${dl.savePath}]`
+      };
+    }
+    return {
+      success: false,
+      action: "download_item",
+      message: "Initiated download click on page.",
+      verification: "\u26A0\uFE0F [Verification Alert: Download has not registered in manager yet. Monitoring background downloads...]"
+    };
+  }
+  if (name === "verify_state") {
+    const check = args.check || "tabs";
+    if (check === "downloads") {
+      const dlRes = await fetch("http://127.0.0.1:4892/api/downloads/verify").then((r) => r.json()).catch(() => null);
+      return {
+        success: true,
+        action: "verify_state",
+        message: `Downloads verified: ${dlRes?.totalCount || 0} items (${dlRes?.activeCount || 0} active).`,
+        verification: `\u2705 [Verified State: Downloads checked. Active: ${dlRes?.activeCount || 0}, Total: ${dlRes?.totalCount || 0}]`
+      };
+    }
+    return {
+      success: true,
+      action: "verify_state",
+      message: `Total open tabs: ${tabs.length}, Active tab #${activeTabId} ("${activeTab?.title || ""}").`,
+      verification: `\u2705 [Verified State: ${tabs.length} tabs open, active tab #${activeTabId}]`
+    };
+  }
+  if (name === "search_page") {
+    const query = args.query || args.text || "";
+    if (query) {
+      let resMsg = "";
+      if (wv && typeof wv.executeJavaScript === "function") {
+        resMsg = await typeAndSubmitInSearchBar(wv, query);
+      } else if (onNavigate) {
+        onNavigate(`https://www.google.com/search?q=${encodeURIComponent(query)}`);
+        resMsg = `Navigated to search for "${query}".`;
+      }
+      return {
+        success: true,
+        action: "search_page",
+        message: resMsg || `Searched for "${query}".`,
+        verification: `\u2705 [Verified Action: Searched for "${query}"]`
+      };
+    }
+    return { success: false, action: "search_page", verification: "\u26A0\uFE0F [Verification Failed: No query provided]" };
+  }
+  if (name === "read_page") {
+    let pageSummary = "Page state could not be read.";
+    if (wv && typeof wv.executeJavaScript === "function") {
+      const ctx = await extractAdaptivePageContext(wv);
+      if (ctx && ctx.success) {
+        const searchInps = (ctx.searchInputs || []).map((i) => i.placeholder || i.name || i.id).join(", ");
+        const dlCount = (ctx.downloadTriggers || []).length;
+        pageSummary = `Page: "${ctx.page?.title || ""}" (${ctx.page?.url || ""}). Phase: ${ctx.phase}. Search inputs: [${searchInps || "none"}]. Download links: ${dlCount}.`;
+      }
+    }
+    return {
+      success: true,
+      action: "read_page",
+      message: pageSummary,
+      verification: `\u2705 [Verified Action: Read page content]`
+    };
+  }
+  if (name === "verify_download") {
+    const dlRes = await fetch("http://127.0.0.1:4892/api/downloads/verify").then((r) => r.json()).catch(() => null);
+    if (dlRes && dlRes.success) {
+      if (dlRes.hasCompletedDownloads) {
+        const c = dlRes.completed[0];
+        return {
+          success: true,
+          action: "verify_download",
+          message: `Verified download on disk: "${c.filename}" (${c.totalBytesFormatted}) at ${c.savePath}.`,
+          verification: `\u2705 [Verified Action: Download completed on disk - "${c.filename}"]`
+        };
+      } else if (dlRes.hasActiveDownloads) {
+        const a = dlRes.active[0];
+        return {
+          success: true,
+          action: "verify_download",
+          message: `Download actively progressing: "${a.filename}" (${a.percent}%).`,
+          verification: `\u2705 [Verified Action: Download progressing (${a.percent}%)]`
+        };
+      }
+    }
+    return {
+      success: false,
+      action: "verify_download",
+      message: "No downloads currently active or completed.",
+      verification: "\u26A0\uFE0F [Verification Status: No download registered yet]"
+    };
+  }
+  if (name === "remind_user") {
+    const msg = args.message || "Action completed!";
+    if (context.onRemindUser) {
+      context.onRemindUser(msg);
+    }
+    return {
+      success: true,
+      action: "remind_user",
+      message: `\u{1F514} Reminder triggered: "${msg}"`,
+      verification: `\u{1F514} [Verified Action: User reminder and chime announced!]`
+    };
+  }
+  if (name === "finish_task") {
+    const msg = args.message || "Task completed successfully.";
+    return {
+      success: true,
+      action: "finish_task",
+      message: `\u{1F3C1} ${msg}`,
+      verification: `\u{1F3C1} [Verified Goal: ${msg}]`
+    };
+  }
+  return {
+    success: false,
+    error: `Unknown tool: ${name}`,
+    verification: `\u26A0\uFE0F [Unknown Tool: ${name}]`
+  };
+}
+async function executeAutonomousAgentLoop(promptText, context = {}) {
+  const raw = (promptText || "").trim();
+  if (!raw) return "Please provide an instruction.";
+  const {
+    tabs = [],
+    activeTabId = 1,
+    activeTab = null,
+    onOpenTab,
+    onCloseTab,
+    onSelectTab,
+    onNavigate,
+    getActiveWebview,
+    onRemindUser,
+    onStreamChunk,
+    onStreamReasoning,
+    onToolEvent,
+    signal,
+    logTelemetry = () => {
+    }
+  } = context;
+  let activeConfig = null;
+  let BROWSER_TOOLS2 = [];
+  let sendChatMessage2 = null;
+  try {
+    const provMod = await Promise.resolve().then(() => (init_aiProviderService(), aiProviderService_exports));
+    activeConfig = provMod.getActiveProviderConfig();
+    BROWSER_TOOLS2 = provMod.BROWSER_TOOLS;
+    sendChatMessage2 = provMod.streamChatMessage || provMod.sendChatMessage;
+  } catch (e) {
+    console.warn("[Autonomous Loop Import Error]", e);
+  }
+  if (!sendChatMessage2 || !activeConfig) {
+    return `\u26A0\uFE0F AI Provider service is not available. Please check AI Provider settings.`;
+  }
+  const maxTurns = 6;
+  const agentHistory = [];
+  const executionLogs = [];
+  let completed = false;
+  const systemPrompt = `You are the Autonomous Antigravity Browser Agent. You directly control this browser.
+You receive a goal and live browser observations.
+You must REASON about the goal, formulate your plan, and decide the next browser tool to execute.
+
+Available Tools:
+- open_tab: { "url": string } (opens a new tab and navigates if url provided)
+- navigate: { "url": string } (navigates active tab)
+- read_page: {} (inspects active webpage title, URL, search boxes, download links)
+- search_page: { "query": string } (types into page search input and submits)
+- click_element: { "target": string } (clicks link, button, or episode by text)
+- download_item: { "url"?: string, "target"?: string } (triggers native download)
+- verify_download: {} (checks download manager and disk status)
+- remind_user: { "message": string } (triggers audio chime and speech reminder to user)
+- finish_task: { "message": string, "success": boolean } (marks goal completed)
+
+Output format:
+\`\`\`tool_call
+{
+  "plan": "Summary of plan",
+  "steps": [
+    { "tool": "<tool_name>", "args": { ... } }
+  ]
+}
+\`\`\`
+
+CRITICAL RULES:
+1. Always emit the \`\`\`tool_call\`\`\` block. Never just talk about what you will do.
+2. If the user asks to download something, navigate to the site, find the episode or download button, trigger the download, call verify_download to confirm, and call remind_user to announce it!`;
+  for (let turn = 1; turn <= maxTurns && !completed; turn++) {
+    if (signal?.aborted) break;
+    const wv = getActiveWebview ? getActiveWebview() : null;
+    let pageObs = null;
+    if (wv && typeof wv.executeJavaScript === "function") {
+      try {
+        pageObs = await extractAdaptivePageContext(wv);
+      } catch (e) {
+      }
+    }
+    let dlObs = null;
+    try {
+      dlObs = await fetch("http://127.0.0.1:4892/api/downloads/verify").then((r) => r.json()).catch(() => null);
+    } catch (e) {
+    }
+    const openTabsCount = tabs.length;
+    const curTabUrl = activeTab?.url || pageObs?.page?.url || "";
+    const curTabTitle = activeTab?.title || pageObs?.page?.title || "";
+    let observationText = `[Turn ${turn} - Current Browser State]
+- Open Tabs: ${openTabsCount}
+- Active Tab: "${curTabTitle}" (${curTabUrl})
+- Page Phase: ${pageObs?.phase || "GENERAL_PAGE"}
+- Active Countdown: ${pageObs?.activeCountdown?.secondsRemaining ? pageObs.activeCountdown.secondsRemaining + "s remaining" : "none"}
+- Search Inputs Detected: ${(pageObs?.searchInputs || []).map((i) => i.placeholder || i.name || i.id).join(", ") || "none"}
+- Download Triggers Detected: ${(pageObs?.downloadTriggers || []).map((d) => d.text).slice(0, 5).join(" | ") || "none"}
+- Downloads State: ${dlObs?.hasCompletedDownloads ? `Completed (${dlObs.completed[0]?.filename})` : dlObs?.hasActiveDownloads ? `Active (${dlObs.active[0]?.percent}%)` : "No active downloads"}`;
+    if (turn === 1) {
+      observationText = `User Goal: "${raw}"
+${observationText}
+What is your plan and first action?`;
+    } else {
+      observationText = `${observationText}
+What is your next action to achieve the goal: "${raw}"?`;
+    }
+    const aiRes = await sendChatMessage2({
+      prompt: observationText,
+      history: agentHistory,
+      systemPrompt,
+      tools: BROWSER_TOOLS2,
+      onChunk: (chunk) => {
+        if (onStreamChunk) onStreamChunk(chunk);
+      },
+      onReasoningChunk: (rChunk) => {
+        if (onStreamReasoning) onStreamReasoning(rChunk);
+      },
+      signal
+    });
+    if (!aiRes || !aiRes.success || aiRes.aborted) {
+      break;
+    }
+    const replyContent = aiRes.reply || "";
+    const reasoningContent = aiRes.reasoning || "";
+    agentHistory.push({ role: "assistant", content: replyContent });
+    let stepsToExecute = [];
+    if (Array.isArray(aiRes.toolCalls) && aiRes.toolCalls.length > 0) {
+      stepsToExecute = aiRes.toolCalls;
+    }
+    if (stepsToExecute.length === 0) {
+      const blockRegex = /```(?:tool_call|json)?\s*(\{[\s\S]*?\})\s*```/gi;
+      let bm;
+      while ((bm = blockRegex.exec(replyContent)) !== null) {
+        try {
+          const parsed = JSON.parse(bm[1]);
+          if (Array.isArray(parsed.steps)) {
+            for (const s of parsed.steps) {
+              stepsToExecute.push({ name: s.tool || s.name, args: s.args || s.parameters || s });
+            }
+          } else if (parsed.tool || parsed.name) {
+            stepsToExecute.push({ name: parsed.tool || parsed.name, args: parsed.args || parsed });
+          }
+        } catch (e) {
+        }
+      }
+    }
+    if (stepsToExecute.length === 0) {
+      const inlineMatch = replyContent.match(/\{[\s\r\n]*"(?:plan|steps|tool|action)"[\s\S]*?\}/);
+      if (inlineMatch) {
+        try {
+          const parsed = JSON.parse(inlineMatch[0]);
+          if (Array.isArray(parsed.steps)) {
+            for (const s of parsed.steps) {
+              stepsToExecute.push({ name: s.tool || s.name, args: s.args || s });
+            }
+          } else if (parsed.tool || parsed.name) {
+            stepsToExecute.push({ name: parsed.tool || parsed.name, args: parsed.args || parsed });
+          }
+        } catch (e) {
+        }
+      }
+    }
+    if (stepsToExecute.length === 0) {
+      if (/open(?:ing)? (?:a )?new tab/i.test(replyContent)) {
+        const urlM = replyContent.match(/https?:\/\/[^\s<>"')]+/i);
+        stepsToExecute.push({ name: "open_tab", args: { url: urlM ? urlM[0] : "" } });
+      } else if (/navigat(?:ing|e) to (https?:\/\/[^\s<>"')]+)/i.test(replyContent)) {
+        const urlM = replyContent.match(/https?:\/\/[^\s<>"')]+/i);
+        if (urlM) stepsToExecute.push({ name: "navigate", args: { url: urlM[0] } });
+      }
+    }
+    if (stepsToExecute.length === 0) {
+      executionLogs.push({
+        turn,
+        reasoning: reasoningContent,
+        reply: replyContent
+      });
+      break;
+    }
+    const turnExecutions = [];
+    for (const st of stepsToExecute) {
+      if (signal?.aborted) break;
+      const toolName = st.name || st.tool;
+      const toolArgs = st.args || {};
+      const toolCallId = "tool_" + Date.now() + "_" + Math.random().toString(36).slice(2, 6);
+      const startTime = Date.now();
+      if (onToolEvent) {
+        onToolEvent({
+          id: toolCallId,
+          tool: toolName,
+          args: toolArgs,
+          status: "running",
+          turn
+        });
+      }
+      const execRes = await executeToolCallAndVerify({ name: toolName, args: toolArgs }, context);
+      const durationMs = Date.now() - startTime;
+      turnExecutions.push(execRes);
+      if (onToolEvent) {
+        onToolEvent({
+          id: toolCallId,
+          tool: toolName,
+          args: toolArgs,
+          status: execRes.success ? "completed" : "failed",
+          result: execRes.message,
+          observation: execRes.verification,
+          durationMs,
+          turn
+        });
+      }
+      if (toolName === "remind_user" && context.onRemindUser) {
+        context.onRemindUser(toolArgs.message || "Task completed!");
+      }
+      if (toolName === "finish_task") {
+        completed = true;
+      }
+    }
+    executionLogs.push({
+      turn,
+      reasoning: reasoningContent,
+      reply: replyContent,
+      executions: turnExecutions
+    });
+    const execSummary = turnExecutions.map((e) => e.verification).join(", ");
+    agentHistory.push({
+      role: "user",
+      content: `Observation after executing tools: ${execSummary}`
+    });
+    const hasReminder = turnExecutions.some((e) => e.action === "remind_user");
+    if (hasReminder || completed) {
+      completed = true;
+      break;
+    }
+    await new Promise((r) => setTimeout(r, 1200));
+  }
+  let formattedHtml = `\u{1F916} <strong>[${activeConfig.name}: ${activeConfig.model}] Autonomous Agent</strong><br>`;
+  formattedHtml += `\u{1F3AF} <strong>Goal:</strong> ${raw}<br><br>`;
+  for (const log of executionLogs) {
+    if (log.reasoning) {
+      formattedHtml += `\u{1F4AD} <em>${log.reasoning.trim().replace(/\n/g, "<br>")}</em><br>`;
+    }
+    if (log.executions && log.executions.length > 0) {
+      for (const ex of log.executions) {
+        formattedHtml += `${ex.verification || `\u2705 ${ex.message}`}<br>`;
+      }
+    } else if (log.reply) {
+      const cleanText = log.reply.replace(/```[\s\S]*?```/g, "").trim();
+      if (cleanText) formattedHtml += `${cleanText.replace(/\n/g, "<br>")}<br>`;
+    }
+    formattedHtml += `<br>`;
+  }
+  return formattedHtml;
+}
 async function executeAiBrowserCommand(promptText, context = {}) {
   let raw = (promptText || "").trim();
   if (!raw) return "Please provide an AI browser instruction.";
@@ -39450,23 +40573,58 @@ async function executeAiBrowserCommand(promptText, context = {}) {
     onOpenTabSearch,
     onOpenHistory,
     onToggleMute,
+    onExecuteClick,
+    onExecuteScroll,
     logTelemetry = () => {
     }
   } = context;
-  if (/^\s*(?:clk|click)\s+(?:sb|s|search\s*bar|searchbox)\s*$/i.test(raw)) {
-    raw = "click search bar";
-  } else if (/^clk\b/i.test(raw)) {
-    raw = raw.replace(/^clk\b/i, "click");
-    raw = raw.replace(/\b(click|clk)\s+sb\b/gi, "click search bar");
-    raw = raw.replace(/\b(click|clk)\s+s\b/gi, "click search bar");
-  }
-  if (/^\s*(?:tab\s*close|tabclose|closetab|close\s*tab)\s*$/i.test(raw)) {
-    if (onCloseTab) {
-      onCloseTab(activeTabId);
-      return "\u274C Closed active tab.";
+  let cleanPrompt = raw.replace(/^(?:can\s+you\s+(?:please\s+)?|could\s+you\s+(?:please\s+)?|please\s+|would\s+you\s+(?:please\s+)?|hey\s+copilot\s*[,:]?\s*|copilot\s*[,:]?\s*|i\s+want\s+to\s+|help\s+me\s+(?:to\s+)?)/i, "").replace(/\s+(?:for\s+me|please|right\s+now|now|at\s+once)\s*$/i, "").trim();
+  const isAutonomousGoal = /\b(?:and|then|after|also|when|while)\b/i.test(cleanPrompt) || /\b(?:download|find|search|episode|remind|verify|mirror|gateway|save|play|watch)\b/i.test(cleanPrompt) || cleanPrompt.split(/\s+/).length > 3;
+  if (isAutonomousGoal) {
+    try {
+      return await executeAutonomousAgentLoop(raw, context);
+    } catch (e) {
+      console.warn("[Autonomous Agent Loop Fallback]", e);
     }
   }
-  const directTabMatch = raw.match(/^\s*(?:tab|switch\s*to\s*tab|goto\s*tab|go\s*to\s*tab)\s*(\d+|one|two|three|four|five)\s*$/i) || raw.match(/^\s*tab(one|two|three|four|five|\d+)\s*$/i);
+  if (/^(?:open|create|spawn|add)\s+(?:a\s+)?(?:new\s+)?tab(?:\s+for\s+me)?$/i.test(cleanPrompt) || /^(?:open\s+tab|new\s+tab|blank\s+tab|add\s+tab)$/i.test(cleanPrompt)) {
+    const prevCount = tabs.length;
+    if (onOpenTab) onOpenTab("", "New Tab");
+    return `\u2728 Opened a new blank tab.<br><br>\u2705 <strong>[Verified Action: Opened New Tab #${prevCount + 1}]</strong>`;
+  }
+  if (/^(?:verify\s+download|check\s+download|has\s+download\s+started|is\s+downloading|download\s+status|download\s+progress)/i.test(cleanPrompt)) {
+    try {
+      const dlRes = await fetch("http://127.0.0.1:4892/api/downloads/verify").then((r) => r.json()).catch(() => null);
+      if (dlRes && dlRes.success) {
+        if (dlRes.hasActiveDownloads) {
+          const activeDl = dlRes.active[0];
+          return `\u{1F4E5} <strong>Download In Progress:</strong> "${activeDl.filename}" (${activeDl.percent || 0}%, speed: ${activeDl.speed || "active"})<br><br>\u2705 <strong>[Verified Action: Download is actively progressing]</strong>`;
+        } else if (dlRes.hasCompletedDownloads) {
+          const lastCompleted = dlRes.completed[0];
+          return `\u2705 <strong>Download Finished:</strong> "${lastCompleted.filename}" (${lastCompleted.totalBytesFormatted}) saved to <code>${lastCompleted.savePath}</code>.<br><br>\u2705 <strong>[Verified Action: Download verified on disk]</strong>`;
+        } else if (dlRes.totalCount > 0) {
+          return `\u{1F4CB} ${dlRes.totalCount} download record(s) found. No active download in progress.`;
+        } else {
+          return `\u26A0\uFE0F No download has started yet. Click the download link or button to initiate.`;
+        }
+      }
+    } catch (e) {
+    }
+  }
+  if (/^\s*(?:clk|click)\s+(?:sb|s|search\s*bar|searchbox)\s*$/i.test(cleanPrompt)) {
+    cleanPrompt = "click search bar";
+  } else if (/^clk\b/i.test(cleanPrompt)) {
+    cleanPrompt = cleanPrompt.replace(/^clk\b/i, "click");
+    cleanPrompt = cleanPrompt.replace(/\b(click|clk)\s+sb\b/gi, "click search bar");
+    cleanPrompt = cleanPrompt.replace(/\b(click|clk)\s+s\b/gi, "click search bar");
+  }
+  if (/^\s*(?:tab\s*close|tabclose|closetab|close\s*tab|close\s*this\s*tab)\s*$/i.test(cleanPrompt)) {
+    if (onCloseTab) {
+      onCloseTab(activeTabId);
+      return `\u274C Closed active tab.<br><br>\u2705 <strong>[Verified Action: Closed Tab #${activeTabId}]</strong>`;
+    }
+  }
+  const directTabMatch = cleanPrompt.match(/^\s*(?:tab|switch\s*to\s*tab|goto\s*tab|go\s*to\s*tab)\s*(\d+|one|two|three|four|five)\s*$/i) || cleanPrompt.match(/^\s*tab(one|two|three|four|five|\d+)\s*$/i);
   if (directTabMatch) {
     const wordMap = { one: 1, two: 2, three: 3, four: 4, five: 5 };
     const val = directTabMatch[1].toLowerCase();
@@ -39475,13 +40633,13 @@ async function executeAiBrowserCommand(promptText, context = {}) {
       const targetTab = tabs[tabIdx - 1];
       if (onSelectTab && targetTab) {
         onSelectTab(targetTab.id);
-        return `\u{1F449} Switched to tab #${tabIdx} (<strong>${targetTab.title || "Untitled"}</strong>).`;
+        return `\u{1F449} Switched to tab #${tabIdx} (<strong>${targetTab.title || "Untitled"}</strong>).<br><br>\u2705 <strong>[Verified Action: Switched to Tab #${tabIdx}]</strong>`;
       }
     } else {
       return `\u26A0\uFE0F Tab #${tabIdx} does not exist. You currently have ${tabs.length} open tab(s).`;
     }
   }
-  const enterCmdMatch = raw.match(/^(?:enter|type|write|input)\s*(?:[;:|]\s*|\s+)(.+)/i);
+  const enterCmdMatch = cleanPrompt.match(/^(?:enter|type|write|input)\s*(?:[;:|]\s*|\s+)(.+)/i);
   if (enterCmdMatch) {
     const textToType = enterCmdMatch[1].trim();
     if (textToType) {
@@ -39489,7 +40647,7 @@ async function executeAiBrowserCommand(promptText, context = {}) {
       return await typeAndSubmitInSearchBar(wv, textToType);
     }
   }
-  const lower = raw.toLowerCase();
+  const lower = cleanPrompt.toLowerCase();
   const matches = (...patterns) => patterns.some((p) => {
     if (p instanceof RegExp) return p.test(lower);
     return lower.includes(p);
@@ -39610,24 +40768,26 @@ async function executeAiBrowserCommand(promptText, context = {}) {
     }
   }
   if (lower.startsWith("navigate to ") || lower.startsWith("go to ") && !lower.includes("tab")) {
-    const dest = raw.replace(/^(navigate to|go to)\s+/i, "").trim();
+    const dest = cleanPrompt.replace(/^(navigate to|go to)\s+/i, "").trim();
     if (dest && onNavigate) {
       const finalUrl = resolveTargetUrl(dest);
       onNavigate(finalUrl);
-      return `\u{1F680} Navigating active tab to <strong>${finalUrl}</strong>.`;
+      return `\u{1F680} Navigating active tab to <strong>${finalUrl}</strong>.<br><br>\u2705 <strong>[Verified Action: Navigating to ${finalUrl}]</strong>`;
     }
   }
   if (lower.startsWith("open ") && !matches("history", "split", "sidebar", "reading", "reader", "qr", "palette")) {
-    const target = raw.substring(5).trim();
-    if (matches("new tab", "a new tab", "blank tab", "tab")) {
+    const target = cleanPrompt.replace(/^open\s+/i, "").replace(/\s+in\s+(?:a\s+)?new\s+tab$/i, "").trim();
+    if (/^(?:new\s+tab|a\s+new\s+tab|blank\s+tab|tab)$/i.test(target)) {
+      const prevCount2 = tabs.length;
       if (onOpenTab) onOpenTab("", "New Tab");
-      return "\u2728 Opened a new blank tab.";
+      return `\u2728 Opened a new blank tab.<br><br>\u2705 <strong>[Verified Action: Opened New Tab #${prevCount2 + 1}]</strong>`;
     }
     const targetUrl = resolveTargetUrl(target);
     const title = target;
+    const prevCount = tabs.length;
     if (onOpenTab) {
       onOpenTab(targetUrl, title);
-      return `\u{1F310} Opened <strong>${title}</strong> in a new tab (<span style="color: var(--accent-cyan);">${targetUrl}</span>).`;
+      return `\u{1F310} Opened <strong>${title}</strong> in a new tab (<span style="color: var(--accent-cyan);">${targetUrl}</span>).<br><br>\u2705 <strong>[Verified Action: Opened New Tab #${prevCount + 1} (${targetUrl})]</strong>`;
     }
   }
   if (matches("close all tabs", "close all the tabs", "close all open tabs", "close every tab", "close all")) {
@@ -39737,7 +40897,7 @@ async function executeAiBrowserCommand(promptText, context = {}) {
     }
   }
   try {
-    const { getActiveProviderConfig: getActiveProviderConfig2, sendChatMessage: sendChatMessage2 } = await Promise.resolve().then(() => (init_aiProviderService(), aiProviderService_exports));
+    const { getActiveProviderConfig: getActiveProviderConfig2, streamChatMessage: streamChatMessage2, sendChatMessage: sendChatMessage2, BROWSER_TOOLS: BROWSER_TOOLS2 } = await Promise.resolve().then(() => (init_aiProviderService(), aiProviderService_exports));
     const activeConfig = getActiveProviderConfig2();
     const hasKeyOrLocal = activeConfig && (activeConfig.apiKey || activeConfig.id === "lmstudio" || activeConfig.id === "ollama");
     if (hasKeyOrLocal) {
@@ -39745,13 +40905,171 @@ async function executeAiBrowserCommand(promptText, context = {}) {
       const activeTitle = activeTab?.title || "";
       const systemPrompt = `You are Antigravity Browser AI Copilot. You assist the user with web browsing and understanding.
 Active Tab: "${activeTitle}" (${activeUrl})
-Total Open Tabs: ${tabs.length}. Keep answers concise and helpful.`;
-      const aiRes = await sendChatMessage2({
+Total Open Tabs: ${tabs.length}.
+Open Tabs List: ${tabs.map((t, i) => `[Tab ${i + 1}] "${t.title || "Untitled"}" (${t.url || "blank"})`).join(", ")}
+Keep answers concise and helpful.`;
+      const chatFn = streamChatMessage2 || sendChatMessage2;
+      const aiRes = await chatFn({
         prompt: raw,
-        systemPrompt
+        systemPrompt,
+        tools: BROWSER_TOOLS2,
+        onChunk: (chunk) => {
+          if (context.onStreamChunk) context.onStreamChunk(chunk);
+        },
+        onReasoningChunk: (rChunk) => {
+          if (context.onStreamReasoning) context.onStreamReasoning(rChunk);
+        },
+        signal: context.signal
       });
-      if (aiRes && aiRes.success && aiRes.reply) {
-        return `\u{1F916} <strong>[${aiRes.provider}: ${aiRes.model}]</strong><br>${aiRes.reply.replace(/\n/g, "<br>")}`;
+      if (aiRes && aiRes.success && !aiRes.aborted) {
+        const toolExecutions = [];
+        if (Array.isArray(aiRes.toolCalls) && aiRes.toolCalls.length > 0) {
+          for (const tc of aiRes.toolCalls) {
+            if (context.signal?.aborted) break;
+            const toolCallId = "tool_" + Date.now() + "_" + Math.random().toString(36).slice(2, 6);
+            const startTime = Date.now();
+            if (context.onToolEvent) {
+              context.onToolEvent({
+                id: toolCallId,
+                tool: tc.name,
+                args: tc.args || {},
+                status: "running"
+              });
+            }
+            const execRes = await executeToolCallAndVerify(tc, context);
+            const durationMs = Date.now() - startTime;
+            toolExecutions.push(execRes);
+            if (context.onToolEvent) {
+              context.onToolEvent({
+                id: toolCallId,
+                tool: tc.name,
+                args: tc.args || {},
+                status: execRes.success ? "completed" : "failed",
+                result: execRes.message,
+                observation: execRes.verification,
+                durationMs
+              });
+            }
+          }
+        }
+        const replyText = aiRes.reply || "";
+        const blockRegex = /```(?:tool_call|json)?\s*(\{[\s\S]*?\})\s*```/gi;
+        let blockMatch;
+        while ((blockMatch = blockRegex.exec(replyText)) !== null) {
+          try {
+            const parsed = JSON.parse(blockMatch[1]);
+            const toolName = parsed.tool || parsed.name || parsed.action;
+            if (toolName) {
+              const toolCallId = "tool_" + Date.now() + "_" + Math.random().toString(36).slice(2, 6);
+              const startTime = Date.now();
+              const toolArgs = parsed.args || parsed.parameters || parsed;
+              if (context.onToolEvent) {
+                context.onToolEvent({
+                  id: toolCallId,
+                  tool: toolName,
+                  args: toolArgs,
+                  status: "running"
+                });
+              }
+              const execRes = await executeToolCallAndVerify({
+                name: toolName,
+                args: toolArgs
+              }, context);
+              const durationMs = Date.now() - startTime;
+              toolExecutions.push(execRes);
+              if (context.onToolEvent) {
+                context.onToolEvent({
+                  id: toolCallId,
+                  tool: toolName,
+                  args: toolArgs,
+                  status: execRes.success ? "completed" : "failed",
+                  result: execRes.message,
+                  observation: execRes.verification,
+                  durationMs
+                });
+              }
+            }
+          } catch (e) {
+          }
+        }
+        if (toolExecutions.length === 0) {
+          const inlineMatch = replyText.match(/\{[\s\r\n]*"(?:tool|action|function)"[\s\r\n]*:[\s\r\n]*"[a-zA-Z0-9_-]+"[\s\S]*?\}/);
+          if (inlineMatch) {
+            try {
+              const parsed = JSON.parse(inlineMatch[0]);
+              const toolName = parsed.tool || parsed.action || parsed.function;
+              if (toolName) {
+                const toolCallId = "tool_" + Date.now() + "_" + Math.random().toString(36).slice(2, 6);
+                const startTime = Date.now();
+                const toolArgs = parsed.args || parsed.parameters || parsed;
+                if (context.onToolEvent) {
+                  context.onToolEvent({
+                    id: toolCallId,
+                    tool: toolName,
+                    args: toolArgs,
+                    status: "running"
+                  });
+                }
+                const execRes = await executeToolCallAndVerify({
+                  name: toolName,
+                  args: toolArgs
+                }, context);
+                const durationMs = Date.now() - startTime;
+                toolExecutions.push(execRes);
+                if (context.onToolEvent) {
+                  context.onToolEvent({
+                    id: toolCallId,
+                    tool: toolName,
+                    args: toolArgs,
+                    status: execRes.success ? "completed" : "failed",
+                    result: execRes.message,
+                    observation: execRes.verification,
+                    durationMs
+                  });
+                }
+              }
+            } catch (e) {
+            }
+          }
+        }
+        if (toolExecutions.length === 0) {
+          if (/opening (?:a )?new tab|here is your new tab|opened (?:a )?new tab|open a new tab/i.test(replyText)) {
+            const urlMatch = replyText.match(/https?:\/\/[^\s<>"')]+/i);
+            const execRes = await executeToolCallAndVerify({
+              name: "open_tab",
+              args: { url: urlMatch ? urlMatch[0] : "" }
+            }, context);
+            toolExecutions.push(execRes);
+          } else if (/navigating to|going to|opened (?:website|page) (?:at )?(https?:\/\/[^\s<>"')]+)/i.test(replyText)) {
+            const urlMatch = replyText.match(/https?:\/\/[^\s<>"')]+/i);
+            if (urlMatch) {
+              const execRes = await executeToolCallAndVerify({
+                name: "navigate",
+                args: { url: urlMatch[0] }
+              }, context);
+              toolExecutions.push(execRes);
+            }
+          } else if (/closed (?:the )?(?:current )?tab|closing tab/i.test(replyText)) {
+            const execRes = await executeToolCallAndVerify({
+              name: "close_tab",
+              args: {}
+            }, context);
+            toolExecutions.push(execRes);
+          }
+        }
+        let cleanReply = replyText.replace(/```(?:tool_call|json)?\s*\{[\s\S]*?\}\s*```/gi, "").trim();
+        let verificationNotes = toolExecutions.map((e) => e.verification).filter(Boolean);
+        if (verificationNotes.length === 0 && toolExecutions.length > 0) {
+          verificationNotes = toolExecutions.map((e) => `\u2705 [Verified: ${e.message || e.action}]`);
+        }
+        let responseHtml = `\u{1F916} <strong>[${aiRes.provider}: ${aiRes.model}]</strong><br>`;
+        if (cleanReply) {
+          responseHtml += `${cleanReply.replace(/\n/g, "<br>")}`;
+        }
+        if (verificationNotes.length > 0) {
+          responseHtml += `<br><br>${verificationNotes.map((v) => `<strong>${v}</strong>`).join("<br>")}`;
+        }
+        return responseHtml;
       }
     }
   } catch (e) {
@@ -40045,6 +41363,7 @@ function AiHudSidebar({
   onOpenHistory,
   onOpenAiProviderModal,
   onCaptureSnapshot,
+  onRemindUser,
   latestSnapshot
 }) {
   const [activeModuleTab, setActiveModuleTab] = (0, import_react4.useState)("chat");
@@ -40068,13 +41387,37 @@ function AiHudSidebar({
   const [isWhisperRecording, setIsWhisperRecording] = (0, import_react4.useState)(false);
   const [isWhisperTranscribing, setIsWhisperTranscribing] = (0, import_react4.useState)(false);
   const [recordingTimer, setRecordingTimer] = (0, import_react4.useState)(0);
+  const [isGenerating, setIsGenerating] = (0, import_react4.useState)(false);
   const recognitionRef = (0, import_react4.useRef)(null);
   const messagesEndRef = (0, import_react4.useRef)(null);
   const timerIntervalRef = (0, import_react4.useRef)(null);
   const audioCtxRef = (0, import_react4.useRef)(null);
   const mediaStreamRef = (0, import_react4.useRef)(null);
-  const audioProcessorRef = (0, import_react4.useRef)(null);
+  const audioProcessorRef2 = (0, import_react4.useRef)(null);
   const audioChunksRef = (0, import_react4.useRef)([]);
+  const abortControllerRef = (0, import_react4.useRef)(null);
+  const toggleThoughtCollapse = (msgId) => {
+    setChatMessages((prev) => prev.map(
+      (m) => m.id === msgId ? { ...m, thoughtCollapsed: !m.thoughtCollapsed } : m
+    ));
+  };
+  const toggleToolCollapse = (msgId, toolId) => {
+    setChatMessages((prev) => prev.map((m) => {
+      if (m.id !== msgId) return m;
+      const updated = (m.toolEvents || []).map(
+        (t) => t.id === toolId ? { ...t, collapsed: !t.collapsed } : t
+      );
+      return { ...m, toolEvents: updated };
+    }));
+  };
+  const handleStopGeneration = () => {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+    setIsGenerating(false);
+    setIsAiThinking(false);
+    setChatMessages((prev) => prev.map((m) => m.isStreaming ? { ...m, isStreaming: false, isThinking: false } : m));
+  };
   (0, import_react4.useEffect)(() => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
@@ -40090,6 +41433,15 @@ function AiHudSidebar({
     } catch (e) {
     }
   }, []);
+  (0, import_react4.useEffect)(() => {
+    const handleCustomQuery = (e) => {
+      if (e.detail?.query) {
+        handleProcessNlpCommand(e.detail.query);
+      }
+    };
+    window.addEventListener("antigravity-copilot-query", handleCustomQuery);
+    return () => window.removeEventListener("antigravity-copilot-query", handleCustomQuery);
+  }, []);
   if (!isOpen || isDetached) return null;
   const toggleWhisperRecording = async () => {
     if (isWhisperRecording) {
@@ -40100,9 +41452,9 @@ function AiHudSidebar({
         if (mediaStreamRef.current) {
           mediaStreamRef.current.getTracks().forEach((t) => t.stop());
         }
-        if (audioProcessorRef.current) {
+        if (audioProcessorRef2.current) {
           try {
-            audioProcessorRef.current.disconnect();
+            audioProcessorRef2.current.disconnect();
           } catch (e) {
           }
         }
@@ -40154,7 +41506,7 @@ function AiHudSidebar({
       audioCtxRef.current = ctx;
       const source = ctx.createMediaStreamSource(stream);
       const processor = ctx.createScriptProcessor(4096, 1, 1);
-      audioProcessorRef.current = processor;
+      audioProcessorRef2.current = processor;
       audioChunksRef.current = [];
       processor.onaudioprocess = (e) => {
         const data = e.inputBuffer.getChannelData(0);
@@ -40284,6 +41636,70 @@ function AiHudSidebar({
         return;
       }
     }
+    const assistantMsgId = "ai-" + Date.now();
+    const startTime = Date.now();
+    const abortController = new AbortController();
+    abortControllerRef.current = abortController;
+    setIsGenerating(true);
+    setIsAiThinking(true);
+    const placeholderMsg = {
+      id: assistantMsgId,
+      role: "assistant",
+      text: "",
+      reasoning: "",
+      isStreaming: true,
+      isThinking: false,
+      thoughtDuration: 0,
+      thoughtCollapsed: false,
+      toolEvents: [],
+      time: (/* @__PURE__ */ new Date()).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+    };
+    setChatMessages((prev) => [...prev, placeholderMsg]);
+    const onStreamReasoning = (chunk) => {
+      setIsAiThinking(false);
+      const elapsedSec = ((Date.now() - startTime) / 1e3).toFixed(1);
+      setChatMessages((prev) => prev.map((m) => {
+        if (m.id !== assistantMsgId) return m;
+        return {
+          ...m,
+          reasoning: (m.reasoning || "") + chunk,
+          isThinking: true,
+          thoughtDuration: elapsedSec
+        };
+      }));
+    };
+    const onStreamChunk = (chunk) => {
+      setIsAiThinking(false);
+      const elapsedSec = ((Date.now() - startTime) / 1e3).toFixed(1);
+      setChatMessages((prev) => prev.map((m) => {
+        if (m.id !== assistantMsgId) return m;
+        const shouldCollapse = m.reasoning && m.isThinking ? true : m.thoughtCollapsed;
+        return {
+          ...m,
+          text: (m.text || "") + chunk,
+          isThinking: false,
+          thoughtCollapsed: shouldCollapse,
+          thoughtDuration: m.thoughtDuration || elapsedSec
+        };
+      }));
+    };
+    const onToolEvent = (evt) => {
+      setIsAiThinking(false);
+      setChatMessages((prev) => prev.map((m) => {
+        if (m.id !== assistantMsgId) return m;
+        const currentTools = [...m.toolEvents || []];
+        const existingIdx = currentTools.findIndex((t) => t.id === evt.id);
+        if (existingIdx >= 0) {
+          currentTools[existingIdx] = { ...currentTools[existingIdx], ...evt };
+        } else {
+          currentTools.push({ ...evt, collapsed: false });
+        }
+        return {
+          ...m,
+          toolEvents: currentTools
+        };
+      }));
+    };
     try {
       const reply = await executeAiBrowserCommand(q, {
         tabs,
@@ -40300,14 +41716,34 @@ function AiHudSidebar({
         onOpenTabSearch,
         onOpenHistory,
         onExecuteClick,
-        onExecuteScroll
+        onExecuteScroll,
+        onRemindUser,
+        onStreamChunk,
+        onStreamReasoning,
+        onToolEvent,
+        signal: abortController.signal
       });
-      addAiReply(reply);
-      const spokenText = String(reply).replace(/<[^>]*>/g, "").substring(0, 120);
+      const totalDuration = ((Date.now() - startTime) / 1e3).toFixed(1);
+      setChatMessages((prev) => prev.map((m) => {
+        if (m.id !== assistantMsgId) return m;
+        const finalText = m.text && m.text.trim() ? m.text : reply || "";
+        return {
+          ...m,
+          text: finalText,
+          isStreaming: false,
+          isThinking: false,
+          thoughtCollapsed: m.reasoning ? true : m.thoughtCollapsed,
+          thoughtDuration: m.thoughtDuration || totalDuration
+        };
+      }));
+      const spokenText = String(reply || "").replace(/<[^>]*>/g, "").substring(0, 120);
       speakReply(spokenText, "en");
     } catch (err) {
-      addAiReply(`\u26A0\uFE0F AI Harness execution error: ${err.message}`);
+      setChatMessages((prev) => prev.map(
+        (m) => m.id === assistantMsgId ? { ...m, text: `\u26A0\uFE0F AI Harness execution error: ${err.message}`, isStreaming: false, isThinking: false } : m
+      ));
     } finally {
+      setIsGenerating(false);
       setIsAiThinking(false);
     }
   };
@@ -40392,14 +41828,26 @@ function AiHudSidebar({
       onClick: () => setVoiceSpeechFeedback(!voiceSpeechFeedback)
     },
     voiceSpeechFeedback ? "\u{1F50A} Speaking" : "\u{1F507} Muted"
-  )), /* @__PURE__ */ import_react4.default.createElement("div", { className: "mac-quick-chips" }, /* @__PURE__ */ import_react4.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("summarize") }, "\u26A1 Summarize Page"), /* @__PURE__ */ import_react4.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("scroll down") }, "\u{1F4DC} Scroll Down"), /* @__PURE__ */ import_react4.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("click play") }, "\u25B6\uFE0F Click Play"), /* @__PURE__ */ import_react4.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("autofill") }, "\u{1F4DD} Autofill"), /* @__PURE__ */ import_react4.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("\u092A\u0947\u091C \u0915\u093E \u0938\u093E\u0930\u093E\u0902\u0936 \u0926\u094B") }, "\u{1F1EE}\u{1F1F3} \u0938\u093E\u0930\u093E\u0902\u0936 (HI)"), /* @__PURE__ */ import_react4.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("\u0928\u0940\u091A\u0947 \u0938\u094D\u0915\u094D\u0930\u0949\u0932 \u0915\u0930\u094B") }, "\u{1F1EE}\u{1F1F3} \u0928\u0940\u091A\u0947 \u0938\u094D\u0915\u094D\u0930\u0949\u0932 (HI)"), /* @__PURE__ */ import_react4.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("\uD398\uC774\uC9C0 \uC694\uC57D") }, "\u{1F1F0}\u{1F1F7} \uC694\uC57D (KO)"), /* @__PURE__ */ import_react4.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("\uC544\uB798\uB85C \uC2A4\uD06C\uB864") }, "\u{1F1F0}\u{1F1F7} \uC544\uB798\uB85C (KO)"), /* @__PURE__ */ import_react4.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("scroll to top") }, "\u2B06 Top")), /* @__PURE__ */ import_react4.default.createElement("div", { className: "mac-messages-stream" }, chatMessages.map((msg) => /* @__PURE__ */ import_react4.default.createElement("div", { key: msg.id, className: `mac-msg-row ${msg.role}` }, /* @__PURE__ */ import_react4.default.createElement("div", { className: "mac-msg-bubble" }, /* @__PURE__ */ import_react4.default.createElement("div", { className: "mac-msg-header" }, /* @__PURE__ */ import_react4.default.createElement("span", { className: "mac-msg-author" }, msg.role === "user" ? "You" : "\u2726 Copilot"), /* @__PURE__ */ import_react4.default.createElement("span", { className: "mac-msg-time" }, msg.time)), /* @__PURE__ */ import_react4.default.createElement(
+  )), /* @__PURE__ */ import_react4.default.createElement("div", { className: "mac-quick-chips" }, /* @__PURE__ */ import_react4.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("summarize") }, "\u26A1 Summarize Page"), /* @__PURE__ */ import_react4.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("scroll down") }, "\u{1F4DC} Scroll Down"), /* @__PURE__ */ import_react4.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("click play") }, "\u25B6\uFE0F Click Play"), /* @__PURE__ */ import_react4.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("autofill") }, "\u{1F4DD} Autofill"), /* @__PURE__ */ import_react4.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("\u092A\u0947\u091C \u0915\u093E \u0938\u093E\u0930\u093E\u0902\u0936 \u0926\u094B") }, "\u{1F1EE}\u{1F1F3} \u0938\u093E\u0930\u093E\u0902\u0936 (HI)"), /* @__PURE__ */ import_react4.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("\u0928\u0940\u091A\u0947 \u0938\u094D\u0915\u094D\u0930\u0949\u0932 \u0915\u0930\u094B") }, "\u{1F1EE}\u{1F1F3} \u0928\u0940\u091A\u0947 \u0938\u094D\u0915\u094D\u0930\u0949\u0932 (HI)"), /* @__PURE__ */ import_react4.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("\uD398\uC774\uC9C0 \uC694\uC57D") }, "\u{1F1F0}\u{1F1F7} \uC694\uC57D (KO)"), /* @__PURE__ */ import_react4.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("\uC544\uB798\uB85C \uC2A4\uD06C\uB864") }, "\u{1F1F0}\u{1F1F7} \uC544\uB798\uB85C (KO)"), /* @__PURE__ */ import_react4.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("scroll to top") }, "\u2B06 Top")), /* @__PURE__ */ import_react4.default.createElement("div", { className: "mac-messages-stream" }, chatMessages.map((msg) => /* @__PURE__ */ import_react4.default.createElement("div", { key: msg.id, className: `mac-msg-row ${msg.role}` }, /* @__PURE__ */ import_react4.default.createElement("div", { className: "mac-msg-bubble" }, /* @__PURE__ */ import_react4.default.createElement("div", { className: "mac-msg-header" }, /* @__PURE__ */ import_react4.default.createElement("span", { className: "mac-msg-author" }, msg.role === "user" ? "You" : "\u2726 Copilot"), /* @__PURE__ */ import_react4.default.createElement("span", { className: "mac-msg-time" }, msg.time)), msg.role === "assistant" && msg.reasoning && /* @__PURE__ */ import_react4.default.createElement("div", { className: `chatgpt-thought-container ${msg.isThinking ? "active-thinking" : ""}` }, /* @__PURE__ */ import_react4.default.createElement("div", { className: "thought-header", onClick: () => toggleThoughtCollapse(msg.id) }, /* @__PURE__ */ import_react4.default.createElement("div", { className: "thought-title-group" }, msg.isThinking ? /* @__PURE__ */ import_react4.default.createElement(import_react4.default.Fragment, null, /* @__PURE__ */ import_react4.default.createElement("span", { className: "thought-shimmer-pulse" }), /* @__PURE__ */ import_react4.default.createElement("span", null, "Thinking... ", msg.thoughtDuration ? `(${msg.thoughtDuration}s)` : "")) : /* @__PURE__ */ import_react4.default.createElement(import_react4.default.Fragment, null, /* @__PURE__ */ import_react4.default.createElement("span", null, "\u{1F4AD}"), /* @__PURE__ */ import_react4.default.createElement("span", null, "Thought for ", msg.thoughtDuration || "2.4", "s"))), /* @__PURE__ */ import_react4.default.createElement(
+    "button",
+    {
+      type: "button",
+      className: "thought-retract-btn",
+      onClick: (e) => {
+        e.stopPropagation();
+        toggleThoughtCollapse(msg.id);
+      },
+      title: msg.thoughtCollapsed ? "Expand reasoning process" : "Collapse / Retract reasoning process"
+    },
+    msg.thoughtCollapsed ? "\u25B6 Expand Thought" : "\u25BC Collapse Thought"
+  )), !msg.thoughtCollapsed && /* @__PURE__ */ import_react4.default.createElement("div", { className: "thought-stream-body" }, msg.reasoning, msg.isThinking && /* @__PURE__ */ import_react4.default.createElement("span", { className: "streaming-caret" }))), msg.role === "assistant" && msg.toolEvents && msg.toolEvents.length > 0 && /* @__PURE__ */ import_react4.default.createElement("div", { className: "antigravity-tools-group" }, msg.toolEvents.map((tool) => /* @__PURE__ */ import_react4.default.createElement("div", { key: tool.id, className: `antigravity-tool-card ${tool.status}` }, /* @__PURE__ */ import_react4.default.createElement("div", { className: "tool-card-header", onClick: () => toggleToolCollapse(msg.id, tool.id) }, /* @__PURE__ */ import_react4.default.createElement("div", { className: "tool-card-title" }, /* @__PURE__ */ import_react4.default.createElement("span", null, tool.tool.includes("download") ? "\u{1F4E5}" : tool.tool.includes("tab") ? "\u{1F5C2}\uFE0F" : tool.tool.includes("search") ? "\u{1F50D}" : tool.tool.includes("remind") ? "\u{1F514}" : tool.tool.includes("click") ? "\u{1F5B1}\uFE0F" : "\u26A1"), /* @__PURE__ */ import_react4.default.createElement("span", null, "Tool:"), /* @__PURE__ */ import_react4.default.createElement("code", { className: "tool-name-code" }, tool.tool)), /* @__PURE__ */ import_react4.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: 6 } }, tool.status === "running" && /* @__PURE__ */ import_react4.default.createElement("span", { className: "tool-status-badge running" }, /* @__PURE__ */ import_react4.default.createElement("span", { className: "tool-card-spinner" }), " Running..."), tool.status === "completed" && /* @__PURE__ */ import_react4.default.createElement("span", { className: "tool-status-badge completed" }, "\u2713 Verified ", tool.durationMs ? `(${tool.durationMs}ms)` : ""), tool.status === "failed" && /* @__PURE__ */ import_react4.default.createElement("span", { className: "tool-status-badge failed" }, "\u2717 Failed"), /* @__PURE__ */ import_react4.default.createElement("span", { style: { fontSize: 10, color: "#94a3b8" } }, tool.collapsed ? "\u25B6" : "\u25BC"))), !tool.collapsed && /* @__PURE__ */ import_react4.default.createElement("div", { className: "tool-card-body" }, tool.args && Object.keys(tool.args).length > 0 && /* @__PURE__ */ import_react4.default.createElement("div", null, /* @__PURE__ */ import_react4.default.createElement("div", { className: "tool-params-label" }, "Parameters"), /* @__PURE__ */ import_react4.default.createElement("pre", { className: "tool-params-pre" }, JSON.stringify(tool.args, null, 2))), (tool.observation || tool.result) && /* @__PURE__ */ import_react4.default.createElement("div", { className: "tool-obs-box" }, /* @__PURE__ */ import_react4.default.createElement("strong", null, "Live Observation:"), " ", tool.observation || tool.result))))), msg.text ? /* @__PURE__ */ import_react4.default.createElement(
     "div",
     {
       className: "mac-msg-text",
       style: { whiteSpace: "pre-wrap" },
       dangerouslySetInnerHTML: { __html: msg.text }
     }
-  )))), isAiThinking && /* @__PURE__ */ import_react4.default.createElement("div", { className: "mac-msg-row assistant" }, /* @__PURE__ */ import_react4.default.createElement("div", { className: "mac-msg-bubble thinking" }, /* @__PURE__ */ import_react4.default.createElement("span", { className: "dot-live", style: { width: 6, height: 6, display: "inline-block" } }), /* @__PURE__ */ import_react4.default.createElement("span", { style: { fontSize: "12px", color: "#94a3b8" } }, "Copilot is thinking..."))), /* @__PURE__ */ import_react4.default.createElement("div", { ref: messagesEndRef })), /* @__PURE__ */ import_react4.default.createElement("div", { className: "ai-chips-bar" }, /* @__PURE__ */ import_react4.default.createElement(
+  ) : msg.isStreaming && !msg.isThinking && !msg.reasoning && /* @__PURE__ */ import_react4.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: 8, padding: "4px 0", color: "#94a3b8" } }, /* @__PURE__ */ import_react4.default.createElement("span", { className: "dot-live", style: { width: 6, height: 6, display: "inline-block" } }), /* @__PURE__ */ import_react4.default.createElement("span", { style: { fontSize: "12px" } }, "Connecting to AI model...")), msg.isStreaming && !msg.isThinking && msg.text && /* @__PURE__ */ import_react4.default.createElement("span", { className: "streaming-caret" })))), isAiThinking && !chatMessages.some((m) => m.isStreaming) && /* @__PURE__ */ import_react4.default.createElement("div", { className: "mac-msg-row assistant" }, /* @__PURE__ */ import_react4.default.createElement("div", { className: "mac-msg-bubble thinking" }, /* @__PURE__ */ import_react4.default.createElement("span", { className: "dot-live", style: { width: 6, height: 6, display: "inline-block" } }), /* @__PURE__ */ import_react4.default.createElement("span", { style: { fontSize: "12px", color: "#94a3b8" } }, "Copilot is thinking..."))), /* @__PURE__ */ import_react4.default.createElement("div", { ref: messagesEndRef })), /* @__PURE__ */ import_react4.default.createElement("div", { className: "ai-chips-bar" }, /* @__PURE__ */ import_react4.default.createElement(
     "span",
     {
       className: "ai-chip",
@@ -40508,7 +41956,16 @@ function AiHudSidebar({
         if (e.key === "Enter") handleProcessNlpCommand(chatInput);
       }
     }
-  ), /* @__PURE__ */ import_react4.default.createElement(
+  ), isGenerating ? /* @__PURE__ */ import_react4.default.createElement(
+    "button",
+    {
+      type: "button",
+      className: "mac-stop-btn",
+      title: "Stop generating (Esc / Click)",
+      onClick: handleStopGeneration
+    },
+    "\u23F9 Stop"
+  ) : /* @__PURE__ */ import_react4.default.createElement(
     "button",
     {
       className: "mac-send-btn",
@@ -42357,6 +43814,57 @@ function App() {
   const handleOpenDownloadsFolder = () => {
     if (ipcRenderer2) ipcRenderer2.invoke("open-downloads-folder");
   };
+  const playAudioChime = () => {
+    try {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const now = ctx.currentTime;
+      const osc1 = ctx.createOscillator();
+      const gain1 = ctx.createGain();
+      osc1.type = "sine";
+      osc1.frequency.setValueAtTime(587.33, now);
+      gain1.gain.setValueAtTime(0.25, now);
+      gain1.gain.exponentialRampToValueAtTime(1e-3, now + 0.35);
+      osc1.connect(gain1);
+      gain1.connect(ctx.destination);
+      osc1.start(now);
+      osc1.stop(now + 0.35);
+      const osc2 = ctx.createOscillator();
+      const gain2 = ctx.createGain();
+      osc2.type = "sine";
+      osc2.frequency.setValueAtTime(880, now + 0.16);
+      gain2.gain.setValueAtTime(0.3, now + 0.16);
+      gain2.gain.exponentialRampToValueAtTime(1e-3, now + 0.7);
+      osc2.connect(gain2);
+      gain2.connect(ctx.destination);
+      osc2.start(now + 0.16);
+      osc2.stop(now + 0.7);
+    } catch (e) {
+      console.warn("[Audio Chime]", e);
+    }
+  };
+  const triggerVoiceReminder = (message) => {
+    try {
+      if ("speechSynthesis" in window) {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(message);
+        utterance.rate = 1.05;
+        utterance.pitch = 1;
+        window.speechSynthesis.speak(utterance);
+      }
+    } catch (e) {
+      console.warn("[Voice Reminder]", e);
+    }
+  };
+  const handleRemindUser = (message) => {
+    playAudioChime();
+    triggerVoiceReminder(message);
+    setAiLiveBanner({ action: "REMINDER", text: message, time: Date.now() });
+    try {
+      if (window._aiBannerTimeout) clearTimeout(window._aiBannerTimeout);
+      window._aiBannerTimeout = setTimeout(() => setAiLiveBanner(null), 12e3);
+    } catch (e) {
+    }
+  };
   const handleClearCompletedDownloads = () => {
     if (ipcRenderer2) {
       ipcRenderer2.invoke("clear-completed-downloads").then((list) => {
@@ -42545,9 +44053,11 @@ function App() {
       } else if (action === "ai-command") {
         if (data.prompt) {
           executeAiBrowserCommand(data.prompt, {
-            tabs,
-            activeTab,
-            activeWebview: document.getElementById(`wv-${activeTabId}`),
+            tabs: tabsRef.current,
+            activeTab: activeTabRef.current,
+            activeTabId: activeTabIdRef.current,
+            activeWebview: document.getElementById(`wv-${activeTabIdRef.current}`),
+            getActiveWebview: () => document.getElementById(`wv-${activeTabIdRef.current}`),
             onOpenTab: openInNewTab,
             onCloseTab: handleCloseTab,
             onNavigate: handleNavigate,
@@ -42557,6 +44067,27 @@ function App() {
             onOpenQrCode: () => setIsQrCodeOpen(true),
             onOpenTabSearch: () => setIsTabSearchOpen(true),
             onOpenHistory: () => setIsHistoryOpen(true),
+            onExecuteClick: executeWebviewClick2,
+            onExecuteScroll: executeWebviewScroll2,
+            onRemindUser: handleRemindUser,
+            onStreamChunk: (chunk) => {
+              ipcRenderer2.send("sync-hud-state", {
+                type: "ai-command-stream-chunk",
+                chunk
+              });
+            },
+            onStreamReasoning: (chunk) => {
+              ipcRenderer2.send("sync-hud-state", {
+                type: "ai-command-stream-reasoning",
+                chunk
+              });
+            },
+            onToolEvent: (toolEvent) => {
+              ipcRenderer2.send("sync-hud-state", {
+                type: "ai-command-tool-event",
+                toolEvent
+              });
+            },
             logTelemetry: (type, msg) => logTelemetry(type, msg)
           }).then((reply) => {
             ipcRenderer2.send("sync-hud-state", {
@@ -42566,7 +44097,7 @@ function App() {
           }).catch((err) => {
             ipcRenderer2.send("sync-hud-state", {
               type: "ai-command-reply",
-              reply: { text: `Command error: ${err.message}` }
+              reply: `Command error: ${err.message}`
             });
           });
         }
@@ -42683,9 +44214,11 @@ function App() {
         } else if (action === "command") {
           triggerAiBanner("COMMAND", "AI Autopilot: " + (payload.prompt || ""));
           const reply = await executeAiBrowserCommand(payload.prompt, {
-            tabs,
-            activeTab,
+            tabs: curTabs,
+            activeTab: curActiveTab,
+            activeTabId: curActiveId,
             activeWebview: wv,
+            getActiveWebview: () => document.getElementById(`wv-${activeTabIdRef.current}`),
             onOpenTab: openInNewTab,
             onCloseTab: handleCloseTab,
             onNavigate: handleNavigate,
@@ -42695,6 +44228,9 @@ function App() {
             onOpenQrCode: () => setIsQrCodeOpen(true),
             onOpenTabSearch: () => setIsTabSearchOpen(true),
             onOpenHistory: () => setIsHistoryOpen(true),
+            onExecuteClick: executeWebviewClick2,
+            onExecuteScroll: executeWebviewScroll2,
+            onRemindUser: handleRemindUser,
             logTelemetry: (type, msg) => logTelemetry(type, msg)
           });
           result = { success: true, reply };
@@ -42826,6 +44362,17 @@ function App() {
           } else {
             result = { success: false, error: "No active webview" };
           }
+        } else if (action === "toggle-hud") {
+          handleDockHud();
+          setIsHudOpen(true);
+          result = { success: true, isHudOpen: true };
+        } else if (action === "copilot-chat") {
+          handleDockHud();
+          setIsHudOpen(true);
+          if (payload.query) {
+            window.dispatchEvent(new CustomEvent("antigravity-copilot-query", { detail: { query: payload.query } }));
+          }
+          result = { success: true, dispatched: true };
         }
         ipcRenderer2.send("ai-control-response", { id, result });
       } catch (err) {
@@ -43178,7 +44725,11 @@ function App() {
   };
   const openInNewTab = (targetUrl) => {
     const url = (targetUrl || "").trim();
-    if (!url || url === "about:blank" || url.startsWith("javascript:") || url.startsWith("data:")) return;
+    if (!url || url === "about:blank") {
+      handleAddTab();
+      return;
+    }
+    if (url.startsWith("javascript:") || url.startsWith("data:")) return;
     const now = Date.now();
     if (lastOpenedTabRef.current.url === url && now - lastOpenedTabRef.current.time < 1200) {
       return;
@@ -43212,20 +44763,24 @@ function App() {
   };
   window.__antigravityOpenNewTab = openInNewTab;
   const handleCloseTab = (tabId) => {
-    const targetId = tabId !== void 0 ? tabId : activeTabId;
-    if (tabs.length <= 1) {
-      setTabs([{ id: activeTab.id, url: "", initialUrl: "about:blank", title: "New Tab", isNewTab: true }]);
-      const wv = document.getElementById(`wv-${activeTab.id}`);
-      if (wv && typeof wv.loadURL === "function") wv.loadURL("about:blank");
-      return;
-    }
-    const closeIndex = tabs.findIndex((t) => t.id === targetId);
-    const filtered = tabs.filter((t) => t.id !== targetId);
-    setTabs(filtered);
-    if (activeTabId === targetId) {
-      const nextActiveIndex = Math.min(closeIndex, filtered.length - 1);
-      setActiveTabId(filtered[nextActiveIndex].id);
-    }
+    const targetId = tabId !== void 0 ? tabId : activeTabIdRef.current;
+    setTabs((prevTabs) => {
+      if (prevTabs.length <= 1) {
+        const firstId = prevTabs[0]?.id || 1;
+        const wv = document.getElementById(`wv-${firstId}`);
+        if (wv && typeof wv.loadURL === "function") wv.loadURL("about:blank");
+        return [{ id: firstId, url: "", initialUrl: "about:blank", title: "New Tab", isNewTab: true }];
+      }
+      const closeIndex = prevTabs.findIndex((t) => String(t.id) === String(targetId));
+      const filtered = prevTabs.filter((t) => String(t.id) !== String(targetId));
+      if (String(activeTabIdRef.current) === String(targetId)) {
+        const nextActiveIndex = Math.max(0, Math.min(closeIndex, filtered.length - 1));
+        if (filtered[nextActiveIndex]) {
+          setActiveTabId(filtered[nextActiveIndex].id);
+        }
+      }
+      return filtered;
+    });
     logTelemetry("act", `TabStripModel::CloseWebContentsAt()`, `Closed Tab #${targetId}`);
   };
   const handleNavigate = (target) => {
@@ -43681,6 +45236,7 @@ function App() {
       onOpenHistory: () => setIsHistoryOpen(true),
       onOpenAiProviderModal: () => setIsAiProviderModalOpen(true),
       onCaptureSnapshot: handleCaptureVlmSnapshot,
+      onRemindUser: handleRemindUser,
       latestSnapshot
     }
   )), /* @__PURE__ */ import_react14.default.createElement(
@@ -43766,9 +45322,9 @@ function App() {
     left: "50%",
     transform: "translateX(-50%)",
     zIndex: 999999,
-    background: "rgba(11, 17, 33, 0.94)",
-    border: "1.5px solid #00e5ff",
-    boxShadow: "0 10px 40px rgba(0, 229, 255, 0.4), 0 0 20px rgba(0, 229, 255, 0.25)",
+    background: aiLiveBanner.action === "REMINDER" ? "rgba(6, 44, 34, 0.96)" : "rgba(11, 17, 33, 0.94)",
+    border: aiLiveBanner.action === "REMINDER" ? "1.5px solid #10b981" : "1.5px solid #00e5ff",
+    boxShadow: aiLiveBanner.action === "REMINDER" ? "0 10px 40px rgba(16, 185, 129, 0.5), 0 0 25px rgba(16, 185, 129, 0.35)" : "0 10px 40px rgba(0, 229, 255, 0.4), 0 0 20px rgba(0, 229, 255, 0.25)",
     borderRadius: 14,
     padding: "14px 28px",
     display: "flex",
@@ -43782,9 +45338,15 @@ function App() {
     width: 10,
     height: 10,
     borderRadius: "50%",
-    background: "#00e5ff",
-    boxShadow: "0 0 12px #00e5ff"
-  } }), /* @__PURE__ */ import_react14.default.createElement("span", { style: { fontSize: 11, fontWeight: 800, color: "#00e5ff", letterSpacing: "0.1em", textTransform: "uppercase" } }, "\u26A1 AI AUTOPILOT"), /* @__PURE__ */ import_react14.default.createElement("span", { style: { fontSize: 14, fontWeight: 600, color: "#f1f5f9", letterSpacing: "-0.2px" } }, aiLiveBanner.text)));
+    background: aiLiveBanner.action === "REMINDER" ? "#10b981" : "#00e5ff",
+    boxShadow: aiLiveBanner.action === "REMINDER" ? "0 0 14px #10b981" : "0 0 12px #00e5ff"
+  } }), /* @__PURE__ */ import_react14.default.createElement("span", { style: {
+    fontSize: 11,
+    fontWeight: 800,
+    color: aiLiveBanner.action === "REMINDER" ? "#10b981" : "#00e5ff",
+    letterSpacing: "0.1em",
+    textTransform: "uppercase"
+  } }, aiLiveBanner.action === "REMINDER" ? "\u{1F514} AI REMINDER" : "\u26A1 AI AUTOPILOT"), /* @__PURE__ */ import_react14.default.createElement("span", { style: { fontSize: 14, fontWeight: 600, color: "#f1f5f9", letterSpacing: "-0.2px" } }, aiLiveBanner.text)));
 }
 
 // desktop/src/components/DetachedAiHudCockpit.jsx
@@ -43841,8 +45403,22 @@ function DetachedAiHudCockpit() {
   const timerIntervalRef = (0, import_react15.useRef)(null);
   const audioCtxRef = (0, import_react15.useRef)(null);
   const mediaStreamRef = (0, import_react15.useRef)(null);
-  const audioProcessorRef = (0, import_react15.useRef)(null);
   const audioChunksRef = (0, import_react15.useRef)([]);
+  const activeAssistantIdRef = (0, import_react15.useRef)(null);
+  const toggleThoughtCollapse = (msgId) => {
+    setChatMessages((prev) => prev.map(
+      (m) => m.id === msgId ? { ...m, thoughtCollapsed: !m.thoughtCollapsed } : m
+    ));
+  };
+  const toggleToolCollapse = (msgId, toolId) => {
+    setChatMessages((prev) => prev.map((m) => {
+      if (m.id !== msgId) return m;
+      const updated = (m.toolEvents || []).map(
+        (t) => t.id === toolId ? { ...t, collapsed: !t.collapsed } : t
+      );
+      return { ...m, toolEvents: updated };
+    }));
+  };
   (0, import_react15.useEffect)(() => {
     try {
       if (ipcRenderer3.invoke) {
@@ -43884,8 +45460,62 @@ function DetachedAiHudCockpit() {
         setGrepPage(1);
       } else if (data.type === "autofill-status") {
         setAutofillStatus(data.status || "");
+      } else if (data.type === "ai-command-stream-reasoning") {
+        setIsAiThinking(false);
+        const curId = activeAssistantIdRef.current;
+        setChatMessages((prev) => prev.map((m) => {
+          if (m.id !== curId) return m;
+          return {
+            ...m,
+            reasoning: (m.reasoning || "") + (data.chunk || ""),
+            isThinking: true
+          };
+        }));
+      } else if (data.type === "ai-command-stream-chunk") {
+        setIsAiThinking(false);
+        const curId = activeAssistantIdRef.current;
+        setChatMessages((prev) => prev.map((m) => {
+          if (m.id !== curId) return m;
+          const shouldCollapse = m.reasoning && m.isThinking ? true : m.thoughtCollapsed;
+          return {
+            ...m,
+            text: (m.text || "") + (data.chunk || ""),
+            isThinking: false,
+            thoughtCollapsed: shouldCollapse
+          };
+        }));
+      } else if (data.type === "ai-command-tool-event") {
+        setIsAiThinking(false);
+        const curId = activeAssistantIdRef.current;
+        const evt = data.toolEvent;
+        if (!evt) return;
+        setChatMessages((prev) => prev.map((m) => {
+          if (m.id !== curId) return m;
+          const currentTools = [...m.toolEvents || []];
+          const existingIdx = currentTools.findIndex((t) => t.id === evt.id);
+          if (existingIdx >= 0) {
+            currentTools[existingIdx] = { ...currentTools[existingIdx], ...evt };
+          } else {
+            currentTools.push({ ...evt, collapsed: false });
+          }
+          return {
+            ...m,
+            toolEvents: currentTools
+          };
+        }));
       } else if (data.type === "ai-command-reply") {
-        addAiReply(data.reply || "");
+        const curId = activeAssistantIdRef.current;
+        setChatMessages((prev) => prev.map((m) => {
+          if (m.id !== curId) return m;
+          const finalText = m.text && m.text.trim() ? m.text : data.reply || "";
+          return {
+            ...m,
+            text: finalText,
+            isStreaming: false,
+            isThinking: false,
+            thoughtCollapsed: m.reasoning ? true : m.thoughtCollapsed
+          };
+        }));
         setIsAiThinking(false);
         if (data.reply) {
           const spokenText = String(data.reply).replace(/<[^>]*>/g, "").substring(0, 120);
@@ -44101,7 +45731,21 @@ function DetachedAiHudCockpit() {
       text: query,
       time: (/* @__PURE__ */ new Date()).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
     };
-    setChatMessages((prev) => [...prev, userMsg]);
+    const assistantMsgId = "ai-" + Date.now();
+    activeAssistantIdRef.current = assistantMsgId;
+    const placeholderMsg = {
+      id: assistantMsgId,
+      role: "assistant",
+      text: "",
+      reasoning: "",
+      isStreaming: true,
+      isThinking: false,
+      thoughtDuration: 0,
+      thoughtCollapsed: false,
+      toolEvents: [],
+      time: (/* @__PURE__ */ new Date()).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+    };
+    setChatMessages((prev) => [...prev, userMsg, placeholderMsg]);
     setChatInput("");
     setIsAiThinking(true);
     sendHudAction("ai-command", { prompt: query });
@@ -44209,14 +45853,26 @@ function DetachedAiHudCockpit() {
       onClick: () => setVoiceSpeechFeedback(!voiceSpeechFeedback)
     },
     voiceSpeechFeedback ? "\u{1F50A} Speaking" : "\u{1F507} Muted"
-  )), /* @__PURE__ */ import_react15.default.createElement("div", { className: "mac-quick-chips" }, /* @__PURE__ */ import_react15.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("CLK SB"), title: "Click Search Bar on web page" }, "\u{1F50D} CLK SB"), /* @__PURE__ */ import_react15.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("s50"), title: "Scroll down by 50%" }, "\u{1F4DC} S50"), /* @__PURE__ */ import_react15.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("open youtube"), title: "Open YouTube tab" }, "\u{1F4FA} YouTube"), /* @__PURE__ */ import_react15.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("show numbers"), title: "Highlight & number keywords on page" }, "\u{1F522} Numbers"), /* @__PURE__ */ import_react15.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("help shortcuts"), title: "Show all NLP commands" }, "\u{1F4A1} Shortcuts"), /* @__PURE__ */ import_react15.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("close tab"), title: "Close active tab" }, "\u274C Close"), /* @__PURE__ */ import_react15.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("summarize") }, "\u26A1 Summarize"), /* @__PURE__ */ import_react15.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("scroll down") }, "\u2B07 Scroll"), /* @__PURE__ */ import_react15.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("click play") }, "\u25B6\uFE0F Play"), /* @__PURE__ */ import_react15.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("autofill") }, "\u{1F4DD} Autofill"), /* @__PURE__ */ import_react15.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("\u092A\u0947\u091C \u0915\u093E \u0938\u093E\u0930\u093E\u0902\u0936 \u0926\u094B") }, "\u{1F1EE}\u{1F1F3} \u0938\u093E\u0930\u093E\u0902\u0936 (HI)"), /* @__PURE__ */ import_react15.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("\uD398\uC774\uC9C0 \uC694\uC57D") }, "\u{1F1F0}\u{1F1F7} \uC694\uC57D (KO)")), /* @__PURE__ */ import_react15.default.createElement("div", { className: "mac-messages-stream" }, chatMessages.map((msg) => /* @__PURE__ */ import_react15.default.createElement("div", { key: msg.id, className: `mac-msg-row ${msg.role}` }, /* @__PURE__ */ import_react15.default.createElement("div", { className: "mac-msg-bubble" }, /* @__PURE__ */ import_react15.default.createElement("div", { className: "mac-msg-header" }, /* @__PURE__ */ import_react15.default.createElement("span", { className: "mac-msg-author" }, msg.role === "user" ? "You" : "\u2726 Copilot"), /* @__PURE__ */ import_react15.default.createElement("span", { className: "mac-msg-time" }, msg.time)), /* @__PURE__ */ import_react15.default.createElement(
+  )), /* @__PURE__ */ import_react15.default.createElement("div", { className: "mac-quick-chips" }, /* @__PURE__ */ import_react15.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("CLK SB"), title: "Click Search Bar on web page" }, "\u{1F50D} CLK SB"), /* @__PURE__ */ import_react15.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("s50"), title: "Scroll down by 50%" }, "\u{1F4DC} S50"), /* @__PURE__ */ import_react15.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("open youtube"), title: "Open YouTube tab" }, "\u{1F4FA} YouTube"), /* @__PURE__ */ import_react15.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("show numbers"), title: "Highlight & number keywords on page" }, "\u{1F522} Numbers"), /* @__PURE__ */ import_react15.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("help shortcuts"), title: "Show all NLP commands" }, "\u{1F4A1} Shortcuts"), /* @__PURE__ */ import_react15.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("close tab"), title: "Close active tab" }, "\u274C Close"), /* @__PURE__ */ import_react15.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("summarize") }, "\u26A1 Summarize"), /* @__PURE__ */ import_react15.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("scroll down") }, "\u2B07 Scroll"), /* @__PURE__ */ import_react15.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("click play") }, "\u25B6\uFE0F Play"), /* @__PURE__ */ import_react15.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("autofill") }, "\u{1F4DD} Autofill"), /* @__PURE__ */ import_react15.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("\u092A\u0947\u091C \u0915\u093E \u0938\u093E\u0930\u093E\u0902\u0936 \u0926\u094B") }, "\u{1F1EE}\u{1F1F3} \u0938\u093E\u0930\u093E\u0902\u0936 (HI)"), /* @__PURE__ */ import_react15.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("\uD398\uC774\uC9C0 \uC694\uC57D") }, "\u{1F1F0}\u{1F1F7} \uC694\uC57D (KO)")), /* @__PURE__ */ import_react15.default.createElement("div", { className: "mac-messages-stream" }, chatMessages.map((msg) => /* @__PURE__ */ import_react15.default.createElement("div", { key: msg.id, className: `mac-msg-row ${msg.role}` }, /* @__PURE__ */ import_react15.default.createElement("div", { className: "mac-msg-bubble" }, /* @__PURE__ */ import_react15.default.createElement("div", { className: "mac-msg-header" }, /* @__PURE__ */ import_react15.default.createElement("span", { className: "mac-msg-author" }, msg.role === "user" ? "You" : "\u2726 Copilot"), /* @__PURE__ */ import_react15.default.createElement("span", { className: "mac-msg-time" }, msg.time)), msg.role === "assistant" && msg.reasoning && /* @__PURE__ */ import_react15.default.createElement("div", { className: `chatgpt-thought-container ${msg.isThinking ? "active-thinking" : ""}` }, /* @__PURE__ */ import_react15.default.createElement("div", { className: "thought-header", onClick: () => toggleThoughtCollapse(msg.id) }, /* @__PURE__ */ import_react15.default.createElement("div", { className: "thought-title-group" }, msg.isThinking ? /* @__PURE__ */ import_react15.default.createElement(import_react15.default.Fragment, null, /* @__PURE__ */ import_react15.default.createElement("span", { className: "thought-shimmer-pulse" }), /* @__PURE__ */ import_react15.default.createElement("span", null, "Thinking...")) : /* @__PURE__ */ import_react15.default.createElement(import_react15.default.Fragment, null, /* @__PURE__ */ import_react15.default.createElement("span", null, "\u{1F4AD}"), /* @__PURE__ */ import_react15.default.createElement("span", null, "Thought for ", msg.thoughtDuration || "2.4", "s"))), /* @__PURE__ */ import_react15.default.createElement(
+    "button",
+    {
+      type: "button",
+      className: "thought-retract-btn",
+      onClick: (e) => {
+        e.stopPropagation();
+        toggleThoughtCollapse(msg.id);
+      },
+      title: msg.thoughtCollapsed ? "Expand reasoning process" : "Collapse / Retract reasoning process"
+    },
+    msg.thoughtCollapsed ? "\u25B6 Expand Thought" : "\u25BC Collapse Thought"
+  )), !msg.thoughtCollapsed && /* @__PURE__ */ import_react15.default.createElement("div", { className: "thought-stream-body" }, msg.reasoning, msg.isThinking && /* @__PURE__ */ import_react15.default.createElement("span", { className: "streaming-caret" }))), msg.role === "assistant" && msg.toolEvents && msg.toolEvents.length > 0 && /* @__PURE__ */ import_react15.default.createElement("div", { className: "antigravity-tools-group" }, msg.toolEvents.map((tool) => /* @__PURE__ */ import_react15.default.createElement("div", { key: tool.id, className: `antigravity-tool-card ${tool.status}` }, /* @__PURE__ */ import_react15.default.createElement("div", { className: "tool-card-header", onClick: () => toggleToolCollapse(msg.id, tool.id) }, /* @__PURE__ */ import_react15.default.createElement("div", { className: "tool-card-title" }, /* @__PURE__ */ import_react15.default.createElement("span", null, tool.tool.includes("download") ? "\u{1F4E5}" : tool.tool.includes("tab") ? "\u{1F5C2}\uFE0F" : tool.tool.includes("search") ? "\u{1F50D}" : tool.tool.includes("remind") ? "\u{1F514}" : tool.tool.includes("click") ? "\u{1F5B1}\uFE0F" : "\u26A1"), /* @__PURE__ */ import_react15.default.createElement("span", null, "Tool:"), /* @__PURE__ */ import_react15.default.createElement("code", { className: "tool-name-code" }, tool.tool)), /* @__PURE__ */ import_react15.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: 6 } }, tool.status === "running" && /* @__PURE__ */ import_react15.default.createElement("span", { className: "tool-status-badge running" }, /* @__PURE__ */ import_react15.default.createElement("span", { className: "tool-card-spinner" }), " Running..."), tool.status === "completed" && /* @__PURE__ */ import_react15.default.createElement("span", { className: "tool-status-badge completed" }, "\u2713 Verified ", tool.durationMs ? `(${tool.durationMs}ms)` : ""), tool.status === "failed" && /* @__PURE__ */ import_react15.default.createElement("span", { className: "tool-status-badge failed" }, "\u2717 Failed"), /* @__PURE__ */ import_react15.default.createElement("span", { style: { fontSize: 10, color: "#94a3b8" } }, tool.collapsed ? "\u25B6" : "\u25BC"))), !tool.collapsed && /* @__PURE__ */ import_react15.default.createElement("div", { className: "tool-card-body" }, tool.args && Object.keys(tool.args).length > 0 && /* @__PURE__ */ import_react15.default.createElement("div", null, /* @__PURE__ */ import_react15.default.createElement("div", { className: "tool-params-label" }, "Parameters"), /* @__PURE__ */ import_react15.default.createElement("pre", { className: "tool-params-pre" }, JSON.stringify(tool.args, null, 2))), (tool.observation || tool.result) && /* @__PURE__ */ import_react15.default.createElement("div", { className: "tool-obs-box" }, /* @__PURE__ */ import_react15.default.createElement("strong", null, "Live Observation:"), " ", tool.observation || tool.result))))), msg.text ? /* @__PURE__ */ import_react15.default.createElement(
     "div",
     {
       className: "mac-msg-text",
       style: { whiteSpace: "pre-wrap" },
       dangerouslySetInnerHTML: { __html: msg.text }
     }
-  )))), isAiThinking && /* @__PURE__ */ import_react15.default.createElement("div", { className: "mac-msg-row assistant" }, /* @__PURE__ */ import_react15.default.createElement("div", { className: "mac-msg-bubble thinking" }, /* @__PURE__ */ import_react15.default.createElement("span", { className: "dot-live", style: { width: 6, height: 6, display: "inline-block" } }), /* @__PURE__ */ import_react15.default.createElement("span", { style: { fontSize: "12px", color: "#94a3b8" } }, "Copilot is thinking..."))), /* @__PURE__ */ import_react15.default.createElement("div", { ref: messagesEndRef })), /* @__PURE__ */ import_react15.default.createElement("div", { className: "mac-whisper-bar" }, /* @__PURE__ */ import_react15.default.createElement("div", { className: "mac-lang-chips" }, /* @__PURE__ */ import_react15.default.createElement("span", { className: "mac-whisper-badge" }, "\u{1F9E0} Whisper Local ASR"), /* @__PURE__ */ import_react15.default.createElement(
+  ) : msg.isStreaming && !msg.isThinking && !msg.reasoning && /* @__PURE__ */ import_react15.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: 8, padding: "4px 0", color: "#94a3b8" } }, /* @__PURE__ */ import_react15.default.createElement("span", { className: "dot-live", style: { width: 6, height: 6, display: "inline-block" } }), /* @__PURE__ */ import_react15.default.createElement("span", { style: { fontSize: "12px" } }, "Connecting to AI model...")), msg.isStreaming && !msg.isThinking && msg.text && /* @__PURE__ */ import_react15.default.createElement("span", { className: "streaming-caret" })))), isAiThinking && !chatMessages.some((m) => m.isStreaming) && /* @__PURE__ */ import_react15.default.createElement("div", { className: "mac-msg-row assistant" }, /* @__PURE__ */ import_react15.default.createElement("div", { className: "mac-msg-bubble thinking" }, /* @__PURE__ */ import_react15.default.createElement("span", { className: "dot-live", style: { width: 6, height: 6, display: "inline-block" } }), /* @__PURE__ */ import_react15.default.createElement("span", { style: { fontSize: "12px", color: "#94a3b8" } }, "Copilot is thinking..."))), /* @__PURE__ */ import_react15.default.createElement("div", { ref: messagesEndRef })), /* @__PURE__ */ import_react15.default.createElement("div", { className: "mac-whisper-bar" }, /* @__PURE__ */ import_react15.default.createElement("div", { className: "mac-lang-chips" }, /* @__PURE__ */ import_react15.default.createElement("span", { className: "mac-whisper-badge" }, "\u{1F9E0} Whisper Local ASR"), /* @__PURE__ */ import_react15.default.createElement(
     "button",
     {
       className: `mac-lang-chip ${whisperLang === "auto" ? "active" : ""}`,

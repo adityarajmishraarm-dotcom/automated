@@ -728,7 +728,7 @@ function startAiControlServer(port = 4892) {
             if (pathname === '/api/command' && req.method === 'POST') {
                 const body = await readBody();
                 const prompt = body.prompt || body.command || '';
-                const result = await sendAiControlRequest('command', { prompt });
+                const result = await sendAiControlRequest('command', { prompt }, 90000);
                 return sendJson(200, result);
             }
 
@@ -779,6 +779,17 @@ function startAiControlServer(port = 4892) {
             if (pathname === '/api/site/act' && req.method === 'POST') {
                 const body = await readBody();
                 const result = await sendAiControlRequest('site-act', body);
+                return sendJson(200, { success: true, result });
+            }
+
+            if (pathname === '/api/hud/toggle' && req.method === 'POST') {
+                const result = await sendAiControlRequest('toggle-hud');
+                return sendJson(200, { success: true, result });
+            }
+
+            if (pathname === '/api/copilot/chat' && req.method === 'POST') {
+                const body = await readBody();
+                const result = await sendAiControlRequest('copilot-chat', body);
                 return sendJson(200, { success: true, result });
             }
 
@@ -837,6 +848,34 @@ function startAiControlServer(port = 4892) {
             if (pathname === '/api/downloads/view' && req.method === 'POST') {
                 const result = await sendAiControlRequest('navigate', { url: 'antigravity://downloads' });
                 return sendJson(200, { success: true, result });
+            }
+
+            if (pathname === '/api/downloads/trigger' && req.method === 'POST') {
+                const body = await readBody();
+                const targetUrl = body.url || body.target;
+                if (!targetUrl) return sendJson(400, { success: false, error: 'url is required' });
+                try {
+                    global.__isAutomatedDownloadTest = true;
+                    session.defaultSession.downloadURL(targetUrl);
+                    return sendJson(200, { success: true, message: `Download initiated for ${targetUrl}` });
+                } catch (dlErr) {
+                    return sendJson(500, { success: false, error: dlErr.message });
+                }
+            }
+
+            if (pathname === '/api/downloads/verify' && req.method === 'GET') {
+                const active = downloadsList.filter(d => d.state === 'progressing');
+                const completed = downloadsList.filter(d => d.state === 'completed');
+                return sendJson(200, {
+                    success: true,
+                    hasActiveDownloads: active.length > 0,
+                    hasCompletedDownloads: completed.length > 0,
+                    totalCount: downloadsList.length,
+                    activeCount: active.length,
+                    completedCount: completed.length,
+                    active,
+                    completed
+                });
             }
 
             return sendJson(404, { error: 'Not Found', pathname });

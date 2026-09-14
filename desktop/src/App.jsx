@@ -280,6 +280,61 @@ export default function App() {
         if (ipcRenderer) ipcRenderer.invoke('open-downloads-folder');
     };
 
+    const playAudioChime = () => {
+        try {
+            const ctx = new (window.AudioContext || window.webkitAudioContext)();
+            const now = ctx.currentTime;
+            // Melodic dual-tone chime: 587.33 Hz (D5) -> 880 Hz (A5)
+            const osc1 = ctx.createOscillator();
+            const gain1 = ctx.createGain();
+            osc1.type = 'sine';
+            osc1.frequency.setValueAtTime(587.33, now);
+            gain1.gain.setValueAtTime(0.25, now);
+            gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+            osc1.connect(gain1);
+            gain1.connect(ctx.destination);
+            osc1.start(now);
+            osc1.stop(now + 0.35);
+
+            const osc2 = ctx.createOscillator();
+            const gain2 = ctx.createGain();
+            osc2.type = 'sine';
+            osc2.frequency.setValueAtTime(880, now + 0.16);
+            gain2.gain.setValueAtTime(0.3, now + 0.16);
+            gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.7);
+            osc2.connect(gain2);
+            gain2.connect(ctx.destination);
+            osc2.start(now + 0.16);
+            osc2.stop(now + 0.7);
+        } catch (e) {
+            console.warn('[Audio Chime]', e);
+        }
+    };
+
+    const triggerVoiceReminder = (message) => {
+        try {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(message);
+                utterance.rate = 1.05;
+                utterance.pitch = 1.0;
+                window.speechSynthesis.speak(utterance);
+            }
+        } catch (e) {
+            console.warn('[Voice Reminder]', e);
+        }
+    };
+
+    const handleRemindUser = (message) => {
+        playAudioChime();
+        triggerVoiceReminder(message);
+        setAiLiveBanner({ action: 'REMINDER', text: message, time: Date.now() });
+        try {
+            if (window._aiBannerTimeout) clearTimeout(window._aiBannerTimeout);
+            window._aiBannerTimeout = setTimeout(() => setAiLiveBanner(null), 12000);
+        } catch (e) {}
+    };
+
     const handleClearCompletedDownloads = () => {
         if (ipcRenderer) {
             ipcRenderer.invoke('clear-completed-downloads').then(list => {
@@ -481,9 +536,11 @@ export default function App() {
             } else if (action === 'ai-command') {
                 if (data.prompt) {
                     executeAiBrowserCommand(data.prompt, {
-                        tabs,
-                        activeTab,
-                        activeWebview: document.getElementById(`wv-${activeTabId}`),
+                        tabs: tabsRef.current,
+                        activeTab: activeTabRef.current,
+                        activeTabId: activeTabIdRef.current,
+                        activeWebview: document.getElementById(`wv-${activeTabIdRef.current}`),
+                        getActiveWebview: () => document.getElementById(`wv-${activeTabIdRef.current}`),
                         onOpenTab: openInNewTab,
                         onCloseTab: handleCloseTab,
                         onNavigate: handleNavigate,
@@ -493,6 +550,27 @@ export default function App() {
                         onOpenQrCode: () => setIsQrCodeOpen(true),
                         onOpenTabSearch: () => setIsTabSearchOpen(true),
                         onOpenHistory: () => setIsHistoryOpen(true),
+                        onExecuteClick: executeWebviewClick,
+                        onExecuteScroll: executeWebviewScroll,
+                        onRemindUser: handleRemindUser,
+                        onStreamChunk: (chunk) => {
+                            ipcRenderer.send('sync-hud-state', {
+                                type: 'ai-command-stream-chunk',
+                                chunk
+                            });
+                        },
+                        onStreamReasoning: (chunk) => {
+                            ipcRenderer.send('sync-hud-state', {
+                                type: 'ai-command-stream-reasoning',
+                                chunk
+                            });
+                        },
+                        onToolEvent: (toolEvent) => {
+                            ipcRenderer.send('sync-hud-state', {
+                                type: 'ai-command-tool-event',
+                                toolEvent
+                            });
+                        },
                         logTelemetry: (type, msg) => logTelemetry(type, msg)
                     }).then(reply => {
                         ipcRenderer.send('sync-hud-state', {
@@ -502,7 +580,7 @@ export default function App() {
                     }).catch(err => {
                         ipcRenderer.send('sync-hud-state', {
                             type: 'ai-command-reply',
-                            reply: { text: `Command error: ${err.message}` }
+                            reply: `Command error: ${err.message}`
                         });
                     });
                 }
@@ -622,9 +700,11 @@ export default function App() {
                 } else if (action === 'command') {
                     triggerAiBanner('COMMAND', 'AI Autopilot: ' + (payload.prompt || ''));
                     const reply = await executeAiBrowserCommand(payload.prompt, {
-                        tabs,
-                        activeTab,
+                        tabs: curTabs,
+                        activeTab: curActiveTab,
+                        activeTabId: curActiveId,
                         activeWebview: wv,
+                        getActiveWebview: () => document.getElementById(`wv-${activeTabIdRef.current}`),
                         onOpenTab: openInNewTab,
                         onCloseTab: handleCloseTab,
                         onNavigate: handleNavigate,
@@ -634,6 +714,9 @@ export default function App() {
                         onOpenQrCode: () => setIsQrCodeOpen(true),
                         onOpenTabSearch: () => setIsTabSearchOpen(true),
                         onOpenHistory: () => setIsHistoryOpen(true),
+                        onExecuteClick: executeWebviewClick,
+                        onExecuteScroll: executeWebviewScroll,
+                        onRemindUser: handleRemindUser,
                         logTelemetry: (type, msg) => logTelemetry(type, msg)
                     });
                     result = { success: true, reply };
@@ -765,6 +848,17 @@ export default function App() {
                     } else {
                         result = { success: false, error: 'No active webview' };
                     }
+                } else if (action === 'toggle-hud') {
+                    handleDockHud();
+                    setIsHudOpen(true);
+                    result = { success: true, isHudOpen: true };
+                } else if (action === 'copilot-chat') {
+                    handleDockHud();
+                    setIsHudOpen(true);
+                    if (payload.query) {
+                        window.dispatchEvent(new CustomEvent('antigravity-copilot-query', { detail: { query: payload.query } }));
+                    }
+                    result = { success: true, dispatched: true };
                 }
 
                 ipcRenderer.send('ai-control-response', { id, result });
@@ -1124,7 +1218,11 @@ export default function App() {
     // Open URL in a New In-App Tab (strictly native tab, zero separate OS windows)
     const openInNewTab = (targetUrl) => {
         const url = (targetUrl || '').trim();
-        if (!url || url === 'about:blank' || url.startsWith('javascript:') || url.startsWith('data:')) return;
+        if (!url || url === 'about:blank') {
+            handleAddTab();
+            return;
+        }
+        if (url.startsWith('javascript:') || url.startsWith('data:')) return;
 
         const now = Date.now();
         // Deduplicate rapid duplicate events for the same target URL within 1200ms
@@ -1167,22 +1265,26 @@ export default function App() {
 
     // Close a Tab
     const handleCloseTab = (tabId) => {
-        const targetId = tabId !== undefined ? tabId : activeTabId;
-        if (tabs.length <= 1) {
-            setTabs([{ id: activeTab.id, url: '', initialUrl: 'about:blank', title: 'New Tab', isNewTab: true }]);
-            const wv = document.getElementById(`wv-${activeTab.id}`);
-            if (wv && typeof wv.loadURL === 'function') wv.loadURL('about:blank');
-            return;
-        }
+        const targetId = tabId !== undefined ? tabId : activeTabIdRef.current;
+        setTabs(prevTabs => {
+            if (prevTabs.length <= 1) {
+                const firstId = prevTabs[0]?.id || 1;
+                const wv = document.getElementById(`wv-${firstId}`);
+                if (wv && typeof wv.loadURL === 'function') wv.loadURL('about:blank');
+                return [{ id: firstId, url: '', initialUrl: 'about:blank', title: 'New Tab', isNewTab: true }];
+            }
 
-        const closeIndex = tabs.findIndex(t => t.id === targetId);
-        const filtered = tabs.filter(t => t.id !== targetId);
-        setTabs(filtered);
+            const closeIndex = prevTabs.findIndex(t => String(t.id) === String(targetId));
+            const filtered = prevTabs.filter(t => String(t.id) !== String(targetId));
 
-        if (activeTabId === targetId) {
-            const nextActiveIndex = Math.min(closeIndex, filtered.length - 1);
-            setActiveTabId(filtered[nextActiveIndex].id);
-        }
+            if (String(activeTabIdRef.current) === String(targetId)) {
+                const nextActiveIndex = Math.max(0, Math.min(closeIndex, filtered.length - 1));
+                if (filtered[nextActiveIndex]) {
+                    setActiveTabId(filtered[nextActiveIndex].id);
+                }
+            }
+            return filtered;
+        });
         logTelemetry('act', `TabStripModel::CloseWebContentsAt()`, `Closed Tab #${targetId}`);
     };
 
@@ -1669,6 +1771,7 @@ export default function App() {
                         onOpenHistory={() => setIsHistoryOpen(true)}
                         onOpenAiProviderModal={() => setIsAiProviderModalOpen(true)}
                         onCaptureSnapshot={handleCaptureVlmSnapshot}
+                        onRemindUser={handleRemindUser}
                         latestSnapshot={latestSnapshot}
                     />
                 )}
@@ -1759,9 +1862,9 @@ export default function App() {
                     left: '50%',
                     transform: 'translateX(-50%)',
                     zIndex: 999999,
-                    background: 'rgba(11, 17, 33, 0.94)',
-                    border: '1.5px solid #00e5ff',
-                    boxShadow: '0 10px 40px rgba(0, 229, 255, 0.4), 0 0 20px rgba(0, 229, 255, 0.25)',
+                    background: aiLiveBanner.action === 'REMINDER' ? 'rgba(6, 44, 34, 0.96)' : 'rgba(11, 17, 33, 0.94)',
+                    border: aiLiveBanner.action === 'REMINDER' ? '1.5px solid #10b981' : '1.5px solid #00e5ff',
+                    boxShadow: aiLiveBanner.action === 'REMINDER' ? '0 10px 40px rgba(16, 185, 129, 0.5), 0 0 25px rgba(16, 185, 129, 0.35)' : '0 10px 40px rgba(0, 229, 255, 0.4), 0 0 20px rgba(0, 229, 255, 0.25)',
                     borderRadius: 14,
                     padding: '14px 28px',
                     display: 'flex',
@@ -1776,11 +1879,17 @@ export default function App() {
                         width: 10,
                         height: 10,
                         borderRadius: '50%',
-                        background: '#00e5ff',
-                        boxShadow: '0 0 12px #00e5ff'
+                        background: aiLiveBanner.action === 'REMINDER' ? '#10b981' : '#00e5ff',
+                        boxShadow: aiLiveBanner.action === 'REMINDER' ? '0 0 14px #10b981' : '0 0 12px #00e5ff'
                     }} />
-                    <span style={{ fontSize: 11, fontWeight: 800, color: '#00e5ff', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
-                        ⚡ AI AUTOPILOT
+                    <span style={{
+                        fontSize: 11,
+                        fontWeight: 800,
+                        color: aiLiveBanner.action === 'REMINDER' ? '#10b981' : '#00e5ff',
+                        letterSpacing: '0.1em',
+                        textTransform: 'uppercase'
+                    }}>
+                        {aiLiveBanner.action === 'REMINDER' ? '🔔 AI REMINDER' : '⚡ AI AUTOPILOT'}
                     </span>
                     <span style={{ fontSize: 14, fontWeight: 600, color: '#f1f5f9', letterSpacing: '-0.2px' }}>
                         {aiLiveBanner.text}

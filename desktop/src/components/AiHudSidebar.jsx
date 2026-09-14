@@ -45,6 +45,7 @@ export default function AiHudSidebar({
     onOpenHistory,
     onOpenAiProviderModal,
     onCaptureSnapshot,
+    onRemindUser,
     latestSnapshot
 }) {
     // 3 Primary Segmented Tabs
@@ -75,6 +76,7 @@ export default function AiHudSidebar({
     const [isWhisperRecording, setIsWhisperRecording] = useState(false);
     const [isWhisperTranscribing, setIsWhisperTranscribing] = useState(false);
     const [recordingTimer, setRecordingTimer] = useState(0);
+    const [isGenerating, setIsGenerating] = useState(false);
 
     const recognitionRef = useRef(null);
     const messagesEndRef = useRef(null);
@@ -83,6 +85,32 @@ export default function AiHudSidebar({
     const mediaStreamRef = useRef(null);
     const audioProcessorRef = useRef(null);
     const audioChunksRef = useRef([]);
+    const abortControllerRef = useRef(null);
+
+    const toggleThoughtCollapse = (msgId) => {
+        setChatMessages(prev => prev.map(m =>
+            m.id === msgId ? { ...m, thoughtCollapsed: !m.thoughtCollapsed } : m
+        ));
+    };
+
+    const toggleToolCollapse = (msgId, toolId) => {
+        setChatMessages(prev => prev.map(m => {
+            if (m.id !== msgId) return m;
+            const updated = (m.toolEvents || []).map(t =>
+                t.id === toolId ? { ...t, collapsed: !t.collapsed } : t
+            );
+            return { ...m, toolEvents: updated };
+        }));
+    };
+
+    const handleStopGeneration = () => {
+        if (abortControllerRef.current) {
+            abortControllerRef.current.abort();
+        }
+        setIsGenerating(false);
+        setIsAiThinking(false);
+        setChatMessages(prev => prev.map(m => m.isStreaming ? { ...m, isStreaming: false, isThinking: false } : m));
+    };
 
     // Scroll chat to bottom on new message
     useEffect(() => {
@@ -99,6 +127,17 @@ export default function AiHudSidebar({
                 ipcRenderer.invoke('whisper-preload').catch(() => {});
             }
         } catch (e) {}
+    }, []);
+
+    // Listen for dispatched Copilot queries (from REST gateway or external agent)
+    useEffect(() => {
+        const handleCustomQuery = (e) => {
+            if (e.detail?.query) {
+                handleProcessNlpCommand(e.detail.query);
+            }
+        };
+        window.addEventListener('antigravity-copilot-query', handleCustomQuery);
+        return () => window.removeEventListener('antigravity-copilot-query', handleCustomQuery);
     }, []);
 
     if (!isOpen || isDetached) return null;
@@ -308,7 +347,76 @@ export default function AiHudSidebar({
             }
         }
 
-        // Execute unified AI Harness Command Engine
+        // Execute unified AI Harness Command Engine with Response Streaming & Live Tool Usage
+        const assistantMsgId = 'ai-' + Date.now();
+        const startTime = Date.now();
+        const abortController = new AbortController();
+        abortControllerRef.current = abortController;
+        setIsGenerating(true);
+        setIsAiThinking(true);
+
+        const placeholderMsg = {
+            id: assistantMsgId,
+            role: 'assistant',
+            text: '',
+            reasoning: '',
+            isStreaming: true,
+            isThinking: false,
+            thoughtDuration: 0,
+            thoughtCollapsed: false,
+            toolEvents: [],
+            time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        };
+        setChatMessages(prev => [...prev, placeholderMsg]);
+
+        const onStreamReasoning = (chunk) => {
+            setIsAiThinking(false);
+            const elapsedSec = ((Date.now() - startTime) / 1000).toFixed(1);
+            setChatMessages(prev => prev.map(m => {
+                if (m.id !== assistantMsgId) return m;
+                return {
+                    ...m,
+                    reasoning: (m.reasoning || '') + chunk,
+                    isThinking: true,
+                    thoughtDuration: elapsedSec
+                };
+            }));
+        };
+
+        const onStreamChunk = (chunk) => {
+            setIsAiThinking(false);
+            const elapsedSec = ((Date.now() - startTime) / 1000).toFixed(1);
+            setChatMessages(prev => prev.map(m => {
+                if (m.id !== assistantMsgId) return m;
+                const shouldCollapse = (m.reasoning && m.isThinking) ? true : m.thoughtCollapsed;
+                return {
+                    ...m,
+                    text: (m.text || '') + chunk,
+                    isThinking: false,
+                    thoughtCollapsed: shouldCollapse,
+                    thoughtDuration: m.thoughtDuration || elapsedSec
+                };
+            }));
+        };
+
+        const onToolEvent = (evt) => {
+            setIsAiThinking(false);
+            setChatMessages(prev => prev.map(m => {
+                if (m.id !== assistantMsgId) return m;
+                const currentTools = [...(m.toolEvents || [])];
+                const existingIdx = currentTools.findIndex(t => t.id === evt.id);
+                if (existingIdx >= 0) {
+                    currentTools[existingIdx] = { ...currentTools[existingIdx], ...evt };
+                } else {
+                    currentTools.push({ ...evt, collapsed: false });
+                }
+                return {
+                    ...m,
+                    toolEvents: currentTools
+                };
+            }));
+        };
+
         try {
             const reply = await executeAiBrowserCommand(q, {
                 tabs,
@@ -325,15 +433,36 @@ export default function AiHudSidebar({
                 onOpenTabSearch,
                 onOpenHistory,
                 onExecuteClick,
-                onExecuteScroll
+                onExecuteScroll,
+                onRemindUser,
+                onStreamChunk,
+                onStreamReasoning,
+                onToolEvent,
+                signal: abortController.signal
             });
 
-            addAiReply(reply);
-            const spokenText = String(reply).replace(/<[^>]*>/g, '').substring(0, 120);
+            const totalDuration = ((Date.now() - startTime) / 1000).toFixed(1);
+            setChatMessages(prev => prev.map(m => {
+                if (m.id !== assistantMsgId) return m;
+                const finalText = (m.text && m.text.trim()) ? m.text : (reply || '');
+                return {
+                    ...m,
+                    text: finalText,
+                    isStreaming: false,
+                    isThinking: false,
+                    thoughtCollapsed: m.reasoning ? true : m.thoughtCollapsed,
+                    thoughtDuration: m.thoughtDuration || totalDuration
+                };
+            }));
+
+            const spokenText = String(reply || '').replace(/<[^>]*>/g, '').substring(0, 120);
             speakReply(spokenText, 'en');
         } catch (err) {
-            addAiReply(`⚠️ AI Harness execution error: ${err.message}`);
+            setChatMessages(prev => prev.map(m =>
+                m.id === assistantMsgId ? { ...m, text: `⚠️ AI Harness execution error: ${err.message}`, isStreaming: false, isThinking: false } : m
+            ));
         } finally {
+            setIsGenerating(false);
             setIsAiThinking(false);
         }
     };
@@ -490,15 +619,125 @@ export default function AiHudSidebar({
                                             </span>
                                             <span className="mac-msg-time">{msg.time}</span>
                                         </div>
-                                        <div
-                                            className="mac-msg-text"
-                                            style={{ whiteSpace: 'pre-wrap' }}
-                                            dangerouslySetInnerHTML={{ __html: msg.text }}
-                                        />
+
+                                        {/* ChatGPT / Claude / Gemini Style Thought Box with Retract Button */}
+                                        {msg.role === 'assistant' && msg.reasoning && (
+                                            <div className={`chatgpt-thought-container ${msg.isThinking ? 'active-thinking' : ''}`}>
+                                                <div className="thought-header" onClick={() => toggleThoughtCollapse(msg.id)}>
+                                                    <div className="thought-title-group">
+                                                        {msg.isThinking ? (
+                                                            <>
+                                                                <span className="thought-shimmer-pulse" />
+                                                                <span>Thinking... {msg.thoughtDuration ? `(${msg.thoughtDuration}s)` : ''}</span>
+                                                            </>
+                                                        ) : (
+                                                            <>
+                                                                <span>💭</span>
+                                                                <span>Thought for {msg.thoughtDuration || '2.4'}s</span>
+                                                            </>
+                                                        )}
+                                                    </div>
+                                                    <button
+                                                        type="button"
+                                                        className="thought-retract-btn"
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            toggleThoughtCollapse(msg.id);
+                                                        }}
+                                                        title={msg.thoughtCollapsed ? "Expand reasoning process" : "Collapse / Retract reasoning process"}
+                                                    >
+                                                        {msg.thoughtCollapsed ? '▶ Expand Thought' : '▼ Collapse Thought'}
+                                                    </button>
+                                                </div>
+                                                {!msg.thoughtCollapsed && (
+                                                    <div className="thought-stream-body">
+                                                        {msg.reasoning}
+                                                        {msg.isThinking && <span className="streaming-caret" />}
+                                                    </div>
+                                                )}
+                                            </div>
+                                        )}
+
+                                        {/* Antigravity Interactive Live Tool Usage Cards */}
+                                        {msg.role === 'assistant' && msg.toolEvents && msg.toolEvents.length > 0 && (
+                                            <div className="antigravity-tools-group">
+                                                {msg.toolEvents.map(tool => (
+                                                    <div key={tool.id} className={`antigravity-tool-card ${tool.status}`}>
+                                                        <div className="tool-card-header" onClick={() => toggleToolCollapse(msg.id, tool.id)}>
+                                                            <div className="tool-card-title">
+                                                                <span>
+                                                                    {tool.tool.includes('download') ? '📥' :
+                                                                     tool.tool.includes('tab') ? '🗂️' :
+                                                                     tool.tool.includes('search') ? '🔍' :
+                                                                     tool.tool.includes('remind') ? '🔔' :
+                                                                     tool.tool.includes('click') ? '🖱️' : '⚡'}
+                                                                </span>
+                                                                <span>Tool:</span>
+                                                                <code className="tool-name-code">{tool.tool}</code>
+                                                            </div>
+                                                            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                                                                {tool.status === 'running' && (
+                                                                    <span className="tool-status-badge running">
+                                                                        <span className="tool-card-spinner" /> Running...
+                                                                    </span>
+                                                                )}
+                                                                {tool.status === 'completed' && (
+                                                                    <span className="tool-status-badge completed">
+                                                                        ✓ Verified {tool.durationMs ? `(${tool.durationMs}ms)` : ''}
+                                                                    </span>
+                                                                )}
+                                                                {tool.status === 'failed' && (
+                                                                    <span className="tool-status-badge failed">
+                                                                        ✗ Failed
+                                                                    </span>
+                                                                )}
+                                                                <span style={{ fontSize: 10, color: '#94a3b8' }}>
+                                                                    {tool.collapsed ? '▶' : '▼'}
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                        {!tool.collapsed && (
+                                                            <div className="tool-card-body">
+                                                                {tool.args && Object.keys(tool.args).length > 0 && (
+                                                                    <div>
+                                                                        <div className="tool-params-label">Parameters</div>
+                                                                        <pre className="tool-params-pre">{JSON.stringify(tool.args, null, 2)}</pre>
+                                                                    </div>
+                                                                )}
+                                                                {(tool.observation || tool.result) && (
+                                                                    <div className="tool-obs-box">
+                                                                        <strong>Live Observation:</strong> {tool.observation || tool.result}
+                                                                    </div>
+                                                                )}
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        )}
+
+                                        {/* Response Message Text with Streaming Caret */}
+                                        {msg.text ? (
+                                            <div
+                                                className="mac-msg-text"
+                                                style={{ whiteSpace: 'pre-wrap' }}
+                                                dangerouslySetInnerHTML={{ __html: msg.text }}
+                                            />
+                                        ) : (
+                                            msg.isStreaming && !msg.isThinking && !msg.reasoning && (
+                                                <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '4px 0', color: '#94a3b8' }}>
+                                                    <span className="dot-live" style={{ width: 6, height: 6, display: 'inline-block' }} />
+                                                    <span style={{ fontSize: '12px' }}>Connecting to AI model...</span>
+                                                </div>
+                                            )
+                                        )}
+                                        {msg.isStreaming && !msg.isThinking && msg.text && (
+                                            <span className="streaming-caret" />
+                                        )}
                                     </div>
                                 </div>
                             ))}
-                            {isAiThinking && (
+                            {isAiThinking && !chatMessages.some(m => m.isStreaming) && (
                                 <div className="mac-msg-row assistant">
                                     <div className="mac-msg-bubble thinking">
                                         <span className="dot-live" style={{ width: 6, height: 6, display: 'inline-block' }} />
@@ -653,13 +892,24 @@ export default function AiHudSidebar({
                                     if (e.key === 'Enter') handleProcessNlpCommand(chatInput);
                                 }}
                             />
-                            <button
-                                className="mac-send-btn"
-                                title="Send command (Enter)"
-                                onClick={() => handleProcessNlpCommand(chatInput)}
-                            >
-                                ➤
-                            </button>
+                            {isGenerating ? (
+                                <button
+                                    type="button"
+                                    className="mac-stop-btn"
+                                    title="Stop generating (Esc / Click)"
+                                    onClick={handleStopGeneration}
+                                >
+                                    ⏹ Stop
+                                </button>
+                            ) : (
+                                <button
+                                    className="mac-send-btn"
+                                    title="Send command (Enter)"
+                                    onClick={() => handleProcessNlpCommand(chatInput)}
+                                >
+                                    ➤
+                                </button>
+                            )}
                         </div>
                     </div>
                 )}
