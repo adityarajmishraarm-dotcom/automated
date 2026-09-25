@@ -116,6 +116,7 @@ function createWindow() {
         mainWindow.show();
         mainWindow.maximize();
         mainWindow.focus();
+        if (mainWindow.moveTop) mainWindow.moveTop();
     });
 
     mainWindow.webContents.on('console-message', (event, level, message, line, sourceId) => {
