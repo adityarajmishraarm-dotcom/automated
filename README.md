@@ -72,29 +72,59 @@
 
 ---
 
-## 🛠️ Building and Running
+## 🛠️ Prerequisites & Installation
 
-### 1. Launch the Native Desktop Browser
-Ensure [Node.js](https://nodejs.org) is installed:
+### System Prerequisites
+- **Node.js**: v18.0.0 or higher (v20+ recommended)
+- **npm**: v9.0.0 or higher
+- **Operating System**: Linux (X11 / Wayland), macOS, or Windows 10/11
+- **Optional (for C++ Core Engine & Verification Suite)**:
+  - CMake 3.20+
+  - Ninja build system
+  - GCC 14+ (MinGW on Windows) or Clang 16+
 
-```powershell
-# Launch the native desktop browser application
+### 1. Install Dependencies
+Run from the root of the repository:
+
+```bash
+npm install
+```
+
+---
+
+## 🚀 Launching the Application
+
+### Native Desktop Browser (Recommended)
+Build the React UI bundle and launch the standalone Electron desktop window:
+
+```bash
+# Linux / macOS / Windows (Cross-platform)
+npm start
+```
+
+Or run directly via Electron:
+```bash
 npx -y electron desktop
 ```
 
-### 2. Compile & Run C++ Engine Verification Suite
-Requires MinGW GCC 14+ or Clang and CMake/Ninja:
+For Windows users, launch via batch script:
+```bat
+launch_desktop.bat
+```
 
-```powershell
+### 2. Compile & Run C++ Engine Verification Suite (Optional)
+Requires CMake, Ninja, and GCC/Clang:
+
+```bash
 # Configure and build C++ engine and test suite
 cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
 cmake --build build
 
 # Execute comprehensive test verification
-./build/ai_browser_tests.exe
+./build/ai_browser_tests
 
 # Run interactive CLI browser runner
-./build/ai_browser_runner.exe
+./build/ai_browser_runner
 ```
 
 ---
@@ -118,6 +148,29 @@ All 13 core engine test suites pass with 100% success rate:
 
 ---
 
-## 📜 License
+## 📜 Full MIT License
 
-MIT License. Designed and engineered for high-assurance autonomous agentic browsing.
+```text
+MIT License
+
+Copyright (c) 2026 Aditya Raj Mishra
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
+
