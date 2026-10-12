@@ -22,7 +22,14 @@ export default function BookmarksBar({
                 <div
                     key={bm.id || bm.url}
                     className="bookmark-pill"
-                    title={`${bm.title} (${bm.url}) — Left-click to open, right-click to remove`}
+                    draggable={true}
+                    onDragStart={(e) => {
+                        e.dataTransfer.effectAllowed = 'copyMove';
+                        e.dataTransfer.setData('application/json', JSON.stringify(bm));
+                        e.dataTransfer.setData('text/plain', bm.url);
+                        e.dataTransfer.setData('text/uri-list', bm.url);
+                    }}
+                    title={`${bm.title} (${bm.url}) — Left-click to open, right-click to remove, drag onto home page`}
                     onClick={() => onNavigate(bm.url)}
                     onContextMenu={(e) => {
                         e.preventDefault();

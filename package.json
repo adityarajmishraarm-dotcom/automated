@@ -4,7 +4,7 @@
   "description": "Antigravity AI-Native Desktop Browser (Chrome/Brave Alternative)",
   "main": "desktop/main.js",
   "scripts": {
-    "build:react": "esbuild desktop/src/index.jsx --bundle --outfile=desktop/dist/bundle.js --platform=node --external:electron --loader:.jsx=jsx",
+    "build:react": "esbuild desktop/src/index.jsx --bundle --outfile=desktop/dist/bundle.js --platform=node --external:electron --loader:.jsx=jsx && node -e \"require('fs').copyFileSync('desktop/guest_preload.js','desktop/dist/guest_preload.js')\"",
     "start": "npm run build:react && electron desktop"
   },
   "keywords": [

@@ -16,6 +16,15 @@ const STORAGE_KEY = 'antigravity_ai_providers_config';
 const ACTIVE_PROVIDER_KEY = 'antigravity_active_ai_provider';
 
 export const DEFAULT_PROVIDERS = {
+    ornith: {
+        id: 'ornith',
+        name: 'Devil.co Ornith-1.0-9B AI OS',
+        type: 'openai_compatible',
+        baseUrl: 'http://127.0.0.1:4893/v1',
+        apiKey: 'devil-co-founder',
+        model: 'ornith-1.0-9b-custom',
+        presetModels: ['ornith-1.0-9b-custom', 'ornith-1.0-9b']
+    },
     openai: {
         id: 'openai',
         name: 'OpenAI Compatible',
@@ -40,8 +49,8 @@ export const DEFAULT_PROVIDERS = {
         type: 'openai_compatible',
         baseUrl: 'http://localhost:11434/v1',
         apiKey: '',
-        model: 'llama3.2-vision',
-        presetModels: ['llama3.2-vision', 'qwen2.5-coder:7b', 'llava:latest', 'llama3.2:latest']
+        model: 'gpt-oss:20b',
+        presetModels: ['gpt-oss:20b', 'qwen3.5:35b', 'llama3.2-vision', 'qwen2.5-coder:7b', 'llava:latest', 'llama3.2:latest']
     },
     openrouter: {
         id: 'openrouter',
@@ -97,16 +106,77 @@ export function getAiProvidersConfig() {
         const parsed = JSON.parse(raw);
         const merged = { ...DEFAULT_PROVIDERS };
         for (const [key, val] of Object.entries(parsed)) {
+            if (!val || typeof val !== 'object') continue;
             if (merged[key]) {
-                merged[key] = { ...merged[key], ...val };
+                const defaultPresets = Array.isArray(DEFAULT_PROVIDERS[key]?.presetModels) ? DEFAULT_PROVIDERS[key].presetModels : [];
+                const savedPresets = Array.isArray(val.presetModels) ? val.presetModels : [];
+                const combinedPresets = Array.from(new Set([...savedPresets, ...defaultPresets]));
+                merged[key] = {
+                    ...merged[key],
+                    ...val,
+                    presetModels: combinedPresets
+                };
             } else {
-                merged[key] = val;
+                merged[key] = {
+                    id: key,
+                    name: val.name || key,
+                    type: val.type || 'openai_compatible',
+                    baseUrl: val.baseUrl || 'http://localhost:11434/v1',
+                    apiKey: val.apiKey || '',
+                    model: val.model || 'default',
+                    presetModels: Array.isArray(val.presetModels) ? val.presetModels : (val.model ? [val.model] : []),
+                    ...val
+                };
             }
+        }
+        if (merged.ollama && merged.ollama.model === 'llama3.2-vision') {
+            merged.ollama.model = 'gpt-oss:20b';
         }
         return merged;
     } catch (e) {
         return { ...DEFAULT_PROVIDERS };
     }
+}
+
+/**
+ * Fetch available/installed models from an endpoint (/v1/models or Ollama /api/tags)
+ */
+export async function fetchAvailableModels(config) {
+    if (!config || !config.baseUrl) return { success: false, models: [], error: 'Missing Base URL' };
+    const cleanBaseUrl = (config.baseUrl || '').replace(/\/+$/, '');
+    const headers = { 'Content-Type': 'application/json' };
+    if (config.apiKey) {
+        headers['Authorization'] = `Bearer ${config.apiKey}`;
+    }
+    try {
+        const res = await fetch(`${cleanBaseUrl}/models`, { method: 'GET', headers });
+        if (res.ok) {
+            const data = await res.json().catch(() => ({}));
+            const list = Array.isArray(data.data)
+                ? data.data.map(m => m.id || m.name).filter(Boolean)
+                : (Array.isArray(data.models) ? data.models.map(m => m.name || m.id || m).filter(Boolean) : []);
+            if (list.length > 0) {
+                return { success: true, models: Array.from(new Set(list)) };
+            }
+        }
+    } catch (e) {}
+
+    // Fallback for Ollama root /api/tags
+    try {
+        const rootUrl = cleanBaseUrl.replace(/\/v1$/i, '');
+        const tagsRes = await fetch(`${rootUrl}/api/tags`, { method: 'GET' });
+        if (tagsRes.ok) {
+            const tagsData = await tagsRes.json().catch(() => ({}));
+            const list = Array.isArray(tagsData.models)
+                ? tagsData.models.map(m => m.name || m.model).filter(Boolean)
+                : [];
+            if (list.length > 0) {
+                return { success: true, models: Array.from(new Set(list)) };
+            }
+        }
+    } catch (e) {}
+
+    return { success: false, models: [], error: 'Could not list models from endpoint' };
 }
 
 /**
@@ -127,9 +197,9 @@ export function saveAiProvidersConfig(config) {
  */
 export function getActiveProviderId() {
     try {
-        return localStorage.getItem(ACTIVE_PROVIDER_KEY) || 'openai';
+        return localStorage.getItem(ACTIVE_PROVIDER_KEY) || 'ornith';
     } catch (e) {
-        return 'openai';
+        return 'ornith';
     }
 }
 
@@ -152,12 +222,18 @@ export function getActiveProviderConfig() {
     const configs = getAiProvidersConfig();
     const activeId = getActiveProviderId();
     const current = configs[activeId];
-    if (current && (current.apiKey || current.id === 'lmstudio' || current.id === 'ollama')) {
+    if (current && (current.apiKey || current.id === 'ornith' || current.id === 'lmstudio' || current.id === 'ollama' || current.isCustom)) {
         return current;
     }
-    // If active has no API key, prefer locally running LM Studio:
+    // Prefer locally running Devil.co Ornith-1.0-9B AI OS:
+    if (configs.ornith) {
+        return configs.ornith;
+    }
     if (configs.lmstudio) {
         return configs.lmstudio;
+    }
+    if (configs.ollama) {
+        return configs.ollama;
     }
     return configs.openai || DEFAULT_PROVIDERS.openai;
 }
@@ -338,14 +414,66 @@ export const BROWSER_TOOLS = [
         type: 'function',
         function: {
             name: 'type_text',
-            description: 'Type text into search bar or input field and optionally submit',
+            description: 'Type text into any input field, textarea, placeholder, or badge #N. Supports multi-field form filling without premature submissions.',
             parameters: {
                 type: 'object',
                 properties: {
-                    text: { type: 'string', description: 'Text to type' },
-                    submit: { type: 'boolean', description: 'Whether to press Enter/submit (default true)' }
+                    text: { type: 'string', description: 'Text to type into the field' },
+                    target: { type: 'string', description: 'Target element: Set-of-Marks badge (#1, #2), input placeholder, field label text, name, ID, or CSS selector. If omitted, uses active focused field or primary search input.' },
+                    submit: { type: 'boolean', description: 'Whether to press Enter/submit after typing (default false; set true for search queries)' },
+                    clear: { type: 'boolean', description: 'Whether to clear existing text before typing (default true)' }
                 },
                 required: ['text']
+            }
+        }
+    },
+    {
+        type: 'function',
+        function: {
+            name: 'press_key',
+            description: 'Dispatch physical keyboard events (e.g. "Space" to play/pause video, "Enter" to submit, "Tab" to advance input, "Escape" to dismiss modals, "ArrowDown", "ArrowUp", "k")',
+            parameters: {
+                type: 'object',
+                properties: {
+                    key: { type: 'string', description: 'Key identifier to press, e.g. "Space", "Enter", "Tab", "Escape", "ArrowDown", "ArrowUp", "k"' },
+                    modifiers: {
+                        type: 'array',
+                        items: { type: 'string' },
+                        description: 'Optional modifiers, e.g. ["Control"], ["Shift"], ["Alt"]'
+                    }
+                },
+                required: ['key']
+            }
+        }
+    },
+    {
+        type: 'function',
+        function: {
+            name: 'hover_element',
+            description: 'Hover mouse over an element or badge #N to reveal dropdown menus, tooltips, or player controls',
+            parameters: {
+                type: 'object',
+                properties: {
+                    target: { type: 'string', description: 'Button text, mark badge #N, or selector to hover over' }
+                },
+                required: ['target']
+            }
+        }
+    },
+    {
+        type: 'function',
+        function: {
+            name: 'delegate_subtask',
+            description: 'Delegate a focused task to a tracked sub-agent (Max 3 concurrent). The sub-agent executes independently and returns structured results back to the main agent.',
+            parameters: {
+                type: 'object',
+                properties: {
+                    subagent_id: { type: 'string', description: 'Unique tracking ID for the sub-agent, e.g. "sub_form_1", "sub_video_2"' },
+                    role: { type: 'string', description: 'Role or specialization, e.g. "form_filler", "media_player", "tab_searcher"' },
+                    goal: { type: 'string', description: 'Specific goal/task for the sub-agent to accomplish' },
+                    tab_id: { type: 'integer', description: 'Optional tab ID to bind the sub-agent to' }
+                },
+                required: ['subagent_id', 'role', 'goal']
             }
         }
     },
@@ -430,6 +558,21 @@ export const BROWSER_TOOLS = [
     {
         type: 'function',
         function: {
+            name: 'grep_page',
+            description: 'Search the active webpage DOM text, headings, links, and buttons for specific keywords or phrases (e.g. "Big Mouth", "1080p", "Episode 1", "Music")',
+            parameters: {
+                type: 'object',
+                properties: {
+                    query: { type: 'string', description: 'Keyword, title, or phrase to search for on the active page' },
+                    selector: { type: 'string', description: 'Optional CSS selector to constrain search' }
+                },
+                required: ['query']
+            }
+        }
+    },
+    {
+        type: 'function',
+        function: {
             name: 'finish_task',
             description: 'Mark the multi-step browser task or goal as completed with a summary',
             parameters: {
@@ -445,6 +588,9 @@ export const BROWSER_TOOLS = [
 ];
 
 export function generateToolSystemPrompt(tools = BROWSER_TOOLS) {
+    if (!Array.isArray(tools) || tools.length === 0) {
+        return '';
+    }
     const list = tools.map(t => {
         const fn = t.function;
         const props = Object.keys(fn.parameters?.properties || {}).join(', ');
@@ -477,6 +623,102 @@ CRITICAL RULES:
 2. Never just say "I did it" without emitting the tool call!
 3. After taking an action, you will receive the updated page observation (URL, title, elements, search results, downloads). Use that observation to decide your next step.
 4. When a download finishes, call verify_download to inspect it on disk, then call remind_user to alert the user with sound and speech.`;
+}
+
+async function fetchOpenAICompatibleWithFailover(config, requestBody, headers, signal = null) {
+    const isReasoningModel = /gpt-oss|qwen3|deepseek-r1|qwq/i.test(config.model || '');
+    if (isReasoningModel && !requestBody.reasoning_effort) {
+        requestBody.reasoning_effort = 'low';
+    }
+    const cleanBaseUrl = (config.baseUrl || '').replace(/\/+$/, '');
+    let primaryResponse = null;
+    let primaryError = null;
+
+    try {
+        const res = await fetch(`${cleanBaseUrl}/chat/completions`, {
+            method: 'POST',
+            headers,
+            body: JSON.stringify(requestBody),
+            ...(signal ? { signal } : {})
+        });
+        if (res.ok) {
+            return { res, activeConfig: config };
+        }
+        primaryResponse = res;
+
+        // If the configured model was not found (404/400) on this endpoint, query /models and retry with an installed model
+        if (res.status === 404 || res.status === 400) {
+            const avail = await fetchAvailableModels(config);
+            if (avail.success && avail.models.length > 0 && !avail.models.includes(requestBody.model)) {
+                const validModel = avail.models[0];
+                const retryBody = { ...requestBody, model: validModel };
+                if (/gpt-oss|qwen3|deepseek-r1|qwq/i.test(validModel)) {
+                    retryBody.reasoning_effort = 'low';
+                }
+                const retryRes = await fetch(`${cleanBaseUrl}/chat/completions`, {
+                    method: 'POST',
+                    headers,
+                    body: JSON.stringify(retryBody),
+                    ...(signal ? { signal } : {})
+                });
+                if (retryRes.ok) {
+                    const updatedAll = getAiProvidersConfig();
+                    if (updatedAll[config.id]) {
+                        updatedAll[config.id].model = validModel;
+                        saveAiProvidersConfig(updatedAll);
+                    }
+                    return { res: retryRes, activeConfig: { ...config, model: validModel } };
+                }
+            }
+        }
+    } catch (err) {
+        if (err.name === 'AbortError' || signal?.aborted) throw err;
+        primaryError = err;
+    }
+
+    // Automatic failover across local AI providers (Ollama 11434, LM Studio 1234, Ornith 4893)
+    const allConfigs = getAiProvidersConfig();
+    const fallbackOrder = ['ollama', 'lmstudio', 'ornith'].filter(id => id !== config.id && allConfigs[id]);
+    for (const fbId of fallbackOrder) {
+        const fbConfig = allConfigs[fbId];
+        const fbBaseUrl = (fbConfig.baseUrl || '').replace(/\/+$/, '');
+        try {
+            let targetModel = fbConfig.model;
+            const avail = await fetchAvailableModels(fbConfig);
+            if (avail.success && avail.models.length > 0) {
+                if (!avail.models.includes(targetModel)) {
+                    targetModel = avail.models[0];
+                }
+            }
+
+            const fbBody = { ...requestBody, model: targetModel || 'default' };
+            if (/gpt-oss|qwen3|deepseek-r1|qwq/i.test(fbBody.model)) {
+                fbBody.reasoning_effort = 'low';
+            }
+            delete fbBody.tools;
+
+            const fbHeaders = { 'Content-Type': 'application/json' };
+            if (fbConfig.apiKey) fbHeaders['Authorization'] = `Bearer ${fbConfig.apiKey}`;
+
+            const fbRes = await fetch(`${fbBaseUrl}/chat/completions`, {
+                method: 'POST',
+                headers: fbHeaders,
+                body: JSON.stringify(fbBody),
+                ...(signal ? { signal } : {})
+            });
+            if (fbRes.ok) {
+                setActiveProviderId(fbId);
+                return { res: fbRes, activeConfig: { ...fbConfig, model: fbBody.model } };
+            }
+        } catch (fbErr) {
+            if (fbErr.name === 'AbortError' || signal?.aborted) throw fbErr;
+        }
+    }
+
+    if (primaryResponse) {
+        return { res: primaryResponse, activeConfig: config };
+    }
+    throw primaryError || new Error('Failed to connect to AI provider');
 }
 
 /**
@@ -641,20 +883,14 @@ export async function sendChatMessage({
             requestBody.tools = tools;
         }
 
-        let res = await fetch(`${cleanBaseUrl}/chat/completions`, {
-            method: 'POST',
-            headers,
-            body: JSON.stringify(requestBody)
-        });
+        let { res, activeConfig } = await fetchOpenAICompatibleWithFailover(config, requestBody, headers);
 
         // If provider returned error due to tools parameter, retry without tools in payload (system prompt instructions remain)
         if (!res.ok && requestBody.tools) {
             delete requestBody.tools;
-            res = await fetch(`${cleanBaseUrl}/chat/completions`, {
-                method: 'POST',
-                headers,
-                body: JSON.stringify(requestBody)
-            });
+            const retryOut = await fetchOpenAICompatibleWithFailover(activeConfig, requestBody, headers);
+            res = retryOut.res;
+            activeConfig = retryOut.activeConfig;
         }
 
         if (!res.ok) {
@@ -688,10 +924,10 @@ export async function sendChatMessage({
         return {
             success: true,
             reply,
-            reasoning: choice.message?.reasoning_content || '',
+            reasoning: choice.message?.reasoning_content || choice.message?.reasoning || '',
             toolCalls,
-            provider: config.name,
-            model: config.model
+            provider: activeConfig.name,
+            model: activeConfig.model
         };
     } catch (err) {
         console.error('[AI Provider Chat Error]', err);
@@ -901,22 +1137,14 @@ export async function streamChatMessage({
             requestBody.tools = tools;
         }
 
-        let res = await fetch(`${cleanBaseUrl}/chat/completions`, {
-            method: 'POST',
-            headers,
-            body: JSON.stringify(requestBody),
-            signal
-        });
+        let { res, activeConfig } = await fetchOpenAICompatibleWithFailover(config, requestBody, headers, signal);
 
         // Fallback without tools if tools payload rejected
         if (!res.ok && requestBody.tools) {
             delete requestBody.tools;
-            res = await fetch(`${cleanBaseUrl}/chat/completions`, {
-                method: 'POST',
-                headers,
-                body: JSON.stringify(requestBody),
-                signal
-            });
+            const retryOut = await fetchOpenAICompatibleWithFailover(activeConfig, requestBody, headers, signal);
+            res = retryOut.res;
+            activeConfig = retryOut.activeConfig;
         }
 
         // If streaming rejected (e.g. 400 Bad Request for stream param), fallback to non-streaming sendChatMessage
@@ -1018,8 +1246,8 @@ export async function streamChatMessage({
             reply: fullReply,
             reasoning: fullReasoning,
             toolCalls,
-            provider: config.name,
-            model: config.model
+            provider: activeConfig.name,
+            model: activeConfig.model
         };
     } catch (err) {
         if (err.name === 'AbortError' || signal?.aborted) {

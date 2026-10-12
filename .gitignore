@@ -25,5 +25,16 @@ Thumbs.db
 out/
 
 # Scratch and temporary files
-scratch/
 *.log
+*.bak
+scratch/
+tests/
+snapshots/
+test_yt_status.py
+
+# Models cache & onnx
+models_cache/
+*.onnx
+
+
+

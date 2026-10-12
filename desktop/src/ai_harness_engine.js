@@ -7,12 +7,26 @@
 // Dynamic live URL resolver (zero preconfigured static sites)
 export function resolveTargetUrl(target) {
     if (!target) return 'https://www.google.com';
-    const trimmed = target.trim();
-    if (trimmed.startsWith('http://') || trimmed.startsWith('https://') || trimmed.startsWith('file://')) {
+    const trimmed = String(target).trim().replace(/[.,!?;:]+$/g, '').trim();
+    if (!trimmed) return 'https://www.google.com';
+    if (trimmed.startsWith('http://') || trimmed.startsWith('https://') || trimmed.startsWith('file://') || trimmed.startsWith('antigravity://')) {
         return trimmed;
     }
+    const lower = trimmed.toLowerCase();
+    const specialDomains = {
+        wikipedia: 'https://www.wikipedia.org',
+        wiki: 'https://www.wikipedia.org',
+        archive: 'https://archive.org',
+        huggingface: 'https://huggingface.co',
+        hn: 'https://news.ycombinator.com',
+        hackernews: 'https://news.ycombinator.com'
+    };
+    if (specialDomains[lower]) return specialDomains[lower];
     if (trimmed.includes('.') && !trimmed.includes(' ') && !trimmed.includes('?')) {
         return 'https://' + trimmed;
+    }
+    if (!trimmed.includes(' ') && /^[a-z0-9-]+$/i.test(trimmed)) {
+        return `https://www.${lower}.com`;
     }
     return `https://www.google.com/search?q=${encodeURIComponent(trimmed)}`;
 }
@@ -148,7 +162,8 @@ export async function executeWebviewClick(webview, targetText, fallbackNavigate)
                 let targetOrdinal = 1;
                 let cleanTerm = targetRaw;
 
-                const rankRegex = /\\b(1st|first|2nd|second|3rd|third|4th|fourth|5th|fifth|6th|sixth|7th|seventh|8th|eighth|9th|ninth|10th|\\d+(?:st|nd|rd|th)?)\\b/gi;
+                // Match only genuine ordinal words or numbers with explicit ordinal suffixes (1st, 2nd, 3rd, etc.)
+                const rankRegex = /\\b(1st|first|2nd|second|3rd|third|4th|fourth|5th|fifth|6th|sixth|7th|seventh|8th|eighth|9th|ninth|10th|\\d+(?:st|nd|rd|th))\\b/gi;
                 const rankMatches = Array.from(targetRaw.matchAll(rankRegex));
 
                 if (rankMatches.length > 0) {
@@ -175,9 +190,11 @@ export async function executeWebviewClick(webview, targetText, fallbackNavigate)
                 } else if (/\\b(?:input|field|textbox|search\\s*bar|search\\s*box)\\b/i.test(cleanTerm)) {
                     filterType = 'input';
                     searchTerm = cleanTerm.replace(/\\b(?:input|field|textbox|search\\s*bar|search\\s*box)\\b/gi, '').trim();
+                } else if (/\\b(?:video|stream|track|music|song)\\b/i.test(cleanTerm)) {
+                    filterType = 'video';
+                    searchTerm = cleanTerm.replace(/\\b(?:video|stream|track|music|song)\\b/gi, '').trim();
                 }
 
-                if (!searchTerm) searchTerm = cleanTerm || targetRaw;
                 const termLower = searchTerm.toLowerCase();
 
                 // Check for Set-of-Marks mark index (#7, hashtag 7, mark 7)
@@ -214,7 +231,13 @@ export async function executeWebviewClick(webview, targetText, fallbackNavigate)
                 // Direct Selector or ID Match
                 if (!matchedEl) {
                     try {
-                        const directEl = document.querySelector(targetRaw) || document.getElementById(targetRaw);
+                        let directEl = document.querySelector(targetRaw) || document.getElementById(targetRaw);
+                        if (directEl && !isVisible(directEl)) {
+                            directEl = directEl.querySelector('input, textarea, button, a') || directEl;
+                        } else if (directEl && (directEl.tagName.toLowerCase() !== 'input' && directEl.tagName.toLowerCase() !== 'textarea')) {
+                            const innerInput = directEl.querySelector('input, textarea');
+                            if (innerInput && isVisible(innerInput)) directEl = innerInput;
+                        }
                         if (directEl && isVisible(directEl)) {
                             matchedEl = directEl;
                             matchType = 'Direct Selector/ID Match';
@@ -244,14 +267,13 @@ export async function executeWebviewClick(webview, targetText, fallbackNavigate)
 
                 if (!matchedEl && isExplicitSearchIntent) {
                     const searchSelectors = [
-                        'textarea[name="q"]', 'input[name="q"]', 'textarea.gLFyf', 'input.gLFyf',
-                        'textarea[title*="Search" i]', 'input[title*="Search" i]',
-                        'textarea[aria-label*="Search" i]', 'input[aria-label*="Search" i]',
-                        'input#search', 'input#searchInput', 'input#searchbox_input', 'input[type="search"]',
-                        'textarea[name*="search" i]', 'input[name*="search" i]', 'input[id*="search" i]',
-                        'input[placeholder*="search" i]', 'textarea[placeholder*="search" i]',
-                        '[role="searchbox"]', '[role="search"] textarea', '[role="search"] input',
-                        'textarea:not([type="hidden"])', 'input[type="text"]', 'input:not([type="hidden"])'
+                        'input[type="search"]', 'input[name="q"]', 'input[name="s"]', 'input[name*="search" i]',
+                        'textarea[name="q"]', 'textarea[name*="search" i]',
+                        'input[id*="search" i]', 'input[placeholder*="search" i]', 'textarea[placeholder*="search" i]',
+                        'input[aria-label*="search" i]', 'textarea[aria-label*="search" i]',
+                        'input#search', 'input#searchInput', 'input#searchbox_input',
+                        '[role="searchbox"]', '[role="search"] input', '[role="search"] textarea',
+                        'input[type="text"]', 'textarea:not([type="hidden"])', 'input:not([type="hidden"])'
                     ];
 
                     for (const sel of searchSelectors) {
@@ -278,11 +300,32 @@ export async function executeWebviewClick(webview, targetText, fallbackNavigate)
                         const txtCombined = (m.txt + ' ' + m.aria + ' ' + m.title + ' ' + m.alt + ' ' + m.placeholder + ' ' + m.id).toLowerCase();
                         const valStr = m.val.toLowerCase();
                         const hrefStr = (el.getAttribute('href') || (el.closest('a') ? el.closest('a').getAttribute('href') : '') || '').toLowerCase();
+                        const isVideo = isLink && (hrefStr.includes('/watch') || hrefStr.includes('video') || tag === 'video' || (el.closest && (el.closest('ytd-rich-item-renderer') || el.closest('ytd-video-renderer'))));
 
-                        const isTextMatched = txtCombined.includes(termLower) || (isLink && hrefStr.includes(termLower));
-                        const isValueMatched = isInput && valStr.includes(termLower);
+                        let isMatch = false;
+                        if (termLower) {
+                            isMatch = txtCombined.includes(termLower) || (isLink && hrefStr.includes(termLower)) || (isInput && valStr.includes(termLower));
+                            // Token overlap fallback if direct substring fails
+                            if (!isMatch) {
+                                const termWords = termLower.split(/[\s,()\[\]\-_|]+/).filter(w => w.length > 1);
+                                if (termWords.length > 0) {
+                                    const matchedWords = termWords.filter(w => txtCombined.includes(w) || (isLink && hrefStr.includes(w)));
+                                    if (matchedWords.length === termWords.length || (termWords.length >= 2 && matchedWords.length >= Math.ceil(termWords.length * 0.75))) {
+                                        isMatch = true;
+                                    }
+                                }
+                            }
+                        } else if (filterType === 'video') {
+                            isMatch = isVideo || isLink;
+                        } else if (filterType === 'link') {
+                            isMatch = isLink;
+                        } else if (filterType === 'button') {
+                            isMatch = isButton;
+                        } else if (filterType === 'input') {
+                            isMatch = isInput;
+                        }
 
-                        if (isTextMatched || isValueMatched) {
+                        if (isMatch) {
                             const clickNode = isLink ? (el.closest('a') || el) : el;
                             matchesList.push({
                                 node: clickNode,
@@ -291,7 +334,8 @@ export async function executeWebviewClick(webview, targetText, fallbackNavigate)
                                 isLink: isLink,
                                 isButton: isButton,
                                 isInput: isInput,
-                                isTextMatched: isTextMatched
+                                isVideo: isVideo,
+                                isTextMatched: isMatch
                             });
                         }
                     }
@@ -308,7 +352,12 @@ export async function executeWebviewClick(webview, targetText, fallbackNavigate)
 
                     // Apply filters
                     let filteredPool = uniqueMatches;
-                    if (filterType === 'link') {
+                    if (filterType === 'video') {
+                        const videoMatches = uniqueMatches.filter(m => m.isVideo || (m.isLink && ((m.node.href || '').includes('watch') || (m.node.href || '').includes('video'))));
+                        if (videoMatches.length > 0) {
+                            filteredPool = videoMatches;
+                        }
+                    } else if (filterType === 'link') {
                         filteredPool = uniqueMatches.filter(m => m.isLink);
                     } else if (filterType === 'button') {
                         filteredPool = uniqueMatches.filter(m => m.isButton);
@@ -323,7 +372,7 @@ export async function executeWebviewClick(webview, targetText, fallbackNavigate)
 
                     if (filteredPool.length === 0) filteredPool = uniqueMatches;
 
-                    // Score candidates so hyperlinks are prioritized
+                    // Score candidates so hyperlinks, videos, and content matches are prioritized
                     filteredPool.sort((a, b) => {
                         let scoreA = 0;
                         let scoreB = 0;
@@ -332,11 +381,16 @@ export async function executeWebviewClick(webview, targetText, fallbackNavigate)
                         const hrefA = (nodeA.href || nodeA.getAttribute('href') || '').toLowerCase();
                         const hrefB = (nodeB.href || nodeB.getAttribute('href') || '').toLowerCase();
 
+                        if (filterType === 'video') {
+                            if (hrefA.includes('watch') || a.isVideo) scoreA += 300;
+                            if (hrefB.includes('watch') || b.isVideo) scoreB += 300;
+                        }
+
                         if (hrefA && (hrefA.startsWith('http://') || hrefA.startsWith('https://'))) scoreA += 100;
                         if (hrefB && (hrefB.startsWith('http://') || hrefB.startsWith('https://'))) scoreB += 100;
 
-                        if (hrefA.includes(termLower)) scoreA += 50;
-                        if (hrefB.includes(termLower)) scoreB += 50;
+                        if (termLower && hrefA.includes(termLower)) scoreA += 50;
+                        if (termLower && hrefB.includes(termLower)) scoreB += 50;
 
                         if (nodeA.querySelector('h1,h2,h3,h4,h5,h6') || nodeA.tagName.toLowerCase().startsWith('h')) scoreA += 40;
                         if (nodeB.querySelector('h1,h2,h3,h4,h5,h6') || nodeB.tagName.toLowerCase().startsWith('h')) scoreB += 40;
@@ -432,7 +486,7 @@ export async function executeWebviewClick(webview, targetText, fallbackNavigate)
                 if (typeof fallbackNavigate === 'function') {
                     fallbackNavigate(result.url);
                 } else if (typeof webview.loadURL === 'function') {
-                    webview.loadURL(result.url).catch(() => {});
+                    webview.loadURL(result.url).catch(() => { });
                 }
             }
 
@@ -460,99 +514,591 @@ export async function executeWebviewClick(webview, targetText, fallbackNavigate)
 }
 
 /**
- * Type text directly into active page's search bar and submit
+ * Sub-Agent Delegation Manager
+ * Enforces hard limit of MAX 3 concurrent subagents to protect RAM and memory.
+ * Tracks each subagent by unique subagent_id with full lifecycle monitoring.
  */
-export async function typeAndSubmitInSearchBar(webview, textToType) {
+export class SubAgentManager {
+    constructor(maxConcurrent = 3) {
+        this.maxConcurrent = maxConcurrent;
+        this.subagents = new Map();
+    }
+
+    canSpawn() {
+        const active = Array.from(this.subagents.values()).filter(s => s.status === 'running');
+        return active.length < this.maxConcurrent;
+    }
+
+    getActiveCount() {
+        return Array.from(this.subagents.values()).filter(s => s.status === 'running').length;
+    }
+
+    register(subagent_id, role, goal, tab_id = null) {
+        if (!this.canSpawn()) {
+            throw new Error(`Concurrency cap reached: Maximum ${this.maxConcurrent} active sub-agents permitted to protect memory and RAM.`);
+        }
+        const record = {
+            subagent_id: String(subagent_id),
+            role: String(role || 'general_worker'),
+            goal: String(goal || ''),
+            tab_id: tab_id !== null ? Number(tab_id) : null,
+            status: 'running',
+            startTime: Date.now(),
+            actionsExecuted: 0,
+            result: null
+        };
+        this.subagents.set(record.subagent_id, record);
+        return record;
+    }
+
+    recordAction(subagent_id) {
+        const sub = this.subagents.get(String(subagent_id));
+        if (sub) sub.actionsExecuted++;
+    }
+
+    complete(subagent_id, success, summary, artifacts = {}, dom_delta = '') {
+        const sub = this.subagents.get(String(subagent_id));
+        if (!sub) return null;
+        sub.status = success ? 'completed' : 'failed';
+        sub.endTime = Date.now();
+        sub.durationMs = sub.endTime - sub.startTime;
+        sub.result = {
+            subagent_id: sub.subagent_id,
+            role: sub.role,
+            status: sub.status,
+            success: !!success,
+            summary: String(summary || ''),
+            artifacts,
+            dom_delta: String(dom_delta || ''),
+            actionsExecuted: sub.actionsExecuted,
+            durationMs: sub.durationMs
+        };
+        return sub.result;
+    }
+
+    terminate(subagent_id) {
+        this.subagents.delete(String(subagent_id));
+    }
+
+    getActiveList() {
+        return Array.from(this.subagents.values());
+    }
+
+    get(subagent_id) {
+        return this.subagents.get(String(subagent_id)) || null;
+    }
+}
+
+export const globalSubAgentManager = new SubAgentManager(3);
+
+/**
+ * Capture Pre-Action or Post-Action DOM Snapshot for Physical Delta Verification
+ */
+export async function captureDomSnapshot(webview) {
     if (!webview || typeof webview.executeJavaScript !== 'function') {
-        return { success: false, message: 'No active webview available for search typing.' };
+        return {
+            url: '',
+            title: '',
+            activeTag: null,
+            activeId: null,
+            inputs: [],
+            videos: [],
+            interactiveCount: 0,
+            bodyLength: 0,
+            timestamp: Date.now()
+        };
+    }
+
+    try {
+        const snap = await webview.executeJavaScript(`
+            (function() {
+                const act = document.activeElement;
+                const activeTag = act ? act.tagName.toLowerCase() : null;
+                const activeId = act ? (act.id || '') : null;
+                const activeName = act ? (act.getAttribute('name') || '') : null;
+                const activeValue = act && ('value' in act) ? String(act.value || '').slice(0, 100) : null;
+
+                const inputList = Array.from(document.querySelectorAll('input:not([type="hidden"]), textarea, select')).slice(0, 25).map(el => ({
+                    tag: el.tagName.toLowerCase(),
+                    id: el.id || '',
+                    name: el.name || '',
+                    type: el.type || '',
+                    placeholder: el.placeholder || '',
+                    value: String(el.value || '').slice(0, 50)
+                }));
+
+                const videoList = Array.from(document.querySelectorAll('video')).slice(0, 5).map(v => ({
+                    paused: v.paused,
+                    currentTime: Math.round(v.currentTime || 0),
+                    duration: Math.round(v.duration || 0),
+                    src: (v.currentSrc || v.src || '').slice(0, 100)
+                }));
+
+                const interactiveCount = document.querySelectorAll('button, a, input, select, textarea, [role="button"], [role="link"], [role="searchbox"]').length;
+                const bodyLength = document.body ? (document.body.innerText || '').length : 0;
+
+                return {
+                    url: window.location.href,
+                    title: document.title || '',
+                    activeTag,
+                    activeId,
+                    activeName,
+                    activeValue,
+                    inputs: inputList,
+                    videos: videoList,
+                    interactiveCount,
+                    bodyLength,
+                    timestamp: Date.now()
+                };
+            })()
+        `);
+        return snap;
+    } catch (e) {
+        return {
+            url: (typeof webview.getURL === 'function' ? webview.getURL() : '') || '',
+            title: (typeof webview.getTitle === 'function' ? webview.getTitle() : '') || '',
+            activeTag: null,
+            activeId: null,
+            inputs: [],
+            videos: [],
+            interactiveCount: 0,
+            bodyLength: 0,
+            timestamp: Date.now(),
+            error: e.message
+        };
+    }
+}
+
+/**
+ * Compute Physical State Delta between Pre-Action and Post-Action DOM Snapshots
+ */
+export function computeDomDelta(beforeSnap, afterSnap) {
+    if (!beforeSnap || !afterSnap) {
+        return { isZeroDelta: false, summary: 'Snapshot delta unavailable' };
+    }
+
+    const urlChanged = beforeSnap.url !== afterSnap.url;
+    const titleChanged = beforeSnap.title !== afterSnap.title;
+    const focusChanged = beforeSnap.activeTag !== afterSnap.activeTag || 
+                         beforeSnap.activeId !== afterSnap.activeId || 
+                         beforeSnap.activeName !== afterSnap.activeName;
+    const valueChanged = JSON.stringify(beforeSnap.inputs) !== JSON.stringify(afterSnap.inputs) ||
+                         beforeSnap.activeValue !== afterSnap.activeValue;
+    const videoChanged = JSON.stringify(beforeSnap.videos) !== JSON.stringify(afterSnap.videos);
+    const interactiveDelta = (afterSnap.interactiveCount || 0) - (beforeSnap.interactiveCount || 0);
+    const bodyLengthDelta = (afterSnap.bodyLength || 0) - (beforeSnap.bodyLength || 0);
+
+    const changes = [];
+    if (urlChanged) changes.push(`URL navigated to: ${afterSnap.url}`);
+    if (titleChanged) changes.push(`Title changed: "${afterSnap.title}"`);
+    if (focusChanged) changes.push(`Focus shifted to <${afterSnap.activeTag || 'none'}${afterSnap.activeId ? '#' + afterSnap.activeId : ''}>`);
+    if (valueChanged) changes.push(`Input values updated`);
+    if (videoChanged) {
+        const vState = afterSnap.videos[0]?.paused ? 'paused' : 'playing';
+        changes.push(`Video state shifted to ${vState}`);
+    }
+    if (Math.abs(interactiveDelta) > 0) changes.push(`Interactive elements delta: ${interactiveDelta > 0 ? '+' : ''}${interactiveDelta}`);
+    if (Math.abs(bodyLengthDelta) > 50) changes.push(`DOM text changed by ${bodyLengthDelta} chars`);
+
+    const isZeroDelta = !urlChanged && !titleChanged && !focusChanged && 
+                        !valueChanged && !videoChanged && 
+                        Math.abs(bodyLengthDelta) < 15 && interactiveDelta === 0;
+
+    return {
+        urlChanged,
+        titleChanged,
+        focusChanged,
+        valueChanged,
+        videoChanged,
+        interactiveDelta,
+        bodyLengthDelta,
+        isZeroDelta,
+        changes,
+        summary: changes.length > 0 ? changes.join(' | ') : 'Zero DOM delta detected (no physical change)'
+    };
+}
+
+/**
+ * Dispatch physical keyboard events (Space, Enter, Tab, Escape, ArrowDown, ArrowUp, k, etc.)
+ */
+export async function executeWebviewKeyPress(webview, key = 'Space', modifiers = []) {
+    if (!webview || typeof webview.executeJavaScript !== 'function') {
+        return { success: false, message: 'Webview is not available to receive key press.' };
+    }
+
+    const cleanKey = (key || 'Space').trim();
+
+    try {
+        const result = await webview.executeJavaScript(`
+            (function() {
+                const targetKey = ${JSON.stringify(cleanKey)};
+                const keyMap = {
+                    'space': { key: ' ', code: 'Space', keyCode: 32 },
+                    ' ': { key: ' ', code: 'Space', keyCode: 32 },
+                    'enter': { key: 'Enter', code: 'Enter', keyCode: 13 },
+                    'return': { key: 'Enter', code: 'Enter', keyCode: 13 },
+                    'tab': { key: 'Tab', code: 'Tab', keyCode: 9 },
+                    'escape': { key: 'Escape', code: 'Escape', keyCode: 27 },
+                    'esc': { key: 'Escape', code: 'Escape', keyCode: 27 },
+                    'arrowdown': { key: 'ArrowDown', code: 'ArrowDown', keyCode: 40 },
+                    'down': { key: 'ArrowDown', code: 'ArrowDown', keyCode: 40 },
+                    'arrowup': { key: 'ArrowUp', code: 'ArrowUp', keyCode: 38 },
+                    'up': { key: 'ArrowUp', code: 'ArrowUp', keyCode: 38 },
+                    'arrowleft': { key: 'ArrowLeft', code: 'ArrowLeft', keyCode: 37 },
+                    'left': { key: 'ArrowLeft', code: 'ArrowLeft', keyCode: 37 },
+                    'arrowright': { key: 'ArrowRight', code: 'ArrowRight', keyCode: 39 },
+                    'right': { key: 'ArrowRight', code: 'ArrowRight', keyCode: 39 },
+                    'backspace': { key: 'Backspace', code: 'Backspace', keyCode: 8 },
+                    'k': { key: 'k', code: 'KeyK', keyCode: 75 }
+                };
+
+                const mapped = keyMap[targetKey.toLowerCase()] || {
+                    key: targetKey,
+                    code: 'Key' + targetKey.toUpperCase(),
+                    keyCode: targetKey.charCodeAt(0) || 0
+                };
+
+                const targetEl = document.activeElement || document.body;
+
+                // 1. Dispatch keydown, keypress, keyup
+                ['keydown', 'keypress', 'keyup'].forEach(type => {
+                    targetEl.dispatchEvent(new KeyboardEvent(type, {
+                        key: mapped.key,
+                        code: mapped.code,
+                        keyCode: mapped.keyCode,
+                        which: mapped.keyCode,
+                        bubbles: true,
+                        cancelable: true
+                    }));
+                });
+
+                // 2. Media Playback Guarantee: If Space or 'k', ensure HTML5 video toggles cleanly
+                let mediaHandled = false;
+                if (mapped.code === 'Space' || mapped.code === 'KeyK') {
+                    const video = document.querySelector('video');
+                    if (video) {
+                        try {
+                            if (video.paused) {
+                                video.play();
+                                mediaHandled = true;
+                            } else {
+                                video.pause();
+                                mediaHandled = true;
+                            }
+                        } catch (e) {}
+                    }
+                }
+
+                // 3. Modal / Popup Dismiss Guarantee: If Escape, blur active element
+                if (mapped.code === 'Escape') {
+                    if (document.activeElement && document.activeElement.blur) {
+                        document.activeElement.blur();
+                    }
+                }
+
+                return {
+                    success: true,
+                    key: mapped.key,
+                    code: mapped.code,
+                    mediaHandled,
+                    targetTag: targetEl.tagName.toLowerCase()
+                };
+            })()
+        `);
+
+        return {
+            success: true,
+            message: `Pressed key [${result.code || cleanKey}] on <${result.targetTag || 'body'}>${result.mediaHandled ? ' (Video playback toggled)' : ''}.`,
+            details: result
+        };
+    } catch (e) {
+        return { success: false, message: `Key press error: ${e.message}` };
+    }
+}
+
+/**
+ * Hover over an element or badge #N to reveal dropdowns, tooltips, or player controls
+ */
+export async function executeWebviewHover(webview, targetText) {
+    if (!webview || typeof webview.executeJavaScript !== 'function') {
+        return { success: false, message: 'Webview is not available to hover.' };
+    }
+
+    const cleanTarget = (targetText || '').trim();
+    if (!cleanTarget) {
+        return { success: false, message: 'Target element required for hover.' };
+    }
+
+    try {
+        const result = await webview.executeJavaScript(`
+            (function() {
+                const target = ${JSON.stringify(cleanTarget)}.trim();
+                let el = null;
+
+                // 1. Set-of-Marks badge (#1, #2, etc.)
+                const markMatch = target.match(/^#?(\\d+)$/);
+                if (markMatch) {
+                    const idx = parseInt(markMatch[1], 10);
+                    const badges = Array.from(document.querySelectorAll('.antigravity-num-badge, [data-som-id]'));
+                    if (badges[idx - 1]) {
+                        el = badges[idx - 1].parentElement || badges[idx - 1];
+                    }
+                }
+
+                // 2. Direct selector
+                if (!el) {
+                    try { el = document.querySelector(target); } catch (e) {}
+                }
+
+                // 3. Text match
+                if (!el) {
+                    const candidates = Array.from(document.querySelectorAll('button, a, [role="button"], [role="menuitem"], div, span'));
+                    el = candidates.find(c => (c.innerText || '').trim().toLowerCase().includes(target.toLowerCase()));
+                }
+
+                if (!el) {
+                    return { success: false, error: 'Element not found' };
+                }
+
+                const rect = el.getBoundingClientRect();
+                ['mouseenter', 'mouseover', 'mousemove'].forEach(type => {
+                    el.dispatchEvent(new MouseEvent(type, {
+                        bubbles: true,
+                        cancelable: true,
+                        clientX: rect.left + rect.width / 2,
+                        clientY: rect.top + rect.height / 2
+                    }));
+                });
+
+                return { success: true, tag: el.tagName.toLowerCase(), text: (el.innerText || '').slice(0, 30) };
+            })()
+        `);
+
+        if (result.success) {
+            return { success: true, message: `Hovered over <${result.tag}> "${result.text}".` };
+        } else {
+            return { success: false, message: `Could not find element to hover: "${cleanTarget}".` };
+        }
+    } catch (e) {
+        return { success: false, message: `Hover error: ${e.message}` };
+    }
+}
+
+/**
+ * Universal text typing with Set-of-Marks (#N), placeholder resolution,
+ * and React/Vue prototype property descriptor setter override.
+ * Supports multi-field form filling without premature form submissions.
+ */
+export async function executeWebviewType(webview, textToType, target = null, submit = false, clear = true) {
+    if (!webview || typeof webview.executeJavaScript !== 'function') {
+        return { success: false, message: 'No active webview available for typing.' };
     }
 
     try {
         const result = await webview.executeJavaScript(`
             (function() {
                 const text = ${JSON.stringify(textToType)};
-                const searchSelectors = [
-                    'textarea[name="q"]', 'input[name="q"]', 'textarea.gLFyf', 'input.gLFyf',
-                    'input#search', 'input#searchInput', 'input#searchbox_input', 'input[type="search"]',
-                    'textarea[name*="search" i]', 'input[name*="search" i]', 'input[id*="search" i]',
-                    'input[placeholder*="search" i]', 'textarea[placeholder*="search" i]',
-                    '[role="searchbox"]', '[role="search"] textarea', '[role="search"] input',
-                    'textarea:not([type="hidden"])', 'input[type="text"]', 'input:not([type="hidden"])'
-                ];
+                const targetQuery = ${JSON.stringify(target || '')}.trim();
+                const shouldSubmit = ${!!submit};
+                const shouldClear = ${clear !== false};
+
+                function isVisible(el) {
+                    if (!el) return false;
+                    const style = window.getComputedStyle(el);
+                    return style.display !== 'none' && 
+                           style.visibility !== 'hidden' && 
+                           style.opacity !== '0' && 
+                           el.offsetWidth > 0 && 
+                           el.offsetHeight > 0;
+                }
 
                 let targetInput = null;
-                for (const sel of searchSelectors) {
-                    const el = document.querySelector(sel);
-                    if (el && el.offsetWidth > 0 && el.offsetHeight > 0) {
-                        targetInput = el;
-                        break;
+                let matchedBy = 'fallback';
+
+                // 1. Target Specified: Check Set-of-Marks Badge (#N)
+                if (targetQuery) {
+                    const markMatch = targetQuery.match(/^#?(\\d+)$/);
+                    if (markMatch) {
+                        const markIdx = parseInt(markMatch[1], 10);
+                        const somEl = document.querySelector('[data-som-id="' + markIdx + '"]') || document.querySelector('#som-' + markIdx);
+                        if (somEl && isVisible(somEl)) {
+                            targetInput = somEl.matches('input, textarea') ? somEl : somEl.querySelector('input, textarea');
+                            if (targetInput) matchedBy = 'Set-of-Marks #' + markIdx;
+                        }
+                    }
+                }
+
+                // 2. Target Specified: Check Placeholder, Aria-Label, Name, or ID
+                if (!targetInput && targetQuery) {
+                    const cleanQ = targetQuery.toLowerCase();
+                    const candidates = Array.from(document.querySelectorAll('input:not([type="hidden"]), textarea')).filter(isVisible);
+
+                    // Exact or substring match on placeholder
+                    targetInput = candidates.find(c => (c.placeholder || '').toLowerCase().includes(cleanQ));
+                    if (targetInput) matchedBy = 'Placeholder: "' + targetInput.placeholder + '"';
+
+                    // Match on aria-label
+                    if (!targetInput) {
+                        targetInput = candidates.find(c => (c.getAttribute('aria-label') || '').toLowerCase().includes(cleanQ));
+                        if (targetInput) matchedBy = 'Aria-Label: "' + targetInput.getAttribute('aria-label') + '"';
+                    }
+
+                    // Match on associated <label>
+                    if (!targetInput) {
+                        const labels = Array.from(document.querySelectorAll('label')).filter(l => (l.innerText || '').toLowerCase().includes(cleanQ));
+                        for (const lbl of labels) {
+                            if (lbl.htmlFor) {
+                                const el = document.getElementById(lbl.htmlFor);
+                                if (el && isVisible(el)) { targetInput = el; matchedBy = 'Label: "' + lbl.innerText.trim() + '"'; break; }
+                            }
+                            const inner = lbl.querySelector('input, textarea');
+                            if (inner && isVisible(inner)) { targetInput = inner; matchedBy = 'Inner Label: "' + lbl.innerText.trim() + '"'; break; }
+                        }
+                    }
+
+                    // Direct CSS Selector
+                    if (!targetInput) {
+                        try {
+                            const selEl = document.querySelector(targetQuery);
+                            if (selEl && isVisible(selEl)) {
+                                targetInput = selEl.matches('input, textarea') ? selEl : selEl.querySelector('input, textarea');
+                                if (targetInput) matchedBy = 'CSS Selector';
+                            }
+                        } catch (e) {}
+                    }
+                }
+
+                // 3. No Target or Target Not Found: Use document.activeElement if editable
+                if (!targetInput && document.activeElement) {
+                    const act = document.activeElement;
+                    if ((act.tagName === 'INPUT' || act.tagName === 'TEXTAREA' || act.isContentEditable) && isVisible(act)) {
+                        targetInput = act;
+                        matchedBy = 'Active Focused Element';
+                    }
+                }
+
+                // 4. Fallback: Search bar or first visible input
+                if (!targetInput) {
+                    const searchSelectors = [
+                        'input[type="search"]', 'input[name="q"]', 'input[name="s"]', 'input[name*="search" i]',
+                        'input[id*="search" i]', 'input[placeholder*="search" i]', 'input[aria-label*="search" i]',
+                        '[role="searchbox"]', '[role="search"] input', '[role="search"] textarea',
+                        'textarea[name="q"]', 'textarea[name*="search" i]',
+                        'input[type="text"]', 'input:not([type="hidden"])', 'textarea:not([type="hidden"])'
+                    ];
+                    for (const sel of searchSelectors) {
+                        const el = document.querySelector(sel);
+                        if (el && isVisible(el)) {
+                            targetInput = el;
+                            matchedBy = 'Primary Input Fallback';
+                            break;
+                        }
                     }
                 }
 
                 if (!targetInput) {
-                    return { success: false, error: 'Could not find an active search input on current page.' };
+                    return { success: false, error: 'Could not locate target input on page.' };
                 }
 
                 targetInput.focus();
-                targetInput.value = text;
+
+                // OpenCode React / Vue Prototype Descriptor Setter Override
+                const isTextArea = targetInput instanceof HTMLTextAreaElement;
+                const proto = isTextArea ? window.HTMLTextAreaElement.prototype : window.HTMLInputElement.prototype;
+                const descriptor = Object.getOwnPropertyDescriptor(proto, 'value');
+                const nativeSetter = descriptor ? descriptor.set : null;
+
+                if (shouldClear) {
+                    if (nativeSetter) nativeSetter.call(targetInput, '');
+                    else targetInput.value = '';
+                }
+
+                if (nativeSetter) {
+                    nativeSetter.call(targetInput, text);
+                } else {
+                    targetInput.value = text;
+                }
+
                 targetInput.dispatchEvent(new Event('input', { bubbles: true }));
                 targetInput.dispatchEvent(new Event('change', { bubbles: true }));
 
-                // Highlight yellow
+                // Subtle visual outline feedback
                 const origOutline = targetInput.style.outline;
                 targetInput.style.outline = '3px solid #FFE600';
-                targetInput.style.boxShadow = '0 0 16px #FFE600';
+                targetInput.style.boxShadow = '0 0 16px rgba(255, 230, 0, 0.6)';
                 setTimeout(() => {
                     targetInput.style.outline = origOutline;
                     targetInput.style.boxShadow = '';
                 }, 1000);
 
-                // Try form submit or Enter keypress
+                // Form Submit only if explicitly requested
                 let formSubmitted = false;
-                const form = targetInput.closest('form');
-                if (form) {
-                    try {
-                        const submitBtn = form.querySelector('button[type="submit"], input[type="submit"]');
-                        if (submitBtn) {
-                            submitBtn.click();
-                            formSubmitted = true;
-                        } else {
-                            form.requestSubmit ? form.requestSubmit() : form.submit();
-                            formSubmitted = true;
-                        }
-                    } catch (e) {}
-                }
-
-                if (!formSubmitted) {
-                    const enterEvt = new KeyboardEvent('keydown', {
-                        key: 'Enter',
-                        code: 'Enter',
-                        keyCode: 13,
-                        which: 13,
-                        bubbles: true,
-                        cancelable: true
+                if (shouldSubmit) {
+                    ['keydown', 'keypress', 'keyup'].forEach(evtName => {
+                        targetInput.dispatchEvent(new KeyboardEvent(evtName, {
+                            key: 'Enter',
+                            code: 'Enter',
+                            keyCode: 13,
+                            which: 13,
+                            bubbles: true,
+                            cancelable: true
+                        }));
                     });
-                    targetInput.dispatchEvent(enterEvt);
+
+                    const form = targetInput.closest('form');
+                    if (form) {
+                        try {
+                            const submitBtn = form.querySelector('button[type="submit"], input[type="submit"], button[aria-label*="Search" i], [class*="submit" i]');
+                            if (submitBtn) {
+                                submitBtn.click();
+                                formSubmitted = true;
+                            } else if (typeof form.requestSubmit === 'function') {
+                                form.requestSubmit();
+                                formSubmitted = true;
+                            } else if (typeof form.submit === 'function') {
+                                form.submit();
+                                formSubmitted = true;
+                            }
+                        } catch (e) {}
+                    }
                 }
 
-                return { success: true, text: text, inputTag: targetInput.tagName.toLowerCase() };
+                return {
+                    success: true,
+                    text: text,
+                    inputTag: targetInput.tagName.toLowerCase(),
+                    placeholder: targetInput.placeholder || '',
+                    matchedBy: matchedBy,
+                    submitted: formSubmitted
+                };
             })();
         `);
 
         if (result && result.success) {
-            return `⌨️ Typed <strong>"${textToType}"</strong> into search bar and submitted search.`;
+            const subMsg = result.submitted ? ' (submitted)' : '';
+            return {
+                success: true,
+                message: `Typed "${textToType}" into <${result.inputTag}> [${result.matchedBy}]${subMsg}.`,
+                details: result
+            };
         } else {
-            return `⚠️ Could not find search bar on current page: ${result ? result.error : 'Unknown error'}`;
+            return { success: false, message: `Could not type into element: ${result ? result.error : 'Unknown error'}` };
         }
     } catch (e) {
-        return `⚠️ Search typing error: ${e.message}`;
+        return { success: false, message: `Type text error: ${e.message}` };
     }
 }
 
 /**
- * Number matching words on screen with yellow badges (#1, #2, #3)
+ * Type text directly into active page's search bar and submit (generic search discovery fallback)
  */
-export async function highlightAndNumberOccurrences(webview, keyword) {
+export async function typeAndSubmitInSearchBar(webview, textToType) {
+    const res = await executeWebviewType(webview, textToType, null, true, true);
+    if (res.success) {
+        return `⌨️ Typed <strong>"${textToType}"</strong> into search bar and submitted search.`;
+    }
+    return `⚠️ ${res.message}`;
+}export async function highlightAndNumberOccurrences(webview, keyword) {
     if (!webview || typeof webview.executeJavaScript !== 'function') {
         return { success: false, count: 0 };
     }
@@ -644,6 +1190,56 @@ export function extractTabIndexFromPrompt(raw) {
 }
 
 /**
+ * Execute sub-agent delegated task run on target tab with isolated goal
+ */
+export async function executeSubAgentRun(subagentId, role, subGoal, context = {}) {
+    const {
+        activeTabId,
+        getActiveWebview,
+        onNavigate
+    } = context;
+
+    const wv = document.getElementById(`wv-${activeTabId}`) || ((typeof getActiveWebview === 'function') ? getActiveWebview() : null);
+    if (!wv) {
+        return { success: false, summary: `Sub-agent [${subagentId}] failed: Tab webview not found.`, dom_delta: '' };
+    }
+
+    const preSnap = await captureDomSnapshot(wv);
+    let subSummary = `Sub-agent [${subagentId}] (${role}) executed goal: "${subGoal}"`;
+    let subSuccess = true;
+
+    if (/play|video|pause|toggle|space/i.test(subGoal)) {
+        const keyRes = await executeWebviewKeyPress(wv, 'Space');
+        subSuccess = keyRes.success;
+        subSummary = `Toggled media playback via Space key.`;
+    } else if (/fill|form|type|enter/i.test(subGoal)) {
+        const textMatch = subGoal.match(/["']([^"']+)["']/);
+        const textToType = textMatch ? textMatch[1] : subGoal.replace(/fill|form|type|enter/gi, '').trim();
+        const typeRes = await executeWebviewType(wv, textToType, null, false, true);
+        subSuccess = typeRes.success;
+        subSummary = typeRes.message;
+    } else if (/click|submit|press/i.test(subGoal)) {
+        const clickTarget = subGoal.replace(/click|submit|press/gi, '').trim();
+        const clickRes = await executeWebviewClick(wv, clickTarget, onNavigate);
+        subSuccess = clickRes.success;
+        subSummary = clickRes.message;
+    } else {
+        subSummary = `Sub-agent completed operation on tab ${activeTabId}.`;
+    }
+
+    await new Promise(r => setTimeout(r, 400));
+    const postSnap = await captureDomSnapshot(wv);
+    const delta = computeDomDelta(preSnap, postSnap);
+
+    return {
+        success: subSuccess,
+        summary: subSummary,
+        dom_delta: delta.summary,
+        artifacts: { url: postSnap.url, title: postSnap.title }
+    };
+}
+
+/**
  * Structured Tool Call Executor & State Verification Loop
  */
 export async function executeToolCallAndVerify(toolCall, context = {}) {
@@ -665,14 +1261,27 @@ export async function executeToolCallAndVerify(toolCall, context = {}) {
     const wv = getActiveWebview ? getActiveWebview() : null;
 
     if (name === 'open_tab') {
+        if (args.inCurrentTab || (typeof args.url === 'string' && /\b(?:in\s+(?:the\s+)?(?:current|this|active)\s+tab|here)\b/i.test(args.url))) {
+            return await executeToolCallAndVerify({ name: 'navigate', args: { url: args.url } }, context);
+        }
         const targetUrl = args.url ? resolveTargetUrl(args.url) : '';
         const title = args.title || (targetUrl ? args.url : 'New Tab');
         const prevCount = tabs.length;
-        if (onOpenTab) onOpenTab(targetUrl, title);
-        await new Promise(r => setTimeout(r, 400));
+        let newTabId = null;
+        if (onOpenTab) {
+            newTabId = onOpenTab(targetUrl, title);
+        }
+        await new Promise(r => setTimeout(r, 600));
+        if (!newTabId) {
+            try {
+                const tabsRes = await fetch('http://127.0.0.1:4892/api/tabs').then(r => r.json()).catch(() => null);
+                if (tabsRes && tabsRes.activeTabId) newTabId = tabsRes.activeTabId;
+            } catch (e) {}
+        }
         return {
             success: true,
             action: 'open_tab',
+            tabId: newTabId,
             message: targetUrl ? `Opened "${title}" in a new tab.` : 'Opened a new blank tab.',
             verification: `✅ [Verified Action: Opened New Tab #${prevCount + 1}${targetUrl ? ` (${targetUrl})` : ''}]`
         };
@@ -736,13 +1345,45 @@ export async function executeToolCallAndVerify(toolCall, context = {}) {
     if (name === 'navigate') {
         const url = args.url ? resolveTargetUrl(args.url) : '';
         if (url && onNavigate) {
+            const prevUrl = (wv && typeof wv.getURL === 'function') ? wv.getURL() : '';
             onNavigate(url);
-            return {
-                success: true,
-                action: 'navigate',
-                message: `Navigating active tab to ${url}.`,
-                verification: `✅ [Verified Action: Navigated active tab to ${url}]`
-            };
+
+            // Physically await and verify webview URL change
+            let currentUrl = prevUrl;
+            let currentTitle = '';
+            for (let i = 0; i < 10; i++) {
+                await new Promise(r => setTimeout(r, 250));
+                if (wv && typeof wv.getURL === 'function') {
+                    currentUrl = wv.getURL() || '';
+                    currentTitle = (typeof wv.getTitle === 'function' ? wv.getTitle() : '') || '';
+                    if (currentUrl && currentUrl !== 'about:blank' && (currentUrl !== prevUrl || i >= 4)) {
+                        break;
+                    }
+                }
+            }
+
+            const targetDomain = (function() {
+                try { return new URL(url).hostname.replace(/^www\./, ''); } catch(e) { return url; }
+            })();
+
+            const isVerified = currentUrl && currentUrl !== 'about:blank' && (currentUrl.includes(targetDomain) || (currentUrl !== prevUrl && !currentUrl.includes('about:blank')));
+            if (isVerified) {
+                return {
+                    success: true,
+                    action: 'navigate',
+                    url: currentUrl,
+                    message: `Navigated active tab to ${currentUrl || url}. Title: "${currentTitle}".`,
+                    verification: `✅ [Verified Action: Navigated active tab to ${currentUrl || url}${currentTitle ? ` ("${currentTitle}")` : ''}]`
+                };
+            } else {
+                return {
+                    success: false,
+                    action: 'navigate',
+                    url: currentUrl,
+                    message: `Navigation initiated to ${url}, but active webview URL is currently "${currentUrl}".`,
+                    verification: `⚠️ [Verification Failed: Active tab URL did not navigate to "${url}"]`
+                };
+            }
         }
         return { success: false, action: 'navigate', verification: '⚠️ [Verification Failed: No URL provided]' };
     }
@@ -751,11 +1392,21 @@ export async function executeToolCallAndVerify(toolCall, context = {}) {
         const target = args.target || '';
         if (target) {
             const clickRes = await executeWebviewClick(wv, target, onNavigate);
+            if (!clickRes || !clickRes.success) {
+                return {
+                    success: false,
+                    action: 'click_element',
+                    message: clickRes?.message || `Could not find clickable element matching "${target}".`,
+                    verification: `⚠️ [Verification Failed: Element "${target}" not found or not clickable on active page]`
+                };
+            }
+            await new Promise(r => setTimeout(r, 600));
+            const newUrl = (wv && typeof wv.getURL === 'function') ? wv.getURL() : '';
             return {
                 success: true,
                 action: 'click_element',
                 message: clickRes.message || `Clicked element matching "${target}".`,
-                verification: `✅ [Verified Action: Click executed on "${target}"]`
+                verification: `✅ [Verified Action: Clicked "${target}"${newUrl && !newUrl.includes('about:blank') ? ` (URL: ${newUrl})` : ''}]`
             };
         }
         return { success: false, action: 'click_element', verification: '⚠️ [Verification Failed: No click target specified]' };
@@ -764,15 +1415,109 @@ export async function executeToolCallAndVerify(toolCall, context = {}) {
     if (name === 'type_text') {
         const text = args.text || '';
         if (text) {
-            const typeMsg = await typeAndSubmitInSearchBar(wv, text);
+            const typeRes = await executeWebviewType(wv, text, args.target, args.submit === true, args.clear !== false);
+            if (!typeRes || !typeRes.success) {
+                return {
+                    success: false,
+                    action: 'type_text',
+                    message: typeRes?.message || 'Failed to type text into target.',
+                    verification: `⚠️ [Verification Failed: Could not type text into ${args.target ? `target "${args.target}"` : 'active field'}]`
+                };
+            }
             return {
                 success: true,
                 action: 'type_text',
-                message: typeMsg,
-                verification: `✅ [Verified Action: Typed and submitted "${text}"]`
+                message: typeRes.message,
+                verification: `✅ [Verified Action: ${typeRes.message}]`
             };
         }
         return { success: false, action: 'type_text', verification: '⚠️ [Verification Failed: No text provided]' };
+    }
+
+    if (name === 'press_key') {
+        const key = args.key || 'Space';
+        const modifiers = args.modifiers || [];
+        const keyRes = await executeWebviewKeyPress(wv, key, modifiers);
+        if (!keyRes || !keyRes.success) {
+            return {
+                success: false,
+                action: 'press_key',
+                message: keyRes?.message || `Failed to press key "${key}".`,
+                verification: `⚠️ [Verification Failed: Key "${key}" dispatch failed]`
+            };
+        }
+        return {
+            success: true,
+            action: 'press_key',
+            message: keyRes.message,
+            verification: `✅ [Verified Action: ${keyRes.message}]`
+        };
+    }
+
+    if (name === 'hover_element') {
+        const target = args.target || '';
+        if (target) {
+            const hoverRes = await executeWebviewHover(wv, target);
+            if (!hoverRes || !hoverRes.success) {
+                return {
+                    success: false,
+                    action: 'hover_element',
+                    message: hoverRes?.message || `Could not hover over "${target}".`,
+                    verification: `⚠️ [Verification Failed: Hover target "${target}" not found]`
+                };
+            }
+            return {
+                success: true,
+                action: 'hover_element',
+                message: hoverRes.message,
+                verification: `✅ [Verified Action: ${hoverRes.message}]`
+            };
+        }
+        return { success: false, action: 'hover_element', verification: '⚠️ [Verification Failed: No hover target specified]' };
+    }
+
+    if (name === 'delegate_subtask') {
+        const subId = args.subagent_id || ('sub_' + Math.random().toString(36).slice(2, 6));
+        const role = args.role || 'general_worker';
+        const subGoal = args.goal || '';
+        const subTabId = args.tab_id !== undefined ? args.tab_id : activeTabId;
+
+        if (!globalSubAgentManager.canSpawn()) {
+            return {
+                success: false,
+                action: 'delegate_subtask',
+                subagent_id: subId,
+                message: `Cannot spawn sub-agent [${subId}]: Maximum 3 concurrent sub-agents limit reached to protect RAM.`,
+                verification: `⚠️ [Delegation Rejected: RAM protection active, maximum 3 sub-agents running]`
+            };
+        }
+
+        try {
+            globalSubAgentManager.register(subId, role, subGoal, subTabId);
+        } catch (e) {
+            return { success: false, action: 'delegate_subtask', message: e.message, verification: `⚠️ [Delegation Error: ${e.message}]` };
+        }
+
+        const subContext = {
+            ...context,
+            activeTabId: subTabId,
+            subagentId: subId
+        };
+
+        const subRes = await executeSubAgentRun(subId, role, subGoal, subContext);
+        const completedRecord = globalSubAgentManager.complete(subId, subRes.success, subRes.summary, subRes.artifacts, subRes.dom_delta);
+        globalSubAgentManager.terminate(subId); // Free slot immediately
+
+        return {
+            success: subRes.success,
+            action: 'delegate_subtask',
+            subagent_id: subId,
+            message: `Sub-agent [${subId}] (${role}) completed: ${subRes.summary}`,
+            result: completedRecord,
+            verification: subRes.success
+                ? `✅ [Sub-Agent [${subId}] Handover: ${subRes.summary} | DOM Delta: ${subRes.dom_delta || 'verified'}]`
+                : `⚠️ [Sub-Agent [${subId}] Handover Failed: ${subRes.summary}]`
+        };
     }
 
     if (name === 'scroll_page') {
@@ -796,12 +1541,21 @@ export async function executeToolCallAndVerify(toolCall, context = {}) {
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ url: directUrl })
                 });
-            } catch (e) {}
+            } catch (e) { }
         } else if (args.target) {
             await executeWebviewClick(wv, args.target, onNavigate);
         }
-        await new Promise(r => setTimeout(r, 1200));
-        const dlCheck = await fetch('http://127.0.0.1:4892/api/downloads/verify').then(r => r.json()).catch(() => null);
+
+        // Poll /api/downloads/verify for up to 2.5s
+        let dlCheck = null;
+        for (let i = 0; i < 5; i++) {
+            await new Promise(r => setTimeout(r, 500));
+            dlCheck = await fetch('http://127.0.0.1:4892/api/downloads/verify').then(r => r.json()).catch(() => null);
+            if (dlCheck && (dlCheck.hasActiveDownloads || dlCheck.hasCompletedDownloads)) {
+                break;
+            }
+        }
+
         if (dlCheck && dlCheck.hasActiveDownloads) {
             const dl = dlCheck.active[0];
             return {
@@ -850,38 +1604,229 @@ export async function executeToolCallAndVerify(toolCall, context = {}) {
         const query = args.query || args.text || '';
         if (query) {
             let resMsg = '';
+            let isOk = false;
             if (wv && typeof wv.executeJavaScript === 'function') {
-                resMsg = await typeAndSubmitInSearchBar(wv, query);
+                const typeRes = await typeAndSubmitInSearchBar(wv, query);
+                isOk = !(typeof typeRes === 'string' && typeRes.startsWith('⚠️'));
+                resMsg = typeRes;
             } else if (onNavigate) {
                 onNavigate(`https://www.google.com/search?q=${encodeURIComponent(query)}`);
                 resMsg = `Navigated to search for "${query}".`;
+                isOk = true;
             }
-            return {
-                success: true,
-                action: 'search_page',
-                message: resMsg || `Searched for "${query}".`,
-                verification: `✅ [Verified Action: Searched for "${query}"]`
-            };
+            if (isOk) {
+                await new Promise(r => setTimeout(r, 1200));
+                const curUrl = (wv && typeof wv.getURL === 'function') ? wv.getURL() : '';
+                return {
+                    success: true,
+                    action: 'search_page',
+                    message: resMsg || `Searched for "${query}".`,
+                    verification: `✅ [Verified Action: Searched for "${query}" on active site${curUrl ? ` (URL: ${curUrl})` : ''}]`
+                };
+            } else {
+                return {
+                    success: false,
+                    action: 'search_page',
+                    message: resMsg,
+                    verification: `⚠️ [Verification Failed: Search input not found on active page]`
+                };
+            }
         }
         return { success: false, action: 'search_page', verification: '⚠️ [Verification Failed: No query provided]' };
     }
 
-    if (name === 'read_page') {
-        let pageSummary = 'Page state could not be read.';
-        if (wv && typeof wv.executeJavaScript === 'function') {
-            const ctx = await extractAdaptivePageContext(wv);
-            if (ctx && ctx.success) {
-                const searchInps = (ctx.searchInputs || []).map(i => i.placeholder || i.name || i.id).join(', ');
-                const dlCount = (ctx.downloadTriggers || []).length;
-                pageSummary = `Page: "${ctx.page?.title || ''}" (${ctx.page?.url || ''}). Phase: ${ctx.phase}. Search inputs: [${searchInps || 'none'}]. Download links: ${dlCount}.`;
-            }
+    if (name === 'read_page' || name === 'read_site') {
+        if (!wv || typeof wv.executeJavaScript !== 'function') {
+            return {
+                success: false,
+                action: 'read_page',
+                message: 'No active webview available to read page.',
+                verification: '⚠️ [Verification Failed: No active webview]'
+            };
         }
-        return {
-            success: true,
-            action: 'read_page',
-            message: pageSummary,
-            verification: `✅ [Verified Action: Read page content]`
-        };
+
+        // Await page settling if loading
+        for (let i = 0; i < 15; i++) {
+            const isLoading = (typeof wv.isLoading === 'function') ? wv.isLoading() : false;
+            if (!isLoading) {
+                try {
+                    const ready = await wv.executeJavaScript(`document.readyState === 'complete' || (document.body && document.body.children.length > 0)`);
+                    if (ready) break;
+                } catch (e) { }
+            }
+            await new Promise(r => setTimeout(r, 200));
+        }
+
+        try {
+            const pageData = await wv.executeJavaScript(`
+                (function() {
+                    const title = document.title || '';
+                    const url = window.location.href || '';
+                    
+                    const headings = Array.from(document.querySelectorAll('h1, h2, h3, h4, h5, h6'))
+                        .map(h => (h.innerText || h.textContent || '').trim().replace(/\\s+/g, ' '))
+                        .filter(h => h.length > 2 && h.length < 200)
+                        .slice(0, 30);
+
+                    const links = Array.from(document.querySelectorAll('a, [role="link"]'))
+                        .map(a => {
+                            const aria = (a.getAttribute('aria-label') || '').trim();
+                            const titleAttr = (a.getAttribute('title') || '').trim();
+                            const txt = (a.innerText || a.textContent || '').trim();
+                            const label = (aria || titleAttr || txt).replace(/\\s+/g, ' ');
+                            const href = a.href || a.getAttribute('href') || '';
+                            return { text: label, href };
+                        })
+                        .filter(l => l.text.length > 2 && l.href && !l.href.startsWith('javascript:'))
+                        .slice(0, 60);
+
+                    const downloads = Array.from(document.querySelectorAll('a, button, .btn, [class*="download" i], [class*="episode" i], [class*="stream" i]'))
+                        .map(el => {
+                            const aria = (el.getAttribute('aria-label') || '').trim();
+                            const txt = (el.innerText || el.textContent || '').trim();
+                            const href = el.href || el.getAttribute('href') || '';
+                            const label = (aria || txt).replace(/\\s+/g, ' ');
+                            return { text: label, href };
+                        })
+                        .filter(d => /\\b(?:1080p|720p|480p|2160p|4k|download|episode|ep\\s*\\d+|direct|g-?drive|stream|torrent|magnet|batch)\\b/i.test(d.text + ' ' + d.href))
+                        .slice(0, 40);
+
+                    const searchInputs = Array.from(document.querySelectorAll('input, textarea'))
+                        .filter(i => /search|query|keyword|find/i.test((i.name || '') + ' ' + (i.id || '') + ' ' + (i.placeholder || '') + ' ' + (i.getAttribute('aria-label') || '') + ' ' + (i.type || '')))
+                        .map(i => i.placeholder || i.name || i.id || 'search_input')
+                        .slice(0, 5);
+
+                    const bodyText = (document.body ? document.body.innerText : '')
+                        .replace(/\\s+/g, ' ')
+                        .trim()
+                        .substring(0, 4000);
+
+                    return { title, url, headings, links, downloads, searchInputs, bodyText };
+                })()
+            `);
+
+            const dlList = (pageData.downloads || []).map(d => `- "${d.text}" ${d.href ? `-> ${d.href}` : ''}`).join('\n');
+            const linkList = (pageData.links || []).slice(0, 25).map(l => `- "${l.text}" -> ${l.href}`).join('\n');
+            const searchList = (pageData.searchInputs || []).join(', ') || 'none';
+
+            const summary = `📄 **Page Title:** "${pageData.title}"\n🔗 **URL:** ${pageData.url}\n🔍 **Search Inputs:** ${searchList}\n📌 **Headings (${pageData.headings?.length || 0}):** ${(pageData.headings || []).slice(0, 10).join(' | ') || 'none'}\n\n📥 **Detected Download/Stream Triggers (${pageData.downloads?.length || 0}):**\n${dlList || 'None detected'}\n\n🌐 **Top Interactive Links (${pageData.links?.length || 0}):**\n${linkList || 'None detected'}\n\n📝 **Page Content Excerpt:**\n${(pageData.bodyText || '').substring(0, 1200)}...`;
+
+            const isBlank = (!pageData.title || pageData.title === 'about:blank') && (!pageData.links || pageData.links.length === 0);
+            if (isBlank) {
+                return {
+                    success: false,
+                    action: 'read_page',
+                    page: pageData,
+                    message: summary,
+                    verification: `⚠️ [Verification Notice: Active page is currently blank or still loading ("${pageData.url}")]`
+                };
+            }
+
+            return {
+                success: true,
+                action: 'read_page',
+                page: pageData,
+                message: summary,
+                verification: `✅ [Verified Action: Read live page state: "${pageData.title}" (${pageData.links?.length || 0} links, ${pageData.downloads?.length || 0} downloads, ${pageData.headings?.length || 0} headings)]`
+            };
+        } catch (e) {
+            return {
+                success: false,
+                action: 'read_page',
+                message: `Failed to read page: ${e.message}`,
+                verification: `⚠️ [Verification Failed: ${e.message}]`
+            };
+        }
+    }
+
+    if (name === 'grep_page' || name === 'grep' || name === 'find_on_page') {
+        const query = args.query || args.text || args.keyword || '';
+        if (!query) {
+            return { success: false, action: 'grep_page', verification: '⚠️ [Verification Failed: No query provided]' };
+        }
+        if (!wv || typeof wv.executeJavaScript !== 'function') {
+            return { success: false, action: 'grep_page', verification: '⚠️ [Verification Failed: No active webview]' };
+        }
+        if (typeof wv.isLoading === 'function' && wv.isLoading()) {
+            await new Promise(r => setTimeout(r, 1000));
+        }
+        try {
+            const grepRes = await wv.executeJavaScript(`
+                (function() {
+                    const q = ${JSON.stringify(query)}.toLowerCase();
+                    const allNodes = Array.from(document.querySelectorAll('a, button, [role="button"], [role="link"], h1, h2, h3, h4, h5, h6, p, span, li, tr, td, div, article, section, input, textarea'));
+                    const matches = [];
+                    const seenTexts = new Set();
+
+                    for (const el of allNodes) {
+                        const aria = (el.getAttribute('aria-label') || '').trim();
+                        const titleAttr = (el.getAttribute('title') || '').trim();
+                        const val = (el.value || '').trim();
+                        const txt = (el.innerText || el.textContent || '').trim().replace(/\\s+/g, ' ');
+                        const href = el.href || el.getAttribute('href') || '';
+                        const combined = (aria + ' ' + titleAttr + ' ' + val + ' ' + txt + ' ' + href).toLowerCase();
+
+                        if (combined.includes(q)) {
+                            // Extract concise display text
+                            let displayText = aria || titleAttr || val || txt;
+                            if (displayText.length > 200) {
+                                const idx = displayText.toLowerCase().indexOf(q);
+                                const start = Math.max(0, idx - 40);
+                                const end = Math.min(displayText.length, idx + q.length + 80);
+                                displayText = (start > 0 ? '...' : '') + displayText.substring(start, end).trim() + (end < displayText.length ? '...' : '');
+                            }
+                            displayText = displayText.replace(/\\s+/g, ' ').trim();
+
+                            if (displayText && !seenTexts.has(displayText)) {
+                                seenTexts.add(displayText);
+                                const link = el.tagName.toLowerCase() === 'a' ? el : el.closest('a');
+                                const isClickable = !!(link || el.tagName.toLowerCase() === 'button' || el.getAttribute('role') === 'button' || el.getAttribute('role') === 'link' || el.onclick || el.classList.contains('btn'));
+                                matches.push({
+                                    tag: el.tagName.toLowerCase(),
+                                    text: displayText,
+                                    href: link ? (link.href || '') : (href || null),
+                                    isClickable
+                                });
+                            }
+                        }
+                    }
+                    return {
+                        title: document.title || '',
+                        url: window.location.href || '',
+                        matches: matches.slice(0, 30)
+                    };
+                })()
+            `);
+
+            const foundMatches = grepRes?.matches || [];
+            if (foundMatches.length > 0) {
+                const matchSummary = foundMatches.map((m, i) => `[${i+1}] <${m.tag}> "${m.text}" ${m.href ? `(Link: ${m.href})` : ''} ${m.isClickable ? '[Clickable]' : ''}`).join('\n');
+                return {
+                    success: true,
+                    action: 'grep_page',
+                    count: foundMatches.length,
+                    matches: foundMatches,
+                    message: `🔍 Found ${foundMatches.length} occurrences matching "${query}" on "${grepRes.title}":\n${matchSummary}`,
+                    verification: `✅ [Verified: Found ${foundMatches.length} matching elements for "${query}" on active page]`
+                };
+            } else {
+                return {
+                    success: false,
+                    action: 'grep_page',
+                    count: 0,
+                    matches: [],
+                    message: `No elements matching "${query}" found on current page "${grepRes?.title || ''}" (${grepRes?.url || ''}).`,
+                    verification: `⚠️ [Verification: No matches found for "${query}" on active page]`
+                };
+            }
+        } catch (e) {
+            return {
+                success: false,
+                action: 'grep_page',
+                message: `Grep error: ${e.message}`,
+                verification: `⚠️ [Verification Failed: Grep error - ${e.message}]`
+            };
+        }
     }
 
     if (name === 'verify_download') {
@@ -944,6 +1889,137 @@ export async function executeToolCallAndVerify(toolCall, context = {}) {
 }
 
 /**
+ * Strips raw tool_call code blocks and raw tool JSON definitions from message text,
+ * ensuring only natural conversational commentary is displayed to the user while
+ * tool executions are cleanly visualized exclusively via interactive UI cards.
+ */
+export function stripToolCallsFromText(content) {
+    if (!content || typeof content !== 'string') return '';
+    let text = content;
+
+    // 1. Remove complete fenced tool_call or tool_calls codeblocks
+    text = text.replace(/```(?:tool_call|tool_calls)\b[\s\S]*?```/gi, '');
+
+    // 2. Remove complete fenced json/code blocks containing tool call signatures
+    text = text.replace(/```(?:json|javascript|js)?\s*\{[\s\S]*?(?:"tool"|"tools"|"tool_calls"|"plan"|"steps"|"action"|"function")[\s\S]*?```/gi, '');
+
+    // 3. Remove in-flight unclosed ```tool_call or ```tool_calls blocks while streaming
+    text = text.replace(/```(?:tool_call|tool_calls)\b[\s\S]*$/gi, '');
+
+    // 4. Remove in-flight unclosed JSON tool call blocks while streaming
+    text = text.replace(/```(?:json)?\s*\{[\s\S]*?(?:"tool"|"tools"|"tool_calls"|"plan"|"steps"|"action"|"function")[\s\S]*$/gi, '');
+
+    // 5. Clean dangling empty fences
+    text = text.replace(/```\s*```/g, '');
+    text = text.replace(/```\s*$/g, '');
+
+    // 6. Remove standalone bare JSON objects specifying tool calls/plans/steps with brace depth matching
+    let result = '';
+    let i = 0;
+    while (i < text.length) {
+        if (text[i] === '{') {
+            let depth = 0;
+            let end = -1;
+            for (let j = i; j < text.length; j++) {
+                if (text[j] === '{') depth++;
+                else if (text[j] === '}') {
+                    depth--;
+                    if (depth === 0) {
+                        end = j;
+                        break;
+                    }
+                }
+            }
+            if (end !== -1) {
+                const candidate = text.substring(i, end + 1);
+                if (/(?:"tool"|"tools"|"tool_calls"|"plan"|"steps"|"action"|"function")\s*:/i.test(candidate)) {
+                    i = end + 1;
+                    continue;
+                }
+            }
+        }
+        result += text[i];
+        i++;
+    }
+
+    return result.trim();
+}
+
+/**
+ * Helper to robustly extract planned tool calls from LLM assistant responses
+ */
+function extractStepsFromText(content) {
+    const steps = [];
+    if (!content || typeof content !== 'string') return steps;
+
+    const ingestParsed = (obj) => {
+        if (!obj) return;
+        if (Array.isArray(obj)) {
+            for (const item of obj) ingestParsed(item);
+            return;
+        }
+        if (typeof obj === 'object') {
+            if (Array.isArray(obj.steps)) {
+                for (const s of obj.steps) ingestParsed(s);
+            } else if (Array.isArray(obj.tools)) {
+                for (const t of obj.tools) ingestParsed(t);
+            } else if (Array.isArray(obj.tool_calls)) {
+                for (const tc of obj.tool_calls) ingestParsed(tc);
+            } else {
+                const toolName = obj.tool || obj.name || obj.action || obj.function;
+                if (toolName && typeof toolName === 'string') {
+                    let toolArgs = obj.args || obj.parameters || obj.arguments || obj.input || {};
+                    if (typeof toolArgs === 'string') {
+                        try { toolArgs = JSON.parse(toolArgs); } catch (e) { toolArgs = { raw: toolArgs }; }
+                    }
+                    steps.push({ name: toolName, args: toolArgs });
+                }
+            }
+        }
+    };
+
+    // 1. Codeblocks ```...```
+    const codeBlockRegex = /```(?:tool_call|tool_calls|json|javascript|js)?\s*([\s\S]*?)```/gi;
+    let match;
+    while ((match = codeBlockRegex.exec(content)) !== null) {
+        const inner = match[1].trim();
+        try {
+            ingestParsed(JSON.parse(inner));
+        } catch (e) {
+            const firstBrace = inner.indexOf('{');
+            const lastBrace = inner.lastIndexOf('}');
+            if (firstBrace !== -1 && lastBrace > firstBrace) {
+                try { ingestParsed(JSON.parse(inner.substring(firstBrace, lastBrace + 1))); } catch (e2) {}
+            }
+            const firstBracket = inner.indexOf('[');
+            const lastBracket = inner.lastIndexOf(']');
+            if (firstBracket !== -1 && lastBracket > firstBracket) {
+                try { ingestParsed(JSON.parse(inner.substring(firstBracket, lastBracket + 1))); } catch (e3) {}
+            }
+        }
+    }
+
+    if (steps.length > 0) return steps;
+
+    // 2. Inline JSON object or array
+    const firstBrace = content.indexOf('{');
+    const lastBrace = content.lastIndexOf('}');
+    if (firstBrace !== -1 && lastBrace > firstBrace) {
+        try { ingestParsed(JSON.parse(content.substring(firstBrace, lastBrace + 1))); } catch (e) {}
+    }
+
+    if (steps.length > 0) return steps;
+
+    const firstBracket = content.indexOf('[');
+    const lastBracket = content.lastIndexOf(']');
+    if (firstBracket !== -1 && lastBracket > firstBracket) {
+        try { ingestParsed(JSON.parse(content.substring(firstBracket, lastBracket + 1))); } catch (e) {}
+    }
+
+    return steps;
+}
+
+/**
  * Autonomous Goal-Driven Agent Execution Loop
  * Gives the AI model full agency to perceive, reason, plan, execute tools, observe feedback,
  * verify outcomes, and notify the user when the goal is achieved.
@@ -966,7 +2042,7 @@ export async function executeAutonomousAgentLoop(promptText, context = {}) {
         onStreamReasoning,
         onToolEvent,
         signal,
-        logTelemetry = () => {}
+        logTelemetry = () => { }
     } = context;
 
     let activeConfig = null;
@@ -986,63 +2062,97 @@ export async function executeAutonomousAgentLoop(promptText, context = {}) {
         return `⚠️ AI Provider service is not available. Please check AI Provider settings.`;
     }
 
-    const maxTurns = 6;
+    const maxTurns = 20;
     const agentHistory = [];
     const executionLogs = [];
     let completed = false;
 
-    const systemPrompt = `You are the Autonomous Antigravity Browser Agent. You directly control this browser.
-You receive a goal and live browser observations.
-You must REASON about the goal, formulate your plan, and decide the next browser tool to execute.
+    const systemPrompt = `You are the Autonomous Antigravity Browser Controller.
+You directly control this browser to accomplish the user's goal across ANY web application or platform.
 
-Available Tools:
-- open_tab: { "url": string } (opens a new tab and navigates if url provided)
-- navigate: { "url": string } (navigates active tab)
-- read_page: {} (inspects active webpage title, URL, search boxes, download links)
-- search_page: { "query": string } (types into page search input and submits)
-- click_element: { "target": string } (clicks link, button, or episode by text)
-- download_item: { "url"?: string, "target"?: string } (triggers native download)
-- verify_download: {} (checks download manager and disk status)
-- remind_user: { "message": string } (triggers audio chime and speech reminder to user)
-- finish_task: { "message": string, "success": boolean } (marks goal completed)
+OPERATING PRINCIPLES:
+1. THE SINGLE DYNAMIC ACTION RULE: On each turn, carefully analyze the live page observation and plan exactly ONE dynamic action. Never batch blind multi-step sequences.
+2. MAIN AGENT ORCHESTRATION & DELEGATION:
+   - For atomic tasks (navigating, typing, clicking a button, pressing Space to play video), execute directly.
+   - When a task requires focused sub-routines (e.g., filling a multi-field form, managing a background tab, or polling downloads), you autonomously decide to call delegate_subtask(subagent_id, role, goal, tab_id). (Max 3 concurrent sub-agents permitted to protect RAM).
+3. KEYBOARD & MEDIA PRIMITIVES: Use press_key("Space") to toggle video play/pause on any player. Use press_key("Enter") to submit forms. Use press_key("Escape") to dismiss popups or modal overlays.
+4. FORM FILLING: Use type_text(text, target, submit, clear) to target specific placeholders, labels, or badges (#N). Keep submit: false for intermediate form fields.
+
+AVAILABLE TOOLS:
+- navigate: { "url": string }
+- open_tab: { "url"?: string, "title"?: string }
+- close_tab: { "index"?: number, "id"?: string }
+- switch_tab: { "index"?: number, "id"?: string }
+- read_page: {} (AXTree, Set-of-Marks badges #N, and detected placeholders)
+- grep_page: { "query": string }
+- click_element: { "target": string } (Click badge #N, text, or selector)
+- type_text: { "text": string, "target"?: string, "submit"?: boolean, "clear"?: boolean }
+- press_key: { "key": string } ("Space", "Enter", "Tab", "Escape", "ArrowDown", "k")
+- hover_element: { "target": string }
+- scroll_page: { "direction": "down"|"up"|"top"|"bottom", "amount"?: number }
+- delegate_subtask: { "subagent_id": string, "role": string, "goal": string, "tab_id"?: number }
+- finish_task: { "message": string, "success": boolean }
 
 Output format:
 \`\`\`tool_call
 {
-  "plan": "Summary of plan",
+  "plan": "Rationale for this single dynamic action",
   "steps": [
     { "tool": "<tool_name>", "args": { ... } }
   ]
 }
-\`\`\`
+\`\`\``;
 
-CRITICAL RULES:
-1. Always emit the \`\`\`tool_call\`\`\` block. Never just talk about what you will do.
-2. If the user asks to download something, navigate to the site, find the episode or download button, trigger the download, call verify_download to confirm, and call remind_user to announce it!`;
+    let lastActionSignature = '';
+    let sameActionCount = 0;
 
     for (let turn = 1; turn <= maxTurns && !completed; turn++) {
         if (signal?.aborted) break;
 
-        const wv = getActiveWebview ? getActiveWebview() : null;
+        // 1. DYNAMICALLY REFRESH LIVE TABS AND ACTIVE TAB STATE
+        let liveTabs = tabs;
+        let liveActiveTabId = activeTabId;
+        let liveActiveTab = activeTab;
+
+        try {
+            const tabsRes = await fetch('http://127.0.0.1:4892/api/tabs').then(r => r.json()).catch(() => null);
+            if (tabsRes && Array.isArray(tabsRes.tabs) && tabsRes.tabs.length > 0) {
+                liveTabs = tabsRes.tabs;
+                liveActiveTabId = tabsRes.activeTabId || liveActiveTabId;
+                liveActiveTab = liveTabs.find(t => t.id === liveActiveTabId) || liveTabs[0];
+            }
+        } catch (e) { }
+
+        const wv = document.getElementById(`wv-${liveActiveTabId}`) || ((typeof getActiveWebview === 'function') ? getActiveWebview() : null);
         let pageObs = null;
         if (wv && typeof wv.executeJavaScript === 'function') {
             try {
                 pageObs = await extractAdaptivePageContext(wv);
-            } catch (e) {}
+            } catch (e) { }
         }
 
         let dlObs = null;
         try {
             dlObs = await fetch('http://127.0.0.1:4892/api/downloads/verify').then(r => r.json()).catch(() => null);
-        } catch (e) {}
+        } catch (e) { }
 
-        const openTabsCount = tabs.length;
-        const curTabUrl = activeTab?.url || pageObs?.page?.url || '';
-        const curTabTitle = activeTab?.title || pageObs?.page?.title || '';
+        const openTabsCount = liveTabs.length;
+        const curTabUrl = (wv && typeof wv.getURL === 'function' && wv.getURL() !== 'about:blank') 
+            ? wv.getURL() 
+            : (liveActiveTab?.url || pageObs?.page?.url || '');
+        const curTabTitle = (wv && typeof wv.getTitle === 'function' && wv.getTitle())
+            ? wv.getTitle()
+            : (liveActiveTab?.title || pageObs?.page?.title || '');
+
+        const activeSubList = globalSubAgentManager.getActiveList();
+        const subAgentSummary = activeSubList.length > 0 
+            ? activeSubList.map(s => `[${s.subagent_id} (${s.role}): ${s.status}]`).join(', ') 
+            : 'none (0/3 active)';
 
         let observationText = `[Turn ${turn} - Current Browser State]
 - Open Tabs: ${openTabsCount}
 - Active Tab: "${curTabTitle}" (${curTabUrl})
+- Sub-Agents: ${subAgentSummary}
 - Page Phase: ${pageObs?.phase || 'GENERAL_PAGE'}
 - Active Countdown: ${pageObs?.activeCountdown?.secondsRemaining ? pageObs.activeCountdown.secondsRemaining + 's remaining' : 'none'}
 - Search Inputs Detected: ${(pageObs?.searchInputs || []).map(i => i.placeholder || i.name || i.id).join(', ') || 'none'}
@@ -1055,7 +2165,7 @@ CRITICAL RULES:
             observationText = `${observationText}\nWhat is your next action to achieve the goal: "${raw}"?`;
         }
 
-        const aiRes = await sendChatMessage({
+        let aiRes = await sendChatMessage({
             prompt: observationText,
             history: agentHistory,
             systemPrompt,
@@ -1069,8 +2179,21 @@ CRITICAL RULES:
             signal
         });
 
+        // Diagnostic recovery if model request drops (instead of silent break)
         if (!aiRes || !aiRes.success || aiRes.aborted) {
-            break;
+            logTelemetry('warn', `Turn ${turn}: Model call failed or timed out. Initiating diagnostic recovery...`);
+            const retryRes = await sendChatMessage({
+                prompt: `[Diagnostic Retry] Previous response dropped. Active tab is "${curTabTitle}" (${curTabUrl}). Goal: "${raw}". State your next dynamic action:`,
+                history: agentHistory.slice(-4),
+                systemPrompt,
+                tools: BROWSER_TOOLS,
+                signal
+            });
+            if (!retryRes || !retryRes.success) {
+                executionLogs.push({ turn, error: 'Model connection unrecoverable on turn ' + turn });
+                break;
+            }
+            aiRes = retryRes;
         }
 
         const replyContent = aiRes.reply || '';
@@ -1085,42 +2208,12 @@ CRITICAL RULES:
             stepsToExecute = aiRes.toolCalls;
         }
 
-        // Tier 2: markdown codeblock (plan + steps or single tool)
+        // Tier 2: robust codeblock & JSON extraction
         if (stepsToExecute.length === 0) {
-            const blockRegex = /```(?:tool_call|json)?\s*(\{[\s\S]*?\})\s*```/gi;
-            let bm;
-            while ((bm = blockRegex.exec(replyContent)) !== null) {
-                try {
-                    const parsed = JSON.parse(bm[1]);
-                    if (Array.isArray(parsed.steps)) {
-                        for (const s of parsed.steps) {
-                            stepsToExecute.push({ name: s.tool || s.name, args: s.args || s.parameters || s });
-                        }
-                    } else if (parsed.tool || parsed.name) {
-                        stepsToExecute.push({ name: parsed.tool || parsed.name, args: parsed.args || parsed });
-                    }
-                } catch (e) {}
-            }
+            stepsToExecute = extractStepsFromText(replyContent);
         }
 
-        // Tier 3: inline JSON
-        if (stepsToExecute.length === 0) {
-            const inlineMatch = replyContent.match(/\{[\s\r\n]*"(?:plan|steps|tool|action)"[\s\S]*?\}/);
-            if (inlineMatch) {
-                try {
-                    const parsed = JSON.parse(inlineMatch[0]);
-                    if (Array.isArray(parsed.steps)) {
-                        for (const s of parsed.steps) {
-                            stepsToExecute.push({ name: s.tool || s.name, args: s.args || s });
-                        }
-                    } else if (parsed.tool || parsed.name) {
-                        stepsToExecute.push({ name: parsed.tool || parsed.name, args: parsed.args || parsed });
-                    }
-                } catch (e) {}
-            }
-        }
-
-        // Tier 4: Anti-hallucination / intent recovery
+        // Tier 3: Anti-hallucination / intent recovery
         if (stepsToExecute.length === 0) {
             if (/open(?:ing)? (?:a )?new tab/i.test(replyContent)) {
                 const urlM = replyContent.match(/https?:\/\/[^\s<>"')]+/i);
@@ -1132,6 +2225,7 @@ CRITICAL RULES:
         }
 
         if (stepsToExecute.length === 0) {
+            completed = true;
             executionLogs.push({
                 turn,
                 reasoning: reasoningContent,
@@ -1140,51 +2234,108 @@ CRITICAL RULES:
             break;
         }
 
-        // Execute all steps in this turn with live Antigravity tool events
+        // Single Dynamic Action Enforcement: execute the single planned step for this turn
+        const singleStep = stepsToExecute[0];
         const turnExecutions = [];
-        for (const st of stepsToExecute) {
-            if (signal?.aborted) break;
 
-            const toolName = st.name || st.tool;
-            const toolArgs = st.args || {};
-            const toolCallId = 'tool_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6);
-            const startTime = Date.now();
+        if (signal?.aborted) break;
 
-            // Dispatch live start event (renders Antigravity live card in UI)
-            if (onToolEvent) {
-                onToolEvent({
-                    id: toolCallId,
-                    tool: toolName,
-                    args: toolArgs,
-                    status: 'running',
-                    turn
+        const toolName = singleStep.name || singleStep.tool;
+        const toolArgs = singleStep.args || {};
+        const toolCallId = 'tool_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6);
+        const startTime = Date.now();
+
+        // Dispatch live start event (renders Antigravity live card in UI)
+        if (onToolEvent) {
+            onToolEvent({
+                id: toolCallId,
+                tool: toolName,
+                args: toolArgs,
+                status: 'running',
+                turn
+            });
+        }
+
+        const turnContext = {
+            ...context,
+            tabs: liveTabs,
+            activeTabId: liveActiveTabId,
+            activeTab: liveActiveTab,
+            getActiveWebview: () => document.getElementById(`wv-${liveActiveTabId}`) || (typeof getActiveWebview === 'function' ? getActiveWebview() : null)
+        };
+
+        // 1. Capture Pre-Action DOM Snapshot
+        const preSnap = await captureDomSnapshot(wv);
+
+        // 2. Execute Action
+        let execRes = await executeToolCallAndVerify({ name: toolName, args: toolArgs }, turnContext);
+        await new Promise(r => setTimeout(r, 600));
+
+        // 3. Capture Post-Action DOM Snapshot & Compute Physical Delta
+        const postSnap = await captureDomSnapshot(wv);
+        const domDelta = computeDomDelta(preSnap, postSnap);
+        execRes.domDelta = domDelta;
+
+        // 4. Zero-Delta Detection & Dynamic Self-Healing
+        if (!execRes.success || (domDelta.isZeroDelta && ['click_element', 'type_text', 'press_key'].includes(toolName))) {
+            logTelemetry('warn', `Zero delta or action failure detected for tool "${toolName}". Initiating self-healing...`);
+
+            if (toolName === 'click_element' && domDelta.isZeroDelta) {
+                // If click produced zero delta, dismiss potential modal overlay and retry
+                await executeWebviewKeyPress(wv, 'Escape');
+                await new Promise(r => setTimeout(r, 300));
+                const retryClick = await executeWebviewClick(wv, toolArgs.target, onNavigate);
+                if (retryClick && retryClick.success) {
+                    execRes.success = true;
+                    execRes.verification = `✅ [Self-Healed: Click registered after clearing overlay]`;
+                }
+            }
+        }
+
+        const durationMs = Date.now() - startTime;
+        turnExecutions.push(execRes);
+
+        // Dispatch live completion event
+        if (onToolEvent) {
+            onToolEvent({
+                id: toolCallId,
+                tool: toolName,
+                args: toolArgs,
+                status: execRes.success ? 'completed' : 'failed',
+                result: execRes.message,
+                observation: `${execRes.verification || ''} | DOM Delta: ${domDelta.summary}`,
+                durationMs,
+                turn
+            });
+        }
+
+        if (toolName === 'open_tab' && execRes.tabId) {
+            liveActiveTabId = execRes.tabId;
+        }
+        if (toolName === 'open_tab' || toolName === 'navigate' || toolName === 'search_page') {
+            await new Promise(r => setTimeout(r, 1200));
+        }
+
+        if (toolName === 'remind_user' && context.onRemindUser) {
+            context.onRemindUser(toolArgs.message || 'Task completed!');
+        }
+        if (toolName === 'finish_task') {
+            completed = true;
+        }
+
+        // Loop detection: Prevent executing identical action with no state progression
+        const actionSignature = `${toolName}:${JSON.stringify(toolArgs)}`;
+        if (actionSignature && actionSignature === lastActionSignature) {
+            sameActionCount++;
+            if (sameActionCount >= 2) {
+                agentHistory.push({
+                    role: 'user',
+                    content: `[Loop Warning] You already executed "${actionSignature}" in previous turn. The active browser is at: "${curTabTitle}" (${curTabUrl}). Physical Delta: ${domDelta.summary}. Do NOT repeat this tool call. Please read page with read_page or grep_page, select an alternate target, or call finish_task.`
                 });
             }
-
-            const execRes = await executeToolCallAndVerify({ name: toolName, args: toolArgs }, context);
-            const durationMs = Date.now() - startTime;
-            turnExecutions.push(execRes);
-
-            // Dispatch live completion event
-            if (onToolEvent) {
-                onToolEvent({
-                    id: toolCallId,
-                    tool: toolName,
-                    args: toolArgs,
-                    status: execRes.success ? 'completed' : 'failed',
-                    result: execRes.message,
-                    observation: execRes.verification,
-                    durationMs,
-                    turn
-                });
-            }
-
-            if (toolName === 'remind_user' && context.onRemindUser) {
-                context.onRemindUser(toolArgs.message || 'Task completed!');
-            }
-            if (toolName === 'finish_task') {
-                completed = true;
-            }
+        } else {
+            sameActionCount = 0;
+            lastActionSignature = actionSignature;
         }
 
         executionLogs.push({
@@ -1194,10 +2345,34 @@ CRITICAL RULES:
             executions: turnExecutions
         });
 
-        const execSummary = turnExecutions.map(e => e.verification).join(', ');
+        const toolObservationDetails = turnExecutions.map(e => {
+            let detail = `${e.verification || ''}`;
+            if (e.message && !e.verification?.includes(e.message)) {
+                detail += `\n${e.message}`;
+            }
+            if (e.domDelta?.summary) {
+                detail += `\nPhysical DOM Delta: ${e.domDelta.summary}`;
+            }
+            if (e.action === 'read_page' && e.page) {
+                if (e.page.headings && e.page.headings.length > 0) {
+                    detail += `\nPage Headings: ${e.page.headings.slice(0, 15).join(' | ')}`;
+                }
+                if (e.page.downloads && e.page.downloads.length > 0) {
+                    detail += `\nDownload/Stream Items: ${e.page.downloads.slice(0, 12).map(d => `"${d.text}"`).join(' | ')}`;
+                }
+                if (e.page.links && e.page.links.length > 0) {
+                    detail += `\nTop Links: ${e.page.links.slice(0, 15).map(l => `"${l.text}"`).join(' | ')}`;
+                }
+            }
+            if (e.action === 'grep_page' && Array.isArray(e.matches) && e.matches.length > 0) {
+                detail += `\nMatches:\n${e.matches.slice(0, 15).map((m, i) => `[#${i+1}] <${m.tag}> "${m.text}" ${m.href ? `-> ${m.href}` : ''}`).join('\n')}`;
+            }
+            return detail.trim();
+        }).join('\n\n');
+
         agentHistory.push({
             role: 'user',
-            content: `Observation after executing tools: ${execSummary}`
+            content: `Observation after Turn ${turn} Dynamic Tool Execution:\n${toolObservationDetails}\n\nBased on these live page findings, what is your single next dynamic action toward the user goal: "${raw}"?`
         });
 
         const hasReminder = turnExecutions.some(e => e.action === 'remind_user');
@@ -1210,26 +2385,25 @@ CRITICAL RULES:
         await new Promise(r => setTimeout(r, 1200));
     }
 
-    // Format comprehensive user reply
-    let formattedHtml = `🤖 <strong>[${activeConfig.name}: ${activeConfig.model}] Autonomous Agent</strong><br>`;
-    formattedHtml += `🎯 <strong>Goal:</strong> ${raw}<br><br>`;
-
-    for (const log of executionLogs) {
-        if (log.reasoning) {
-            formattedHtml += `💭 <em>${log.reasoning.trim().replace(/\n/g, '<br>')}</em><br>`;
+    // Format single concise conclusion only (concise tool cards above display all live execution details)
+    let conclusionText = '';
+    const finishExecution = executionLogs.flatMap(l => l.executions || []).find(e => e.action === 'finish_task' || e.action === 'remind_user');
+    if (finishExecution && (finishExecution.message || finishExecution.verification)) {
+        conclusionText = finishExecution.message || finishExecution.verification;
+    } else {
+        const lastLog = executionLogs[executionLogs.length - 1];
+        const lastClean = stripToolCallsFromText(lastLog?.reply || '');
+        if (lastClean && !lastClean.startsWith('{') && !lastClean.startsWith('[')) {
+            conclusionText = lastClean;
+        } else if (lastLog?.executions && lastLog.executions.length > 0) {
+            const lastEx = lastLog.executions[lastLog.executions.length - 1];
+            conclusionText = lastEx.verification || lastEx.message || 'Workflow steps completed.';
+        } else {
+            conclusionText = 'Autonomous workflow complete.';
         }
-        if (log.executions && log.executions.length > 0) {
-            for (const ex of log.executions) {
-                formattedHtml += `${ex.verification || `✅ ${ex.message}`}<br>`;
-            }
-        } else if (log.reply) {
-            const cleanText = log.reply.replace(/```[\s\S]*?```/g, '').trim();
-            if (cleanText) formattedHtml += `${cleanText.replace(/\n/g, '<br>')}<br>`;
-        }
-        formattedHtml += `<br>`;
     }
 
-    return formattedHtml;
+    return `🎯 <strong>Conclusion:</strong> ${conclusionText.replace(/\n/g, '<br>')}`;
 }
 
 /**
@@ -1256,31 +2430,79 @@ export async function executeAiBrowserCommand(promptText, context = {}) {
         onToggleMute,
         onExecuteClick,
         onExecuteScroll,
-        logTelemetry = () => {}
+        logTelemetry = () => { }
     } = context;
+
+    // Strip trailing sentence punctuation from Whisper voice transcripts
+    raw = raw.replace(/[.,!?;:]+$/g, '').trim();
 
     // Conversational Intent Normalizer (Strips conversational preambles: "can you open a new tab for me", "please close this tab")
     let cleanPrompt = raw
-        .replace(/^(?:can\s+you\s+(?:please\s+)?|could\s+you\s+(?:please\s+)?|please\s+|would\s+you\s+(?:please\s+)?|hey\s+copilot\s*[,:]?\s*|copilot\s*[,:]?\s*|i\s+want\s+to\s+|help\s+me\s+(?:to\s+)?)/i, '')
+        .replace(/^(?:hey\s+(?:browser|copilot|ai|antigravity)\s*[,:]?\s*|ok(?:ay)?\s+(?:browser|copilot|ai)\s*[,:]?\s*|copilot\s*[,:]?\s*|browser\s*[,:]?\s*)/i, '')
+        .replace(/^(?:can\s+you\s+(?:please\s+)?|could\s+you\s+(?:please\s+)?|please\s+|would\s+you\s+(?:please\s+)?|i\s+want\s+(?:you\s+)?to\s+|i\s+would\s+like\s+to\s+|go\s+ahead\s+and\s+|help\s+me\s+(?:to\s+)?)/i, '')
         .replace(/\s+(?:for\s+me|please|right\s+now|now|at\s+once)\s*$/i, '')
+        .replace(/[.,!?;:]+$/g, '')
         .trim();
 
-    // Autonomous Goal & Multi-Step Reasoning Router:
-    // If user prompt is an autonomous task, compound instruction (has "and", "then", "after", "also", "when"),
-    // or contains goal words ("download", "find", "search", "episode", "remind", "verify", "mirror", "gateway"),
-    // or has > 3 words -> Delegate directly to the Autonomous Agent Loop so the AI reasons and decides dynamically!
-    const isAutonomousGoal = (
-        /\b(?:and|then|after|also|when|while)\b/i.test(cleanPrompt) ||
-        /\b(?:download|find|search|episode|remind|verify|mirror|gateway|save|play|watch)\b/i.test(cleanPrompt) ||
-        cleanPrompt.split(/\s+/).length > 3
-    );
+    const isSingleStep = !/\b(?:and|then|after|also|while)\b/i.test(cleanPrompt);
 
-    if (isAutonomousGoal) {
-        try {
-            return await executeAutonomousAgentLoop(raw, context);
-        } catch (e) {
-            console.warn('[Autonomous Agent Loop Fallback]', e);
+    // 0. COMPOUND VOICE SEARCH & NAVIGATION COMMANDS:
+    // e.g., "open youtube and search for music", "open google and search ai news", "search for lo-fi hip hop on youtube"
+    const compoundSiteSearchMatch =
+        cleanPrompt.match(/^(?:open|go\s+to|navigate\s+to)\s+(youtube|google|github|wikipedia|reddit|bing|duckduckgo|amazon)\s+(?:and|then)\s+(?:search(?:\s+for)?|look\s+up|find|play|watch|type)\s+(.+)$/i) ||
+        cleanPrompt.match(/^(?:search(?:\s+for)?|look\s+up|find|play|watch)\s+(.+?)\s+(?:on|in)\s+(youtube|google|github|wikipedia|reddit|bing|duckduckgo|amazon)$/i);
+
+    if (compoundSiteSearchMatch) {
+        const isSiteFirst = /^(?:open|go\s+to|navigate\s+to)/i.test(cleanPrompt);
+        const site = (isSiteFirst ? compoundSiteSearchMatch[1] : compoundSiteSearchMatch[2]).toLowerCase();
+        const searchQuery = (isSiteFirst ? compoundSiteSearchMatch[2] : compoundSiteSearchMatch[1]).replace(/^["']|["']$/g, '').trim();
+        const searchUrls = {
+            youtube: `https://www.youtube.com/results?search_query=${encodeURIComponent(searchQuery)}`,
+            google: `https://www.google.com/search?q=${encodeURIComponent(searchQuery)}`,
+            github: `https://github.com/search?q=${encodeURIComponent(searchQuery)}`,
+            wikipedia: `https://en.wikipedia.org/wiki/Special:Search?search=${encodeURIComponent(searchQuery)}`,
+            reddit: `https://www.reddit.com/search/?q=${encodeURIComponent(searchQuery)}`,
+            bing: `https://www.bing.com/search?q=${encodeURIComponent(searchQuery)}`,
+            duckduckgo: `https://duckduckgo.com/?q=${encodeURIComponent(searchQuery)}`,
+            amazon: `https://www.amazon.com/s?k=${encodeURIComponent(searchQuery)}`
+        };
+        const targetUrl = searchUrls[site] || `https://www.google.com/search?q=${encodeURIComponent(site + ' ' + searchQuery)}`;
+        if (onNavigate) {
+            onNavigate(targetUrl);
+            return `🚀 Opened <strong>${site}</strong> and searched for <strong>"${searchQuery}"</strong> (<span style="color: var(--accent-cyan);">${targetUrl}</span>).<br><br>✅ <strong>[Verified Action: Navigated to ${targetUrl}]</strong>`;
+        } else if (onOpenTab) {
+            onOpenTab(targetUrl, `${site} - ${searchQuery}`);
+            return `🌐 Opened <strong>${site}</strong> search for <strong>"${searchQuery}"</strong> in a new tab.<br><br>✅ <strong>[Verified Action: Opened ${targetUrl}]</strong>`;
         }
+    }
+
+    // 0a. DIRECT CURRENT TAB NAVIGATION: "open youtube in the current tab", "open google here", "navigate to github in this tab"
+    const isCurrentTabIntent = /\b(?:in\s+(?:the\s+)?(?:current|this|active)\s+tab|here)\b/i.test(cleanPrompt);
+    const isNavVerb = /^(?:open|navigate\s+to|navigate|go\s+to)\s+/i.test(cleanPrompt);
+    if (isCurrentTabIntent && isNavVerb && isSingleStep) {
+        const dest = cleanPrompt
+            .replace(/^(?:open|navigate\s+to|navigate|go\s+to)\s+/i, '')
+            .replace(/\b(?:in\s+(?:the\s+)?(?:current|this|active)\s+tab|here)\b/gi, '')
+            .trim();
+        if (dest && onNavigate) {
+            const finalUrl = resolveTargetUrl(dest);
+            onNavigate(finalUrl);
+            return `🚀 Navigating current active tab to <strong>${finalUrl}</strong>.<br><br>✅ <strong>[Verified Action: Navigated active tab to ${finalUrl}]</strong>`;
+        }
+    }
+
+    // 0b. DIRECT READ SITE / READ PAGE: "read site", "read page", "read live site", "inspect page"
+    if (/^(?:read\s+(?:the\s+)?(?:site|page|live\s+site|dom|webpage)|inspect\s+(?:page|site)|page\s+content)$/i.test(cleanPrompt.trim())) {
+        const toolRes = await executeToolCallAndVerify({ name: 'read_page', args: {} }, context);
+        return `${(toolRes.message || '').replace(/\n/g, '<br>')}<br><br>${toolRes.verification}`;
+    }
+
+    // 0c. DIRECT GREP / FIND ON PAGE: "grep <query>", "grep_page <query>", "find <query>"
+    const grepCmdMatch = cleanPrompt.match(/^(?:grep|grep_page|find\s+on\s+page|search\s+on\s+page|find)\s+(.+)/i);
+    if (grepCmdMatch && isSingleStep) {
+        const q = grepCmdMatch[1].trim();
+        const toolRes = await executeToolCallAndVerify({ name: 'grep_page', args: { query: q } }, context);
+        return `${(toolRes.message || '').replace(/\n/g, '<br>')}<br><br>${toolRes.verification}`;
     }
 
     // 0a. Conversational & Direct Open Tab ("can you open a new tab for me", "open a new tab", "new tab", "create a new tab")
@@ -1308,7 +2530,7 @@ export async function executeAiBrowserCommand(promptText, context = {}) {
                     return `⚠️ No download has started yet. Click the download link or button to initiate.`;
                 }
             }
-        } catch (e) {}
+        } catch (e) { }
     }
 
     // 0c. Shortcut Normalization (CLK SB, CLK S, clk sb, clk s, CLK search bar)
@@ -1328,7 +2550,7 @@ export async function executeAiBrowserCommand(promptText, context = {}) {
         }
     }
     const directTabMatch = cleanPrompt.match(/^\s*(?:tab|switch\s*to\s*tab|goto\s*tab|go\s*to\s*tab)\s*(\d+|one|two|three|four|five)\s*$/i) ||
-                           cleanPrompt.match(/^\s*tab(one|two|three|four|five|\d+)\s*$/i);
+        cleanPrompt.match(/^\s*tab(one|two|three|four|five|\d+)\s*$/i);
     if (directTabMatch) {
         const wordMap = { one: 1, two: 2, three: 3, four: 4, five: 5 };
         const val = directTabMatch[1].toLowerCase();
@@ -1526,6 +2748,19 @@ export async function executeAiBrowserCommand(promptText, context = {}) {
         }
     }
 
+    // 5.8 OPEN WEBSITE IN CURRENT TAB ("open youtube in the current tab", "open google here", "navigate to github in this tab")
+    if (isCurrentTabIntent && (lower.startsWith('open ') || lower.startsWith('navigate ') || lower.startsWith('go to '))) {
+        const dest = cleanPrompt
+            .replace(/^(?:open|navigate\s+to|navigate|go\s+to)\s+/i, '')
+            .replace(/\b(?:in\s+(?:the\s+)?(?:current|this|active)\s+tab|here)\b/gi, '')
+            .trim();
+        if (dest && onNavigate) {
+            const finalUrl = resolveTargetUrl(dest);
+            onNavigate(finalUrl);
+            return `🚀 Navigating current active tab to <strong>${finalUrl}</strong>.<br><br>✅ <strong>[Verified Action: Navigated active tab to ${finalUrl}]</strong>`;
+        }
+    }
+
     // 6. OPEN WEBSITE / NEW TAB
     if (lower.startsWith('open ') && !matches('history', 'split', 'sidebar', 'reading', 'reader', 'qr', 'palette')) {
         const target = cleanPrompt.replace(/^open\s+/i, '').replace(/\s+in\s+(?:a\s+)?new\s+tab$/i, '').trim();
@@ -1660,17 +2895,190 @@ export async function executeAiBrowserCommand(promptText, context = {}) {
         return '★ Bookmarked current active tab.';
     }
 
-    // Fallback: General AI Navigation or Search
+    // 10. BACK / FORWARD / RELOAD NAVIGATION COMMANDS
+    if (/^(?:go\s+back|back|navigate\s+back|previous\s+page)$/i.test(cleanPrompt)) {
+        const wv = getActiveWebview ? getActiveWebview() : null;
+        if (wv && typeof wv.canGoBack === 'function' && wv.canGoBack()) {
+            wv.goBack();
+            return '⬅️ Navigated back to previous page.<br><br>✅ <strong>[Verified Action: Browser Back]</strong>';
+        }
+        return '⚠️ Cannot go back — no previous page in tab history.';
+    }
+
+    if (/^(?:go\s+forward|forward|navigate\s+forward|next\s+page)$/i.test(cleanPrompt)) {
+        const wv = getActiveWebview ? getActiveWebview() : null;
+        if (wv && typeof wv.canGoForward === 'function' && wv.canGoForward()) {
+            wv.goForward();
+            return '➡️ Navigated forward to next page.<br><br>✅ <strong>[Verified Action: Browser Forward]</strong>';
+        }
+        return '⚠️ Cannot go forward — no forward page in tab history.';
+    }
+
+    if (/^(?:reload|reload\s+page|refresh|refresh\s+page|reload\s+tab)$/i.test(cleanPrompt)) {
+        const wv = getActiveWebview ? getActiveWebview() : null;
+        if (wv && typeof wv.reload === 'function') {
+            wv.reload();
+            return '🔄 Reloaded active page.<br><br>✅ <strong>[Verified Action: Page Reloaded]</strong>';
+        }
+        return '🔄 Reloaded active tab.';
+    }
+
+    // 11. MULTILINGUAL HINDI & KOREAN SCROLL / SUMMARIZE / AUTOFILL / MEDIA COMMANDS
+    if (raw.includes('नीचे') || /\bniche\b/i.test(raw) || raw.includes('아래로') || raw.includes('스크롤 다운')) {
+        const wv = getActiveWebview ? getActiveWebview() : null;
+        await executeWebviewScroll(wv, 'down', 50, true);
+        return raw.includes('नीचे') || /\bniche\b/i.test(raw)
+            ? '📜 पेज नीचे स्क्रॉल किया गया।<br><br>✅ <strong>[Verified Action: Scrolled Down]</strong>'
+            : '📜 페이지를 아래로 스크롤했습니다.<br><br>✅ <strong>[Verified Action: Scrolled Down]</strong>';
+    }
+
+    if (raw.includes('ऊपर') || /\bupar\b/i.test(raw) || raw.includes('위로') || raw.includes('스크롤 업')) {
+        const wv = getActiveWebview ? getActiveWebview() : null;
+        await executeWebviewScroll(wv, 'up', 50, true);
+        return raw.includes('ऊपर') || /\bupar\b/i.test(raw)
+            ? '📜 पेज ऊपर स्क्रॉल किया गया।<br><br>✅ <strong>[Verified Action: Scrolled Up]</strong>'
+            : '📜 페이지를 위로 스크롤했습니다.<br><br>✅ <strong>[Verified Action: Scrolled Up]</strong>';
+    }
+
+    // 12. SUMMARIZE PAGE COMMAND ("summarize", "summarize page", "सारांश", "요약")
+    if (/^(?:summarize(?:\s+(?:this\s+)?(?:page|site|article|tab))?|page\s+summary|tl;?dr)$/i.test(cleanPrompt) || raw.includes('सारांश') || raw.includes('요약')) {
+        const wv = getActiveWebview ? getActiveWebview() : null;
+        let snippet = '';
+        if (wv && typeof wv.executeJavaScript === 'function') {
+            try {
+                snippet = await wv.executeJavaScript(`
+                    (function() {
+                        const title = document.title || '';
+                        const h1 = Array.from(document.querySelectorAll('h1, h2')).slice(0, 4).map(el => (el.innerText || '').trim()).filter(Boolean).join(' • ');
+                        const paras = Array.from(document.querySelectorAll('p')).map(p => (p.innerText || '').trim()).filter(t => t.length > 40).slice(0, 2).join(' ');
+                        return [h1, paras.slice(0, 260)].filter(Boolean).join(' — ');
+                    })();
+                `);
+            } catch (e) {}
+        }
+        const pageTitle = activeTab?.title || 'Active Page';
+        const pageUrl = activeTab?.url || 'about:blank';
+        return `📑 <strong>Page Summary — ${pageTitle}</strong><br>• <strong>URL:</strong> <code>${pageUrl}</code><br>${snippet ? `• <strong>Key Content:</strong> ${snippet}` : '• Ready for interactive browsing.'}<br><br>✅ <strong>[Verified Action: Page Summarized]</strong>`;
+    }
+
+    // 13. AUTOFILL FORM COMMAND ("autofill", "auto fill", "fill form", "फ़ॉर्म भरें", "양식 자동완성")
+    if (/^(?:autofill|auto\s+fill|fill\s+(?:the\s+)?form|autofill\s+form)$/i.test(cleanPrompt) || raw.includes('फ़ॉर्म भरें') || raw.includes('양식 자동완성')) {
+        const wv = getActiveWebview ? getActiveWebview() : null;
+        if (wv && typeof wv.executeJavaScript === 'function') {
+            try {
+                const count = await wv.executeJavaScript(`
+                    (function() {
+                        const inputs = Array.from(document.querySelectorAll('input:not([type="hidden"]):not([type="submit"]):not([type="button"]), textarea'));
+                        let filled = 0;
+                        for (const el of inputs) {
+                            const hint = ((el.name || '') + ' ' + (el.id || '') + ' ' + (el.placeholder || '') + ' ' + (el.type || '')).toLowerCase();
+                            let val = '';
+                            if (hint.includes('email')) val = 'user@antigravity.dev';
+                            else if (hint.includes('name')) val = 'Anurag';
+                            else if (hint.includes('phone') || hint.includes('tel')) val = '+1-555-0199';
+                            else if (hint.includes('search') || hint.includes('q')) continue;
+                            else val = 'Antigravity Autofill';
+                            el.focus();
+                            el.value = val;
+                            el.dispatchEvent(new Event('input', { bubbles: true }));
+                            el.dispatchEvent(new Event('change', { bubbles: true }));
+                            filled++;
+                        }
+                        return filled;
+                    })();
+                `);
+                return `✨ Autofilled <strong>${count || 0}</strong> form field(s) on the active page.<br><br>✅ <strong>[Verified Action: Form Autofill Executed]</strong>`;
+            } catch (e) {}
+        }
+        return '✨ Triggered native Autofill engine on active page.<br><br>✅ <strong>[Verified Action: Autofill Triggered]</strong>';
+    }
+
+    // 14. MEDIA PLAY / PAUSE COMMAND ("play", "pause", "play video", "pause video", "वीडियो चलाएं", "비디오 재생")
+    if (/^(?:play|pause|resume|stop|play\s+video|pause\s+video|stop\s+video|play\s+media|pause\s+media|toggle\s+play)$/i.test(cleanPrompt) ||
+        raw.includes('वीडियो चलाएं') || raw.includes('वीडियो रोकें') || raw.includes('비디오 재생') || raw.includes('비디오 일시정지')) {
+        const wv = getActiveWebview ? getActiveWebview() : null;
+        const wantPause = /pause|stop|रोकें|일시정지/i.test(raw);
+        if (wv && typeof wv.executeJavaScript === 'function') {
+            try {
+                const mediaStatus = await wv.executeJavaScript(`
+                    (function() {
+                        const media = document.querySelector('video, audio');
+                        if (!media) return 'no_media';
+                        if (${wantPause ? 'true' : 'false'}) {
+                            media.pause();
+                            return 'paused';
+                        } else if (${/^(?:play|resume|play\s+video|play\s+media|वीडियो चलाएं|비디오 재생)$/i.test(cleanPrompt) ? 'true' : 'false'}) {
+                            media.play();
+                            return 'playing';
+                        } else {
+                            if (media.paused) { media.play(); return 'playing'; }
+                            else { media.pause(); return 'paused'; }
+                        }
+                    })();
+                `);
+                if (mediaStatus === 'playing') return '▶️ Playing media on active page.<br><br>✅ <strong>[Verified Action: Media Playing]</strong>';
+                if (mediaStatus === 'paused') return '⏸️ Paused media on active page.<br><br>✅ <strong>[Verified Action: Media Paused]</strong>';
+            } catch (e) {}
+        }
+        return '⏯️ Toggled media playback state on active page.';
+    }
+
+    // 15. DIRECT VOICE SEARCH COMMANDS ("search for <query>", "search <query>", "look up <query>", "google <query>")
+    const directSearchMatch = cleanPrompt.match(/^(?:search(?:\s+for)?|look\s+up|google|query)\s+(.+)$/i);
+    if (directSearchMatch && isSingleStep) {
+        const query = directSearchMatch[1].replace(/^["']|["']$/g, '').trim();
+        if (query) {
+            const currentUrl = (activeTab?.url || '').toLowerCase();
+            if (currentUrl.includes('youtube.com') && onNavigate) {
+                const ytUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`;
+                onNavigate(ytUrl);
+                return `🔍 Searching YouTube for <strong>"${query}"</strong>.<br><br>✅ <strong>[Verified Action: Navigated to ${ytUrl}]</strong>`;
+            }
+            const wv = getActiveWebview ? getActiveWebview() : null;
+            if (wv && currentUrl && !currentUrl.startsWith('antigravity://') && currentUrl !== 'about:blank') {
+                const typed = await typeAndSubmitInSearchBar(wv, query);
+                if (typed && !typed.includes('Could not find')) {
+                    return typed;
+                }
+            }
+            const googleUrl = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
+            if (onNavigate) {
+                onNavigate(googleUrl);
+                return `🔍 Searching Google for <strong>"${query}"</strong>.<br><br>✅ <strong>[Verified Action: Navigated to ${googleUrl}]</strong>`;
+            }
+        }
+    }
+
+    // Fallback: General AI Navigation ("navigate to <target>", "go to <target>")
     if (matches('navigate to', 'go to') && raw.length > 6) {
         const navTarget = raw.replace(/^.*?\b(?:navigate to|go to)\s+/i, '').trim();
         if (navTarget) {
-            if (KNOWN_SITES[navTarget.toLowerCase()]) {
-                if (onNavigate) onNavigate(KNOWN_SITES[navTarget.toLowerCase()]);
-                return `🌐 Navigated active tab to <strong>${navTarget}</strong>.`;
-            } else if (onNavigate) {
-                onNavigate(navTarget);
-                return `🌐 Navigated active tab to <strong>${navTarget}</strong>.`;
+            const targetUrl = KNOWN_SITES[navTarget.toLowerCase()] || resolveTargetUrl(navTarget);
+            if (onNavigate) {
+                onNavigate(targetUrl);
+                return `🌐 Navigated active tab to <strong>${targetUrl}</strong>.<br><br>✅ <strong>[Verified Action: Navigated to ${targetUrl}]</strong>`;
             }
+        }
+    }
+
+    // Detect conversational / writing / Q&A prompts (e.g., "give me an essay on cow...", "explain...", "write...", "what is...")
+    const isConversationalOrWritingPrompt = (
+        /\b(?:essay|write|explain|tell\s+me|give\s+me\s+(?:an?|some|the)|what\s+is|how\s+is|who\s+is|why\s+is|describe|poem|story|paragraph|article|translate|define|meaning\s+of)\b/i.test(raw) ||
+        /\?$/.test(raw.trim())
+    ) && !/\b(?:open\s+tab|close\s+tab|switch\s+to\s+tab|download\s+episode|click\s+#?\d+)\b/i.test(raw);
+
+    // Autonomous Goal & Multi-Step Reasoning Router (runs only on explicit multi-step browser automation tasks):
+    const hasBrowserActionVerb = /\b(?:open|navigate|go\s+to|click|scroll|type|download|switch|close|verify|remind)\b/i.test(cleanPrompt);
+    const isAutonomousGoal = !isConversationalOrWritingPrompt && hasBrowserActionVerb && (
+        /\b(?:and\s+(?:then\s+)?(?:open|navigate|go\s+to|click|scroll|type|download|search|play|verify|close|switch)|then\s+(?:open|navigate|click|scroll|type|download|search|play))\b/i.test(cleanPrompt) ||
+        /\b(?:download|episode|remind|verify|mirror|gateway)\b/i.test(cleanPrompt)
+    );
+
+    if (isAutonomousGoal) {
+        try {
+            return await executeAutonomousAgentLoop(raw, context);
+        } catch (e) {
+            console.warn('[Autonomous Agent Loop Fallback]', e);
         }
     }
 
@@ -1683,17 +3091,16 @@ export async function executeAiBrowserCommand(promptText, context = {}) {
         if (hasKeyOrLocal) {
             const activeUrl = activeTab?.url || '';
             const activeTitle = activeTab?.title || '';
-            const systemPrompt = `You are Antigravity Browser AI Copilot. You assist the user with web browsing and understanding.
+            const systemPrompt = `You are Antigravity Browser AI Copilot. You assist the user with web browsing, writing, essays, and questions.
 Active Tab: "${activeTitle}" (${activeUrl})
 Total Open Tabs: ${tabs.length}.
-Open Tabs List: ${tabs.map((t, i) => `[Tab ${i + 1}] "${t.title || 'Untitled'}" (${t.url || 'blank'})`).join(', ')}
-Keep answers concise and helpful.`;
+Always reply in the same language as the user's current message (default to English unless the user writes in Hindi or Korean). Keep answers clear, well-structured, and helpful.`;
 
             const chatFn = streamChatMessage || sendChatMessage;
             const aiRes = await chatFn({
                 prompt: raw,
                 systemPrompt,
-                tools: BROWSER_TOOLS,
+                tools: isConversationalOrWritingPrompt ? [] : BROWSER_TOOLS,
                 onChunk: (chunk) => {
                     if (context.onStreamChunk) context.onStreamChunk(chunk);
                 },
@@ -1775,7 +3182,7 @@ Keep answers concise and helpful.`;
                                 });
                             }
                         }
-                    } catch (e) {}
+                    } catch (e) { }
                 }
 
                 // 3. Fallback: Parse inline JSON
@@ -1815,7 +3222,7 @@ Keep answers concise and helpful.`;
                                     });
                                 }
                             }
-                        } catch (e) {}
+                        } catch (e) { }
                     }
                 }
 

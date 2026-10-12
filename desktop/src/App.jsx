@@ -10,20 +10,44 @@ import QrCodeModal from './components/QrCodeModal.jsx';
 import HistoryModal from './components/HistoryModal.jsx';
 import WallpaperStudioModal from './components/WallpaperStudioModal.jsx';
 import DownloadsPage from './components/DownloadsPage.jsx';
+import HistoryPage from './components/HistoryPage.jsx';
 import TypographyStudioModal, { TYPOGRAPHY_FONT_SIZES, TYPOGRAPHY_FONT_STYLES } from './components/TypographyStudioModal.jsx';
 import AiProviderModal from './components/AiProviderModal.jsx';
 import {
     executeAiBrowserCommand,
     executeWebviewClick as harnessExecuteClick,
     executeWebviewScroll as harnessExecuteScroll,
+    executeWebviewKeyPress,
+    executeWebviewHover,
+    executeWebviewType,
     extractAdaptivePageContext,
     executeAdaptiveAction
 } from './ai_harness_engine.js';
 
 const { ipcRenderer } = window.require ? window.require('electron') : require('electron');
 const path = window.require ? window.require('path') : require('path');
+const fs = window.require ? window.require('fs') : require('fs');
+
+const nodeUrl = window.require ? window.require('url') : require('url');
 
 const NEW_TAB_IDENTIFIER = 'antigravity://newtab';
+const CHROME_USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36';
+const GUEST_PRELOAD_URL = (() => {
+    try {
+        const candidates = [
+            path.resolve(__dirname, 'guest_preload.js'),
+            path.resolve(__dirname, '../guest_preload.js')
+        ];
+        for (const c of candidates) {
+            if (fs && fs.existsSync && fs.existsSync(c)) {
+                return nodeUrl.pathToFileURL(c).href;
+            }
+        }
+        return '';
+    } catch(e) {
+        return '';
+    }
+})();
 
 export default function App() {
     // Engine preference
@@ -52,7 +76,7 @@ export default function App() {
         recentEvents: []
     });
     const [hudTab, setHudTab] = useState('shields');
-    const [isHudOpen, setIsHudOpen] = useState(false);
+    const [isHudOpen, setIsHudOpen] = useState(true);
     const [somEnabled, setSomEnabled] = useState(true);
     const [somMode, setSomMode] = useState('summarized');
     const [isHudDetached, setIsHudDetached] = useState(() => {
@@ -126,6 +150,13 @@ export default function App() {
     const [wallpaperColor, setWallpaperColor] = useState(() => {
         return localStorage.getItem('antigravity_wallpaper_color') || '#0b0f19';
     });
+    const [wallpaperMuted, setWallpaperMuted] = useState(() => {
+        return localStorage.getItem('antigravity_wallpaper_muted') === 'false' ? false : true;
+    });
+    const [isWindowFocused, setIsWindowFocused] = useState(() => {
+        return typeof document !== 'undefined' ? document.hasFocus() : true;
+    });
+    const wallpaperVideoRef = useRef(null);
     const [isWallpaperStudioOpen, setIsWallpaperStudioOpen] = useState(false);
     const [downloads, setDownloads] = useState([]);
 
@@ -209,12 +240,19 @@ export default function App() {
         } catch (e) {}
     };
 
-    // In-Process Download Manager IPC synchronization
+    // In-Process Download & History Manager IPC synchronization
     useEffect(() => {
         if (!ipcRenderer) return;
 
         ipcRenderer.invoke('get-downloads').then(list => {
             if (Array.isArray(list)) setDownloads(list);
+        }).catch(() => {});
+
+        ipcRenderer.invoke('get-history').then(savedHistory => {
+            if (Array.isArray(savedHistory) && savedHistory.length > 0) {
+                setHistory(savedHistory);
+                try { localStorage.setItem('antigravity_browsing_history', JSON.stringify(savedHistory)); } catch (e) {}
+            }
         }).catch(() => {});
 
         const handleDownloadStarted = (event, record) => {
@@ -371,6 +409,35 @@ export default function App() {
         setActiveTabId(newId);
     };
 
+    const handleOpenHistoryTab = () => {
+        const existing = tabs.find(t => t.url === 'antigravity://history' || t.isHistory);
+        if (existing) {
+            setActiveTabId(existing.id);
+            return;
+        }
+        const current = tabs.find(t => t.id === activeTabId);
+        if (current && (current.isNewTab || !current.url)) {
+            setTabs(prev => prev.map(t => {
+                if (t.id === activeTabId) {
+                    return { ...t, isNewTab: false, isDownloads: false, isHistory: true, url: 'antigravity://history', title: 'History' };
+                }
+                return t;
+            }));
+            return;
+        }
+        const newId = nextTabIdRef.current++;
+        setTabs(prev => [...prev, {
+            id: newId,
+            url: 'antigravity://history',
+            initialUrl: 'about:blank',
+            title: 'History',
+            isNewTab: false,
+            isDownloads: false,
+            isHistory: true
+        }]);
+        setActiveTabId(newId);
+    };
+
     // Apply wallpaper class and overlay opacity to document.body
     useEffect(() => {
         const hasWp = wallpaperType !== 'none' && !!wallpaper;
@@ -378,21 +445,82 @@ export default function App() {
         document.body.style.setProperty('--wallpaper-overlay-opacity', String(wallpaperOpacity));
     }, [wallpaper, wallpaperType, wallpaperOpacity]);
 
-    const handleSetWallpaper = (type, value, opacity, color) => {
+    const handleSetWallpaper = (type, value, opacity, color, isMuted) => {
         setWallpaperType(type);
         setWallpaper(value);
         if (opacity !== undefined) setWallpaperOpacity(opacity);
         if (color !== undefined) setWallpaperColor(color);
+        if (isMuted !== undefined) {
+            setWallpaperMuted(isMuted);
+            localStorage.setItem('antigravity_wallpaper_muted', String(isMuted));
+        }
 
         localStorage.setItem('antigravity_wallpaper_type', type);
         localStorage.setItem('antigravity_wallpaper', value);
         if (opacity !== undefined) localStorage.setItem('antigravity_wallpaper_opacity', String(opacity));
         if (color !== undefined) localStorage.setItem('antigravity_wallpaper_color', color);
-        logTelemetry('act', `Wallpaper updated: ${type}`);
+        logTelemetry('act', `Wallpaper updated: ${type} (muted: ${isMuted !== undefined ? isMuted : wallpaperMuted})`);
     };
 
-    // Active Tab Helper
-    const isNewTab = activeTab.isNewTab;
+    const handleRemoveWallpaper = () => {
+        setWallpaperType('none');
+        setWallpaper('');
+        localStorage.setItem('antigravity_wallpaper_type', 'none');
+        localStorage.removeItem('antigravity_wallpaper');
+        logTelemetry('act', 'Wallpaper removed');
+    };
+
+    // Window focus & visibility tracking for background audio muting
+    useEffect(() => {
+        const handleFocus = () => setIsWindowFocused(true);
+        const handleBlur = () => setIsWindowFocused(false);
+        const handleVisibility = () => {
+            if (document.hidden) {
+                setIsWindowFocused(false);
+            } else {
+                setIsWindowFocused(document.hasFocus());
+            }
+        };
+
+        window.addEventListener('focus', handleFocus);
+        window.addEventListener('blur', handleBlur);
+        document.addEventListener('visibilitychange', handleVisibility);
+
+        let removeIpcListener = null;
+        try {
+            if (window.require) {
+                const { ipcRenderer: electronIpc } = window.require('electron');
+                const onIpcFocus = (event, focused) => {
+                    setIsWindowFocused(Boolean(focused));
+                };
+                electronIpc.on('window-focus-changed', onIpcFocus);
+                removeIpcListener = () => electronIpc.removeListener('window-focus-changed', onIpcFocus);
+            }
+        } catch (e) {}
+
+        return () => {
+            window.removeEventListener('focus', handleFocus);
+            window.removeEventListener('blur', handleBlur);
+            document.removeEventListener('visibilitychange', handleVisibility);
+            if (removeIpcListener) removeIpcListener();
+        };
+    }, []);
+
+    // Active Tab Helper: Only true home page without external web navigation
+    const isNewTab = Boolean(activeTab.isNewTab) && (!activeTab.url || activeTab.url === '' || activeTab.url === 'about:blank') && !activeTab.isDownloads && !activeTab.isHistory;
+
+    // Video wallpaper audio ONLY plays when:
+    // 1. User enabled audio (!wallpaperMuted)
+    // 2. Active tab is currently on the home page (isNewTab)
+    // 3. Browser window is currently active and focused in foreground (isWindowFocused)
+    const shouldPlayWallpaperAudio = !wallpaperMuted && Boolean(isNewTab) && Boolean(isWindowFocused);
+    const effectiveWallpaperMuted = !shouldPlayWallpaperAudio;
+
+    useEffect(() => {
+        if (wallpaperVideoRef.current) {
+            wallpaperVideoRef.current.muted = effectiveWallpaperMuted;
+        }
+    }, [effectiveWallpaperMuted]);
 
     const logTelemetry = (type, msg, meta = '') => {
         setTelemetryLogs(prev => {
@@ -515,7 +643,7 @@ export default function App() {
                 if (data.url) handleNavigate(data.url);
             } else if (action === 'extract-page-text') {
                 const wv = document.getElementById(`wv-${activeTabId}`);
-                if (wv && typeof wv.executeJavaScript === 'function') {
+                if (wv && typeof wv.executeJavaScript === 'function' && wv.getURL() && wv.getURL() !== 'about:blank') {
                     wv.executeJavaScript(`
                         (function() {
                             const title = document.title || '';
@@ -729,47 +857,36 @@ export default function App() {
                     triggerAiBanner('SCROLL', 'Scrolling ' + (payload.direction || 'down'));
                     const ok = await executeWebviewScroll(payload.direction || 'down', payload.amount || 50, payload.isPercent !== false);
                     result = { success: ok, direction: payload.direction, amount: payload.amount };
+                } else if (action === 'press-key' || action === 'key') {
+                    const key = payload.key || 'Space';
+                    triggerAiBanner('KEY_PRESS', 'Pressing key: [' + key + ']');
+                    if (wv) {
+                        result = await executeWebviewKeyPress(wv, key, payload.modifiers || []);
+                    } else {
+                        result = { success: false, error: 'No active webview' };
+                    }
+                } else if (action === 'hover') {
+                    const target = payload.target || payload.text || '';
+                    triggerAiBanner('HOVER', 'Hovering: "' + target + '"');
+                    if (wv) {
+                        result = await executeWebviewHover(wv, target);
+                    } else {
+                        result = { success: false, error: 'No active webview' };
+                    }
                 } else if (action === 'type') {
-                    if (wv && typeof wv.executeJavaScript === 'function') {
-                        const typeText = payload.text || '';
-                        const submit = payload.submit !== false;
-                        triggerAiBanner('TYPE', 'Typing "' + typeText + '" and submitting search');
-                        const selector = payload.selector || null;
-                        const res = await wv.executeJavaScript(`
-                            (function() {
-                                let target = null;
-                                if (${JSON.stringify(selector)}) {
-                                    target = document.querySelector(${JSON.stringify(selector)});
-                                }
-                                if (!target) {
-                                    const inputs = Array.from(document.querySelectorAll('input[type="search"], input[name*="search" i], input[id*="search" i], input[class*="search" i], input[type="text"], input:not([type]), textarea')).filter(el => {
-                                        const s = window.getComputedStyle(el);
-                                        return s.display !== 'none' && s.visibility !== 'hidden' && el.offsetWidth > 0;
-                                    });
-                                    target = inputs[0];
-                                }
-                                if (!target) return { success: false, error: 'No input found' };
-                                target.focus();
-                                target.value = ${JSON.stringify(typeText)};
-                                target.dispatchEvent(new Event('input', { bubbles: true }));
-                                target.dispatchEvent(new Event('change', { bubbles: true }));
-                                if (${submit}) {
-                                    const form = target.closest('form');
-                                    if (form) {
-                                        form.requestSubmit ? form.requestSubmit() : form.submit();
-                                    } else {
-                                        target.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', code: 'Enter', keyCode: 13, bubbles: true }));
-                                    }
-                                }
-                                return { success: true, typed: ${JSON.stringify(typeText)} };
-                            })()
-                        `);
-                        result = res;
+                    const typeText = payload.text || '';
+                    const submit = payload.submit === true;
+                    const clear = payload.clear !== false;
+                    const target = payload.target || payload.selector || null;
+                    triggerAiBanner('TYPE', 'Typing into ' + (target || 'active field') + ': "' + typeText + '"' + (submit ? ' (submit)' : ''));
+                    if (wv) {
+                        result = await executeWebviewType(wv, typeText, target, submit, clear);
                     } else {
                         result = { success: false, error: 'No active webview' };
                     }
                 } else if (action === 'get-page-content') {
-                    if (wv && typeof wv.executeJavaScript === 'function') {
+                    const wvUrl4 = wv && typeof wv.getURL === 'function' ? wv.getURL() : '';
+                    if (wv && typeof wv.executeJavaScript === 'function' && wvUrl4 && wvUrl4 !== 'about:blank') {
                         const execPromise = wv.executeJavaScript(`
                             (function() {
                                 const allLinks = Array.from(document.querySelectorAll('a')).map(a => ({
@@ -827,35 +944,50 @@ export default function App() {
                         };
                     }
                 } else if (action === 'eval') {
-                    if (wv && typeof wv.executeJavaScript === 'function') {
-                        const execPromise = wv.executeJavaScript(payload.script);
-                        const timeoutPromise = new Promise((resolve) => {
-                            setTimeout(() => resolve({ error: 'eval timed out after 8000ms' }), 8000);
-                        });
-                        result = await Promise.race([execPromise, timeoutPromise]);
+                    const wvUrl = wv && typeof wv.getURL === 'function' ? wv.getURL() : '';
+                    const wvReady = wv && typeof wv.executeJavaScript === 'function' && wvUrl && wvUrl !== 'about:blank' && !(typeof wv.isLoading === 'function' && wv.isLoading());
+                    if (wvReady) {
+                        try {
+                            const execPromise = wv.executeJavaScript(payload.script);
+                            const timeoutPromise = new Promise((resolve) => {
+                                setTimeout(() => resolve({ error: 'eval timed out after 8000ms' }), 8000);
+                            });
+                            result = await Promise.race([execPromise, timeoutPromise]);
+                        } catch (execErr) {
+                            result = { success: false, error: 'Script execution failed: ' + (execErr.message || String(execErr)) };
+                        }
                     } else {
-                        result = { success: false, error: 'No active webview' };
+                        result = { success: false, error: 'Webview not ready (loading or uninitialized)' };
                     }
                 } else if (action === 'get-page-context') {
-                    if (wv && typeof wv.executeJavaScript === 'function') {
+                    const wvUrl2 = wv && typeof wv.getURL === 'function' ? wv.getURL() : '';
+                    const wvReady2 = wv && typeof wv.executeJavaScript === 'function' && wvUrl2 && wvUrl2 !== 'about:blank';
+                    if (wvReady2) {
                         result = await extractAdaptivePageContext(wv);
                     } else {
-                        result = { success: false, error: 'No active webview' };
+                        result = { success: false, error: 'Webview not ready' };
                     }
                 } else if (action === 'site-act') {
-                    if (wv && typeof wv.executeJavaScript === 'function') {
+                    const wvUrl3 = wv && typeof wv.getURL === 'function' ? wv.getURL() : '';
+                    const wvReady3 = wv && typeof wv.executeJavaScript === 'function' && wvUrl3 && wvUrl3 !== 'about:blank';
+                    if (wvReady3) {
                         result = await executeAdaptiveAction(wv, payload.intent, payload.options);
                     } else {
-                        result = { success: false, error: 'No active webview' };
+                        result = { success: false, error: 'Webview not ready' };
                     }
                 } else if (action === 'toggle-hud') {
-                    handleDockHud();
+                    setIsHudDetached(false);
                     setIsHudOpen(true);
                     result = { success: true, isHudOpen: true };
+                } else if (action === 'open-ai-provider-modal') {
+                    setIsAiProviderModalOpen(payload?.open !== false);
+                    result = { success: true, isAiProviderModalOpen: payload?.open !== false };
                 } else if (action === 'copilot-chat') {
-                    handleDockHud();
+                    setIsHudDetached(false);
                     setIsHudOpen(true);
-                    if (payload.query) {
+                    if (payload.openModelSetup) {
+                        setIsAiProviderModalOpen(true);
+                    } else if (payload.query) {
                         window.dispatchEvent(new CustomEvent('antigravity-copilot-query', { detail: { query: payload.query } }));
                     }
                     result = { success: true, dispatched: true };
@@ -875,6 +1007,10 @@ export default function App() {
             setIsHudOpen(true);
             try { localStorage.setItem('antigravity_hud_detached', 'false'); } catch (e) {}
         };
+        const handleOpenModelSetup = () => {
+            setIsAiProviderModalOpen(true);
+        };
+        window.addEventListener('antigravity-open-model-setup', handleOpenModelSetup);
 
         ipcRenderer.on('open-new-tab', handleOpenNewTab);
         ipcRenderer.on('hud-window-opened', handleHudOpened);
@@ -1029,7 +1165,7 @@ export default function App() {
 
     // Set-of-Marks Hashtag Clicking & Target Element Interaction (AI Harness Unified)
     const executeWebviewClick = async (targetText) => {
-        const wv = document.getElementById(`wv-${activeTabId}`) || document.querySelector('.native-webview');
+        const wv = document.getElementById(`wv-${activeTabIdRef.current}`) || document.querySelector('.native-webview');
         if (!wv || typeof wv.executeJavaScript !== 'function') {
             logTelemetry('warn', 'No active webview available to execute click interaction.');
             return false;
@@ -1045,7 +1181,7 @@ export default function App() {
 
     // Proportional Logical Scroll Scale & Shortcuts (s50, s0, s1000) (AI Harness Unified)
     const executeWebviewScroll = async (direction = 'down', amount = 20, isPercent = false) => {
-        const wv = document.getElementById(`wv-${activeTabId}`) || document.querySelector('.native-webview');
+        const wv = document.getElementById(`wv-${activeTabIdRef.current}`) || document.querySelector('.native-webview');
         if (!wv || typeof wv.executeJavaScript !== 'function') return false;
         try {
             const scrollPromise = harnessExecuteScroll(wv, direction, amount, isPercent, logTelemetry);
@@ -1057,7 +1193,7 @@ export default function App() {
     };
 
     const extractPageTextForAi = async () => {
-        const wv = document.getElementById(`wv-${activeTabId}`);
+        const wv = document.getElementById(`wv-${activeTabIdRef.current}`);
         if (!wv || typeof wv.executeJavaScript !== 'function') return '';
         try {
             const text = await wv.executeJavaScript(`
@@ -1073,7 +1209,7 @@ export default function App() {
 
     // Clean Distraction-Free Reader Mode Extractor
     const handleOpenReaderMode = async () => {
-        const wv = document.getElementById(`wv-${activeTabId}`);
+        const wv = document.getElementById(`wv-${activeTabIdRef.current}`);
         if (!wv || typeof wv.executeJavaScript !== 'function') return;
 
         try {
@@ -1134,9 +1270,9 @@ export default function App() {
         logTelemetry('act', 'Bookmark removed');
     };
 
-    // Browsing History Management
+    // Browsing History Management (Persisted across opens/closes)
     const addHistoryEntry = (url, title) => {
-        if (!url || url === 'about:blank' || url.startsWith('javascript:') || url.startsWith('data:') || url.includes('newtab.html')) return;
+        if (!url || url === 'about:blank' || url.startsWith('javascript:') || url.startsWith('data:') || url.includes('newtab.html') || url.startsWith('antigravity://')) return;
         setHistory(prev => {
             const now = Date.now();
             if (prev.length > 0 && prev[0].url === url && (now - prev[0].timestamp) < 4000) {
@@ -1149,8 +1285,11 @@ export default function App() {
                 title: cleanTitle,
                 timestamp: now
             };
-            const updated = [newEntry, ...prev.filter(item => item.url !== url)].slice(0, 100);
+            const updated = [newEntry, ...prev.filter(item => item.url !== url)].slice(0, 300);
             try { localStorage.setItem('antigravity_browsing_history', JSON.stringify(updated)); } catch (e) {}
+            if (ipcRenderer && ipcRenderer.invoke) {
+                ipcRenderer.invoke('save-history', updated).catch(() => {});
+            }
             return updated;
         });
     };
@@ -1159,6 +1298,9 @@ export default function App() {
         setHistory(prev => {
             const updated = prev.filter(item => item.id !== idOrUrl && item.url !== idOrUrl);
             try { localStorage.setItem('antigravity_browsing_history', JSON.stringify(updated)); } catch (e) {}
+            if (ipcRenderer && ipcRenderer.invoke) {
+                ipcRenderer.invoke('save-history', updated).catch(() => {});
+            }
             return updated;
         });
         logTelemetry('act', 'Deleted item from browsing history');
@@ -1167,6 +1309,9 @@ export default function App() {
     const handleClearHistory = () => {
         setHistory([]);
         try { localStorage.removeItem('antigravity_browsing_history'); } catch (e) {}
+        if (ipcRenderer && ipcRenderer.invoke) {
+            ipcRenderer.invoke('clear-history').catch(() => {});
+        }
         logTelemetry('act', 'Cleared all browsing history');
     };
 
@@ -1181,7 +1326,7 @@ export default function App() {
                 handleToggleBookmark();
             } else if ((e.ctrlKey || e.metaKey) && (e.key === 'h' || e.key === 'H')) {
                 e.preventDefault();
-                setIsHistoryOpen(prev => !prev);
+                handleOpenHistoryTab();
             } else if (e.key === 'Escape') {
                 setIsTabSearchOpen(false);
                 setIsReaderModeOpen(false);
@@ -1213,21 +1358,21 @@ export default function App() {
         setTabs(prev => [...prev, newTab]);
         setActiveTabId(newId);
         logTelemetry('act', `TabStripModel::InsertWebContentsAt()`, `Tab #${newId} -> New Tab`);
+        return newId;
     };
 
     // Open URL in a New In-App Tab (strictly native tab, zero separate OS windows)
     const openInNewTab = (targetUrl) => {
         const url = (targetUrl || '').trim();
         if (!url || url === 'about:blank') {
-            handleAddTab();
-            return;
+            return handleAddTab();
         }
-        if (url.startsWith('javascript:') || url.startsWith('data:')) return;
+        if (url.startsWith('javascript:') || url.startsWith('data:')) return null;
 
         const now = Date.now();
         // Deduplicate rapid duplicate events for the same target URL within 1200ms
         if (lastOpenedTabRef.current.url === url && (now - lastOpenedTabRef.current.time) < 1200) {
-            return;
+            return activeTabIdRef.current;
         }
         lastOpenedTabRef.current = { url, time: now };
 
@@ -1245,7 +1390,7 @@ export default function App() {
 
         if (isBlocked) {
             logTelemetry('verify', `Shields blocked unwanted popup tab: ${url.substring(0, 60)}...`);
-            return;
+            return null;
         }
 
         const newId = nextTabIdRef.current++;
@@ -1256,9 +1401,13 @@ export default function App() {
             title: 'Loading...',
             isNewTab: false
         };
+        tabsRef.current = [...tabsRef.current, newTab];
+        activeTabIdRef.current = newId;
+        activeTabRef.current = newTab;
         setTabs(prev => [...prev, newTab]);
         setActiveTabId(newId);
         logTelemetry('act', `TabStripModel::InsertWebContentsAt()`, `Tab #${newId} -> ${url}`);
+        return newId;
     };
 
     window.__antigravityOpenNewTab = openInNewTab;
@@ -1289,18 +1438,19 @@ export default function App() {
     };
 
     // Navigate Active Tab
-    const handleNavigate = (target) => {
+    const handleNavigate = (target, overrideTabId = null) => {
+        const targetId = overrideTabId || activeTabIdRef.current;
         const trimmed = (target || '').trim();
         let finalUrl = trimmed;
 
         if (!trimmed || trimmed === NEW_TAB_IDENTIFIER || trimmed.includes('newtab.html')) {
             setTabs(prev => prev.map(t => {
-                if (t.id === activeTabId) {
-                    return { ...t, isNewTab: true, isDownloads: false, url: '', title: 'New Tab' };
+                if (t.id === targetId) {
+                    return { ...t, isNewTab: true, isDownloads: false, isHistory: false, url: '', title: 'New Tab' };
                 }
                 return t;
             }));
-            const wv = document.getElementById(`wv-${activeTabId}`);
+            const wv = document.getElementById(`wv-${targetId}`);
             if (wv && typeof wv.loadURL === 'function') wv.loadURL('about:blank');
             logTelemetry('act', 'Tab navigated to New Tab Page');
             return;
@@ -1313,14 +1463,32 @@ export default function App() {
             trimmed === 'about:downloads'
         ) {
             setTabs(prev => prev.map(t => {
-                if (t.id === activeTabId) {
-                    return { ...t, isNewTab: false, isDownloads: true, url: 'antigravity://downloads', title: 'Downloads' };
+                if (t.id === targetId) {
+                    return { ...t, isNewTab: false, isDownloads: true, isHistory: false, url: 'antigravity://downloads', title: 'Downloads' };
                 }
                 return t;
             }));
-            const wv = document.getElementById(`wv-${activeTabId}`);
+            const wv = document.getElementById(`wv-${targetId}`);
             if (wv && typeof wv.loadURL === 'function') wv.loadURL('about:blank');
             logTelemetry('act', 'Navigated to Brave-style Downloads Manager');
+            return;
+        }
+
+        if (
+            trimmed === 'antigravity://history' || 
+            trimmed === 'brave://history' || 
+            trimmed === 'chrome://history' || 
+            trimmed === 'about:history'
+        ) {
+            setTabs(prev => prev.map(t => {
+                if (t.id === targetId) {
+                    return { ...t, isNewTab: false, isDownloads: false, isHistory: true, url: 'antigravity://history', title: 'History' };
+                }
+                return t;
+            }));
+            const wv = document.getElementById(`wv-${targetId}`);
+            if (wv && typeof wv.loadURL === 'function') wv.loadURL('about:blank');
+            logTelemetry('act', 'Navigated to Chrome/Brave-style History Page');
             return;
         }
 
@@ -1330,6 +1498,8 @@ export default function App() {
             finalUrl = 'http://' + trimmed;
         } else if (trimmed.includes('.') && !trimmed.includes(' ') && !trimmed.includes('?')) {
             finalUrl = 'https://' + trimmed;
+        } else if (!trimmed.includes(' ') && /^[a-z0-9-]+$/i.test(trimmed)) {
+            finalUrl = `https://www.${trimmed.toLowerCase()}.com`;
         } else {
             // Search engine dispatch
             if (activeEngine === 'brave') {
@@ -1340,14 +1510,14 @@ export default function App() {
         }
 
         setTabs(prev => prev.map(t => {
-            if (t.id === activeTabId) {
-                return { ...t, isNewTab: false, isDownloads: false, url: finalUrl, title: t.title || 'Loading...' };
+            if (t.id === targetId) {
+                return { ...t, isNewTab: false, isDownloads: false, isHistory: false, url: finalUrl, title: t.title || 'Loading...' };
             }
             return t;
         }));
 
         // Imperatively load URL in webview with instant dispatch
-        const wv = document.getElementById(`wv-${activeTabId}`);
+        const wv = document.getElementById(`wv-${targetId}`);
         if (wv && typeof wv.loadURL === 'function') {
             wv.loadURL(finalUrl).catch((err) => {
                 if (err && (err.code === 'ERR_ABORTED' || String(err).includes('ERR_ABORTED'))) {
@@ -1414,8 +1584,33 @@ export default function App() {
 
         wv.addEventListener('new-window', (e) => {
             e.preventDefault();
-            if (e.url) {
-                openInNewTab(e.url);
+            const targetUrl = (e.url || '').trim();
+            if (!targetUrl || targetUrl === 'about:blank' || targetUrl.startsWith('javascript:')) return;
+
+            const curUrl = (typeof wv.getURL === 'function' ? wv.getURL() : '') || activeTabRef.current?.url || '';
+
+            // Check against shady patterns and ad rotators immediately
+            const isSuspiciousDest = /(?:wasgiwiththinfeet|acscdn|greenanalytics|ukankingwithea|certaker|enaightdecipie|unlockr|adsboosters|cpmgate|topcreativeformat|mybestmv|recrampwiped|bonuscaf|rtvhd=|aydfd=|sklnk|aliexpress\.com|ali\.pub)/i.test(targetUrl);
+            const isAdOrigin = /(?:4khdhub|greenmotors|hubcloud|gamerxyt|moviesmod|hianime|aniwave|fmovies|123movies)/i.test(curUrl);
+
+            // If it comes from an ad-injecting origin and isn't a trusted destination, block it
+            if (isSuspiciousDest || (isAdOrigin && !/(?:greenmotors\.|hubcloud\.|mega\.|mediafire\.|1fichier\.|google\.com|youtube\.com|pixeldrain\.|zippyshare\.)/i.test(targetUrl))) {
+                logTelemetry('act', `Brave Shields blocked shady popup: ${targetUrl}`);
+                return;
+            }
+
+            if (ipcRenderer && ipcRenderer.invoke) {
+                ipcRenderer.invoke('check-url-block', { url: targetUrl, initiatorUrl: curUrl }).then(res => {
+                    if (res && (res.block || (res.decision && res.decision.block))) {
+                        logTelemetry('act', `Brave Shields blocked popup: ${targetUrl}`);
+                    } else {
+                        openInNewTab(targetUrl);
+                    }
+                }).catch(() => {
+                    openInNewTab(targetUrl);
+                });
+            } else {
+                openInNewTab(targetUrl);
             }
         });
 
@@ -1474,6 +1669,7 @@ export default function App() {
             if (!u || u === 'about:blank') {
                 setTabs(prev => prev.map(t => {
                     if (t.id === tabId) {
+                        if (t.initialUrl && t.initialUrl !== 'about:blank') return t;
                         if (t.isNewTab && !t.url) return t;
                         return { ...t, url: '', title: 'New Tab', isNewTab: true };
                     }
@@ -1558,7 +1754,14 @@ export default function App() {
                     }}
                 >
                     {wallpaperType === 'video' && (
-                        <video src={wallpaper} autoPlay loop muted playsInline />
+                        <video
+                            ref={wallpaperVideoRef}
+                            src={wallpaper}
+                            autoPlay
+                            loop
+                            muted={effectiveWallpaperMuted}
+                            playsInline
+                        />
                     )}
                 </div>
             )}
@@ -1622,6 +1825,7 @@ export default function App() {
                 onOpenWallpaperStudio={() => setIsWallpaperStudioOpen(true)}
                 activeDownloadsCount={downloads.filter(d => d.state === 'progressing').length}
                 onOpenDownloads={handleOpenDownloadsTab}
+                onOpenHistory={handleOpenHistoryTab}
                 onOpenTypography={() => setIsTypographyOpen(true)}
                 onOpenAiProviderModal={() => setIsAiProviderModalOpen(true)}
             />
@@ -1632,7 +1836,7 @@ export default function App() {
                 onNavigate={handleNavigate}
                 onAddCurrentPage={handleToggleBookmark}
                 onRemoveBookmark={handleRemoveBookmark}
-                onOpenHistory={() => setIsHistoryOpen(true)}
+                onOpenHistory={handleOpenHistoryTab}
             />
 
             {/* Main Content: Adaptive Viewport (100% full-width when detached, or splits with sidebar when docked) */}
@@ -1650,6 +1854,8 @@ export default function App() {
                     {tabs.map((tab) => {
                         const isActive = tab.id === activeTabId;
                         const isDownloadsTab = tab.isDownloads || tab.url === 'antigravity://downloads';
+                        const isHistoryTab = tab.isHistory || tab.url === 'antigravity://history';
+                        const showWebview = isActive && !tab.isNewTab && !isDownloadsTab && !isHistoryTab;
                         return (
                             <div
                                 key={tab.id}
@@ -1662,10 +1868,10 @@ export default function App() {
                                     bottom: 0,
                                     width: '100%',
                                     height: '100%',
+                                    display: isActive ? 'flex' : 'none',
                                     visibility: isActive ? 'visible' : 'hidden',
                                     pointerEvents: isActive ? 'auto' : 'none',
-                                    zIndex: isActive ? 1 : 0,
-                                    display: 'flex',
+                                    zIndex: isActive ? 2 : -1,
                                     flexDirection: 'column'
                                 }}
                             >
@@ -1673,12 +1879,19 @@ export default function App() {
                                     id={`wv-${tab.id}`}
                                     className="native-webview"
                                     src={tab.initialUrl || tab.url || 'about:blank'}
-                                    allowpopups="true"
-                                    webpreferences="allowRunningInsecureContent=no"
+                                    partition="persist:antigravity"
+                                    useragent={CHROME_USER_AGENT}
+                                    preload={GUEST_PRELOAD_URL || undefined}
+                                    webpreferences="contextIsolation=no, nodeIntegration=no, allowRunningInsecureContent=no"
                                     style={{
-                                        width: '100%',
-                                        height: '100%',
-                                        display: (tab.isNewTab || isDownloadsTab) ? 'none' : 'flex'
+                                        width: showWebview ? '100%' : '0px',
+                                        height: showWebview ? '100%' : '0px',
+                                        position: showWebview ? 'relative' : 'absolute',
+                                        display: showWebview ? 'flex' : 'none',
+                                        visibility: showWebview ? 'visible' : 'hidden',
+                                        opacity: showWebview ? 1 : 0,
+                                        pointerEvents: showWebview ? 'auto' : 'none',
+                                        zIndex: showWebview ? 2 : -1
                                     }}
                                     ref={(el) => {
                                         if (el) attachWebviewListeners(el, tab.id);
@@ -1700,12 +1913,26 @@ export default function App() {
                                     </div>
                                 )}
 
-                                {tab.isNewTab && !isDownloadsTab && (
+                                {isHistoryTab && (
+                                    <div style={{ width: '100%', height: '100%', overflowY: 'auto' }}>
+                                        <HistoryPage
+                                            history={history}
+                                            onNavigate={(navUrl) => {
+                                                handleNavigate(navUrl, tab.id);
+                                            }}
+                                            onRemoveHistoryItem={handleRemoveHistoryItem}
+                                            onClearHistory={handleClearHistory}
+                                        />
+                                    </div>
+                                )}
+
+                                {tab.isNewTab && !isDownloadsTab && !isHistoryTab && (
                                     <div style={{ width: '100%', height: '100%', overflowY: 'auto' }}>
                                         <NewTabPage
                                             activeEngine={activeEngine}
                                             onSetEngine={handleSetEngine}
                                             onNavigate={handleNavigate}
+                                            bookmarks={bookmarks}
                                         />
                                     </div>
                                 )}
@@ -1818,7 +2045,9 @@ export default function App() {
                 currentType={wallpaperType}
                 currentOpacity={wallpaperOpacity}
                 currentColor={wallpaperColor}
+                currentMuted={wallpaperMuted}
                 onSelectWallpaper={handleSetWallpaper}
+                onRemoveWallpaper={handleRemoveWallpaper}
                 onClose={() => setIsWallpaperStudioOpen(false)}
             />
 

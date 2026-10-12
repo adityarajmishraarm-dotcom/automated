@@ -17,6 +17,7 @@ export default function NavigationToolbar({
     onOpenWallpaperStudio,
     activeDownloadsCount = 0,
     onOpenDownloads,
+    onOpenHistory,
     onOpenTypography,
     onOpenAiProviderModal
 }) {
@@ -188,6 +189,15 @@ export default function NavigationToolbar({
                         {activeDownloadsCount}
                     </span>
                 )}
+            </button>
+
+            <button
+                className="btn-toolbar-tool"
+                id="btnToolbarHistory"
+                title="Open Browsing History (Ctrl+H)"
+                onClick={onOpenHistory}
+            >
+                🕒 History
             </button>
 
             <button

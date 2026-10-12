@@ -155,19 +155,30 @@ void AdblockEngine::LoadDefaultRuleSets() {
     blocked_patterns_.push_back("beacon.min.js");
     blocked_patterns_.push_back("youtube.com/api/stats/ads");
     blocked_patterns_.push_back("youtube.com/pagead/");
-    blocked_patterns_.push_back("youtube.com/ptracking");
     blocked_patterns_.push_back("youtube.com/get_midroll_info");
     blocked_patterns_.push_back("youtube.com/api/stats/playback?*adformat*");
     blocked_patterns_.push_back("youtube.com/api/stats/qoe?*adformat*");
     blocked_patterns_.push_back("youtube.com/api/stats/watchtime?*adformat*");
-    blocked_patterns_.push_back("youtube.com/youtubei/v1/log_event");
-    blocked_patterns_.push_back("youtube.com/youtubei/v1/att/");
     blocked_patterns_.push_back("ade.googlesyndication.com");
     blocked_patterns_.push_back("pagead2.googlesyndication.com");
     blocked_patterns_.push_back("googleads.g.doubleclick.net");
     blocked_patterns_.push_back("securepubads.g.doubleclick.net");
     blocked_patterns_.push_back("adservice.google.");
     blocked_patterns_.push_back("play.google.com/log");
+
+    // Whitelist media streaming and player integrity endpoints
+    exception_rules_.push_back("googlevideo.com");
+    exception_rules_.push_back("videoplayback");
+    exception_rules_.push_back("/videoplayback");
+    exception_rules_.push_back("youtube.com/youtubei/v1/att");
+    exception_rules_.push_back("youtube.com/youtubei/v1/log_event");
+    exception_rules_.push_back("youtube.com/youtubei/v1/qoe");
+    exception_rules_.push_back("youtube.com/ptracking");
+    exception_rules_.push_back("youtube.com/api/stats");
+    exception_rules_.push_back("youtube.com/api/timedtext");
+    exception_rules_.push_back("youtube.com/s/player");
+    exception_rules_.push_back("youtube.com/s/desktop");
+    exception_rules_.push_back("youtubei/v1/player");
 
     // 3. Universal Cosmetic Filter Selectors (Banners, Modals & Video Player Overlays)
     cosmetic_selectors_.push_back(".ad-container");

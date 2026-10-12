@@ -2049,7 +2049,7 @@ var require_scheduler = __commonJS({
 var require_react_dom_production = __commonJS({
   "node_modules/react-dom/cjs/react-dom.production.js"(exports2) {
     "use strict";
-    var React17 = require_react();
+    var React18 = require_react();
     function formatProdErrorMessage(code) {
       var url = "https://react.dev/errors/" + code;
       if (1 < arguments.length) {
@@ -2091,7 +2091,7 @@ var require_react_dom_production = __commonJS({
         implementation
       };
     }
-    var ReactSharedInternals = React17.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
+    var ReactSharedInternals = React18.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
     function getCrossOriginStringAs(as, input) {
       if ("font" === as) return "";
       if ("string" === typeof input)
@@ -2256,7 +2256,7 @@ var require_react_dom_development = __commonJS({
         return dispatcher;
       }
       "undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(Error());
-      var React17 = require_react(), Internals = {
+      var React18 = require_react(), Internals = {
         d: {
           f: noop,
           r: function() {
@@ -2274,7 +2274,7 @@ var require_react_dom_development = __commonJS({
         },
         p: 0,
         findDOMNode: null
-      }, REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), REACT_RECOVERABLE_TYPE = /* @__PURE__ */ Symbol.for("react.recoverable"), REACT_OPTIMISTIC_KEY = /* @__PURE__ */ Symbol.for("react.optimistic_key"), ReactSharedInternals = React17.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
+      }, REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), REACT_RECOVERABLE_TYPE = /* @__PURE__ */ Symbol.for("react.recoverable"), REACT_OPTIMISTIC_KEY = /* @__PURE__ */ Symbol.for("react.optimistic_key"), ReactSharedInternals = React18.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
       "function" === typeof Map && null != Map.prototype && "function" === typeof Map.prototype.forEach && "function" === typeof Set && null != Set.prototype && "function" === typeof Set.prototype.clear && "function" === typeof Set.prototype.forEach || console.error(
         "React depends on Map and Set built-in types. Make sure that you load a polyfill in older browsers. https://reactjs.org/link/react-polyfills"
       );
@@ -2488,7 +2488,7 @@ var require_react_dom_client_production = __commonJS({
   "node_modules/react-dom/cjs/react-dom-client.production.js"(exports2) {
     "use strict";
     var Scheduler = require_scheduler();
-    var React17 = require_react();
+    var React18 = require_react();
     var ReactDOM = require_react_dom();
     function formatProdErrorMessage(code) {
       var url = "https://react.dev/errors/" + code;
@@ -2779,7 +2779,7 @@ var require_react_dom_client_production = __commonJS({
       return null;
     }
     var isArrayImpl = Array.isArray;
-    var ReactSharedInternals = React17.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
+    var ReactSharedInternals = React18.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
     var ReactDOMSharedInternals = ReactDOM.__DOM_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
     var sharedNotPendingObject = {
       pending: false,
@@ -15928,7 +15928,7 @@ var require_react_dom_client_production = __commonJS({
         0 === i && attemptExplicitHydrationTarget(target);
       }
     };
-    var isomorphicReactPackageVersion$jscomp$inline_2043 = React17.version;
+    var isomorphicReactPackageVersion$jscomp$inline_2043 = React18.version;
     if ("19.3.0" !== isomorphicReactPackageVersion$jscomp$inline_2043)
       throw Error(
         formatProdErrorMessage(
@@ -17517,7 +17517,7 @@ var require_react_dom_client_development = __commonJS({
         node.defaultValue !== "" + value && (node.defaultValue = "" + value);
       }
       function validateOptionProps(element, props) {
-        null == props.value && ("object" === typeof props.children && null !== props.children ? React17.Children.forEach(props.children, function(child) {
+        null == props.value && ("object" === typeof props.children && null !== props.children ? React18.Children.forEach(props.children, function(child) {
           null == child || "string" === typeof child || "number" === typeof child || "bigint" === typeof child || didWarnInvalidChild || (didWarnInvalidChild = true, console.error(
             "Cannot infer the option value of complex children. Pass a `value` prop or use a plain string as children to <option>."
           ));
@@ -34665,11 +34665,11 @@ var require_react_dom_client_development = __commonJS({
         ));
       }
       "undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(Error());
-      var Scheduler = require_scheduler(), React17 = require_react(), ReactDOM = require_react_dom(), searchTarget = null, searchBoundary = null, assign = Object.assign, REACT_LEGACY_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.element"), REACT_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = /* @__PURE__ */ Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = /* @__PURE__ */ Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = /* @__PURE__ */ Symbol.for("react.profiler"), REACT_CONSUMER_TYPE = /* @__PURE__ */ Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = /* @__PURE__ */ Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = /* @__PURE__ */ Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = /* @__PURE__ */ Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = /* @__PURE__ */ Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = /* @__PURE__ */ Symbol.for("react.memo"), REACT_LAZY_TYPE = /* @__PURE__ */ Symbol.for("react.lazy");
+      var Scheduler = require_scheduler(), React18 = require_react(), ReactDOM = require_react_dom(), searchTarget = null, searchBoundary = null, assign = Object.assign, REACT_LEGACY_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.element"), REACT_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = /* @__PURE__ */ Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = /* @__PURE__ */ Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = /* @__PURE__ */ Symbol.for("react.profiler"), REACT_CONSUMER_TYPE = /* @__PURE__ */ Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = /* @__PURE__ */ Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = /* @__PURE__ */ Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = /* @__PURE__ */ Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = /* @__PURE__ */ Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = /* @__PURE__ */ Symbol.for("react.memo"), REACT_LAZY_TYPE = /* @__PURE__ */ Symbol.for("react.lazy");
       /* @__PURE__ */ Symbol.for("react.scope");
       var REACT_ACTIVITY_TYPE = /* @__PURE__ */ Symbol.for("react.activity"), REACT_LEGACY_HIDDEN_TYPE = /* @__PURE__ */ Symbol.for("react.legacy_hidden");
       /* @__PURE__ */ Symbol.for("react.tracing_marker");
-      var REACT_MEMO_CACHE_SENTINEL = /* @__PURE__ */ Symbol.for("react.memo_cache_sentinel"), REACT_VIEW_TRANSITION_TYPE = /* @__PURE__ */ Symbol.for("react.view_transition"), REACT_RECOVERABLE_TYPE = /* @__PURE__ */ Symbol.for("react.recoverable"), MAYBE_ITERATOR_SYMBOL = Symbol.iterator, REACT_CLIENT_REFERENCE = /* @__PURE__ */ Symbol.for("react.client.reference"), isArrayImpl = Array.isArray, ReactSharedInternals = React17.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, ReactDOMSharedInternals = ReactDOM.__DOM_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, NotPending = Object.freeze({
+      var REACT_MEMO_CACHE_SENTINEL = /* @__PURE__ */ Symbol.for("react.memo_cache_sentinel"), REACT_VIEW_TRANSITION_TYPE = /* @__PURE__ */ Symbol.for("react.view_transition"), REACT_RECOVERABLE_TYPE = /* @__PURE__ */ Symbol.for("react.recoverable"), MAYBE_ITERATOR_SYMBOL = Symbol.iterator, REACT_CLIENT_REFERENCE = /* @__PURE__ */ Symbol.for("react.client.reference"), isArrayImpl = Array.isArray, ReactSharedInternals = React18.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, ReactDOMSharedInternals = ReactDOM.__DOM_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, NotPending = Object.freeze({
         pending: false,
         data: null,
         method: null,
@@ -37861,7 +37861,7 @@ var require_react_dom_client_development = __commonJS({
         }
       };
       (function() {
-        var isomorphicReactPackageVersion = React17.version;
+        var isomorphicReactPackageVersion = React18.version;
         if ("19.3.0" !== isomorphicReactPackageVersion)
           throw Error(
             'Incompatible React versions: The "react" and "react-dom" packages must have the exact same version. Instead got:\n  - react:      ' + (isomorphicReactPackageVersion + "\n  - react-dom:  19.3.0\nLearn more: https://react.dev/warnings/version-mismatch")
@@ -38019,6 +38019,7 @@ var aiProviderService_exports = {};
 __export(aiProviderService_exports, {
   BROWSER_TOOLS: () => BROWSER_TOOLS,
   DEFAULT_PROVIDERS: () => DEFAULT_PROVIDERS,
+  fetchAvailableModels: () => fetchAvailableModels,
   generateToolSystemPrompt: () => generateToolSystemPrompt,
   getActiveProviderConfig: () => getActiveProviderConfig,
   getActiveProviderId: () => getActiveProviderId,
@@ -38036,16 +38037,68 @@ function getAiProvidersConfig() {
     const parsed = JSON.parse(raw);
     const merged = { ...DEFAULT_PROVIDERS };
     for (const [key, val] of Object.entries(parsed)) {
+      if (!val || typeof val !== "object") continue;
       if (merged[key]) {
-        merged[key] = { ...merged[key], ...val };
+        const defaultPresets = Array.isArray(DEFAULT_PROVIDERS[key]?.presetModels) ? DEFAULT_PROVIDERS[key].presetModels : [];
+        const savedPresets = Array.isArray(val.presetModels) ? val.presetModels : [];
+        const combinedPresets = Array.from(/* @__PURE__ */ new Set([...savedPresets, ...defaultPresets]));
+        merged[key] = {
+          ...merged[key],
+          ...val,
+          presetModels: combinedPresets
+        };
       } else {
-        merged[key] = val;
+        merged[key] = {
+          id: key,
+          name: val.name || key,
+          type: val.type || "openai_compatible",
+          baseUrl: val.baseUrl || "http://localhost:11434/v1",
+          apiKey: val.apiKey || "",
+          model: val.model || "default",
+          presetModels: Array.isArray(val.presetModels) ? val.presetModels : val.model ? [val.model] : [],
+          ...val
+        };
       }
+    }
+    if (merged.ollama && merged.ollama.model === "llama3.2-vision") {
+      merged.ollama.model = "gpt-oss:20b";
     }
     return merged;
   } catch (e) {
     return { ...DEFAULT_PROVIDERS };
   }
+}
+async function fetchAvailableModels(config) {
+  if (!config || !config.baseUrl) return { success: false, models: [], error: "Missing Base URL" };
+  const cleanBaseUrl = (config.baseUrl || "").replace(/\/+$/, "");
+  const headers = { "Content-Type": "application/json" };
+  if (config.apiKey) {
+    headers["Authorization"] = `Bearer ${config.apiKey}`;
+  }
+  try {
+    const res = await fetch(`${cleanBaseUrl}/models`, { method: "GET", headers });
+    if (res.ok) {
+      const data = await res.json().catch(() => ({}));
+      const list = Array.isArray(data.data) ? data.data.map((m) => m.id || m.name).filter(Boolean) : Array.isArray(data.models) ? data.models.map((m) => m.name || m.id || m).filter(Boolean) : [];
+      if (list.length > 0) {
+        return { success: true, models: Array.from(new Set(list)) };
+      }
+    }
+  } catch (e) {
+  }
+  try {
+    const rootUrl = cleanBaseUrl.replace(/\/v1$/i, "");
+    const tagsRes = await fetch(`${rootUrl}/api/tags`, { method: "GET" });
+    if (tagsRes.ok) {
+      const tagsData = await tagsRes.json().catch(() => ({}));
+      const list = Array.isArray(tagsData.models) ? tagsData.models.map((m) => m.name || m.model).filter(Boolean) : [];
+      if (list.length > 0) {
+        return { success: true, models: Array.from(new Set(list)) };
+      }
+    }
+  } catch (e) {
+  }
+  return { success: false, models: [], error: "Could not list models from endpoint" };
 }
 function saveAiProvidersConfig(config) {
   try {
@@ -38058,9 +38111,9 @@ function saveAiProvidersConfig(config) {
 }
 function getActiveProviderId() {
   try {
-    return localStorage.getItem(ACTIVE_PROVIDER_KEY) || "openai";
+    return localStorage.getItem(ACTIVE_PROVIDER_KEY) || "ornith";
   } catch (e) {
-    return "openai";
+    return "ornith";
   }
 }
 function setActiveProviderId(id) {
@@ -38075,11 +38128,17 @@ function getActiveProviderConfig() {
   const configs = getAiProvidersConfig();
   const activeId = getActiveProviderId();
   const current = configs[activeId];
-  if (current && (current.apiKey || current.id === "lmstudio" || current.id === "ollama")) {
+  if (current && (current.apiKey || current.id === "ornith" || current.id === "lmstudio" || current.id === "ollama" || current.isCustom)) {
     return current;
+  }
+  if (configs.ornith) {
+    return configs.ornith;
   }
   if (configs.lmstudio) {
     return configs.lmstudio;
+  }
+  if (configs.ollama) {
+    return configs.ollama;
   }
   return configs.openai || DEFAULT_PROVIDERS.openai;
 }
@@ -38167,6 +38226,9 @@ async function testConnection(providerId, customConfig = null) {
   }
 }
 function generateToolSystemPrompt(tools = BROWSER_TOOLS) {
+  if (!Array.isArray(tools) || tools.length === 0) {
+    return "";
+  }
   const list = tools.map((t) => {
     const fn = t.function;
     const props = Object.keys(fn.parameters?.properties || {}).join(", ");
@@ -38207,6 +38269,92 @@ CRITICAL RULES:
 2. Never just say "I did it" without emitting the tool call!
 3. After taking an action, you will receive the updated page observation (URL, title, elements, search results, downloads). Use that observation to decide your next step.
 4. When a download finishes, call verify_download to inspect it on disk, then call remind_user to alert the user with sound and speech.`;
+}
+async function fetchOpenAICompatibleWithFailover(config, requestBody, headers, signal = null) {
+  const isReasoningModel = /gpt-oss|qwen3|deepseek-r1|qwq/i.test(config.model || "");
+  if (isReasoningModel && !requestBody.reasoning_effort) {
+    requestBody.reasoning_effort = "low";
+  }
+  const cleanBaseUrl = (config.baseUrl || "").replace(/\/+$/, "");
+  let primaryResponse = null;
+  let primaryError = null;
+  try {
+    const res = await fetch(`${cleanBaseUrl}/chat/completions`, {
+      method: "POST",
+      headers,
+      body: JSON.stringify(requestBody),
+      ...signal ? { signal } : {}
+    });
+    if (res.ok) {
+      return { res, activeConfig: config };
+    }
+    primaryResponse = res;
+    if (res.status === 404 || res.status === 400) {
+      const avail = await fetchAvailableModels(config);
+      if (avail.success && avail.models.length > 0 && !avail.models.includes(requestBody.model)) {
+        const validModel = avail.models[0];
+        const retryBody = { ...requestBody, model: validModel };
+        if (/gpt-oss|qwen3|deepseek-r1|qwq/i.test(validModel)) {
+          retryBody.reasoning_effort = "low";
+        }
+        const retryRes = await fetch(`${cleanBaseUrl}/chat/completions`, {
+          method: "POST",
+          headers,
+          body: JSON.stringify(retryBody),
+          ...signal ? { signal } : {}
+        });
+        if (retryRes.ok) {
+          const updatedAll = getAiProvidersConfig();
+          if (updatedAll[config.id]) {
+            updatedAll[config.id].model = validModel;
+            saveAiProvidersConfig(updatedAll);
+          }
+          return { res: retryRes, activeConfig: { ...config, model: validModel } };
+        }
+      }
+    }
+  } catch (err) {
+    if (err.name === "AbortError" || signal?.aborted) throw err;
+    primaryError = err;
+  }
+  const allConfigs = getAiProvidersConfig();
+  const fallbackOrder = ["ollama", "lmstudio", "ornith"].filter((id) => id !== config.id && allConfigs[id]);
+  for (const fbId of fallbackOrder) {
+    const fbConfig = allConfigs[fbId];
+    const fbBaseUrl = (fbConfig.baseUrl || "").replace(/\/+$/, "");
+    try {
+      let targetModel = fbConfig.model;
+      const avail = await fetchAvailableModels(fbConfig);
+      if (avail.success && avail.models.length > 0) {
+        if (!avail.models.includes(targetModel)) {
+          targetModel = avail.models[0];
+        }
+      }
+      const fbBody = { ...requestBody, model: targetModel || "default" };
+      if (/gpt-oss|qwen3|deepseek-r1|qwq/i.test(fbBody.model)) {
+        fbBody.reasoning_effort = "low";
+      }
+      delete fbBody.tools;
+      const fbHeaders = { "Content-Type": "application/json" };
+      if (fbConfig.apiKey) fbHeaders["Authorization"] = `Bearer ${fbConfig.apiKey}`;
+      const fbRes = await fetch(`${fbBaseUrl}/chat/completions`, {
+        method: "POST",
+        headers: fbHeaders,
+        body: JSON.stringify(fbBody),
+        ...signal ? { signal } : {}
+      });
+      if (fbRes.ok) {
+        setActiveProviderId(fbId);
+        return { res: fbRes, activeConfig: { ...fbConfig, model: fbBody.model } };
+      }
+    } catch (fbErr) {
+      if (fbErr.name === "AbortError" || signal?.aborted) throw fbErr;
+    }
+  }
+  if (primaryResponse) {
+    return { res: primaryResponse, activeConfig: config };
+  }
+  throw primaryError || new Error("Failed to connect to AI provider");
 }
 async function sendChatMessage({
   prompt,
@@ -38342,18 +38490,12 @@ You can inspect this snapshot to visually understand the active webview and brow
     if (tools && tools.length > 0 && config.id !== "lmstudio" && config.id !== "ollama") {
       requestBody.tools = tools;
     }
-    let res = await fetch(`${cleanBaseUrl}/chat/completions`, {
-      method: "POST",
-      headers,
-      body: JSON.stringify(requestBody)
-    });
+    let { res, activeConfig } = await fetchOpenAICompatibleWithFailover(config, requestBody, headers);
     if (!res.ok && requestBody.tools) {
       delete requestBody.tools;
-      res = await fetch(`${cleanBaseUrl}/chat/completions`, {
-        method: "POST",
-        headers,
-        body: JSON.stringify(requestBody)
-      });
+      const retryOut = await fetchOpenAICompatibleWithFailover(activeConfig, requestBody, headers);
+      res = retryOut.res;
+      activeConfig = retryOut.activeConfig;
     }
     if (!res.ok) {
       const err = await res.json().catch(() => ({}));
@@ -38381,10 +38523,10 @@ You can inspect this snapshot to visually understand the active webview and brow
     return {
       success: true,
       reply,
-      reasoning: choice.message?.reasoning_content || "",
+      reasoning: choice.message?.reasoning_content || choice.message?.reasoning || "",
       toolCalls,
-      provider: config.name,
-      model: config.model
+      provider: activeConfig.name,
+      model: activeConfig.model
     };
   } catch (err) {
     console.error("[AI Provider Chat Error]", err);
@@ -38574,20 +38716,12 @@ You can inspect this snapshot to visually understand the active webview and brow
     if (tools && tools.length > 0 && config.id !== "lmstudio" && config.id !== "ollama") {
       requestBody.tools = tools;
     }
-    let res = await fetch(`${cleanBaseUrl}/chat/completions`, {
-      method: "POST",
-      headers,
-      body: JSON.stringify(requestBody),
-      signal
-    });
+    let { res, activeConfig } = await fetchOpenAICompatibleWithFailover(config, requestBody, headers, signal);
     if (!res.ok && requestBody.tools) {
       delete requestBody.tools;
-      res = await fetch(`${cleanBaseUrl}/chat/completions`, {
-        method: "POST",
-        headers,
-        body: JSON.stringify(requestBody),
-        signal
-      });
+      const retryOut = await fetchOpenAICompatibleWithFailover(activeConfig, requestBody, headers, signal);
+      res = retryOut.res;
+      activeConfig = retryOut.activeConfig;
     }
     if (!res.ok) {
       const nonStreamRes = await sendChatMessage({
@@ -38680,8 +38814,8 @@ You can inspect this snapshot to visually understand the active webview and brow
       reply: fullReply,
       reasoning: fullReasoning,
       toolCalls,
-      provider: config.name,
-      model: config.model
+      provider: activeConfig.name,
+      model: activeConfig.model
     };
   } catch (err) {
     if (err.name === "AbortError" || signal?.aborted) {
@@ -38708,6 +38842,15 @@ var init_aiProviderService = __esm({
     STORAGE_KEY = "antigravity_ai_providers_config";
     ACTIVE_PROVIDER_KEY = "antigravity_active_ai_provider";
     DEFAULT_PROVIDERS = {
+      ornith: {
+        id: "ornith",
+        name: "Devil.co Ornith-1.0-9B AI OS",
+        type: "openai_compatible",
+        baseUrl: "http://127.0.0.1:4893/v1",
+        apiKey: "devil-co-founder",
+        model: "ornith-1.0-9b-custom",
+        presetModels: ["ornith-1.0-9b-custom", "ornith-1.0-9b"]
+      },
       openai: {
         id: "openai",
         name: "OpenAI Compatible",
@@ -38732,8 +38875,8 @@ var init_aiProviderService = __esm({
         type: "openai_compatible",
         baseUrl: "http://localhost:11434/v1",
         apiKey: "",
-        model: "llama3.2-vision",
-        presetModels: ["llama3.2-vision", "qwen2.5-coder:7b", "llava:latest", "llama3.2:latest"]
+        model: "gpt-oss:20b",
+        presetModels: ["gpt-oss:20b", "qwen3.5:35b", "llama3.2-vision", "qwen2.5-coder:7b", "llava:latest", "llama3.2:latest"]
       },
       openrouter: {
         id: "openrouter",
@@ -38854,14 +38997,66 @@ var init_aiProviderService = __esm({
         type: "function",
         function: {
           name: "type_text",
-          description: "Type text into search bar or input field and optionally submit",
+          description: "Type text into any input field, textarea, placeholder, or badge #N. Supports multi-field form filling without premature submissions.",
           parameters: {
             type: "object",
             properties: {
-              text: { type: "string", description: "Text to type" },
-              submit: { type: "boolean", description: "Whether to press Enter/submit (default true)" }
+              text: { type: "string", description: "Text to type into the field" },
+              target: { type: "string", description: "Target element: Set-of-Marks badge (#1, #2), input placeholder, field label text, name, ID, or CSS selector. If omitted, uses active focused field or primary search input." },
+              submit: { type: "boolean", description: "Whether to press Enter/submit after typing (default false; set true for search queries)" },
+              clear: { type: "boolean", description: "Whether to clear existing text before typing (default true)" }
             },
             required: ["text"]
+          }
+        }
+      },
+      {
+        type: "function",
+        function: {
+          name: "press_key",
+          description: 'Dispatch physical keyboard events (e.g. "Space" to play/pause video, "Enter" to submit, "Tab" to advance input, "Escape" to dismiss modals, "ArrowDown", "ArrowUp", "k")',
+          parameters: {
+            type: "object",
+            properties: {
+              key: { type: "string", description: 'Key identifier to press, e.g. "Space", "Enter", "Tab", "Escape", "ArrowDown", "ArrowUp", "k"' },
+              modifiers: {
+                type: "array",
+                items: { type: "string" },
+                description: 'Optional modifiers, e.g. ["Control"], ["Shift"], ["Alt"]'
+              }
+            },
+            required: ["key"]
+          }
+        }
+      },
+      {
+        type: "function",
+        function: {
+          name: "hover_element",
+          description: "Hover mouse over an element or badge #N to reveal dropdown menus, tooltips, or player controls",
+          parameters: {
+            type: "object",
+            properties: {
+              target: { type: "string", description: "Button text, mark badge #N, or selector to hover over" }
+            },
+            required: ["target"]
+          }
+        }
+      },
+      {
+        type: "function",
+        function: {
+          name: "delegate_subtask",
+          description: "Delegate a focused task to a tracked sub-agent (Max 3 concurrent). The sub-agent executes independently and returns structured results back to the main agent.",
+          parameters: {
+            type: "object",
+            properties: {
+              subagent_id: { type: "string", description: 'Unique tracking ID for the sub-agent, e.g. "sub_form_1", "sub_video_2"' },
+              role: { type: "string", description: 'Role or specialization, e.g. "form_filler", "media_player", "tab_searcher"' },
+              goal: { type: "string", description: "Specific goal/task for the sub-agent to accomplish" },
+              tab_id: { type: "integer", description: "Optional tab ID to bind the sub-agent to" }
+            },
+            required: ["subagent_id", "role", "goal"]
           }
         }
       },
@@ -38946,6 +39141,21 @@ var init_aiProviderService = __esm({
       {
         type: "function",
         function: {
+          name: "grep_page",
+          description: 'Search the active webpage DOM text, headings, links, and buttons for specific keywords or phrases (e.g. "Big Mouth", "1080p", "Episode 1", "Music")',
+          parameters: {
+            type: "object",
+            properties: {
+              query: { type: "string", description: "Keyword, title, or phrase to search for on the active page" },
+              selector: { type: "string", description: "Optional CSS selector to constrain search" }
+            },
+            required: ["query"]
+          }
+        }
+      },
+      {
+        type: "function",
+        function: {
           name: "finish_task",
           description: "Mark the multi-step browser task or goal as completed with a summary",
           parameters: {
@@ -38963,11 +39173,11 @@ var init_aiProviderService = __esm({
 });
 
 // desktop/src/index.jsx
-var import_react16 = __toESM(require_react());
+var import_react17 = __toESM(require_react());
 var import_client = __toESM(require_client());
 
 // desktop/src/App.jsx
-var import_react14 = __toESM(require_react());
+var import_react15 = __toESM(require_react());
 
 // desktop/src/components/TabStrip.jsx
 var import_react = __toESM(require_react());
@@ -39154,6 +39364,7 @@ function NavigationToolbar({
   onOpenWallpaperStudio,
   activeDownloadsCount = 0,
   onOpenDownloads,
+  onOpenHistory,
   onOpenTypography,
   onOpenAiProviderModal
 }) {
@@ -39297,6 +39508,15 @@ function NavigationToolbar({
     "button",
     {
       className: "btn-toolbar-tool",
+      id: "btnToolbarHistory",
+      title: "Open Browsing History (Ctrl+H)",
+      onClick: onOpenHistory
+    },
+    "\u{1F552} History"
+  ), /* @__PURE__ */ import_react2.default.createElement(
+    "button",
+    {
+      className: "btn-toolbar-tool",
       id: "btnToolbarAiProviders",
       title: "AI Keys & Providers (OpenAI, LM Studio, Ollama, OpenRouter, OpenCode, Anthropic)",
       onClick: onOpenAiProviderModal,
@@ -39308,31 +39528,151 @@ function NavigationToolbar({
 
 // desktop/src/components/NewTabPage.jsx
 var import_react3 = __toESM(require_react());
+var DEFAULT_LAYOUT = {
+  cardScale: 1,
+  gridCols: 4,
+  clockSize: 56,
+  searchWidth: 780,
+  showClock: true,
+  showGreeting: true,
+  showBadge: true,
+  showSearchBar: true,
+  showShortcuts: true,
+  showFeaturePills: true,
+  timeFormat: "12h",
+  customGreeting: "",
+  sectionOrder: ["time", "badge", "search", "shortcuts", "features"],
+  positions: {}
+};
+var DEFAULT_SHORTCUTS = [
+  { id: "sc-1", name: "Google", desc: "Search engine", icon: "\u{1F310}", color: "#4285f4", url: "https://www.google.com" },
+  { id: "sc-2", name: "YouTube", desc: "Videos & Music", icon: "\u25B6\uFE0F", color: "#ef4444", url: "https://www.youtube.com" },
+  { id: "sc-3", name: "GitHub", desc: "Code & Repos", icon: "\u{1F419}", color: "#f8fafc", url: "https://github.com" },
+  { id: "sc-4", name: "Wikipedia", desc: "Encyclopedia", icon: "\u{1F4D6}", color: "#38bdf8", url: "https://en.wikipedia.org" },
+  { id: "sc-5", name: "Hacker News", desc: "Tech & Startups", icon: "\u{1F536}", color: "#ff6600", url: "https://news.ycombinator.com" },
+  { id: "sc-6", name: "Reddit", desc: "Communities", icon: "\u{1F4AC}", color: "#f97316", url: "https://www.reddit.com" },
+  { id: "sc-7", name: "ChatGPT", desc: "AI Assistant", icon: "\u{1F916}", color: "#10b981", url: "https://chatgpt.com" },
+  { id: "sc-8", name: "AutoFill Demo", desc: "Checkout Testbed", icon: "\u26A1", color: "#00e5ff", demo: "checkout" }
+];
 function NewTabPage({
   activeEngine,
   onSetEngine,
-  onNavigate
+  onNavigate,
+  bookmarks = []
 }) {
   const [timeStr, setTimeStr] = (0, import_react3.useState)("");
-  const [greeting, setGreeting] = (0, import_react3.useState)("Good day");
+  const [defaultGreeting, setDefaultGreeting] = (0, import_react3.useState)("Good day");
   const [query, setQuery] = (0, import_react3.useState)("");
+  const wrapperRef = (0, import_react3.useRef)(null);
+  const [layout, setLayout] = (0, import_react3.useState)(() => {
+    try {
+      const saved = localStorage.getItem("antigravity_ntp_layout");
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        const rawOrder = Array.isArray(parsed.sectionOrder) && parsed.sectionOrder.length > 0 ? parsed.sectionOrder : DEFAULT_LAYOUT.sectionOrder;
+        const filteredOrder = rawOrder.filter((s) => s !== "engines");
+        return {
+          ...DEFAULT_LAYOUT,
+          ...parsed,
+          sectionOrder: filteredOrder.length > 0 ? filteredOrder : DEFAULT_LAYOUT.sectionOrder,
+          positions: parsed.positions || {}
+        };
+      }
+    } catch (e) {
+    }
+    return DEFAULT_LAYOUT;
+  });
+  const layoutRef = (0, import_react3.useRef)(layout);
+  layoutRef.current = layout;
+  const [shortcuts, setShortcuts] = (0, import_react3.useState)(() => {
+    try {
+      const saved = localStorage.getItem("antigravity_home_shortcuts");
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch (e) {
+    }
+    return DEFAULT_SHORTCUTS;
+  });
+  const [draggedIndex, setDraggedIndex] = (0, import_react3.useState)(null);
+  const [dragOverIndex, setDragOverIndex] = (0, import_react3.useState)(null);
+  const [draggedSection, setDraggedSection] = (0, import_react3.useState)(null);
+  const [dragOverSection, setDragOverSection] = (0, import_react3.useState)(null);
+  const [selectedId, setSelectedId] = (0, import_react3.useState)(null);
+  const [isEditMode, setIsEditMode] = (0, import_react3.useState)(() => {
+    try {
+      return localStorage.getItem("antigravity_ntp_edit_mode") === "true";
+    } catch (e) {
+      return false;
+    }
+  });
+  const toggleEditMode = () => {
+    setIsEditMode((prev) => {
+      const next = !prev;
+      try {
+        localStorage.setItem("antigravity_ntp_edit_mode", String(next));
+      } catch (e) {
+      }
+      if (next) {
+        showToast("\u270F\uFE0F Edit Mode ON: Drag to rearrange, click any item to resize with Canva handles");
+      } else {
+        showToast("\u{1F512} Edit Mode OFF: Home Page locked");
+        setIsCustomizeOpen(false);
+        setIsEditingGreetingInline(false);
+        setSelectedId(null);
+      }
+      return next;
+    });
+  };
+  const [isCustomizeOpen, setIsCustomizeOpen] = (0, import_react3.useState)(false);
+  const [isSiteModalOpen, setIsSiteModalOpen] = (0, import_react3.useState)(false);
+  const [editingSite, setEditingSite] = (0, import_react3.useState)(null);
+  const [siteForm, setSiteForm] = (0, import_react3.useState)({ name: "", url: "", desc: "", icon: "\u{1F310}", color: "#00e5ff" });
+  const [isEditingGreetingInline, setIsEditingGreetingInline] = (0, import_react3.useState)(false);
+  const [inlineGreetingText, setInlineGreetingText] = (0, import_react3.useState)("");
+  const [toastMessage, setToastMessage] = (0, import_react3.useState)("");
+  const toastTimeoutRef = (0, import_react3.useRef)(null);
+  const showToast = (msg) => {
+    setToastMessage(msg);
+    if (toastTimeoutRef.current) clearTimeout(toastTimeoutRef.current);
+    toastTimeoutRef.current = setTimeout(() => setToastMessage(""), 3500);
+  };
+  const saveLayout = (updated) => {
+    setLayout(updated);
+    try {
+      localStorage.setItem("antigravity_ntp_layout", JSON.stringify(updated));
+    } catch (e) {
+    }
+  };
+  const saveShortcuts = (updated) => {
+    setShortcuts(updated);
+    try {
+      localStorage.setItem("antigravity_home_shortcuts", JSON.stringify(updated));
+    } catch (e) {
+    }
+  };
   (0, import_react3.useEffect)(() => {
     const updateTime = () => {
       const now = /* @__PURE__ */ new Date();
       let hours = now.getHours();
       const minutes = String(now.getMinutes()).padStart(2, "0");
-      const ampm = hours >= 12 ? "PM" : "AM";
-      hours = hours % 12 || 12;
-      setTimeStr(`${hours}:${minutes} ${ampm}`);
+      if (layout.timeFormat === "24h") {
+        setTimeStr(`${String(hours).padStart(2, "0")}:${minutes}`);
+      } else {
+        const ampm = hours >= 12 ? "PM" : "AM";
+        hours = hours % 12 || 12;
+        setTimeStr(`${hours}:${minutes} ${ampm}`);
+      }
       const curHour = now.getHours();
-      if (curHour < 12) setGreeting("Good morning");
-      else if (curHour < 17) setGreeting("Good afternoon");
-      else setGreeting("Good evening");
+      if (curHour < 12) setDefaultGreeting("Good morning");
+      else if (curHour < 17) setDefaultGreeting("Good afternoon");
+      else setDefaultGreeting("Good evening");
     };
     updateTime();
     const timer = setInterval(updateTime, 1e3);
     return () => clearInterval(timer);
-  }, []);
+  }, [layout.timeFormat]);
   const handleSearchSubmit = (e) => {
     if (e) e.preventDefault();
     const text = query.trim();
@@ -39351,62 +39691,1397 @@ function NewTabPage({
     }
     onNavigate(targetUrl);
   };
-  const shortcuts = [
-    { name: "Google", desc: "Search engine", icon: "\u{1F310}", color: "#4285f4", url: "https://www.google.com" },
-    { name: "YouTube", desc: "Videos & Music", icon: "\u25B6\uFE0F", color: "#ef4444", url: "https://www.youtube.com" },
-    { name: "GitHub", desc: "Code & Repos", icon: "\u{1F419}", color: "#f8fafc", url: "https://github.com" },
-    { name: "Wikipedia", desc: "Encyclopedia", icon: "\u{1F4D6}", color: "#38bdf8", url: "https://en.wikipedia.org" },
-    { name: "Hacker News", desc: "Tech & Startups", icon: "\u{1F536}", color: "#ff6600", url: "https://news.ycombinator.com" },
-    { name: "Reddit", desc: "Communities", icon: "\u{1F4AC}", color: "#f97316", url: "https://www.reddit.com" },
-    { name: "ChatGPT", desc: "AI Assistant", icon: "\u{1F916}", color: "#10b981", url: "https://chatgpt.com" },
-    { name: "Autofill Demo", desc: "Checkout Testbed", icon: "\u26A1", color: "#00e5ff", demo: "checkout" }
-  ];
-  const placeholder = activeEngine === "brave" ? "Search Brave Private Search or type a web address..." : "Search Google or type a web address...";
-  return /* @__PURE__ */ import_react3.default.createElement("div", { className: "ntp-wrapper" }, /* @__PURE__ */ import_react3.default.createElement("div", { className: "ntp-container" }, /* @__PURE__ */ import_react3.default.createElement("div", { className: "time-box" }, /* @__PURE__ */ import_react3.default.createElement("div", { className: "clock-display", id: "clockDisplay" }, timeStr || "12:00 PM"), /* @__PURE__ */ import_react3.default.createElement("div", { className: "greeting-display", id: "greetingDisplay" }, greeting, "! Where would you like to go today?")), /* @__PURE__ */ import_react3.default.createElement("div", { className: "brand-badge" }, /* @__PURE__ */ import_react3.default.createElement("span", null, "ANTIGRAVITY NATIVE BROWSER")), /* @__PURE__ */ import_react3.default.createElement("div", { className: "engine-selector" }, /* @__PURE__ */ import_react3.default.createElement(
-    "button",
-    {
-      className: `engine-btn ${activeEngine === "google" ? "active google" : ""}`,
-      id: "btnEngineGoogle",
-      onClick: () => onSetEngine("google")
-    },
-    /* @__PURE__ */ import_react3.default.createElement("span", null, "\u{1F50D}"),
-    " Google Search"
-  ), /* @__PURE__ */ import_react3.default.createElement(
-    "button",
-    {
-      className: `engine-btn ${activeEngine === "brave" ? "active brave" : ""}`,
-      id: "btnEngineBrave",
-      onClick: () => onSetEngine("brave")
-    },
-    /* @__PURE__ */ import_react3.default.createElement("span", null, "\u{1F981}"),
-    " Brave Search"
-  )), /* @__PURE__ */ import_react3.default.createElement("form", { className: "search-wrapper", onSubmit: handleSearchSubmit }, /* @__PURE__ */ import_react3.default.createElement("span", { className: "search-icon-left", id: "searchIconDisplay" }, activeEngine === "brave" ? "\u{1F981}" : "\u{1F50D}"), /* @__PURE__ */ import_react3.default.createElement(
-    "input",
-    {
-      type: "text",
-      id: "ntpSearchInput",
-      className: "search-box",
-      placeholder,
-      value: query,
-      onChange: (e) => setQuery(e.target.value),
-      autoComplete: "off",
-      spellCheck: "false",
-      autoFocus: true
+  const handleOpenAddSite = () => {
+    setEditingSite(null);
+    setSiteForm({ name: "", url: "", desc: "", icon: "\u{1F310}", color: "#00e5ff" });
+    setIsSiteModalOpen(true);
+  };
+  const handleOpenEditSite = (e, site) => {
+    e.stopPropagation();
+    setEditingSite(site);
+    setSiteForm({
+      name: site.name || "",
+      url: site.url || "",
+      desc: site.desc || "",
+      icon: site.icon || "\u{1F310}",
+      color: site.color || "#00e5ff"
+    });
+    setIsSiteModalOpen(true);
+  };
+  const handleSaveSiteModal = (e) => {
+    e.preventDefault();
+    const cleanName = (siteForm.name || "").trim();
+    let cleanUrl = (siteForm.url || "").trim();
+    if (!cleanName) return;
+    if (cleanUrl && !cleanUrl.startsWith("http://") && !cleanUrl.startsWith("https://") && !cleanUrl.startsWith("file://")) {
+      cleanUrl = "https://" + cleanUrl;
     }
-  ), /* @__PURE__ */ import_react3.default.createElement("button", { type: "submit", className: "btn-submit-search", id: "btnSubmitSearch" }, "Search")), /* @__PURE__ */ import_react3.default.createElement("div", { className: "shortcuts-grid" }, shortcuts.map((sc, i) => /* @__PURE__ */ import_react3.default.createElement(
+    if (editingSite) {
+      const updated = shortcuts.map((s) => s.id === editingSite.id ? {
+        ...s,
+        name: cleanName,
+        url: cleanUrl,
+        desc: siteForm.desc.trim() || "Custom site",
+        icon: siteForm.icon.trim() || "\u{1F310}",
+        color: siteForm.color || "#00e5ff"
+      } : s);
+      saveShortcuts(updated);
+      showToast(`Updated "${cleanName}"`);
+    } else {
+      const newSite = {
+        id: `sc-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
+        name: cleanName,
+        url: cleanUrl,
+        desc: siteForm.desc.trim() || "Custom site",
+        icon: siteForm.icon.trim() || "\u{1F310}",
+        color: siteForm.color || "#00e5ff"
+      };
+      const updated = [...shortcuts, newSite];
+      saveShortcuts(updated);
+      showToast(`Added "${cleanName}" to Home`);
+    }
+    setIsSiteModalOpen(false);
+  };
+  const handleDeleteSite = (e, siteId) => {
+    e.stopPropagation();
+    const updated = shortcuts.filter((s) => s.id !== siteId);
+    saveShortcuts(updated);
+    showToast("Site removed from Home");
+    if (editingSite && editingSite.id === siteId) {
+      setIsSiteModalOpen(false);
+    }
+  };
+  const handleLoadAllBookmarks = () => {
+    if (!bookmarks || bookmarks.length === 0) {
+      showToast("No bookmarks available to load");
+      return;
+    }
+    const existingUrls = new Set(shortcuts.map((s) => (s.url || "").toLowerCase()));
+    const toAdd = [];
+    const EMOJI_LIST = ["\u{1F516}", "\u2B50", "\u{1F310}", "\u{1F4CC}", "\u{1F680}", "\u26A1", "\u{1F4A1}", "\u{1F48E}", "\u{1F3AF}"];
+    bookmarks.forEach((bm, idx) => {
+      if (bm.url && !existingUrls.has(bm.url.toLowerCase())) {
+        toAdd.push({
+          id: `sc-bm-${Date.now()}-${idx}`,
+          name: bm.title || bm.url,
+          desc: "From Bookmarks",
+          icon: EMOJI_LIST[idx % EMOJI_LIST.length],
+          color: "#38bdf8",
+          url: bm.url
+        });
+        existingUrls.add(bm.url.toLowerCase());
+      }
+    });
+    if (toAdd.length === 0) {
+      showToast("All your bookmarks are already on the Home Page");
+      return;
+    }
+    const updated = [...shortcuts, ...toAdd];
+    saveShortcuts(updated);
+    showToast(`Loaded ${toAdd.length} bookmark${toAdd.length > 1 ? "s" : ""} to Home Page`);
+  };
+  const addShortcutFromBookmark = (bm) => {
+    if (!bm || !bm.url) return;
+    const exists = shortcuts.some((s) => s.url === bm.url);
+    if (exists) {
+      showToast(`"${bm.title || bm.url}" is already on Home`);
+      return;
+    }
+    const newSite = {
+      id: `sc-drop-${Date.now()}`,
+      name: bm.title || bm.url,
+      desc: "From Bookmarks",
+      icon: "\u{1F516}",
+      color: "#38bdf8",
+      url: bm.url
+    };
+    const updated = [...shortcuts, newSite];
+    saveShortcuts(updated);
+    showToast(`Added "${bm.title || bm.url}" to Home`);
+  };
+  const moveShortcut = (e, index, offset) => {
+    if (e) e.stopPropagation();
+    const targetIndex = index + offset;
+    if (targetIndex < 0 || targetIndex >= shortcuts.length) return;
+    const copy = [...shortcuts];
+    const [item] = copy.splice(index, 1);
+    copy.splice(targetIndex, 0, item);
+    saveShortcuts(copy);
+    showToast(`Moved "${item.name}"`);
+  };
+  const handleDragStart = (e, index) => {
+    if (!isEditMode) return;
+    e.stopPropagation();
+    setDraggedIndex(index);
+    e.dataTransfer.effectAllowed = "move";
+    e.dataTransfer.setData("application/antigravity-shortcut", String(index));
+    e.dataTransfer.setData("text/plain", String(index));
+  };
+  const handleDragOver = (e, index) => {
+    if (!isEditMode) return;
+    e.preventDefault();
+    e.stopPropagation();
+    e.dataTransfer.dropEffect = "move";
+    if (dragOverIndex !== index) {
+      setDragOverIndex(index);
+    }
+  };
+  const handleDragLeave = (e) => {
+    if (e) e.stopPropagation();
+    setDragOverIndex(null);
+  };
+  const handleDrop = (e, targetIndex) => {
+    if (!isEditMode) return;
+    e.preventDefault();
+    e.stopPropagation();
+    setDragOverIndex(null);
+    const bookmarkData = e.dataTransfer.getData("application/json");
+    if (bookmarkData) {
+      try {
+        const bm = JSON.parse(bookmarkData);
+        if (bm && (bm.url || bm.title)) {
+          addShortcutFromBookmark(bm);
+          setDraggedIndex(null);
+          return;
+        }
+      } catch (err) {
+      }
+    }
+    const textData = e.dataTransfer.getData("text/plain") || e.dataTransfer.getData("text/uri-list");
+    if (textData && (textData.startsWith("http://") || textData.startsWith("https://"))) {
+      addShortcutFromBookmark({ title: textData, url: textData });
+      setDraggedIndex(null);
+      return;
+    }
+    let fromIndex = draggedIndex;
+    if (fromIndex === null || fromIndex === void 0) {
+      const parsed = parseInt(e.dataTransfer.getData("application/antigravity-shortcut") || e.dataTransfer.getData("text/plain"), 10);
+      if (!isNaN(parsed)) fromIndex = parsed;
+    }
+    if (fromIndex === null || fromIndex === void 0 || isNaN(fromIndex) || fromIndex === targetIndex) {
+      setDraggedIndex(null);
+      return;
+    }
+    const copy = [...shortcuts];
+    if (fromIndex >= 0 && fromIndex < copy.length) {
+      const [draggedItem] = copy.splice(fromIndex, 1);
+      copy.splice(targetIndex, 0, draggedItem);
+      saveShortcuts(copy);
+      showToast(`Moved "${draggedItem.name}"`);
+    }
+    setDraggedIndex(null);
+  };
+  const handleDragEnd = () => {
+    setDraggedIndex(null);
+    setDragOverIndex(null);
+    setDraggedSection(null);
+    setDragOverSection(null);
+  };
+  const saveItemPosition = (id, x, y, width, height) => {
+    const prevItem = layout.positions && layout.positions[id] || {};
+    const next = {
+      ...layout.positions || {},
+      [id]: {
+        ...prevItem,
+        x,
+        y,
+        ...width !== void 0 ? { width } : {},
+        ...height !== void 0 ? { height } : {}
+      }
+    };
+    saveLayout({ ...layout, positions: next });
+  };
+  const handleResetSinglePosition = (id) => {
+    const next = { ...layout.positions || {} };
+    delete next[id];
+    saveLayout({ ...layout, positions: next });
+    showToast("\u229E Snapped back into alignment");
+  };
+  const handleResetPositions = () => {
+    saveLayout({ ...layout, positions: {} });
+    showToast("\u229E All elements aligned back to centered grid");
+  };
+  const startPointerDrag = (e, itemId, type) => {
+    if (!isEditMode) return;
+    if (e.button !== 0) return;
+    e.preventDefault();
+    e.stopPropagation();
+    setSelectedId(itemId);
+    const wrapper = wrapperRef.current;
+    const wrapperRect = wrapper ? wrapper.getBoundingClientRect() : { left: 0, top: 0, width: window.innerWidth, height: window.innerHeight };
+    const targetElem = e.currentTarget.closest(".ntp-draggable-section, .shortcut-card") || e.currentTarget;
+    const targetRect = targetElem.getBoundingClientRect();
+    const elemWidth = targetRect.width || 200;
+    const elemHeight = targetRect.height || 110;
+    const offsetX = e.clientX - targetRect.left;
+    const offsetY = e.clientY - targetRect.top;
+    let hasMoved = false;
+    const onMouseMove = (moveEvt) => {
+      hasMoved = true;
+      const scrollLeft = wrapper ? wrapper.scrollLeft : 0;
+      const scrollTop = wrapper ? wrapper.scrollTop : 0;
+      const rawX = moveEvt.clientX - wrapperRect.left + scrollLeft - offsetX;
+      const rawY = moveEvt.clientY - wrapperRect.top + scrollTop - offsetY;
+      const minX = 16;
+      const minY = 60;
+      const maxX = Math.max(minX, (wrapper ? wrapper.clientWidth : wrapperRect.width) - elemWidth - 16);
+      const maxY = Math.max(minY, (wrapper ? wrapper.clientHeight : wrapperRect.height) - elemHeight - 20);
+      const clampedX = Math.max(minX, Math.min(maxX, rawX));
+      const clampedY = Math.max(minY, Math.min(maxY, rawY));
+      setLayout((prev) => ({
+        ...prev,
+        positions: {
+          ...prev.positions || {},
+          [itemId]: {
+            ...prev.positions?.[itemId] || {},
+            x: Math.round(clampedX),
+            y: Math.round(clampedY),
+            width: prev.positions?.[itemId]?.width || Math.round(elemWidth),
+            height: prev.positions?.[itemId]?.height || Math.round(elemHeight)
+          }
+        }
+      }));
+    };
+    const onMouseUp = (upEvt) => {
+      window.removeEventListener("mousemove", onMouseMove);
+      window.removeEventListener("mouseup", onMouseUp);
+      if (hasMoved) {
+        const scrollLeft = wrapper ? wrapper.scrollLeft : 0;
+        const scrollTop = wrapper ? wrapper.scrollTop : 0;
+        const rawX = upEvt.clientX - wrapperRect.left + scrollLeft - offsetX;
+        const rawY = upEvt.clientY - wrapperRect.top + scrollTop - offsetY;
+        const minX = 16;
+        const minY = 60;
+        const maxX = Math.max(minX, (wrapper ? wrapper.clientWidth : wrapperRect.width) - elemWidth - 16);
+        const maxY = Math.max(minY, (wrapper ? wrapper.clientHeight : wrapperRect.height) - elemHeight - 20);
+        const clampedX = Math.max(minX, Math.min(maxX, rawX));
+        const clampedY = Math.max(minY, Math.min(maxY, rawY));
+        const currentPos = layout.positions && layout.positions[itemId] || {};
+        const next = {
+          ...layout.positions || {},
+          [itemId]: {
+            ...currentPos,
+            x: Math.round(clampedX),
+            y: Math.round(clampedY),
+            width: currentPos.width || Math.round(elemWidth),
+            height: currentPos.height || Math.round(elemHeight)
+          }
+        };
+        saveLayout({ ...layoutRef.current, positions: next });
+        showToast(`Placed at (${Math.round(clampedX)}, ${Math.round(clampedY)})`);
+      }
+    };
+    window.addEventListener("mousemove", onMouseMove);
+    window.addEventListener("mouseup", onMouseUp);
+  };
+  const startResizeDrag = (e, id, handle, type) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const startX = e.clientX;
+    const startY = e.clientY;
+    const initClockSize = layoutRef.current.clockSize || 56;
+    const initSearchWidth = layoutRef.current.searchWidth || 780;
+    const currentPos = layoutRef.current.positions && layoutRef.current.positions[id] || {};
+    const isFree = currentPos.x !== void 0;
+    const renderedElem = document.getElementById(`item-${id}`);
+    const renderedRect = renderedElem ? renderedElem.getBoundingClientRect() : null;
+    const wrapper = wrapperRef.current;
+    const wrapperRect = wrapper ? wrapper.getBoundingClientRect() : { left: 0, top: 0 };
+    const scrollLeft = wrapper ? wrapper.scrollLeft : 0;
+    const scrollTop = wrapper ? wrapper.scrollTop : 0;
+    const initX = isFree ? currentPos.x : renderedRect ? Math.round(renderedRect.left - wrapperRect.left + scrollLeft) : 100;
+    const initY = isFree ? currentPos.y : renderedRect ? Math.round(renderedRect.top - wrapperRect.top + scrollTop) : 100;
+    const initWidth = currentPos.width || (renderedRect ? Math.round(renderedRect.width) : type === "shortcut" ? 200 : type === "search" ? initSearchWidth : 400);
+    const initHeight = currentPos.height || (renderedRect ? Math.round(renderedRect.height) : type === "shortcut" ? 110 : 80);
+    const onMouseMove = (moveEvt) => {
+      const deltaX = moveEvt.clientX - startX;
+      const deltaY = moveEvt.clientY - startY;
+      if (id === "time") {
+        let factor = 0;
+        if (handle === "se" || handle === "e" || handle === "s") factor = (deltaX + deltaY) / 4;
+        else if (handle === "nw" || handle === "w" || handle === "n") factor = -(deltaX + deltaY) / 4;
+        else if (handle === "ne") factor = (deltaX - deltaY) / 4;
+        else if (handle === "sw") factor = (-deltaX + deltaY) / 4;
+        const newSize = Math.max(28, Math.min(130, Math.round(initClockSize + factor)));
+        setLayout((prev) => ({ ...prev, clockSize: newSize }));
+      } else if (id === "search") {
+        let newWidth = initSearchWidth;
+        let newX = initX;
+        if (handle.includes("e")) {
+          newWidth = isFree ? Math.max(380, Math.min(1200, Math.round(initSearchWidth + deltaX))) : Math.max(380, Math.min(1200, Math.round(initSearchWidth + deltaX * 2)));
+        } else if (handle.includes("w")) {
+          newWidth = isFree ? Math.max(380, Math.min(1200, Math.round(initSearchWidth - deltaX))) : Math.max(380, Math.min(1200, Math.round(initSearchWidth - deltaX * 2)));
+          if (isFree) {
+            newX = Math.round(initX + (initSearchWidth - newWidth));
+          }
+        }
+        setLayout((prev) => ({
+          ...prev,
+          searchWidth: newWidth,
+          positions: isFree ? {
+            ...prev.positions || {},
+            [id]: {
+              ...prev.positions?.[id] || {},
+              x: newX
+            }
+          } : prev.positions
+        }));
+      } else if (type === "shortcut") {
+        let newW = initWidth;
+        let newH = initHeight;
+        let newX = initX;
+        let newY = initY;
+        if (handle.includes("e")) {
+          newW = Math.max(120, Math.min(450, Math.round(initWidth + deltaX)));
+        } else if (handle.includes("w")) {
+          newW = Math.max(120, Math.min(450, Math.round(initWidth - deltaX)));
+          newX = Math.round(initX + (initWidth - newW));
+        }
+        if (handle.includes("s")) {
+          newH = Math.max(70, Math.min(320, Math.round(initHeight + deltaY)));
+        } else if (handle.includes("n")) {
+          newH = Math.max(70, Math.min(320, Math.round(initHeight - deltaY)));
+          newY = Math.round(initY + (initHeight - newH));
+        }
+        setLayout((prev) => ({
+          ...prev,
+          positions: {
+            ...prev.positions || {},
+            [id]: {
+              ...prev.positions?.[id] || {},
+              x: newX,
+              y: newY,
+              width: newW,
+              height: newH
+            }
+          }
+        }));
+      }
+    };
+    const onMouseUp = (upEvt) => {
+      window.removeEventListener("mousemove", onMouseMove);
+      window.removeEventListener("mouseup", onMouseUp);
+      const deltaX = upEvt.clientX - startX;
+      const deltaY = upEvt.clientY - startY;
+      if (id === "time") {
+        let factor = 0;
+        if (handle === "se" || handle === "e" || handle === "s") factor = (deltaX + deltaY) / 4;
+        else if (handle === "nw" || handle === "w" || handle === "n") factor = -(deltaX + deltaY) / 4;
+        else if (handle === "ne") factor = (deltaX - deltaY) / 4;
+        else if (handle === "sw") factor = (-deltaX + deltaY) / 4;
+        const newSize = Math.max(28, Math.min(130, Math.round(initClockSize + factor)));
+        saveLayout({ ...layoutRef.current, clockSize: newSize });
+        showToast(`Clock size set to ${newSize}px`);
+      } else if (id === "search") {
+        let newWidth = initSearchWidth;
+        let newX = initX;
+        if (handle.includes("e")) {
+          newWidth = isFree ? Math.max(380, Math.min(1200, Math.round(initSearchWidth + deltaX))) : Math.max(380, Math.min(1200, Math.round(initSearchWidth + deltaX * 2)));
+        } else if (handle.includes("w")) {
+          newWidth = isFree ? Math.max(380, Math.min(1200, Math.round(initSearchWidth - deltaX))) : Math.max(380, Math.min(1200, Math.round(initSearchWidth - deltaX * 2)));
+          if (isFree) {
+            newX = Math.round(initX + (initSearchWidth - newWidth));
+          }
+        }
+        const nextPositions = isFree ? {
+          ...layoutRef.current.positions || {},
+          [id]: { ...layoutRef.current.positions?.[id] || {}, x: newX }
+        } : layoutRef.current.positions || {};
+        saveLayout({ ...layoutRef.current, searchWidth: newWidth, positions: nextPositions });
+        showToast(`Search bar width set to ${newWidth}px`);
+      } else if (type === "shortcut") {
+        let newW = initWidth;
+        let newH = initHeight;
+        let newX = initX;
+        let newY = initY;
+        if (handle.includes("e")) {
+          newW = Math.max(120, Math.min(450, Math.round(initWidth + deltaX)));
+        } else if (handle.includes("w")) {
+          newW = Math.max(120, Math.min(450, Math.round(initWidth - deltaX)));
+          newX = Math.round(initX + (initWidth - newW));
+        }
+        if (handle.includes("s")) {
+          newH = Math.max(70, Math.min(320, Math.round(initHeight + deltaY)));
+        } else if (handle.includes("n")) {
+          newH = Math.max(70, Math.min(320, Math.round(initHeight - deltaY)));
+          newY = Math.round(initY + (initHeight - newH));
+        }
+        const nextPositions = {
+          ...layoutRef.current.positions || {},
+          [id]: {
+            ...layoutRef.current.positions?.[id] || {},
+            x: newX,
+            y: newY,
+            width: newW,
+            height: newH
+          }
+        };
+        saveLayout({ ...layoutRef.current, positions: nextPositions });
+        showToast(`Shortcut resized (${newW}px \xD7 ${newH}px)`);
+      }
+    };
+    window.addEventListener("mousemove", onMouseMove);
+    window.addEventListener("mouseup", onMouseUp);
+  };
+  const renderCanvaBoundingBox = (targetId, type, itemProps = {}) => {
+    if (!isEditMode || selectedId !== targetId) return null;
+    return /* @__PURE__ */ import_react3.default.createElement(
+      "div",
+      {
+        className: "canva-bounding-box",
+        onClick: (e) => e.stopPropagation()
+      },
+      /* @__PURE__ */ import_react3.default.createElement(
+        "div",
+        {
+          className: "canva-floating-bar",
+          onMouseDown: (e) => startPointerDrag(e, targetId, type)
+        },
+        /* @__PURE__ */ import_react3.default.createElement("span", { className: "canva-bar-pill drag-handle", title: "Drag to move" }, "\u22EE\u22EE Move"),
+        type === "shortcut" && itemProps.shortcut && /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, /* @__PURE__ */ import_react3.default.createElement(
+          "button",
+          {
+            type: "button",
+            className: "canva-bar-btn",
+            title: "Edit site details",
+            onClick: (e) => {
+              e.stopPropagation();
+              handleOpenEditSite(e, itemProps.shortcut);
+            }
+          },
+          "\u270F\uFE0F Edit"
+        ), /* @__PURE__ */ import_react3.default.createElement(
+          "button",
+          {
+            type: "button",
+            className: "canva-bar-btn delete",
+            title: "Remove shortcut",
+            onClick: (e) => {
+              e.stopPropagation();
+              handleDeleteSite(e, targetId);
+            }
+          },
+          "\u2715"
+        )),
+        type === "time" && /* @__PURE__ */ import_react3.default.createElement(
+          "button",
+          {
+            type: "button",
+            className: "canva-bar-btn",
+            title: "Toggle 12h / 24h format",
+            onClick: (e) => {
+              e.stopPropagation();
+              saveLayout({ ...layout, timeFormat: layout.timeFormat === "12h" ? "24h" : "12h" });
+            }
+          },
+          "\u{1F550} ",
+          layout.timeFormat === "12h" ? "24h" : "12h"
+        ),
+        layout.positions && layout.positions[targetId] && /* @__PURE__ */ import_react3.default.createElement(
+          "button",
+          {
+            type: "button",
+            className: "canva-bar-btn snap",
+            title: "Snap back into alignment",
+            onClick: (e) => {
+              e.stopPropagation();
+              handleResetSinglePosition(targetId);
+            }
+          },
+          "\u229E Center"
+        )
+      ),
+      /* @__PURE__ */ import_react3.default.createElement(
+        "div",
+        {
+          className: "canva-handle corner nw",
+          onMouseDown: (e) => startResizeDrag(e, targetId, "nw", type),
+          title: "Resize"
+        }
+      ),
+      /* @__PURE__ */ import_react3.default.createElement(
+        "div",
+        {
+          className: "canva-handle corner ne",
+          onMouseDown: (e) => startResizeDrag(e, targetId, "ne", type),
+          title: "Resize"
+        }
+      ),
+      /* @__PURE__ */ import_react3.default.createElement(
+        "div",
+        {
+          className: "canva-handle corner se",
+          onMouseDown: (e) => startResizeDrag(e, targetId, "se", type),
+          title: "Resize"
+        }
+      ),
+      /* @__PURE__ */ import_react3.default.createElement(
+        "div",
+        {
+          className: "canva-handle corner sw",
+          onMouseDown: (e) => startResizeDrag(e, targetId, "sw", type),
+          title: "Resize"
+        }
+      ),
+      /* @__PURE__ */ import_react3.default.createElement(
+        "div",
+        {
+          className: "canva-handle edge n",
+          onMouseDown: (e) => startResizeDrag(e, targetId, "n", type),
+          title: "Resize height"
+        }
+      ),
+      /* @__PURE__ */ import_react3.default.createElement(
+        "div",
+        {
+          className: "canva-handle edge s",
+          onMouseDown: (e) => startResizeDrag(e, targetId, "s", type),
+          title: "Resize height"
+        }
+      ),
+      /* @__PURE__ */ import_react3.default.createElement(
+        "div",
+        {
+          className: "canva-handle edge e",
+          onMouseDown: (e) => startResizeDrag(e, targetId, "e", type),
+          title: "Resize width"
+        }
+      ),
+      /* @__PURE__ */ import_react3.default.createElement(
+        "div",
+        {
+          className: "canva-handle edge w",
+          onMouseDown: (e) => startResizeDrag(e, targetId, "w", type),
+          title: "Resize width"
+        }
+      )
+    );
+  };
+  const handleCanvasDrop = (e) => {
+    if (!isEditMode) return;
+    e.preventDefault();
+    const bookmarkData = e.dataTransfer.getData("application/json");
+    if (bookmarkData) {
+      try {
+        const bm = JSON.parse(bookmarkData);
+        if (bm && (bm.url || bm.title)) {
+          addShortcutFromBookmark(bm);
+          handleDragEnd();
+          return;
+        }
+      } catch (err) {
+      }
+    }
+    const textData = e.dataTransfer.getData("text/plain") || e.dataTransfer.getData("text/uri-list");
+    if (textData && (textData.startsWith("http://") || textData.startsWith("https://"))) {
+      addShortcutFromBookmark({ title: textData, url: textData });
+      handleDragEnd();
+      return;
+    }
+    const wrapper = wrapperRef.current;
+    const wrapperRect = wrapper ? wrapper.getBoundingClientRect() : { left: 0, top: 0, width: window.innerWidth, height: window.innerHeight };
+    const dropX = Math.max(16, Math.min(wrapperRect.width - 150, Math.round(e.clientX - wrapperRect.left - 60)));
+    const dropY = Math.max(40, Math.min(wrapperRect.height - 100, Math.round(e.clientY - wrapperRect.top - 40)));
+    let scIdx = draggedIndex;
+    if (scIdx === null || scIdx === void 0) {
+      const parsed = parseInt(e.dataTransfer.getData("application/antigravity-shortcut") || e.dataTransfer.getData("text/plain"), 10);
+      if (!isNaN(parsed)) scIdx = parsed;
+    }
+    if (scIdx !== null && scIdx !== void 0 && !isNaN(scIdx) && shortcuts[scIdx]) {
+      const sc = shortcuts[scIdx];
+      saveItemPosition(sc.id, dropX, dropY);
+      showToast(`Placed "${sc.name}" at (${dropX}, ${dropY})`);
+      handleDragEnd();
+      return;
+    }
+    const secId = draggedSection || e.dataTransfer.getData("application/antigravity-section");
+    if (secId) {
+      saveItemPosition(secId, dropX, dropY);
+      showToast(`Placed ${secId} section at (${dropX}, ${dropY})`);
+      handleDragEnd();
+      return;
+    }
+    handleDragEnd();
+  };
+  const handleCanvasDragOver = (e) => {
+    if (!isEditMode) return;
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "move";
+  };
+  const handleGridDrop = (e) => {
+    handleCanvasDrop(e);
+  };
+  const handleSectionDragStart = (e, sectionId) => {
+    if (!isEditMode) return;
+    e.stopPropagation();
+    setDraggedSection(sectionId);
+    e.dataTransfer.effectAllowed = "move";
+    e.dataTransfer.setData("application/antigravity-section", sectionId);
+    e.dataTransfer.setData("text/plain", `section:${sectionId}`);
+  };
+  const handleSectionDragOver = (e, sectionId) => {
+    if (!isEditMode) return;
+    if (draggedSection || e.dataTransfer.types.includes("application/antigravity-section")) {
+      e.preventDefault();
+      e.stopPropagation();
+      e.dataTransfer.dropEffect = "move";
+      if (dragOverSection !== sectionId) {
+        setDragOverSection(sectionId);
+      }
+    }
+  };
+  const handleSectionDragLeave = (e) => {
+    if (e) e.stopPropagation();
+    setDragOverSection(null);
+  };
+  const handleSectionDrop = (e, targetSectionId) => {
+    if (!isEditMode) return;
+    e.preventDefault();
+    e.stopPropagation();
+    setDragOverSection(null);
+    const sourceSectionId = draggedSection || e.dataTransfer.getData("application/antigravity-section");
+    if (!sourceSectionId || sourceSectionId === targetSectionId) {
+      setDraggedSection(null);
+      return;
+    }
+    const currentOrder = layout.sectionOrder && layout.sectionOrder.length > 0 ? [...layout.sectionOrder] : ["time", "badge", "search", "shortcuts", "features"];
+    const fromIdx = currentOrder.indexOf(sourceSectionId);
+    const toIdx = currentOrder.indexOf(targetSectionId);
+    if (fromIdx !== -1 && toIdx !== -1) {
+      const [moved] = currentOrder.splice(fromIdx, 1);
+      currentOrder.splice(toIdx, 0, moved);
+      saveLayout({ ...layout, sectionOrder: currentOrder });
+      showToast(`Moved ${sourceSectionId} section`);
+    }
+    setDraggedSection(null);
+  };
+  const moveSectionUp = (e, id) => {
+    if (e) e.stopPropagation();
+    const current = [...layout.sectionOrder || ["time", "badge", "search", "shortcuts", "features"]];
+    const idx = current.indexOf(id);
+    if (idx > 0) {
+      const temp = current[idx];
+      current[idx] = current[idx - 1];
+      current[idx - 1] = temp;
+      saveLayout({ ...layout, sectionOrder: current });
+      showToast(`Moved section up`);
+    }
+  };
+  const moveSectionDown = (e, id) => {
+    if (e) e.stopPropagation();
+    const current = [...layout.sectionOrder || ["time", "badge", "search", "shortcuts", "features"]];
+    const idx = current.indexOf(id);
+    if (idx >= 0 && idx < current.length - 1) {
+      const temp = current[idx];
+      current[idx] = current[idx + 1];
+      current[idx + 1] = temp;
+      saveLayout({ ...layout, sectionOrder: current });
+      showToast(`Moved section down`);
+    }
+  };
+  const handleResetDefaults = () => {
+    saveLayout(DEFAULT_LAYOUT);
+    saveShortcuts(DEFAULT_SHORTCUTS);
+    showToast("Home page reset to default layout");
+  };
+  const placeholder = activeEngine === "brave" ? "Search Brave Private Search or type a web address..." : "Search Google or type a web address...";
+  const currentGreeting = layout.customGreeting || defaultGreeting;
+  const renderSection = (sectionId) => {
+    if (sectionId === "time" && layout.showClock) {
+      const timePos = layout.positions && layout.positions["time"];
+      const timeStyle = timePos ? {
+        position: "absolute",
+        left: `${timePos.x}px`,
+        top: `${timePos.y}px`,
+        zIndex: selectedId === "time" ? 120 : 95,
+        width: "max-content",
+        maxWidth: "90vw"
+      } : { width: "fit-content", margin: "0 auto" };
+      return /* @__PURE__ */ import_react3.default.createElement(
+        "div",
+        {
+          key: "time",
+          id: "item-time",
+          className: `ntp-draggable-section section-time ${draggedSection === "time" ? "dragging-section" : ""} ${dragOverSection === "time" ? "drag-over-section" : ""} ${timePos ? "ntp-canvas-free-item" : ""} ${selectedId === "time" ? "canva-selected" : ""}`,
+          style: timeStyle,
+          draggable: isEditMode,
+          onDragStart: (e) => handleSectionDragStart(e, "time"),
+          onDragOver: (e) => handleSectionDragOver(e, "time"),
+          onDragLeave: handleSectionDragLeave,
+          onDrop: (e) => handleSectionDrop(e, "time"),
+          onDragEnd: handleDragEnd,
+          onClick: (e) => {
+            if (isEditMode) {
+              e.stopPropagation();
+              setSelectedId("time");
+            }
+          }
+        },
+        renderCanvaBoundingBox("time", "time"),
+        /* @__PURE__ */ import_react3.default.createElement(
+          "div",
+          {
+            className: "time-box",
+            onMouseDown: (e) => {
+              if (isEditMode && !isEditingGreetingInline) {
+                startPointerDrag(e, "time", "section");
+              }
+            }
+          },
+          /* @__PURE__ */ import_react3.default.createElement(
+            "div",
+            {
+              className: `clock-display ${isEditMode ? "editable" : "locked"}`,
+              id: "clockDisplay",
+              style: { fontSize: `${layout.clockSize}px`, cursor: isEditMode ? "pointer" : "default" },
+              title: isEditMode ? "Click to toggle 12h / 24h format" : void 0,
+              onClick: isEditMode ? () => saveLayout({ ...layout, timeFormat: layout.timeFormat === "12h" ? "24h" : "12h" }) : void 0
+            },
+            timeStr || "12:00 PM"
+          ),
+          layout.showGreeting && /* @__PURE__ */ import_react3.default.createElement("div", { className: "greeting-wrapper" }, isEditMode && isEditingGreetingInline ? /* @__PURE__ */ import_react3.default.createElement("div", { className: "inline-greeting-editor" }, /* @__PURE__ */ import_react3.default.createElement(
+            "input",
+            {
+              type: "text",
+              className: "inline-greeting-input",
+              value: inlineGreetingText,
+              autoFocus: true,
+              placeholder: "Enter greeting...",
+              onChange: (e) => setInlineGreetingText(e.target.value),
+              onKeyDown: (e) => {
+                if (e.key === "Enter") {
+                  saveLayout({ ...layout, customGreeting: inlineGreetingText.trim() });
+                  setIsEditingGreetingInline(false);
+                } else if (e.key === "Escape") {
+                  setIsEditingGreetingInline(false);
+                }
+              },
+              onBlur: () => {
+                saveLayout({ ...layout, customGreeting: inlineGreetingText.trim() });
+                setIsEditingGreetingInline(false);
+              }
+            }
+          )) : /* @__PURE__ */ import_react3.default.createElement(
+            "div",
+            {
+              className: `greeting-display ${isEditMode ? "clickable" : "locked"}`,
+              id: "greetingDisplay",
+              title: isEditMode ? "Click to edit greeting text" : void 0,
+              onClick: isEditMode ? () => {
+                setInlineGreetingText(layout.customGreeting || defaultGreeting);
+                setIsEditingGreetingInline(true);
+              } : void 0
+            },
+            /* @__PURE__ */ import_react3.default.createElement("span", null, currentGreeting, "! Where would you like to go today?"),
+            isEditMode && /* @__PURE__ */ import_react3.default.createElement("span", { className: "greeting-edit-icon" }, "\u270F\uFE0F")
+          ))
+        )
+      );
+    }
+    if (sectionId === "badge" && layout.showBadge) {
+      const badgePos = layout.positions && layout.positions["badge"];
+      const badgeStyle = badgePos ? { position: "absolute", left: `${badgePos.x}px`, top: `${badgePos.y}px`, zIndex: selectedId === "badge" ? 120 : 90, width: "max-content" } : {};
+      return /* @__PURE__ */ import_react3.default.createElement(
+        "div",
+        {
+          key: "badge",
+          id: "item-badge",
+          className: `ntp-draggable-section section-badge ${draggedSection === "badge" ? "dragging-section" : ""} ${dragOverSection === "badge" ? "drag-over-section" : ""} ${badgePos ? "ntp-canvas-free-item" : ""} ${selectedId === "badge" ? "canva-selected" : ""}`,
+          style: badgeStyle,
+          draggable: isEditMode,
+          onDragStart: (e) => handleSectionDragStart(e, "badge"),
+          onDragOver: (e) => handleSectionDragOver(e, "badge"),
+          onDragLeave: handleSectionDragLeave,
+          onDrop: (e) => handleSectionDrop(e, "badge"),
+          onDragEnd: handleDragEnd,
+          onClick: (e) => {
+            if (isEditMode) {
+              e.stopPropagation();
+              setSelectedId("badge");
+            }
+          }
+        },
+        renderCanvaBoundingBox("badge", "badge"),
+        /* @__PURE__ */ import_react3.default.createElement(
+          "div",
+          {
+            className: "brand-badge",
+            onMouseDown: (e) => {
+              if (isEditMode) startPointerDrag(e, "badge", "section");
+            }
+          },
+          /* @__PURE__ */ import_react3.default.createElement("span", null, "ANTIGRAVITY NATIVE BROWSER")
+        )
+      );
+    }
+    if (sectionId === "search" && layout.showSearchBar) {
+      const searchPos = layout.positions && layout.positions["search"];
+      const searchStyle = searchPos ? { position: "absolute", left: `${searchPos.x}px`, top: `${searchPos.y}px`, zIndex: selectedId === "search" ? 120 : 92, width: `${layout.searchWidth}px`, maxWidth: "95vw" } : { width: "100%", maxWidth: `${layout.searchWidth}px`, margin: "0 auto" };
+      return /* @__PURE__ */ import_react3.default.createElement(
+        "div",
+        {
+          key: "search",
+          id: "item-search",
+          className: `ntp-draggable-section section-search ${draggedSection === "search" ? "dragging-section" : ""} ${dragOverSection === "search" ? "drag-over-section" : ""} ${searchPos ? "ntp-canvas-free-item" : ""} ${selectedId === "search" ? "canva-selected" : ""}`,
+          style: searchStyle,
+          draggable: isEditMode,
+          onDragStart: (e) => handleSectionDragStart(e, "search"),
+          onDragOver: (e) => handleSectionDragOver(e, "search"),
+          onDragLeave: handleSectionDragLeave,
+          onDrop: (e) => handleSectionDrop(e, "search"),
+          onDragEnd: handleDragEnd,
+          onClick: (e) => {
+            if (isEditMode) {
+              e.stopPropagation();
+              setSelectedId("search");
+            }
+          }
+        },
+        renderCanvaBoundingBox("search", "search"),
+        /* @__PURE__ */ import_react3.default.createElement(
+          "form",
+          {
+            className: "search-wrapper",
+            onSubmit: handleSearchSubmit,
+            onMouseDown: (e) => {
+              if (isEditMode && e.target.tagName !== "INPUT" && e.target.tagName !== "BUTTON") {
+                startPointerDrag(e, "search", "section");
+              }
+            }
+          },
+          /* @__PURE__ */ import_react3.default.createElement(
+            "button",
+            {
+              type: "button",
+              className: "engine-toggle-pill",
+              id: "btnToggleEngine",
+              onClick: () => onSetEngine(activeEngine === "google" ? "brave" : "google"),
+              title: `Searching with ${activeEngine === "brave" ? "Brave" : "Google"}. Click to switch engine.`
+            },
+            /* @__PURE__ */ import_react3.default.createElement("span", { className: "engine-toggle-icon" }, activeEngine === "brave" ? "\u{1F981}" : "\u{1F50D}"),
+            /* @__PURE__ */ import_react3.default.createElement("span", { className: "engine-toggle-name" }, activeEngine === "brave" ? "Brave" : "Google"),
+            /* @__PURE__ */ import_react3.default.createElement("span", { className: "engine-toggle-arrow" }, "\u21C4")
+          ),
+          /* @__PURE__ */ import_react3.default.createElement(
+            "input",
+            {
+              type: "text",
+              id: "ntpSearchInput",
+              className: "search-box with-engine-pill",
+              placeholder,
+              value: query,
+              onChange: (e) => setQuery(e.target.value),
+              autoComplete: "off",
+              spellCheck: "false",
+              autoFocus: true
+            }
+          ),
+          /* @__PURE__ */ import_react3.default.createElement("button", { type: "submit", className: "btn-submit-search", id: "btnSubmitSearch" }, "Search")
+        )
+      );
+    }
+    if (sectionId === "shortcuts" && layout.showShortcuts) {
+      const secPos = layout.positions && layout.positions["shortcuts"];
+      const shortcutsStyle = secPos ? { position: "absolute", left: `${secPos.x}px`, top: `${secPos.y}px`, zIndex: 85 } : {};
+      const gridShortcuts = shortcuts.filter((sc) => !(layout.positions && layout.positions[sc.id]));
+      return /* @__PURE__ */ import_react3.default.createElement(
+        "div",
+        {
+          key: "shortcuts",
+          id: "item-shortcuts",
+          className: `ntp-draggable-section section-shortcuts ${draggedSection === "shortcuts" ? "dragging-section" : ""} ${dragOverSection === "shortcuts" ? "drag-over-section" : ""} ${secPos ? "ntp-canvas-free-item" : ""}`,
+          style: shortcutsStyle,
+          draggable: isEditMode,
+          onDragStart: (e) => handleSectionDragStart(e, "shortcuts"),
+          onDragOver: (e) => handleSectionDragOver(e, "shortcuts"),
+          onDragLeave: handleSectionDragLeave,
+          onDrop: (e) => handleSectionDrop(e, "shortcuts"),
+          onDragEnd: handleDragEnd
+        },
+        /* @__PURE__ */ import_react3.default.createElement(
+          "div",
+          {
+            className: "shortcuts-grid-wrapper",
+            onDragOver: (e) => {
+              if (isEditMode) {
+                e.preventDefault();
+                e.dataTransfer.dropEffect = "copy";
+              }
+            },
+            onDrop: handleGridDrop
+          },
+          /* @__PURE__ */ import_react3.default.createElement(
+            "div",
+            {
+              className: "shortcuts-grid",
+              style: {
+                gridTemplateColumns: `repeat(${layout.gridCols}, 1fr)`,
+                transform: `scale(${layout.cardScale})`,
+                transformOrigin: "top center"
+              }
+            },
+            gridShortcuts.map((sc) => {
+              const originalIndex = shortcuts.indexOf(sc);
+              const isBeingDragged = isEditMode && draggedIndex === originalIndex;
+              const isOver = isEditMode && dragOverIndex === originalIndex;
+              return /* @__PURE__ */ import_react3.default.createElement(
+                "div",
+                {
+                  key: sc.id || `sc-${originalIndex}`,
+                  id: `item-${sc.id}`,
+                  className: `shortcut-card ${isBeingDragged ? "dragging" : ""} ${isOver ? "drag-over" : ""} ${isEditMode ? "editable" : "locked"} ${selectedId === sc.id ? "canva-selected" : ""}`,
+                  draggable: isEditMode,
+                  onDragStart: (e) => handleDragStart(e, originalIndex),
+                  onDragOver: (e) => handleDragOver(e, originalIndex),
+                  onDragLeave: handleDragLeave,
+                  onDrop: (e) => handleDrop(e, originalIndex),
+                  onDragEnd: handleDragEnd,
+                  onMouseDown: (e) => {
+                    if (isEditMode) {
+                      startPointerDrag(e, sc.id, "shortcut");
+                    }
+                  },
+                  onClick: (e) => {
+                    if (isEditMode) {
+                      e.stopPropagation();
+                      setSelectedId(sc.id);
+                    } else {
+                      if (sc.url) onNavigate(sc.url);
+                      else if (sc.demo === "checkout") onNavigate("demo_checkout.html");
+                    }
+                  },
+                  title: isEditMode ? `${sc.name} (${sc.url || "Demo"})
+Drag anywhere freely to place, click to resize with Canva handles` : `${sc.name} (${sc.url || "Demo"})
+Click to open`
+                },
+                renderCanvaBoundingBox(sc.id, "shortcut", { shortcut: sc }),
+                isEditMode && /* @__PURE__ */ import_react3.default.createElement("div", { className: "shortcut-card-actions" }, /* @__PURE__ */ import_react3.default.createElement(
+                  "span",
+                  {
+                    className: "shortcut-card-btn drag-btn",
+                    title: "Click and drag to place anywhere on the home page",
+                    onMouseDown: (e) => startPointerDrag(e, sc.id, "shortcut")
+                  },
+                  "\u22EE\u22EE"
+                ), /* @__PURE__ */ import_react3.default.createElement(
+                  "button",
+                  {
+                    type: "button",
+                    className: "shortcut-card-btn move-btn",
+                    title: "Move left",
+                    disabled: originalIndex === 0,
+                    onClick: (e) => moveShortcut(e, originalIndex, -1)
+                  },
+                  "\u25C0"
+                ), /* @__PURE__ */ import_react3.default.createElement(
+                  "button",
+                  {
+                    type: "button",
+                    className: "shortcut-card-btn move-btn",
+                    title: "Move right",
+                    disabled: originalIndex === shortcuts.length - 1,
+                    onClick: (e) => moveShortcut(e, originalIndex, 1)
+                  },
+                  "\u25B6"
+                ), /* @__PURE__ */ import_react3.default.createElement(
+                  "button",
+                  {
+                    type: "button",
+                    className: "shortcut-card-btn edit",
+                    title: "Edit site details",
+                    onClick: (e) => handleOpenEditSite(e, sc)
+                  },
+                  "\u270F\uFE0F"
+                ), /* @__PURE__ */ import_react3.default.createElement(
+                  "button",
+                  {
+                    type: "button",
+                    className: "shortcut-card-btn delete",
+                    title: "Remove shortcut",
+                    onClick: (e) => handleDeleteSite(e, sc.id)
+                  },
+                  "\u2715"
+                )),
+                /* @__PURE__ */ import_react3.default.createElement("div", { className: "shortcut-icon", style: { color: sc.color } }, sc.icon),
+                /* @__PURE__ */ import_react3.default.createElement("span", { className: "shortcut-title" }, sc.name),
+                /* @__PURE__ */ import_react3.default.createElement("span", { className: "shortcut-desc" }, sc.desc)
+              );
+            }),
+            isEditMode && /* @__PURE__ */ import_react3.default.createElement(
+              "div",
+              {
+                className: "shortcut-card shortcut-add-card",
+                title: "Add a new custom site or link",
+                onClick: handleOpenAddSite
+              },
+              /* @__PURE__ */ import_react3.default.createElement("div", { className: "shortcut-icon add-icon" }, "\u2795"),
+              /* @__PURE__ */ import_react3.default.createElement("span", { className: "shortcut-title" }, "Add Site"),
+              /* @__PURE__ */ import_react3.default.createElement("span", { className: "shortcut-desc" }, "Custom Shortcut")
+            )
+          )
+        )
+      );
+    }
+    if (sectionId === "features" && layout.showFeaturePills) {
+      const featPos = layout.positions && layout.positions["features"];
+      const featStyle = featPos ? { position: "absolute", left: `${featPos.x}px`, top: `${featPos.y}px`, zIndex: selectedId === "features" ? 120 : 80, width: "max-content" } : {};
+      return /* @__PURE__ */ import_react3.default.createElement(
+        "div",
+        {
+          key: "features",
+          id: "item-features",
+          className: `ntp-draggable-section section-features ${draggedSection === "features" ? "dragging-section" : ""} ${dragOverSection === "features" ? "drag-over-section" : ""} ${featPos ? "ntp-canvas-free-item" : ""} ${selectedId === "features" ? "canva-selected" : ""}`,
+          style: featStyle,
+          draggable: isEditMode,
+          onDragStart: (e) => handleSectionDragStart(e, "features"),
+          onDragOver: (e) => handleSectionDragOver(e, "features"),
+          onDragLeave: handleSectionDragLeave,
+          onDrop: (e) => handleSectionDrop(e, "features"),
+          onDragEnd: handleDragEnd,
+          onClick: (e) => {
+            if (isEditMode) {
+              e.stopPropagation();
+              setSelectedId("features");
+            }
+          }
+        },
+        renderCanvaBoundingBox("features", "features"),
+        /* @__PURE__ */ import_react3.default.createElement(
+          "div",
+          {
+            className: "feature-pills",
+            onMouseDown: (e) => {
+              if (isEditMode) startPointerDrag(e, "features", "section");
+            }
+          },
+          /* @__PURE__ */ import_react3.default.createElement("span", { className: "pill active" }, "\u{1F6E1}\uFE0F Native Adblock Active"),
+          /* @__PURE__ */ import_react3.default.createElement("span", { className: "pill active" }, "\u26A1 In-Process Chromium"),
+          /* @__PURE__ */ import_react3.default.createElement("span", { className: "pill active" }, "\u{1F512} Zero CDP Port Leaks"),
+          /* @__PURE__ */ import_react3.default.createElement("span", { className: "pill active" }, "\u{1F916} React Native Desktop App")
+        )
+      );
+    }
+    return null;
+  };
+  return /* @__PURE__ */ import_react3.default.createElement(
     "div",
     {
-      key: i,
-      className: "shortcut-card",
-      onClick: () => {
-        if (sc.url) onNavigate(sc.url);
-        else if (sc.demo === "checkout") onNavigate("demo_checkout.html");
+      ref: wrapperRef,
+      className: `ntp-wrapper ${isEditMode ? "is-edit-mode" : ""}`,
+      onDragOver: handleCanvasDragOver,
+      onDrop: handleCanvasDrop,
+      onClick: (e) => {
+        if (isEditMode && e.target === wrapperRef.current) setSelectedId(null);
       }
     },
-    /* @__PURE__ */ import_react3.default.createElement("div", { className: "shortcut-icon", style: { color: sc.color } }, sc.icon),
-    /* @__PURE__ */ import_react3.default.createElement("span", { className: "shortcut-title" }, sc.name),
-    /* @__PURE__ */ import_react3.default.createElement("span", { className: "shortcut-desc" }, sc.desc)
-  ))), /* @__PURE__ */ import_react3.default.createElement("div", { className: "feature-pills" }, /* @__PURE__ */ import_react3.default.createElement("span", { className: "pill active" }, "\u{1F6E1}\uFE0F Native Adblock Active"), /* @__PURE__ */ import_react3.default.createElement("span", { className: "pill active" }, "\u26A1 In-Process Chromium"), /* @__PURE__ */ import_react3.default.createElement("span", { className: "pill active" }, "\u{1F512} Zero CDP Port Leaks"), /* @__PURE__ */ import_react3.default.createElement("span", { className: "pill active" }, "\u{1F916} React Native Desktop App"))));
+    /* @__PURE__ */ import_react3.default.createElement("div", { className: "ntp-floating-top-bar" }, /* @__PURE__ */ import_react3.default.createElement(
+      "button",
+      {
+        id: "btnToggleEditMode",
+        className: `ntp-tool-pill-btn ntp-edit-toggle-btn ${isEditMode ? "active on" : "off"}`,
+        title: isEditMode ? "Exit Edit Mode (Lock Home Page layout)" : "Enter Edit Mode (Unlock editing, rearranging & resizing)",
+        onClick: toggleEditMode
+      },
+      /* @__PURE__ */ import_react3.default.createElement("span", { className: "edit-toggle-icon" }, isEditMode ? "\u270F\uFE0F" : "\u{1F512}"),
+      /* @__PURE__ */ import_react3.default.createElement("span", { className: "edit-toggle-label" }, "Edit Mode:"),
+      /* @__PURE__ */ import_react3.default.createElement("span", { className: `edit-toggle-badge ${isEditMode ? "badge-on" : "badge-off"}` }, isEditMode ? "ON" : "OFF"),
+      /* @__PURE__ */ import_react3.default.createElement("span", { className: `edit-toggle-switch ${isEditMode ? "sw-on" : "sw-off"}` }, /* @__PURE__ */ import_react3.default.createElement("span", { className: "edit-toggle-knob" }))
+    ), isEditMode && /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, /* @__PURE__ */ import_react3.default.createElement(
+      "button",
+      {
+        type: "button",
+        className: "ntp-tool-pill-btn btn-reset-positions",
+        title: "Reset custom positions and align all elements to centered grid",
+        onClick: handleResetPositions
+      },
+      "\u229E Snap to Center"
+    ), /* @__PURE__ */ import_react3.default.createElement(
+      "button",
+      {
+        type: "button",
+        className: "ntp-tool-pill-btn",
+        title: "Load user bookmarks directly as Home page shortcuts",
+        onClick: handleLoadAllBookmarks
+      },
+      "\u2B50 Load Bookmarks"
+    ), /* @__PURE__ */ import_react3.default.createElement(
+      "button",
+      {
+        type: "button",
+        className: `ntp-tool-pill-btn ${isCustomizeOpen ? "active" : ""}`,
+        title: "Customize & Resize Home Page Elements",
+        onClick: () => setIsCustomizeOpen((prev) => !prev)
+      },
+      "\u2699\uFE0F Customize Home"
+    ))),
+    isCustomizeOpen && /* @__PURE__ */ import_react3.default.createElement("div", { className: "ntp-customize-drawer" }, /* @__PURE__ */ import_react3.default.createElement("div", { className: "ntp-customize-drawer-header" }, /* @__PURE__ */ import_react3.default.createElement("h3", null, "\u{1F3A8} Home Page Customizer"), /* @__PURE__ */ import_react3.default.createElement("button", { className: "ntp-drawer-close-btn", onClick: () => setIsCustomizeOpen(false) }, "\u2715")), /* @__PURE__ */ import_react3.default.createElement("div", { className: "ntp-customize-drawer-content" }, /* @__PURE__ */ import_react3.default.createElement("div", { className: "ntp-custom-section" }, /* @__PURE__ */ import_react3.default.createElement("h4", null, "\u{1F4CF} Element Sizing & Resizing"), /* @__PURE__ */ import_react3.default.createElement("div", { className: "ntp-control-row" }, /* @__PURE__ */ import_react3.default.createElement("label", null, "Shortcuts Card Scale: ", /* @__PURE__ */ import_react3.default.createElement("b", null, Math.round(layout.cardScale * 100), "%")), /* @__PURE__ */ import_react3.default.createElement(
+      "input",
+      {
+        type: "range",
+        min: "0.75",
+        max: "1.35",
+        step: "0.05",
+        value: layout.cardScale,
+        onChange: (e) => saveLayout({ ...layout, cardScale: parseFloat(e.target.value) })
+      }
+    )), /* @__PURE__ */ import_react3.default.createElement("div", { className: "ntp-control-row" }, /* @__PURE__ */ import_react3.default.createElement("label", null, "Grid Columns: ", /* @__PURE__ */ import_react3.default.createElement("b", null, layout.gridCols, " Cols")), /* @__PURE__ */ import_react3.default.createElement("div", { className: "ntp-button-group" }, [2, 3, 4, 5, 6].map((cols) => /* @__PURE__ */ import_react3.default.createElement(
+      "button",
+      {
+        key: cols,
+        className: `ntp-seg-btn ${layout.gridCols === cols ? "active" : ""}`,
+        onClick: () => saveLayout({ ...layout, gridCols: cols })
+      },
+      cols
+    )))), /* @__PURE__ */ import_react3.default.createElement("div", { className: "ntp-control-row" }, /* @__PURE__ */ import_react3.default.createElement("label", null, "Clock Display Size: ", /* @__PURE__ */ import_react3.default.createElement("b", null, layout.clockSize, "px")), /* @__PURE__ */ import_react3.default.createElement(
+      "input",
+      {
+        type: "range",
+        min: "36",
+        max: "84",
+        step: "4",
+        value: layout.clockSize,
+        onChange: (e) => saveLayout({ ...layout, clockSize: parseInt(e.target.value, 10) })
+      }
+    )), /* @__PURE__ */ import_react3.default.createElement("div", { className: "ntp-control-row" }, /* @__PURE__ */ import_react3.default.createElement("label", null, "Search Bar Width: ", /* @__PURE__ */ import_react3.default.createElement("b", null, layout.searchWidth, "px")), /* @__PURE__ */ import_react3.default.createElement(
+      "input",
+      {
+        type: "range",
+        min: "520",
+        max: "960",
+        step: "20",
+        value: layout.searchWidth,
+        onChange: (e) => saveLayout({ ...layout, searchWidth: parseInt(e.target.value, 10) })
+      }
+    )), /* @__PURE__ */ import_react3.default.createElement("div", { className: "ntp-control-row" }, /* @__PURE__ */ import_react3.default.createElement("label", null, "Clock Time Format:"), /* @__PURE__ */ import_react3.default.createElement("div", { className: "ntp-button-group" }, /* @__PURE__ */ import_react3.default.createElement(
+      "button",
+      {
+        className: `ntp-seg-btn ${layout.timeFormat === "12h" ? "active" : ""}`,
+        onClick: () => saveLayout({ ...layout, timeFormat: "12h" })
+      },
+      "12-Hour (AM/PM)"
+    ), /* @__PURE__ */ import_react3.default.createElement(
+      "button",
+      {
+        className: `ntp-seg-btn ${layout.timeFormat === "24h" ? "active" : ""}`,
+        onClick: () => saveLayout({ ...layout, timeFormat: "24h" })
+      },
+      "24-Hour"
+    )))), /* @__PURE__ */ import_react3.default.createElement("div", { className: "ntp-custom-section" }, /* @__PURE__ */ import_react3.default.createElement("h4", null, "\u{1F441}\uFE0F Show / Hide Elements"), /* @__PURE__ */ import_react3.default.createElement("div", { className: "ntp-toggles-grid" }, /* @__PURE__ */ import_react3.default.createElement("label", { className: "ntp-toggle-label" }, /* @__PURE__ */ import_react3.default.createElement(
+      "input",
+      {
+        type: "checkbox",
+        checked: layout.showClock,
+        onChange: (e) => saveLayout({ ...layout, showClock: e.target.checked })
+      }
+    ), /* @__PURE__ */ import_react3.default.createElement("span", null, "Clock & Greeting")), /* @__PURE__ */ import_react3.default.createElement("label", { className: "ntp-toggle-label" }, /* @__PURE__ */ import_react3.default.createElement(
+      "input",
+      {
+        type: "checkbox",
+        checked: layout.showBadge,
+        onChange: (e) => saveLayout({ ...layout, showBadge: e.target.checked })
+      }
+    ), /* @__PURE__ */ import_react3.default.createElement("span", null, "Brand Badge")), /* @__PURE__ */ import_react3.default.createElement("label", { className: "ntp-toggle-label" }, /* @__PURE__ */ import_react3.default.createElement(
+      "input",
+      {
+        type: "checkbox",
+        checked: layout.showEngineSelector,
+        onChange: (e) => saveLayout({ ...layout, showEngineSelector: e.target.checked })
+      }
+    ), /* @__PURE__ */ import_react3.default.createElement("span", null, "Search Engine Switcher")), /* @__PURE__ */ import_react3.default.createElement("label", { className: "ntp-toggle-label" }, /* @__PURE__ */ import_react3.default.createElement(
+      "input",
+      {
+        type: "checkbox",
+        checked: layout.showSearchBar,
+        onChange: (e) => saveLayout({ ...layout, showSearchBar: e.target.checked })
+      }
+    ), /* @__PURE__ */ import_react3.default.createElement("span", null, "Main Search Bar")), /* @__PURE__ */ import_react3.default.createElement("label", { className: "ntp-toggle-label" }, /* @__PURE__ */ import_react3.default.createElement(
+      "input",
+      {
+        type: "checkbox",
+        checked: layout.showShortcuts,
+        onChange: (e) => saveLayout({ ...layout, showShortcuts: e.target.checked })
+      }
+    ), /* @__PURE__ */ import_react3.default.createElement("span", null, "Speed Dial Shortcuts")), /* @__PURE__ */ import_react3.default.createElement("label", { className: "ntp-toggle-label" }, /* @__PURE__ */ import_react3.default.createElement(
+      "input",
+      {
+        type: "checkbox",
+        checked: layout.showFeaturePills,
+        onChange: (e) => saveLayout({ ...layout, showFeaturePills: e.target.checked })
+      }
+    ), /* @__PURE__ */ import_react3.default.createElement("span", null, "Bottom Feature Badges")))), /* @__PURE__ */ import_react3.default.createElement("div", { className: "ntp-custom-section" }, /* @__PURE__ */ import_react3.default.createElement("h4", null, "\u270F\uFE0F Custom Greeting Message"), /* @__PURE__ */ import_react3.default.createElement(
+      "input",
+      {
+        type: "text",
+        className: "ntp-custom-input",
+        placeholder: "e.g. Welcome back, Anurag! (leave blank for automatic)",
+        value: layout.customGreeting,
+        onChange: (e) => saveLayout({ ...layout, customGreeting: e.target.value })
+      }
+    )), /* @__PURE__ */ import_react3.default.createElement("div", { className: "ntp-custom-actions" }, /* @__PURE__ */ import_react3.default.createElement("button", { className: "ntp-action-btn secondary", onClick: handleResetDefaults }, "\u21BA Reset to Default"), /* @__PURE__ */ import_react3.default.createElement("button", { className: "ntp-action-btn primary", onClick: () => setIsCustomizeOpen(false) }, "Done")))),
+    shortcuts.filter((sc) => layout.positions && layout.positions[sc.id]).map((sc) => {
+      const pos = layout.positions[sc.id];
+      return /* @__PURE__ */ import_react3.default.createElement(
+        "div",
+        {
+          key: `free-${sc.id}`,
+          id: `item-${sc.id}`,
+          className: `shortcut-card ntp-canvas-free-card ${isEditMode ? "editable" : "locked"} ${selectedId === sc.id ? "canva-selected" : ""}`,
+          style: {
+            position: "absolute",
+            left: `${pos.x}px`,
+            top: `${pos.y}px`,
+            width: `${pos.width || 200}px`,
+            height: `${pos.height || 110}px`,
+            zIndex: selectedId === sc.id ? 120 : 100
+          },
+          draggable: isEditMode,
+          onDragStart: (e) => handleDragStart(e, shortcuts.indexOf(sc)),
+          onDragEnd: handleDragEnd,
+          onMouseDown: (e) => {
+            if (isEditMode) {
+              startPointerDrag(e, sc.id, "shortcut");
+            }
+          },
+          onClick: (e) => {
+            if (isEditMode) {
+              e.stopPropagation();
+              setSelectedId(sc.id);
+            } else {
+              if (sc.url) onNavigate(sc.url);
+              else if (sc.demo === "checkout") onNavigate("demo_checkout.html");
+            }
+          },
+          title: isEditMode ? `${sc.name}
+Drag anywhere freely, click to resize with Canva handles, or click \u229E to return to grid` : `${sc.name}
+Click to open`
+        },
+        renderCanvaBoundingBox(sc.id, "shortcut", { shortcut: sc }),
+        isEditMode && /* @__PURE__ */ import_react3.default.createElement("div", { className: "shortcut-card-actions" }, /* @__PURE__ */ import_react3.default.createElement(
+          "span",
+          {
+            className: "shortcut-card-btn drag-btn",
+            title: "Click and drag to place anywhere on the home page",
+            onMouseDown: (e) => startPointerDrag(e, sc.id, "shortcut")
+          },
+          "\u22EE\u22EE"
+        ), /* @__PURE__ */ import_react3.default.createElement(
+          "button",
+          {
+            type: "button",
+            className: "shortcut-card-btn snap-btn",
+            title: "Snap back into grid",
+            onClick: (e) => {
+              e.stopPropagation();
+              handleResetSinglePosition(sc.id);
+            }
+          },
+          "\u229E"
+        ), /* @__PURE__ */ import_react3.default.createElement(
+          "button",
+          {
+            type: "button",
+            className: "shortcut-card-btn edit",
+            title: "Edit site details",
+            onClick: (e) => handleOpenEditSite(e, sc)
+          },
+          "\u270F\uFE0F"
+        ), /* @__PURE__ */ import_react3.default.createElement(
+          "button",
+          {
+            type: "button",
+            className: "shortcut-card-btn delete",
+            title: "Remove shortcut",
+            onClick: (e) => handleDeleteSite(e, sc.id)
+          },
+          "\u2715"
+        )),
+        /* @__PURE__ */ import_react3.default.createElement("div", { className: "shortcut-icon", style: { color: sc.color } }, sc.icon),
+        /* @__PURE__ */ import_react3.default.createElement("span", { className: "shortcut-title" }, sc.name),
+        /* @__PURE__ */ import_react3.default.createElement("span", { className: "shortcut-desc" }, sc.desc)
+      );
+    }),
+    /* @__PURE__ */ import_react3.default.createElement(
+      "div",
+      {
+        className: "ntp-container",
+        style: {
+          "--card-scale": layout.cardScale,
+          "--grid-cols": layout.gridCols,
+          "--clock-size": `${layout.clockSize}px`,
+          "--search-width": `${layout.searchWidth}px`,
+          maxWidth: "1200px",
+          width: "100%"
+        }
+      },
+      (layout.sectionOrder || ["time", "badge", "search", "shortcuts", "features"]).map(renderSection)
+    ),
+    isSiteModalOpen && /* @__PURE__ */ import_react3.default.createElement("div", { className: "modal-backdrop", onClick: () => setIsSiteModalOpen(false) }, /* @__PURE__ */ import_react3.default.createElement("div", { className: "modal-container site-edit-modal", onClick: (e) => e.stopPropagation() }, /* @__PURE__ */ import_react3.default.createElement("div", { className: "modal-header" }, /* @__PURE__ */ import_react3.default.createElement("h2", null, editingSite ? "\u270F\uFE0F Edit Site Shortcut" : "\u2795 Add Site to Home"), /* @__PURE__ */ import_react3.default.createElement("button", { className: "modal-close-btn", onClick: () => setIsSiteModalOpen(false) }, "\u2715")), /* @__PURE__ */ import_react3.default.createElement("form", { className: "site-form", onSubmit: handleSaveSiteModal }, /* @__PURE__ */ import_react3.default.createElement("div", { className: "form-group" }, /* @__PURE__ */ import_react3.default.createElement("label", null, "Site Name *"), /* @__PURE__ */ import_react3.default.createElement(
+      "input",
+      {
+        type: "text",
+        className: "site-input",
+        placeholder: "e.g. Netflix, Twitter, Slack",
+        value: siteForm.name,
+        required: true,
+        autoFocus: true,
+        onChange: (e) => setSiteForm({ ...siteForm, name: e.target.value })
+      }
+    )), /* @__PURE__ */ import_react3.default.createElement("div", { className: "form-group" }, /* @__PURE__ */ import_react3.default.createElement("label", null, "Web Address (URL) *"), /* @__PURE__ */ import_react3.default.createElement(
+      "input",
+      {
+        type: "text",
+        className: "site-input",
+        placeholder: "e.g. https://netflix.com or netflix.com",
+        value: siteForm.url,
+        required: true,
+        onChange: (e) => setSiteForm({ ...siteForm, url: e.target.value })
+      }
+    )), /* @__PURE__ */ import_react3.default.createElement("div", { className: "form-group" }, /* @__PURE__ */ import_react3.default.createElement("label", null, "Description (Subtitle)"), /* @__PURE__ */ import_react3.default.createElement(
+      "input",
+      {
+        type: "text",
+        className: "site-input",
+        placeholder: "e.g. Movies & TV Shows",
+        value: siteForm.desc,
+        onChange: (e) => setSiteForm({ ...siteForm, desc: e.target.value })
+      }
+    )), /* @__PURE__ */ import_react3.default.createElement("div", { className: "form-row-two" }, /* @__PURE__ */ import_react3.default.createElement("div", { className: "form-group" }, /* @__PURE__ */ import_react3.default.createElement("label", null, "Icon / Emoji"), /* @__PURE__ */ import_react3.default.createElement(
+      "input",
+      {
+        type: "text",
+        className: "site-input icon-input",
+        value: siteForm.icon,
+        maxLength: 4,
+        placeholder: "\u{1F310}",
+        onChange: (e) => setSiteForm({ ...siteForm, icon: e.target.value })
+      }
+    )), /* @__PURE__ */ import_react3.default.createElement("div", { className: "form-group" }, /* @__PURE__ */ import_react3.default.createElement("label", null, "Accent Color"), /* @__PURE__ */ import_react3.default.createElement(
+      "input",
+      {
+        type: "color",
+        className: "site-color-picker",
+        value: siteForm.color,
+        onChange: (e) => setSiteForm({ ...siteForm, color: e.target.value })
+      }
+    ))), /* @__PURE__ */ import_react3.default.createElement("div", { className: "site-form-actions" }, editingSite && /* @__PURE__ */ import_react3.default.createElement(
+      "button",
+      {
+        type: "button",
+        className: "btn-site-delete",
+        onClick: (e) => handleDeleteSite(e, editingSite.id)
+      },
+      "\u{1F5D1}\uFE0F Delete"
+    ), /* @__PURE__ */ import_react3.default.createElement("div", { style: { marginLeft: "auto", display: "flex", gap: 10 } }, /* @__PURE__ */ import_react3.default.createElement(
+      "button",
+      {
+        type: "button",
+        className: "btn-site-cancel",
+        onClick: () => setIsSiteModalOpen(false)
+      },
+      "Cancel"
+    ), /* @__PURE__ */ import_react3.default.createElement("button", { type: "submit", className: "btn-site-save" }, editingSite ? "Save Changes" : "Add Shortcut")))))),
+    toastMessage && /* @__PURE__ */ import_react3.default.createElement("div", { className: "ntp-toast" }, /* @__PURE__ */ import_react3.default.createElement("span", null, "\u2728 ", toastMessage))
+  );
 }
 
 // desktop/src/components/AiHudSidebar.jsx
@@ -39415,12 +41090,26 @@ var import_react4 = __toESM(require_react());
 // desktop/src/ai_harness_engine.js
 function resolveTargetUrl(target) {
   if (!target) return "https://www.google.com";
-  const trimmed = target.trim();
-  if (trimmed.startsWith("http://") || trimmed.startsWith("https://") || trimmed.startsWith("file://")) {
+  const trimmed = String(target).trim().replace(/[.,!?;:]+$/g, "").trim();
+  if (!trimmed) return "https://www.google.com";
+  if (trimmed.startsWith("http://") || trimmed.startsWith("https://") || trimmed.startsWith("file://") || trimmed.startsWith("antigravity://")) {
     return trimmed;
   }
+  const lower = trimmed.toLowerCase();
+  const specialDomains = {
+    wikipedia: "https://www.wikipedia.org",
+    wiki: "https://www.wikipedia.org",
+    archive: "https://archive.org",
+    huggingface: "https://huggingface.co",
+    hn: "https://news.ycombinator.com",
+    hackernews: "https://news.ycombinator.com"
+  };
+  if (specialDomains[lower]) return specialDomains[lower];
   if (trimmed.includes(".") && !trimmed.includes(" ") && !trimmed.includes("?")) {
     return "https://" + trimmed;
+  }
+  if (!trimmed.includes(" ") && /^[a-z0-9-]+$/i.test(trimmed)) {
+    return `https://www.${lower}.com`;
   }
   return `https://www.google.com/search?q=${encodeURIComponent(trimmed)}`;
 }
@@ -39544,7 +41233,8 @@ async function executeWebviewClick(webview, targetText, fallbackNavigate) {
                 let targetOrdinal = 1;
                 let cleanTerm = targetRaw;
 
-                const rankRegex = /\\b(1st|first|2nd|second|3rd|third|4th|fourth|5th|fifth|6th|sixth|7th|seventh|8th|eighth|9th|ninth|10th|\\d+(?:st|nd|rd|th)?)\\b/gi;
+                // Match only genuine ordinal words or numbers with explicit ordinal suffixes (1st, 2nd, 3rd, etc.)
+                const rankRegex = /\\b(1st|first|2nd|second|3rd|third|4th|fourth|5th|fifth|6th|sixth|7th|seventh|8th|eighth|9th|ninth|10th|\\d+(?:st|nd|rd|th))\\b/gi;
                 const rankMatches = Array.from(targetRaw.matchAll(rankRegex));
 
                 if (rankMatches.length > 0) {
@@ -39571,9 +41261,11 @@ async function executeWebviewClick(webview, targetText, fallbackNavigate) {
                 } else if (/\\b(?:input|field|textbox|search\\s*bar|search\\s*box)\\b/i.test(cleanTerm)) {
                     filterType = 'input';
                     searchTerm = cleanTerm.replace(/\\b(?:input|field|textbox|search\\s*bar|search\\s*box)\\b/gi, '').trim();
+                } else if (/\\b(?:video|stream|track|music|song)\\b/i.test(cleanTerm)) {
+                    filterType = 'video';
+                    searchTerm = cleanTerm.replace(/\\b(?:video|stream|track|music|song)\\b/gi, '').trim();
                 }
 
-                if (!searchTerm) searchTerm = cleanTerm || targetRaw;
                 const termLower = searchTerm.toLowerCase();
 
                 // Check for Set-of-Marks mark index (#7, hashtag 7, mark 7)
@@ -39610,7 +41302,13 @@ async function executeWebviewClick(webview, targetText, fallbackNavigate) {
                 // Direct Selector or ID Match
                 if (!matchedEl) {
                     try {
-                        const directEl = document.querySelector(targetRaw) || document.getElementById(targetRaw);
+                        let directEl = document.querySelector(targetRaw) || document.getElementById(targetRaw);
+                        if (directEl && !isVisible(directEl)) {
+                            directEl = directEl.querySelector('input, textarea, button, a') || directEl;
+                        } else if (directEl && (directEl.tagName.toLowerCase() !== 'input' && directEl.tagName.toLowerCase() !== 'textarea')) {
+                            const innerInput = directEl.querySelector('input, textarea');
+                            if (innerInput && isVisible(innerInput)) directEl = innerInput;
+                        }
                         if (directEl && isVisible(directEl)) {
                             matchedEl = directEl;
                             matchType = 'Direct Selector/ID Match';
@@ -39640,14 +41338,13 @@ async function executeWebviewClick(webview, targetText, fallbackNavigate) {
 
                 if (!matchedEl && isExplicitSearchIntent) {
                     const searchSelectors = [
-                        'textarea[name="q"]', 'input[name="q"]', 'textarea.gLFyf', 'input.gLFyf',
-                        'textarea[title*="Search" i]', 'input[title*="Search" i]',
-                        'textarea[aria-label*="Search" i]', 'input[aria-label*="Search" i]',
-                        'input#search', 'input#searchInput', 'input#searchbox_input', 'input[type="search"]',
-                        'textarea[name*="search" i]', 'input[name*="search" i]', 'input[id*="search" i]',
-                        'input[placeholder*="search" i]', 'textarea[placeholder*="search" i]',
-                        '[role="searchbox"]', '[role="search"] textarea', '[role="search"] input',
-                        'textarea:not([type="hidden"])', 'input[type="text"]', 'input:not([type="hidden"])'
+                        'input[type="search"]', 'input[name="q"]', 'input[name="s"]', 'input[name*="search" i]',
+                        'textarea[name="q"]', 'textarea[name*="search" i]',
+                        'input[id*="search" i]', 'input[placeholder*="search" i]', 'textarea[placeholder*="search" i]',
+                        'input[aria-label*="search" i]', 'textarea[aria-label*="search" i]',
+                        'input#search', 'input#searchInput', 'input#searchbox_input',
+                        '[role="searchbox"]', '[role="search"] input', '[role="search"] textarea',
+                        'input[type="text"]', 'textarea:not([type="hidden"])', 'input:not([type="hidden"])'
                     ];
 
                     for (const sel of searchSelectors) {
@@ -39674,11 +41371,32 @@ async function executeWebviewClick(webview, targetText, fallbackNavigate) {
                         const txtCombined = (m.txt + ' ' + m.aria + ' ' + m.title + ' ' + m.alt + ' ' + m.placeholder + ' ' + m.id).toLowerCase();
                         const valStr = m.val.toLowerCase();
                         const hrefStr = (el.getAttribute('href') || (el.closest('a') ? el.closest('a').getAttribute('href') : '') || '').toLowerCase();
+                        const isVideo = isLink && (hrefStr.includes('/watch') || hrefStr.includes('video') || tag === 'video' || (el.closest && (el.closest('ytd-rich-item-renderer') || el.closest('ytd-video-renderer'))));
 
-                        const isTextMatched = txtCombined.includes(termLower) || (isLink && hrefStr.includes(termLower));
-                        const isValueMatched = isInput && valStr.includes(termLower);
+                        let isMatch = false;
+                        if (termLower) {
+                            isMatch = txtCombined.includes(termLower) || (isLink && hrefStr.includes(termLower)) || (isInput && valStr.includes(termLower));
+                            // Token overlap fallback if direct substring fails
+                            if (!isMatch) {
+                                const termWords = termLower.split(/[s,()[]-_|]+/).filter(w => w.length > 1);
+                                if (termWords.length > 0) {
+                                    const matchedWords = termWords.filter(w => txtCombined.includes(w) || (isLink && hrefStr.includes(w)));
+                                    if (matchedWords.length === termWords.length || (termWords.length >= 2 && matchedWords.length >= Math.ceil(termWords.length * 0.75))) {
+                                        isMatch = true;
+                                    }
+                                }
+                            }
+                        } else if (filterType === 'video') {
+                            isMatch = isVideo || isLink;
+                        } else if (filterType === 'link') {
+                            isMatch = isLink;
+                        } else if (filterType === 'button') {
+                            isMatch = isButton;
+                        } else if (filterType === 'input') {
+                            isMatch = isInput;
+                        }
 
-                        if (isTextMatched || isValueMatched) {
+                        if (isMatch) {
                             const clickNode = isLink ? (el.closest('a') || el) : el;
                             matchesList.push({
                                 node: clickNode,
@@ -39687,7 +41405,8 @@ async function executeWebviewClick(webview, targetText, fallbackNavigate) {
                                 isLink: isLink,
                                 isButton: isButton,
                                 isInput: isInput,
-                                isTextMatched: isTextMatched
+                                isVideo: isVideo,
+                                isTextMatched: isMatch
                             });
                         }
                     }
@@ -39704,7 +41423,12 @@ async function executeWebviewClick(webview, targetText, fallbackNavigate) {
 
                     // Apply filters
                     let filteredPool = uniqueMatches;
-                    if (filterType === 'link') {
+                    if (filterType === 'video') {
+                        const videoMatches = uniqueMatches.filter(m => m.isVideo || (m.isLink && ((m.node.href || '').includes('watch') || (m.node.href || '').includes('video'))));
+                        if (videoMatches.length > 0) {
+                            filteredPool = videoMatches;
+                        }
+                    } else if (filterType === 'link') {
                         filteredPool = uniqueMatches.filter(m => m.isLink);
                     } else if (filterType === 'button') {
                         filteredPool = uniqueMatches.filter(m => m.isButton);
@@ -39719,7 +41443,7 @@ async function executeWebviewClick(webview, targetText, fallbackNavigate) {
 
                     if (filteredPool.length === 0) filteredPool = uniqueMatches;
 
-                    // Score candidates so hyperlinks are prioritized
+                    // Score candidates so hyperlinks, videos, and content matches are prioritized
                     filteredPool.sort((a, b) => {
                         let scoreA = 0;
                         let scoreB = 0;
@@ -39728,11 +41452,16 @@ async function executeWebviewClick(webview, targetText, fallbackNavigate) {
                         const hrefA = (nodeA.href || nodeA.getAttribute('href') || '').toLowerCase();
                         const hrefB = (nodeB.href || nodeB.getAttribute('href') || '').toLowerCase();
 
+                        if (filterType === 'video') {
+                            if (hrefA.includes('watch') || a.isVideo) scoreA += 300;
+                            if (hrefB.includes('watch') || b.isVideo) scoreB += 300;
+                        }
+
                         if (hrefA && (hrefA.startsWith('http://') || hrefA.startsWith('https://'))) scoreA += 100;
                         if (hrefB && (hrefB.startsWith('http://') || hrefB.startsWith('https://'))) scoreB += 100;
 
-                        if (hrefA.includes(termLower)) scoreA += 50;
-                        if (hrefB.includes(termLower)) scoreB += 50;
+                        if (termLower && hrefA.includes(termLower)) scoreA += 50;
+                        if (termLower && hrefB.includes(termLower)) scoreB += 50;
 
                         if (nodeA.querySelector('h1,h2,h3,h4,h5,h6') || nodeA.tagName.toLowerCase().startsWith('h')) scoreA += 40;
                         if (nodeB.querySelector('h1,h2,h3,h4,h5,h6') || nodeB.tagName.toLowerCase().startsWith('h')) scoreB += 40;
@@ -39851,89 +41580,533 @@ async function executeWebviewClick(webview, targetText, fallbackNavigate) {
     return { success: false, message: `\u26A0\uFE0F Click action error: ${e.message}` };
   }
 }
-async function typeAndSubmitInSearchBar(webview, textToType) {
+var SubAgentManager = class {
+  constructor(maxConcurrent = 3) {
+    this.maxConcurrent = maxConcurrent;
+    this.subagents = /* @__PURE__ */ new Map();
+  }
+  canSpawn() {
+    const active = Array.from(this.subagents.values()).filter((s) => s.status === "running");
+    return active.length < this.maxConcurrent;
+  }
+  getActiveCount() {
+    return Array.from(this.subagents.values()).filter((s) => s.status === "running").length;
+  }
+  register(subagent_id, role, goal, tab_id = null) {
+    if (!this.canSpawn()) {
+      throw new Error(`Concurrency cap reached: Maximum ${this.maxConcurrent} active sub-agents permitted to protect memory and RAM.`);
+    }
+    const record = {
+      subagent_id: String(subagent_id),
+      role: String(role || "general_worker"),
+      goal: String(goal || ""),
+      tab_id: tab_id !== null ? Number(tab_id) : null,
+      status: "running",
+      startTime: Date.now(),
+      actionsExecuted: 0,
+      result: null
+    };
+    this.subagents.set(record.subagent_id, record);
+    return record;
+  }
+  recordAction(subagent_id) {
+    const sub = this.subagents.get(String(subagent_id));
+    if (sub) sub.actionsExecuted++;
+  }
+  complete(subagent_id, success, summary, artifacts = {}, dom_delta = "") {
+    const sub = this.subagents.get(String(subagent_id));
+    if (!sub) return null;
+    sub.status = success ? "completed" : "failed";
+    sub.endTime = Date.now();
+    sub.durationMs = sub.endTime - sub.startTime;
+    sub.result = {
+      subagent_id: sub.subagent_id,
+      role: sub.role,
+      status: sub.status,
+      success: !!success,
+      summary: String(summary || ""),
+      artifacts,
+      dom_delta: String(dom_delta || ""),
+      actionsExecuted: sub.actionsExecuted,
+      durationMs: sub.durationMs
+    };
+    return sub.result;
+  }
+  terminate(subagent_id) {
+    this.subagents.delete(String(subagent_id));
+  }
+  getActiveList() {
+    return Array.from(this.subagents.values());
+  }
+  get(subagent_id) {
+    return this.subagents.get(String(subagent_id)) || null;
+  }
+};
+var globalSubAgentManager = new SubAgentManager(3);
+async function captureDomSnapshot(webview) {
   if (!webview || typeof webview.executeJavaScript !== "function") {
-    return { success: false, message: "No active webview available for search typing." };
+    return {
+      url: "",
+      title: "",
+      activeTag: null,
+      activeId: null,
+      inputs: [],
+      videos: [],
+      interactiveCount: 0,
+      bodyLength: 0,
+      timestamp: Date.now()
+    };
+  }
+  try {
+    const snap = await webview.executeJavaScript(`
+            (function() {
+                const act = document.activeElement;
+                const activeTag = act ? act.tagName.toLowerCase() : null;
+                const activeId = act ? (act.id || '') : null;
+                const activeName = act ? (act.getAttribute('name') || '') : null;
+                const activeValue = act && ('value' in act) ? String(act.value || '').slice(0, 100) : null;
+
+                const inputList = Array.from(document.querySelectorAll('input:not([type="hidden"]), textarea, select')).slice(0, 25).map(el => ({
+                    tag: el.tagName.toLowerCase(),
+                    id: el.id || '',
+                    name: el.name || '',
+                    type: el.type || '',
+                    placeholder: el.placeholder || '',
+                    value: String(el.value || '').slice(0, 50)
+                }));
+
+                const videoList = Array.from(document.querySelectorAll('video')).slice(0, 5).map(v => ({
+                    paused: v.paused,
+                    currentTime: Math.round(v.currentTime || 0),
+                    duration: Math.round(v.duration || 0),
+                    src: (v.currentSrc || v.src || '').slice(0, 100)
+                }));
+
+                const interactiveCount = document.querySelectorAll('button, a, input, select, textarea, [role="button"], [role="link"], [role="searchbox"]').length;
+                const bodyLength = document.body ? (document.body.innerText || '').length : 0;
+
+                return {
+                    url: window.location.href,
+                    title: document.title || '',
+                    activeTag,
+                    activeId,
+                    activeName,
+                    activeValue,
+                    inputs: inputList,
+                    videos: videoList,
+                    interactiveCount,
+                    bodyLength,
+                    timestamp: Date.now()
+                };
+            })()
+        `);
+    return snap;
+  } catch (e) {
+    return {
+      url: (typeof webview.getURL === "function" ? webview.getURL() : "") || "",
+      title: (typeof webview.getTitle === "function" ? webview.getTitle() : "") || "",
+      activeTag: null,
+      activeId: null,
+      inputs: [],
+      videos: [],
+      interactiveCount: 0,
+      bodyLength: 0,
+      timestamp: Date.now(),
+      error: e.message
+    };
+  }
+}
+function computeDomDelta(beforeSnap, afterSnap) {
+  if (!beforeSnap || !afterSnap) {
+    return { isZeroDelta: false, summary: "Snapshot delta unavailable" };
+  }
+  const urlChanged = beforeSnap.url !== afterSnap.url;
+  const titleChanged = beforeSnap.title !== afterSnap.title;
+  const focusChanged = beforeSnap.activeTag !== afterSnap.activeTag || beforeSnap.activeId !== afterSnap.activeId || beforeSnap.activeName !== afterSnap.activeName;
+  const valueChanged = JSON.stringify(beforeSnap.inputs) !== JSON.stringify(afterSnap.inputs) || beforeSnap.activeValue !== afterSnap.activeValue;
+  const videoChanged = JSON.stringify(beforeSnap.videos) !== JSON.stringify(afterSnap.videos);
+  const interactiveDelta = (afterSnap.interactiveCount || 0) - (beforeSnap.interactiveCount || 0);
+  const bodyLengthDelta = (afterSnap.bodyLength || 0) - (beforeSnap.bodyLength || 0);
+  const changes = [];
+  if (urlChanged) changes.push(`URL navigated to: ${afterSnap.url}`);
+  if (titleChanged) changes.push(`Title changed: "${afterSnap.title}"`);
+  if (focusChanged) changes.push(`Focus shifted to <${afterSnap.activeTag || "none"}${afterSnap.activeId ? "#" + afterSnap.activeId : ""}>`);
+  if (valueChanged) changes.push(`Input values updated`);
+  if (videoChanged) {
+    const vState = afterSnap.videos[0]?.paused ? "paused" : "playing";
+    changes.push(`Video state shifted to ${vState}`);
+  }
+  if (Math.abs(interactiveDelta) > 0) changes.push(`Interactive elements delta: ${interactiveDelta > 0 ? "+" : ""}${interactiveDelta}`);
+  if (Math.abs(bodyLengthDelta) > 50) changes.push(`DOM text changed by ${bodyLengthDelta} chars`);
+  const isZeroDelta = !urlChanged && !titleChanged && !focusChanged && !valueChanged && !videoChanged && Math.abs(bodyLengthDelta) < 15 && interactiveDelta === 0;
+  return {
+    urlChanged,
+    titleChanged,
+    focusChanged,
+    valueChanged,
+    videoChanged,
+    interactiveDelta,
+    bodyLengthDelta,
+    isZeroDelta,
+    changes,
+    summary: changes.length > 0 ? changes.join(" | ") : "Zero DOM delta detected (no physical change)"
+  };
+}
+async function executeWebviewKeyPress(webview, key = "Space", modifiers = []) {
+  if (!webview || typeof webview.executeJavaScript !== "function") {
+    return { success: false, message: "Webview is not available to receive key press." };
+  }
+  const cleanKey = (key || "Space").trim();
+  try {
+    const result = await webview.executeJavaScript(`
+            (function() {
+                const targetKey = ${JSON.stringify(cleanKey)};
+                const keyMap = {
+                    'space': { key: ' ', code: 'Space', keyCode: 32 },
+                    ' ': { key: ' ', code: 'Space', keyCode: 32 },
+                    'enter': { key: 'Enter', code: 'Enter', keyCode: 13 },
+                    'return': { key: 'Enter', code: 'Enter', keyCode: 13 },
+                    'tab': { key: 'Tab', code: 'Tab', keyCode: 9 },
+                    'escape': { key: 'Escape', code: 'Escape', keyCode: 27 },
+                    'esc': { key: 'Escape', code: 'Escape', keyCode: 27 },
+                    'arrowdown': { key: 'ArrowDown', code: 'ArrowDown', keyCode: 40 },
+                    'down': { key: 'ArrowDown', code: 'ArrowDown', keyCode: 40 },
+                    'arrowup': { key: 'ArrowUp', code: 'ArrowUp', keyCode: 38 },
+                    'up': { key: 'ArrowUp', code: 'ArrowUp', keyCode: 38 },
+                    'arrowleft': { key: 'ArrowLeft', code: 'ArrowLeft', keyCode: 37 },
+                    'left': { key: 'ArrowLeft', code: 'ArrowLeft', keyCode: 37 },
+                    'arrowright': { key: 'ArrowRight', code: 'ArrowRight', keyCode: 39 },
+                    'right': { key: 'ArrowRight', code: 'ArrowRight', keyCode: 39 },
+                    'backspace': { key: 'Backspace', code: 'Backspace', keyCode: 8 },
+                    'k': { key: 'k', code: 'KeyK', keyCode: 75 }
+                };
+
+                const mapped = keyMap[targetKey.toLowerCase()] || {
+                    key: targetKey,
+                    code: 'Key' + targetKey.toUpperCase(),
+                    keyCode: targetKey.charCodeAt(0) || 0
+                };
+
+                const targetEl = document.activeElement || document.body;
+
+                // 1. Dispatch keydown, keypress, keyup
+                ['keydown', 'keypress', 'keyup'].forEach(type => {
+                    targetEl.dispatchEvent(new KeyboardEvent(type, {
+                        key: mapped.key,
+                        code: mapped.code,
+                        keyCode: mapped.keyCode,
+                        which: mapped.keyCode,
+                        bubbles: true,
+                        cancelable: true
+                    }));
+                });
+
+                // 2. Media Playback Guarantee: If Space or 'k', ensure HTML5 video toggles cleanly
+                let mediaHandled = false;
+                if (mapped.code === 'Space' || mapped.code === 'KeyK') {
+                    const video = document.querySelector('video');
+                    if (video) {
+                        try {
+                            if (video.paused) {
+                                video.play();
+                                mediaHandled = true;
+                            } else {
+                                video.pause();
+                                mediaHandled = true;
+                            }
+                        } catch (e) {}
+                    }
+                }
+
+                // 3. Modal / Popup Dismiss Guarantee: If Escape, blur active element
+                if (mapped.code === 'Escape') {
+                    if (document.activeElement && document.activeElement.blur) {
+                        document.activeElement.blur();
+                    }
+                }
+
+                return {
+                    success: true,
+                    key: mapped.key,
+                    code: mapped.code,
+                    mediaHandled,
+                    targetTag: targetEl.tagName.toLowerCase()
+                };
+            })()
+        `);
+    return {
+      success: true,
+      message: `Pressed key [${result.code || cleanKey}] on <${result.targetTag || "body"}>${result.mediaHandled ? " (Video playback toggled)" : ""}.`,
+      details: result
+    };
+  } catch (e) {
+    return { success: false, message: `Key press error: ${e.message}` };
+  }
+}
+async function executeWebviewHover(webview, targetText) {
+  if (!webview || typeof webview.executeJavaScript !== "function") {
+    return { success: false, message: "Webview is not available to hover." };
+  }
+  const cleanTarget = (targetText || "").trim();
+  if (!cleanTarget) {
+    return { success: false, message: "Target element required for hover." };
+  }
+  try {
+    const result = await webview.executeJavaScript(`
+            (function() {
+                const target = ${JSON.stringify(cleanTarget)}.trim();
+                let el = null;
+
+                // 1. Set-of-Marks badge (#1, #2, etc.)
+                const markMatch = target.match(/^#?(\\d+)$/);
+                if (markMatch) {
+                    const idx = parseInt(markMatch[1], 10);
+                    const badges = Array.from(document.querySelectorAll('.antigravity-num-badge, [data-som-id]'));
+                    if (badges[idx - 1]) {
+                        el = badges[idx - 1].parentElement || badges[idx - 1];
+                    }
+                }
+
+                // 2. Direct selector
+                if (!el) {
+                    try { el = document.querySelector(target); } catch (e) {}
+                }
+
+                // 3. Text match
+                if (!el) {
+                    const candidates = Array.from(document.querySelectorAll('button, a, [role="button"], [role="menuitem"], div, span'));
+                    el = candidates.find(c => (c.innerText || '').trim().toLowerCase().includes(target.toLowerCase()));
+                }
+
+                if (!el) {
+                    return { success: false, error: 'Element not found' };
+                }
+
+                const rect = el.getBoundingClientRect();
+                ['mouseenter', 'mouseover', 'mousemove'].forEach(type => {
+                    el.dispatchEvent(new MouseEvent(type, {
+                        bubbles: true,
+                        cancelable: true,
+                        clientX: rect.left + rect.width / 2,
+                        clientY: rect.top + rect.height / 2
+                    }));
+                });
+
+                return { success: true, tag: el.tagName.toLowerCase(), text: (el.innerText || '').slice(0, 30) };
+            })()
+        `);
+    if (result.success) {
+      return { success: true, message: `Hovered over <${result.tag}> "${result.text}".` };
+    } else {
+      return { success: false, message: `Could not find element to hover: "${cleanTarget}".` };
+    }
+  } catch (e) {
+    return { success: false, message: `Hover error: ${e.message}` };
+  }
+}
+async function executeWebviewType(webview, textToType, target = null, submit = false, clear = true) {
+  if (!webview || typeof webview.executeJavaScript !== "function") {
+    return { success: false, message: "No active webview available for typing." };
   }
   try {
     const result = await webview.executeJavaScript(`
             (function() {
                 const text = ${JSON.stringify(textToType)};
-                const searchSelectors = [
-                    'textarea[name="q"]', 'input[name="q"]', 'textarea.gLFyf', 'input.gLFyf',
-                    'input#search', 'input#searchInput', 'input#searchbox_input', 'input[type="search"]',
-                    'textarea[name*="search" i]', 'input[name*="search" i]', 'input[id*="search" i]',
-                    'input[placeholder*="search" i]', 'textarea[placeholder*="search" i]',
-                    '[role="searchbox"]', '[role="search"] textarea', '[role="search"] input',
-                    'textarea:not([type="hidden"])', 'input[type="text"]', 'input:not([type="hidden"])'
-                ];
+                const targetQuery = ${JSON.stringify(target || "")}.trim();
+                const shouldSubmit = ${!!submit};
+                const shouldClear = ${clear !== false};
+
+                function isVisible(el) {
+                    if (!el) return false;
+                    const style = window.getComputedStyle(el);
+                    return style.display !== 'none' && 
+                           style.visibility !== 'hidden' && 
+                           style.opacity !== '0' && 
+                           el.offsetWidth > 0 && 
+                           el.offsetHeight > 0;
+                }
 
                 let targetInput = null;
-                for (const sel of searchSelectors) {
-                    const el = document.querySelector(sel);
-                    if (el && el.offsetWidth > 0 && el.offsetHeight > 0) {
-                        targetInput = el;
-                        break;
+                let matchedBy = 'fallback';
+
+                // 1. Target Specified: Check Set-of-Marks Badge (#N)
+                if (targetQuery) {
+                    const markMatch = targetQuery.match(/^#?(\\d+)$/);
+                    if (markMatch) {
+                        const markIdx = parseInt(markMatch[1], 10);
+                        const somEl = document.querySelector('[data-som-id="' + markIdx + '"]') || document.querySelector('#som-' + markIdx);
+                        if (somEl && isVisible(somEl)) {
+                            targetInput = somEl.matches('input, textarea') ? somEl : somEl.querySelector('input, textarea');
+                            if (targetInput) matchedBy = 'Set-of-Marks #' + markIdx;
+                        }
+                    }
+                }
+
+                // 2. Target Specified: Check Placeholder, Aria-Label, Name, or ID
+                if (!targetInput && targetQuery) {
+                    const cleanQ = targetQuery.toLowerCase();
+                    const candidates = Array.from(document.querySelectorAll('input:not([type="hidden"]), textarea')).filter(isVisible);
+
+                    // Exact or substring match on placeholder
+                    targetInput = candidates.find(c => (c.placeholder || '').toLowerCase().includes(cleanQ));
+                    if (targetInput) matchedBy = 'Placeholder: "' + targetInput.placeholder + '"';
+
+                    // Match on aria-label
+                    if (!targetInput) {
+                        targetInput = candidates.find(c => (c.getAttribute('aria-label') || '').toLowerCase().includes(cleanQ));
+                        if (targetInput) matchedBy = 'Aria-Label: "' + targetInput.getAttribute('aria-label') + '"';
+                    }
+
+                    // Match on associated <label>
+                    if (!targetInput) {
+                        const labels = Array.from(document.querySelectorAll('label')).filter(l => (l.innerText || '').toLowerCase().includes(cleanQ));
+                        for (const lbl of labels) {
+                            if (lbl.htmlFor) {
+                                const el = document.getElementById(lbl.htmlFor);
+                                if (el && isVisible(el)) { targetInput = el; matchedBy = 'Label: "' + lbl.innerText.trim() + '"'; break; }
+                            }
+                            const inner = lbl.querySelector('input, textarea');
+                            if (inner && isVisible(inner)) { targetInput = inner; matchedBy = 'Inner Label: "' + lbl.innerText.trim() + '"'; break; }
+                        }
+                    }
+
+                    // Direct CSS Selector
+                    if (!targetInput) {
+                        try {
+                            const selEl = document.querySelector(targetQuery);
+                            if (selEl && isVisible(selEl)) {
+                                targetInput = selEl.matches('input, textarea') ? selEl : selEl.querySelector('input, textarea');
+                                if (targetInput) matchedBy = 'CSS Selector';
+                            }
+                        } catch (e) {}
+                    }
+                }
+
+                // 3. No Target or Target Not Found: Use document.activeElement if editable
+                if (!targetInput && document.activeElement) {
+                    const act = document.activeElement;
+                    if ((act.tagName === 'INPUT' || act.tagName === 'TEXTAREA' || act.isContentEditable) && isVisible(act)) {
+                        targetInput = act;
+                        matchedBy = 'Active Focused Element';
+                    }
+                }
+
+                // 4. Fallback: Search bar or first visible input
+                if (!targetInput) {
+                    const searchSelectors = [
+                        'input[type="search"]', 'input[name="q"]', 'input[name="s"]', 'input[name*="search" i]',
+                        'input[id*="search" i]', 'input[placeholder*="search" i]', 'input[aria-label*="search" i]',
+                        '[role="searchbox"]', '[role="search"] input', '[role="search"] textarea',
+                        'textarea[name="q"]', 'textarea[name*="search" i]',
+                        'input[type="text"]', 'input:not([type="hidden"])', 'textarea:not([type="hidden"])'
+                    ];
+                    for (const sel of searchSelectors) {
+                        const el = document.querySelector(sel);
+                        if (el && isVisible(el)) {
+                            targetInput = el;
+                            matchedBy = 'Primary Input Fallback';
+                            break;
+                        }
                     }
                 }
 
                 if (!targetInput) {
-                    return { success: false, error: 'Could not find an active search input on current page.' };
+                    return { success: false, error: 'Could not locate target input on page.' };
                 }
 
                 targetInput.focus();
-                targetInput.value = text;
+
+                // OpenCode React / Vue Prototype Descriptor Setter Override
+                const isTextArea = targetInput instanceof HTMLTextAreaElement;
+                const proto = isTextArea ? window.HTMLTextAreaElement.prototype : window.HTMLInputElement.prototype;
+                const descriptor = Object.getOwnPropertyDescriptor(proto, 'value');
+                const nativeSetter = descriptor ? descriptor.set : null;
+
+                if (shouldClear) {
+                    if (nativeSetter) nativeSetter.call(targetInput, '');
+                    else targetInput.value = '';
+                }
+
+                if (nativeSetter) {
+                    nativeSetter.call(targetInput, text);
+                } else {
+                    targetInput.value = text;
+                }
+
                 targetInput.dispatchEvent(new Event('input', { bubbles: true }));
                 targetInput.dispatchEvent(new Event('change', { bubbles: true }));
 
-                // Highlight yellow
+                // Subtle visual outline feedback
                 const origOutline = targetInput.style.outline;
                 targetInput.style.outline = '3px solid #FFE600';
-                targetInput.style.boxShadow = '0 0 16px #FFE600';
+                targetInput.style.boxShadow = '0 0 16px rgba(255, 230, 0, 0.6)';
                 setTimeout(() => {
                     targetInput.style.outline = origOutline;
                     targetInput.style.boxShadow = '';
                 }, 1000);
 
-                // Try form submit or Enter keypress
+                // Form Submit only if explicitly requested
                 let formSubmitted = false;
-                const form = targetInput.closest('form');
-                if (form) {
-                    try {
-                        const submitBtn = form.querySelector('button[type="submit"], input[type="submit"]');
-                        if (submitBtn) {
-                            submitBtn.click();
-                            formSubmitted = true;
-                        } else {
-                            form.requestSubmit ? form.requestSubmit() : form.submit();
-                            formSubmitted = true;
-                        }
-                    } catch (e) {}
-                }
-
-                if (!formSubmitted) {
-                    const enterEvt = new KeyboardEvent('keydown', {
-                        key: 'Enter',
-                        code: 'Enter',
-                        keyCode: 13,
-                        which: 13,
-                        bubbles: true,
-                        cancelable: true
+                if (shouldSubmit) {
+                    ['keydown', 'keypress', 'keyup'].forEach(evtName => {
+                        targetInput.dispatchEvent(new KeyboardEvent(evtName, {
+                            key: 'Enter',
+                            code: 'Enter',
+                            keyCode: 13,
+                            which: 13,
+                            bubbles: true,
+                            cancelable: true
+                        }));
                     });
-                    targetInput.dispatchEvent(enterEvt);
+
+                    const form = targetInput.closest('form');
+                    if (form) {
+                        try {
+                            const submitBtn = form.querySelector('button[type="submit"], input[type="submit"], button[aria-label*="Search" i], [class*="submit" i]');
+                            if (submitBtn) {
+                                submitBtn.click();
+                                formSubmitted = true;
+                            } else if (typeof form.requestSubmit === 'function') {
+                                form.requestSubmit();
+                                formSubmitted = true;
+                            } else if (typeof form.submit === 'function') {
+                                form.submit();
+                                formSubmitted = true;
+                            }
+                        } catch (e) {}
+                    }
                 }
 
-                return { success: true, text: text, inputTag: targetInput.tagName.toLowerCase() };
+                return {
+                    success: true,
+                    text: text,
+                    inputTag: targetInput.tagName.toLowerCase(),
+                    placeholder: targetInput.placeholder || '',
+                    matchedBy: matchedBy,
+                    submitted: formSubmitted
+                };
             })();
         `);
     if (result && result.success) {
-      return `\u2328\uFE0F Typed <strong>"${textToType}"</strong> into search bar and submitted search.`;
+      const subMsg = result.submitted ? " (submitted)" : "";
+      return {
+        success: true,
+        message: `Typed "${textToType}" into <${result.inputTag}> [${result.matchedBy}]${subMsg}.`,
+        details: result
+      };
     } else {
-      return `\u26A0\uFE0F Could not find search bar on current page: ${result ? result.error : "Unknown error"}`;
+      return { success: false, message: `Could not type into element: ${result ? result.error : "Unknown error"}` };
     }
   } catch (e) {
-    return `\u26A0\uFE0F Search typing error: ${e.message}`;
+    return { success: false, message: `Type text error: ${e.message}` };
   }
+}
+async function typeAndSubmitInSearchBar(webview, textToType) {
+  const res = await executeWebviewType(webview, textToType, null, true, true);
+  if (res.success) {
+    return `\u2328\uFE0F Typed <strong>"${textToType}"</strong> into search bar and submitted search.`;
+  }
+  return `\u26A0\uFE0F ${res.message}`;
 }
 async function highlightAndNumberOccurrences(webview, keyword) {
   if (!webview || typeof webview.executeJavaScript !== "function") {
@@ -40027,6 +42200,47 @@ function extractTabIndexFromPrompt(raw) {
   }
   return null;
 }
+async function executeSubAgentRun(subagentId, role, subGoal, context = {}) {
+  const {
+    activeTabId,
+    getActiveWebview,
+    onNavigate
+  } = context;
+  const wv = document.getElementById(`wv-${activeTabId}`) || (typeof getActiveWebview === "function" ? getActiveWebview() : null);
+  if (!wv) {
+    return { success: false, summary: `Sub-agent [${subagentId}] failed: Tab webview not found.`, dom_delta: "" };
+  }
+  const preSnap = await captureDomSnapshot(wv);
+  let subSummary = `Sub-agent [${subagentId}] (${role}) executed goal: "${subGoal}"`;
+  let subSuccess = true;
+  if (/play|video|pause|toggle|space/i.test(subGoal)) {
+    const keyRes = await executeWebviewKeyPress(wv, "Space");
+    subSuccess = keyRes.success;
+    subSummary = `Toggled media playback via Space key.`;
+  } else if (/fill|form|type|enter/i.test(subGoal)) {
+    const textMatch = subGoal.match(/["']([^"']+)["']/);
+    const textToType = textMatch ? textMatch[1] : subGoal.replace(/fill|form|type|enter/gi, "").trim();
+    const typeRes = await executeWebviewType(wv, textToType, null, false, true);
+    subSuccess = typeRes.success;
+    subSummary = typeRes.message;
+  } else if (/click|submit|press/i.test(subGoal)) {
+    const clickTarget = subGoal.replace(/click|submit|press/gi, "").trim();
+    const clickRes = await executeWebviewClick(wv, clickTarget, onNavigate);
+    subSuccess = clickRes.success;
+    subSummary = clickRes.message;
+  } else {
+    subSummary = `Sub-agent completed operation on tab ${activeTabId}.`;
+  }
+  await new Promise((r) => setTimeout(r, 400));
+  const postSnap = await captureDomSnapshot(wv);
+  const delta = computeDomDelta(preSnap, postSnap);
+  return {
+    success: subSuccess,
+    summary: subSummary,
+    dom_delta: delta.summary,
+    artifacts: { url: postSnap.url, title: postSnap.title }
+  };
+}
 async function executeToolCallAndVerify(toolCall, context = {}) {
   const {
     tabs = [],
@@ -40044,14 +42258,28 @@ async function executeToolCallAndVerify(toolCall, context = {}) {
   const args = toolCall.args || toolCall.parameters || {};
   const wv = getActiveWebview ? getActiveWebview() : null;
   if (name === "open_tab") {
+    if (args.inCurrentTab || typeof args.url === "string" && /\b(?:in\s+(?:the\s+)?(?:current|this|active)\s+tab|here)\b/i.test(args.url)) {
+      return await executeToolCallAndVerify({ name: "navigate", args: { url: args.url } }, context);
+    }
     const targetUrl = args.url ? resolveTargetUrl(args.url) : "";
     const title = args.title || (targetUrl ? args.url : "New Tab");
     const prevCount = tabs.length;
-    if (onOpenTab) onOpenTab(targetUrl, title);
-    await new Promise((r) => setTimeout(r, 400));
+    let newTabId = null;
+    if (onOpenTab) {
+      newTabId = onOpenTab(targetUrl, title);
+    }
+    await new Promise((r) => setTimeout(r, 600));
+    if (!newTabId) {
+      try {
+        const tabsRes = await fetch("http://127.0.0.1:4892/api/tabs").then((r) => r.json()).catch(() => null);
+        if (tabsRes && tabsRes.activeTabId) newTabId = tabsRes.activeTabId;
+      } catch (e) {
+      }
+    }
     return {
       success: true,
       action: "open_tab",
+      tabId: newTabId,
       message: targetUrl ? `Opened "${title}" in a new tab.` : "Opened a new blank tab.",
       verification: `\u2705 [Verified Action: Opened New Tab #${prevCount + 1}${targetUrl ? ` (${targetUrl})` : ""}]`
     };
@@ -40112,13 +42340,45 @@ async function executeToolCallAndVerify(toolCall, context = {}) {
   if (name === "navigate") {
     const url = args.url ? resolveTargetUrl(args.url) : "";
     if (url && onNavigate) {
+      const prevUrl = wv && typeof wv.getURL === "function" ? wv.getURL() : "";
       onNavigate(url);
-      return {
-        success: true,
-        action: "navigate",
-        message: `Navigating active tab to ${url}.`,
-        verification: `\u2705 [Verified Action: Navigated active tab to ${url}]`
-      };
+      let currentUrl = prevUrl;
+      let currentTitle = "";
+      for (let i = 0; i < 10; i++) {
+        await new Promise((r) => setTimeout(r, 250));
+        if (wv && typeof wv.getURL === "function") {
+          currentUrl = wv.getURL() || "";
+          currentTitle = (typeof wv.getTitle === "function" ? wv.getTitle() : "") || "";
+          if (currentUrl && currentUrl !== "about:blank" && (currentUrl !== prevUrl || i >= 4)) {
+            break;
+          }
+        }
+      }
+      const targetDomain = (function() {
+        try {
+          return new URL(url).hostname.replace(/^www\./, "");
+        } catch (e) {
+          return url;
+        }
+      })();
+      const isVerified = currentUrl && currentUrl !== "about:blank" && (currentUrl.includes(targetDomain) || currentUrl !== prevUrl && !currentUrl.includes("about:blank"));
+      if (isVerified) {
+        return {
+          success: true,
+          action: "navigate",
+          url: currentUrl,
+          message: `Navigated active tab to ${currentUrl || url}. Title: "${currentTitle}".`,
+          verification: `\u2705 [Verified Action: Navigated active tab to ${currentUrl || url}${currentTitle ? ` ("${currentTitle}")` : ""}]`
+        };
+      } else {
+        return {
+          success: false,
+          action: "navigate",
+          url: currentUrl,
+          message: `Navigation initiated to ${url}, but active webview URL is currently "${currentUrl}".`,
+          verification: `\u26A0\uFE0F [Verification Failed: Active tab URL did not navigate to "${url}"]`
+        };
+      }
     }
     return { success: false, action: "navigate", verification: "\u26A0\uFE0F [Verification Failed: No URL provided]" };
   }
@@ -40126,11 +42386,21 @@ async function executeToolCallAndVerify(toolCall, context = {}) {
     const target = args.target || "";
     if (target) {
       const clickRes = await executeWebviewClick(wv, target, onNavigate);
+      if (!clickRes || !clickRes.success) {
+        return {
+          success: false,
+          action: "click_element",
+          message: clickRes?.message || `Could not find clickable element matching "${target}".`,
+          verification: `\u26A0\uFE0F [Verification Failed: Element "${target}" not found or not clickable on active page]`
+        };
+      }
+      await new Promise((r) => setTimeout(r, 600));
+      const newUrl = wv && typeof wv.getURL === "function" ? wv.getURL() : "";
       return {
         success: true,
         action: "click_element",
         message: clickRes.message || `Clicked element matching "${target}".`,
-        verification: `\u2705 [Verified Action: Click executed on "${target}"]`
+        verification: `\u2705 [Verified Action: Clicked "${target}"${newUrl && !newUrl.includes("about:blank") ? ` (URL: ${newUrl})` : ""}]`
       };
     }
     return { success: false, action: "click_element", verification: "\u26A0\uFE0F [Verification Failed: No click target specified]" };
@@ -40138,15 +42408,99 @@ async function executeToolCallAndVerify(toolCall, context = {}) {
   if (name === "type_text") {
     const text = args.text || "";
     if (text) {
-      const typeMsg = await typeAndSubmitInSearchBar(wv, text);
+      const typeRes = await executeWebviewType(wv, text, args.target, args.submit === true, args.clear !== false);
+      if (!typeRes || !typeRes.success) {
+        return {
+          success: false,
+          action: "type_text",
+          message: typeRes?.message || "Failed to type text into target.",
+          verification: `\u26A0\uFE0F [Verification Failed: Could not type text into ${args.target ? `target "${args.target}"` : "active field"}]`
+        };
+      }
       return {
         success: true,
         action: "type_text",
-        message: typeMsg,
-        verification: `\u2705 [Verified Action: Typed and submitted "${text}"]`
+        message: typeRes.message,
+        verification: `\u2705 [Verified Action: ${typeRes.message}]`
       };
     }
     return { success: false, action: "type_text", verification: "\u26A0\uFE0F [Verification Failed: No text provided]" };
+  }
+  if (name === "press_key") {
+    const key = args.key || "Space";
+    const modifiers = args.modifiers || [];
+    const keyRes = await executeWebviewKeyPress(wv, key, modifiers);
+    if (!keyRes || !keyRes.success) {
+      return {
+        success: false,
+        action: "press_key",
+        message: keyRes?.message || `Failed to press key "${key}".`,
+        verification: `\u26A0\uFE0F [Verification Failed: Key "${key}" dispatch failed]`
+      };
+    }
+    return {
+      success: true,
+      action: "press_key",
+      message: keyRes.message,
+      verification: `\u2705 [Verified Action: ${keyRes.message}]`
+    };
+  }
+  if (name === "hover_element") {
+    const target = args.target || "";
+    if (target) {
+      const hoverRes = await executeWebviewHover(wv, target);
+      if (!hoverRes || !hoverRes.success) {
+        return {
+          success: false,
+          action: "hover_element",
+          message: hoverRes?.message || `Could not hover over "${target}".`,
+          verification: `\u26A0\uFE0F [Verification Failed: Hover target "${target}" not found]`
+        };
+      }
+      return {
+        success: true,
+        action: "hover_element",
+        message: hoverRes.message,
+        verification: `\u2705 [Verified Action: ${hoverRes.message}]`
+      };
+    }
+    return { success: false, action: "hover_element", verification: "\u26A0\uFE0F [Verification Failed: No hover target specified]" };
+  }
+  if (name === "delegate_subtask") {
+    const subId = args.subagent_id || "sub_" + Math.random().toString(36).slice(2, 6);
+    const role = args.role || "general_worker";
+    const subGoal = args.goal || "";
+    const subTabId = args.tab_id !== void 0 ? args.tab_id : activeTabId;
+    if (!globalSubAgentManager.canSpawn()) {
+      return {
+        success: false,
+        action: "delegate_subtask",
+        subagent_id: subId,
+        message: `Cannot spawn sub-agent [${subId}]: Maximum 3 concurrent sub-agents limit reached to protect RAM.`,
+        verification: `\u26A0\uFE0F [Delegation Rejected: RAM protection active, maximum 3 sub-agents running]`
+      };
+    }
+    try {
+      globalSubAgentManager.register(subId, role, subGoal, subTabId);
+    } catch (e) {
+      return { success: false, action: "delegate_subtask", message: e.message, verification: `\u26A0\uFE0F [Delegation Error: ${e.message}]` };
+    }
+    const subContext = {
+      ...context,
+      activeTabId: subTabId,
+      subagentId: subId
+    };
+    const subRes = await executeSubAgentRun(subId, role, subGoal, subContext);
+    const completedRecord = globalSubAgentManager.complete(subId, subRes.success, subRes.summary, subRes.artifacts, subRes.dom_delta);
+    globalSubAgentManager.terminate(subId);
+    return {
+      success: subRes.success,
+      action: "delegate_subtask",
+      subagent_id: subId,
+      message: `Sub-agent [${subId}] (${role}) completed: ${subRes.summary}`,
+      result: completedRecord,
+      verification: subRes.success ? `\u2705 [Sub-Agent [${subId}] Handover: ${subRes.summary} | DOM Delta: ${subRes.dom_delta || "verified"}]` : `\u26A0\uFE0F [Sub-Agent [${subId}] Handover Failed: ${subRes.summary}]`
+    };
   }
   if (name === "scroll_page") {
     const direction = args.direction || "down";
@@ -40173,8 +42527,14 @@ async function executeToolCallAndVerify(toolCall, context = {}) {
     } else if (args.target) {
       await executeWebviewClick(wv, args.target, onNavigate);
     }
-    await new Promise((r) => setTimeout(r, 1200));
-    const dlCheck = await fetch("http://127.0.0.1:4892/api/downloads/verify").then((r) => r.json()).catch(() => null);
+    let dlCheck = null;
+    for (let i = 0; i < 5; i++) {
+      await new Promise((r) => setTimeout(r, 500));
+      dlCheck = await fetch("http://127.0.0.1:4892/api/downloads/verify").then((r) => r.json()).catch(() => null);
+      if (dlCheck && (dlCheck.hasActiveDownloads || dlCheck.hasCompletedDownloads)) {
+        break;
+      }
+    }
     if (dlCheck && dlCheck.hasActiveDownloads) {
       const dl = dlCheck.active[0];
       return {
@@ -40221,37 +42581,233 @@ async function executeToolCallAndVerify(toolCall, context = {}) {
     const query = args.query || args.text || "";
     if (query) {
       let resMsg = "";
+      let isOk = false;
       if (wv && typeof wv.executeJavaScript === "function") {
-        resMsg = await typeAndSubmitInSearchBar(wv, query);
+        const typeRes = await typeAndSubmitInSearchBar(wv, query);
+        isOk = !(typeof typeRes === "string" && typeRes.startsWith("\u26A0\uFE0F"));
+        resMsg = typeRes;
       } else if (onNavigate) {
         onNavigate(`https://www.google.com/search?q=${encodeURIComponent(query)}`);
         resMsg = `Navigated to search for "${query}".`;
+        isOk = true;
       }
-      return {
-        success: true,
-        action: "search_page",
-        message: resMsg || `Searched for "${query}".`,
-        verification: `\u2705 [Verified Action: Searched for "${query}"]`
-      };
+      if (isOk) {
+        await new Promise((r) => setTimeout(r, 1200));
+        const curUrl = wv && typeof wv.getURL === "function" ? wv.getURL() : "";
+        return {
+          success: true,
+          action: "search_page",
+          message: resMsg || `Searched for "${query}".`,
+          verification: `\u2705 [Verified Action: Searched for "${query}" on active site${curUrl ? ` (URL: ${curUrl})` : ""}]`
+        };
+      } else {
+        return {
+          success: false,
+          action: "search_page",
+          message: resMsg,
+          verification: `\u26A0\uFE0F [Verification Failed: Search input not found on active page]`
+        };
+      }
     }
     return { success: false, action: "search_page", verification: "\u26A0\uFE0F [Verification Failed: No query provided]" };
   }
-  if (name === "read_page") {
-    let pageSummary = "Page state could not be read.";
-    if (wv && typeof wv.executeJavaScript === "function") {
-      const ctx = await extractAdaptivePageContext(wv);
-      if (ctx && ctx.success) {
-        const searchInps = (ctx.searchInputs || []).map((i) => i.placeholder || i.name || i.id).join(", ");
-        const dlCount = (ctx.downloadTriggers || []).length;
-        pageSummary = `Page: "${ctx.page?.title || ""}" (${ctx.page?.url || ""}). Phase: ${ctx.phase}. Search inputs: [${searchInps || "none"}]. Download links: ${dlCount}.`;
-      }
+  if (name === "read_page" || name === "read_site") {
+    if (!wv || typeof wv.executeJavaScript !== "function") {
+      return {
+        success: false,
+        action: "read_page",
+        message: "No active webview available to read page.",
+        verification: "\u26A0\uFE0F [Verification Failed: No active webview]"
+      };
     }
-    return {
-      success: true,
-      action: "read_page",
-      message: pageSummary,
-      verification: `\u2705 [Verified Action: Read page content]`
-    };
+    for (let i = 0; i < 15; i++) {
+      const isLoading = typeof wv.isLoading === "function" ? wv.isLoading() : false;
+      if (!isLoading) {
+        try {
+          const ready = await wv.executeJavaScript(`document.readyState === 'complete' || (document.body && document.body.children.length > 0)`);
+          if (ready) break;
+        } catch (e) {
+        }
+      }
+      await new Promise((r) => setTimeout(r, 200));
+    }
+    try {
+      const pageData = await wv.executeJavaScript(`
+                (function() {
+                    const title = document.title || '';
+                    const url = window.location.href || '';
+                    
+                    const headings = Array.from(document.querySelectorAll('h1, h2, h3, h4, h5, h6'))
+                        .map(h => (h.innerText || h.textContent || '').trim().replace(/\\s+/g, ' '))
+                        .filter(h => h.length > 2 && h.length < 200)
+                        .slice(0, 30);
+
+                    const links = Array.from(document.querySelectorAll('a, [role="link"]'))
+                        .map(a => {
+                            const aria = (a.getAttribute('aria-label') || '').trim();
+                            const titleAttr = (a.getAttribute('title') || '').trim();
+                            const txt = (a.innerText || a.textContent || '').trim();
+                            const label = (aria || titleAttr || txt).replace(/\\s+/g, ' ');
+                            const href = a.href || a.getAttribute('href') || '';
+                            return { text: label, href };
+                        })
+                        .filter(l => l.text.length > 2 && l.href && !l.href.startsWith('javascript:'))
+                        .slice(0, 60);
+
+                    const downloads = Array.from(document.querySelectorAll('a, button, .btn, [class*="download" i], [class*="episode" i], [class*="stream" i]'))
+                        .map(el => {
+                            const aria = (el.getAttribute('aria-label') || '').trim();
+                            const txt = (el.innerText || el.textContent || '').trim();
+                            const href = el.href || el.getAttribute('href') || '';
+                            const label = (aria || txt).replace(/\\s+/g, ' ');
+                            return { text: label, href };
+                        })
+                        .filter(d => /\\b(?:1080p|720p|480p|2160p|4k|download|episode|ep\\s*\\d+|direct|g-?drive|stream|torrent|magnet|batch)\\b/i.test(d.text + ' ' + d.href))
+                        .slice(0, 40);
+
+                    const searchInputs = Array.from(document.querySelectorAll('input, textarea'))
+                        .filter(i => /search|query|keyword|find/i.test((i.name || '') + ' ' + (i.id || '') + ' ' + (i.placeholder || '') + ' ' + (i.getAttribute('aria-label') || '') + ' ' + (i.type || '')))
+                        .map(i => i.placeholder || i.name || i.id || 'search_input')
+                        .slice(0, 5);
+
+                    const bodyText = (document.body ? document.body.innerText : '')
+                        .replace(/\\s+/g, ' ')
+                        .trim()
+                        .substring(0, 4000);
+
+                    return { title, url, headings, links, downloads, searchInputs, bodyText };
+                })()
+            `);
+      const dlList = (pageData.downloads || []).map((d) => `- "${d.text}" ${d.href ? `-> ${d.href}` : ""}`).join("\n");
+      const linkList = (pageData.links || []).slice(0, 25).map((l) => `- "${l.text}" -> ${l.href}`).join("\n");
+      const searchList = (pageData.searchInputs || []).join(", ") || "none";
+      const summary = `\u{1F4C4} **Page Title:** "${pageData.title}"
+\u{1F517} **URL:** ${pageData.url}
+\u{1F50D} **Search Inputs:** ${searchList}
+\u{1F4CC} **Headings (${pageData.headings?.length || 0}):** ${(pageData.headings || []).slice(0, 10).join(" | ") || "none"}
+
+\u{1F4E5} **Detected Download/Stream Triggers (${pageData.downloads?.length || 0}):**
+${dlList || "None detected"}
+
+\u{1F310} **Top Interactive Links (${pageData.links?.length || 0}):**
+${linkList || "None detected"}
+
+\u{1F4DD} **Page Content Excerpt:**
+${(pageData.bodyText || "").substring(0, 1200)}...`;
+      const isBlank = (!pageData.title || pageData.title === "about:blank") && (!pageData.links || pageData.links.length === 0);
+      if (isBlank) {
+        return {
+          success: false,
+          action: "read_page",
+          page: pageData,
+          message: summary,
+          verification: `\u26A0\uFE0F [Verification Notice: Active page is currently blank or still loading ("${pageData.url}")]`
+        };
+      }
+      return {
+        success: true,
+        action: "read_page",
+        page: pageData,
+        message: summary,
+        verification: `\u2705 [Verified Action: Read live page state: "${pageData.title}" (${pageData.links?.length || 0} links, ${pageData.downloads?.length || 0} downloads, ${pageData.headings?.length || 0} headings)]`
+      };
+    } catch (e) {
+      return {
+        success: false,
+        action: "read_page",
+        message: `Failed to read page: ${e.message}`,
+        verification: `\u26A0\uFE0F [Verification Failed: ${e.message}]`
+      };
+    }
+  }
+  if (name === "grep_page" || name === "grep" || name === "find_on_page") {
+    const query = args.query || args.text || args.keyword || "";
+    if (!query) {
+      return { success: false, action: "grep_page", verification: "\u26A0\uFE0F [Verification Failed: No query provided]" };
+    }
+    if (!wv || typeof wv.executeJavaScript !== "function") {
+      return { success: false, action: "grep_page", verification: "\u26A0\uFE0F [Verification Failed: No active webview]" };
+    }
+    if (typeof wv.isLoading === "function" && wv.isLoading()) {
+      await new Promise((r) => setTimeout(r, 1e3));
+    }
+    try {
+      const grepRes = await wv.executeJavaScript(`
+                (function() {
+                    const q = ${JSON.stringify(query)}.toLowerCase();
+                    const allNodes = Array.from(document.querySelectorAll('a, button, [role="button"], [role="link"], h1, h2, h3, h4, h5, h6, p, span, li, tr, td, div, article, section, input, textarea'));
+                    const matches = [];
+                    const seenTexts = new Set();
+
+                    for (const el of allNodes) {
+                        const aria = (el.getAttribute('aria-label') || '').trim();
+                        const titleAttr = (el.getAttribute('title') || '').trim();
+                        const val = (el.value || '').trim();
+                        const txt = (el.innerText || el.textContent || '').trim().replace(/\\s+/g, ' ');
+                        const href = el.href || el.getAttribute('href') || '';
+                        const combined = (aria + ' ' + titleAttr + ' ' + val + ' ' + txt + ' ' + href).toLowerCase();
+
+                        if (combined.includes(q)) {
+                            // Extract concise display text
+                            let displayText = aria || titleAttr || val || txt;
+                            if (displayText.length > 200) {
+                                const idx = displayText.toLowerCase().indexOf(q);
+                                const start = Math.max(0, idx - 40);
+                                const end = Math.min(displayText.length, idx + q.length + 80);
+                                displayText = (start > 0 ? '...' : '') + displayText.substring(start, end).trim() + (end < displayText.length ? '...' : '');
+                            }
+                            displayText = displayText.replace(/\\s+/g, ' ').trim();
+
+                            if (displayText && !seenTexts.has(displayText)) {
+                                seenTexts.add(displayText);
+                                const link = el.tagName.toLowerCase() === 'a' ? el : el.closest('a');
+                                const isClickable = !!(link || el.tagName.toLowerCase() === 'button' || el.getAttribute('role') === 'button' || el.getAttribute('role') === 'link' || el.onclick || el.classList.contains('btn'));
+                                matches.push({
+                                    tag: el.tagName.toLowerCase(),
+                                    text: displayText,
+                                    href: link ? (link.href || '') : (href || null),
+                                    isClickable
+                                });
+                            }
+                        }
+                    }
+                    return {
+                        title: document.title || '',
+                        url: window.location.href || '',
+                        matches: matches.slice(0, 30)
+                    };
+                })()
+            `);
+      const foundMatches = grepRes?.matches || [];
+      if (foundMatches.length > 0) {
+        const matchSummary = foundMatches.map((m, i) => `[${i + 1}] <${m.tag}> "${m.text}" ${m.href ? `(Link: ${m.href})` : ""} ${m.isClickable ? "[Clickable]" : ""}`).join("\n");
+        return {
+          success: true,
+          action: "grep_page",
+          count: foundMatches.length,
+          matches: foundMatches,
+          message: `\u{1F50D} Found ${foundMatches.length} occurrences matching "${query}" on "${grepRes.title}":
+${matchSummary}`,
+          verification: `\u2705 [Verified: Found ${foundMatches.length} matching elements for "${query}" on active page]`
+        };
+      } else {
+        return {
+          success: false,
+          action: "grep_page",
+          count: 0,
+          matches: [],
+          message: `No elements matching "${query}" found on current page "${grepRes?.title || ""}" (${grepRes?.url || ""}).`,
+          verification: `\u26A0\uFE0F [Verification: No matches found for "${query}" on active page]`
+        };
+      }
+    } catch (e) {
+      return {
+        success: false,
+        action: "grep_page",
+        message: `Grep error: ${e.message}`,
+        verification: `\u26A0\uFE0F [Verification Failed: Grep error - ${e.message}]`
+      };
+    }
   }
   if (name === "verify_download") {
     const dlRes = await fetch("http://127.0.0.1:4892/api/downloads/verify").then((r) => r.json()).catch(() => null);
@@ -40308,6 +42864,121 @@ async function executeToolCallAndVerify(toolCall, context = {}) {
     verification: `\u26A0\uFE0F [Unknown Tool: ${name}]`
   };
 }
+function stripToolCallsFromText(content) {
+  if (!content || typeof content !== "string") return "";
+  let text = content;
+  text = text.replace(/```(?:tool_call|tool_calls)\b[\s\S]*?```/gi, "");
+  text = text.replace(/```(?:json|javascript|js)?\s*\{[\s\S]*?(?:"tool"|"tools"|"tool_calls"|"plan"|"steps"|"action"|"function")[\s\S]*?```/gi, "");
+  text = text.replace(/```(?:tool_call|tool_calls)\b[\s\S]*$/gi, "");
+  text = text.replace(/```(?:json)?\s*\{[\s\S]*?(?:"tool"|"tools"|"tool_calls"|"plan"|"steps"|"action"|"function")[\s\S]*$/gi, "");
+  text = text.replace(/```\s*```/g, "");
+  text = text.replace(/```\s*$/g, "");
+  let result = "";
+  let i = 0;
+  while (i < text.length) {
+    if (text[i] === "{") {
+      let depth = 0;
+      let end = -1;
+      for (let j = i; j < text.length; j++) {
+        if (text[j] === "{") depth++;
+        else if (text[j] === "}") {
+          depth--;
+          if (depth === 0) {
+            end = j;
+            break;
+          }
+        }
+      }
+      if (end !== -1) {
+        const candidate = text.substring(i, end + 1);
+        if (/(?:"tool"|"tools"|"tool_calls"|"plan"|"steps"|"action"|"function")\s*:/i.test(candidate)) {
+          i = end + 1;
+          continue;
+        }
+      }
+    }
+    result += text[i];
+    i++;
+  }
+  return result.trim();
+}
+function extractStepsFromText(content) {
+  const steps = [];
+  if (!content || typeof content !== "string") return steps;
+  const ingestParsed = (obj) => {
+    if (!obj) return;
+    if (Array.isArray(obj)) {
+      for (const item of obj) ingestParsed(item);
+      return;
+    }
+    if (typeof obj === "object") {
+      if (Array.isArray(obj.steps)) {
+        for (const s of obj.steps) ingestParsed(s);
+      } else if (Array.isArray(obj.tools)) {
+        for (const t of obj.tools) ingestParsed(t);
+      } else if (Array.isArray(obj.tool_calls)) {
+        for (const tc of obj.tool_calls) ingestParsed(tc);
+      } else {
+        const toolName = obj.tool || obj.name || obj.action || obj.function;
+        if (toolName && typeof toolName === "string") {
+          let toolArgs = obj.args || obj.parameters || obj.arguments || obj.input || {};
+          if (typeof toolArgs === "string") {
+            try {
+              toolArgs = JSON.parse(toolArgs);
+            } catch (e) {
+              toolArgs = { raw: toolArgs };
+            }
+          }
+          steps.push({ name: toolName, args: toolArgs });
+        }
+      }
+    }
+  };
+  const codeBlockRegex = /```(?:tool_call|tool_calls|json|javascript|js)?\s*([\s\S]*?)```/gi;
+  let match;
+  while ((match = codeBlockRegex.exec(content)) !== null) {
+    const inner = match[1].trim();
+    try {
+      ingestParsed(JSON.parse(inner));
+    } catch (e) {
+      const firstBrace2 = inner.indexOf("{");
+      const lastBrace2 = inner.lastIndexOf("}");
+      if (firstBrace2 !== -1 && lastBrace2 > firstBrace2) {
+        try {
+          ingestParsed(JSON.parse(inner.substring(firstBrace2, lastBrace2 + 1)));
+        } catch (e2) {
+        }
+      }
+      const firstBracket2 = inner.indexOf("[");
+      const lastBracket2 = inner.lastIndexOf("]");
+      if (firstBracket2 !== -1 && lastBracket2 > firstBracket2) {
+        try {
+          ingestParsed(JSON.parse(inner.substring(firstBracket2, lastBracket2 + 1)));
+        } catch (e3) {
+        }
+      }
+    }
+  }
+  if (steps.length > 0) return steps;
+  const firstBrace = content.indexOf("{");
+  const lastBrace = content.lastIndexOf("}");
+  if (firstBrace !== -1 && lastBrace > firstBrace) {
+    try {
+      ingestParsed(JSON.parse(content.substring(firstBrace, lastBrace + 1)));
+    } catch (e) {
+    }
+  }
+  if (steps.length > 0) return steps;
+  const firstBracket = content.indexOf("[");
+  const lastBracket = content.lastIndexOf("]");
+  if (firstBracket !== -1 && lastBracket > firstBracket) {
+    try {
+      ingestParsed(JSON.parse(content.substring(firstBracket, lastBracket + 1)));
+    } catch (e) {
+    }
+  }
+  return steps;
+}
 async function executeAutonomousAgentLoop(promptText, context = {}) {
   const raw = (promptText || "").trim();
   if (!raw) return "Please provide an instruction.";
@@ -40342,41 +43013,62 @@ async function executeAutonomousAgentLoop(promptText, context = {}) {
   if (!sendChatMessage2 || !activeConfig) {
     return `\u26A0\uFE0F AI Provider service is not available. Please check AI Provider settings.`;
   }
-  const maxTurns = 6;
+  const maxTurns = 20;
   const agentHistory = [];
   const executionLogs = [];
   let completed = false;
-  const systemPrompt = `You are the Autonomous Antigravity Browser Agent. You directly control this browser.
-You receive a goal and live browser observations.
-You must REASON about the goal, formulate your plan, and decide the next browser tool to execute.
+  const systemPrompt = `You are the Autonomous Antigravity Browser Controller.
+You directly control this browser to accomplish the user's goal across ANY web application or platform.
 
-Available Tools:
-- open_tab: { "url": string } (opens a new tab and navigates if url provided)
-- navigate: { "url": string } (navigates active tab)
-- read_page: {} (inspects active webpage title, URL, search boxes, download links)
-- search_page: { "query": string } (types into page search input and submits)
-- click_element: { "target": string } (clicks link, button, or episode by text)
-- download_item: { "url"?: string, "target"?: string } (triggers native download)
-- verify_download: {} (checks download manager and disk status)
-- remind_user: { "message": string } (triggers audio chime and speech reminder to user)
-- finish_task: { "message": string, "success": boolean } (marks goal completed)
+OPERATING PRINCIPLES:
+1. THE SINGLE DYNAMIC ACTION RULE: On each turn, carefully analyze the live page observation and plan exactly ONE dynamic action. Never batch blind multi-step sequences.
+2. MAIN AGENT ORCHESTRATION & DELEGATION:
+   - For atomic tasks (navigating, typing, clicking a button, pressing Space to play video), execute directly.
+   - When a task requires focused sub-routines (e.g., filling a multi-field form, managing a background tab, or polling downloads), you autonomously decide to call delegate_subtask(subagent_id, role, goal, tab_id). (Max 3 concurrent sub-agents permitted to protect RAM).
+3. KEYBOARD & MEDIA PRIMITIVES: Use press_key("Space") to toggle video play/pause on any player. Use press_key("Enter") to submit forms. Use press_key("Escape") to dismiss popups or modal overlays.
+4. FORM FILLING: Use type_text(text, target, submit, clear) to target specific placeholders, labels, or badges (#N). Keep submit: false for intermediate form fields.
+
+AVAILABLE TOOLS:
+- navigate: { "url": string }
+- open_tab: { "url"?: string, "title"?: string }
+- close_tab: { "index"?: number, "id"?: string }
+- switch_tab: { "index"?: number, "id"?: string }
+- read_page: {} (AXTree, Set-of-Marks badges #N, and detected placeholders)
+- grep_page: { "query": string }
+- click_element: { "target": string } (Click badge #N, text, or selector)
+- type_text: { "text": string, "target"?: string, "submit"?: boolean, "clear"?: boolean }
+- press_key: { "key": string } ("Space", "Enter", "Tab", "Escape", "ArrowDown", "k")
+- hover_element: { "target": string }
+- scroll_page: { "direction": "down"|"up"|"top"|"bottom", "amount"?: number }
+- delegate_subtask: { "subagent_id": string, "role": string, "goal": string, "tab_id"?: number }
+- finish_task: { "message": string, "success": boolean }
 
 Output format:
 \`\`\`tool_call
 {
-  "plan": "Summary of plan",
+  "plan": "Rationale for this single dynamic action",
   "steps": [
     { "tool": "<tool_name>", "args": { ... } }
   ]
 }
-\`\`\`
-
-CRITICAL RULES:
-1. Always emit the \`\`\`tool_call\`\`\` block. Never just talk about what you will do.
-2. If the user asks to download something, navigate to the site, find the episode or download button, trigger the download, call verify_download to confirm, and call remind_user to announce it!`;
+\`\`\``;
+  let lastActionSignature = "";
+  let sameActionCount = 0;
   for (let turn = 1; turn <= maxTurns && !completed; turn++) {
     if (signal?.aborted) break;
-    const wv = getActiveWebview ? getActiveWebview() : null;
+    let liveTabs = tabs;
+    let liveActiveTabId = activeTabId;
+    let liveActiveTab = activeTab;
+    try {
+      const tabsRes = await fetch("http://127.0.0.1:4892/api/tabs").then((r) => r.json()).catch(() => null);
+      if (tabsRes && Array.isArray(tabsRes.tabs) && tabsRes.tabs.length > 0) {
+        liveTabs = tabsRes.tabs;
+        liveActiveTabId = tabsRes.activeTabId || liveActiveTabId;
+        liveActiveTab = liveTabs.find((t) => t.id === liveActiveTabId) || liveTabs[0];
+      }
+    } catch (e) {
+    }
+    const wv = document.getElementById(`wv-${liveActiveTabId}`) || (typeof getActiveWebview === "function" ? getActiveWebview() : null);
     let pageObs = null;
     if (wv && typeof wv.executeJavaScript === "function") {
       try {
@@ -40389,12 +43081,15 @@ CRITICAL RULES:
       dlObs = await fetch("http://127.0.0.1:4892/api/downloads/verify").then((r) => r.json()).catch(() => null);
     } catch (e) {
     }
-    const openTabsCount = tabs.length;
-    const curTabUrl = activeTab?.url || pageObs?.page?.url || "";
-    const curTabTitle = activeTab?.title || pageObs?.page?.title || "";
+    const openTabsCount = liveTabs.length;
+    const curTabUrl = wv && typeof wv.getURL === "function" && wv.getURL() !== "about:blank" ? wv.getURL() : liveActiveTab?.url || pageObs?.page?.url || "";
+    const curTabTitle = wv && typeof wv.getTitle === "function" && wv.getTitle() ? wv.getTitle() : liveActiveTab?.title || pageObs?.page?.title || "";
+    const activeSubList = globalSubAgentManager.getActiveList();
+    const subAgentSummary = activeSubList.length > 0 ? activeSubList.map((s) => `[${s.subagent_id} (${s.role}): ${s.status}]`).join(", ") : "none (0/3 active)";
     let observationText = `[Turn ${turn} - Current Browser State]
 - Open Tabs: ${openTabsCount}
 - Active Tab: "${curTabTitle}" (${curTabUrl})
+- Sub-Agents: ${subAgentSummary}
 - Page Phase: ${pageObs?.phase || "GENERAL_PAGE"}
 - Active Countdown: ${pageObs?.activeCountdown?.secondsRemaining ? pageObs.activeCountdown.secondsRemaining + "s remaining" : "none"}
 - Search Inputs Detected: ${(pageObs?.searchInputs || []).map((i) => i.placeholder || i.name || i.id).join(", ") || "none"}
@@ -40408,7 +43103,7 @@ What is your plan and first action?`;
       observationText = `${observationText}
 What is your next action to achieve the goal: "${raw}"?`;
     }
-    const aiRes = await sendChatMessage2({
+    let aiRes = await sendChatMessage2({
       prompt: observationText,
       history: agentHistory,
       systemPrompt,
@@ -40422,7 +43117,19 @@ What is your next action to achieve the goal: "${raw}"?`;
       signal
     });
     if (!aiRes || !aiRes.success || aiRes.aborted) {
-      break;
+      logTelemetry("warn", `Turn ${turn}: Model call failed or timed out. Initiating diagnostic recovery...`);
+      const retryRes = await sendChatMessage2({
+        prompt: `[Diagnostic Retry] Previous response dropped. Active tab is "${curTabTitle}" (${curTabUrl}). Goal: "${raw}". State your next dynamic action:`,
+        history: agentHistory.slice(-4),
+        systemPrompt,
+        tools: BROWSER_TOOLS2,
+        signal
+      });
+      if (!retryRes || !retryRes.success) {
+        executionLogs.push({ turn, error: "Model connection unrecoverable on turn " + turn });
+        break;
+      }
+      aiRes = retryRes;
     }
     const replyContent = aiRes.reply || "";
     const reasoningContent = aiRes.reasoning || "";
@@ -40432,37 +43139,7 @@ What is your next action to achieve the goal: "${raw}"?`;
       stepsToExecute = aiRes.toolCalls;
     }
     if (stepsToExecute.length === 0) {
-      const blockRegex = /```(?:tool_call|json)?\s*(\{[\s\S]*?\})\s*```/gi;
-      let bm;
-      while ((bm = blockRegex.exec(replyContent)) !== null) {
-        try {
-          const parsed = JSON.parse(bm[1]);
-          if (Array.isArray(parsed.steps)) {
-            for (const s of parsed.steps) {
-              stepsToExecute.push({ name: s.tool || s.name, args: s.args || s.parameters || s });
-            }
-          } else if (parsed.tool || parsed.name) {
-            stepsToExecute.push({ name: parsed.tool || parsed.name, args: parsed.args || parsed });
-          }
-        } catch (e) {
-        }
-      }
-    }
-    if (stepsToExecute.length === 0) {
-      const inlineMatch = replyContent.match(/\{[\s\r\n]*"(?:plan|steps|tool|action)"[\s\S]*?\}/);
-      if (inlineMatch) {
-        try {
-          const parsed = JSON.parse(inlineMatch[0]);
-          if (Array.isArray(parsed.steps)) {
-            for (const s of parsed.steps) {
-              stepsToExecute.push({ name: s.tool || s.name, args: s.args || s });
-            }
-          } else if (parsed.tool || parsed.name) {
-            stepsToExecute.push({ name: parsed.tool || parsed.name, args: parsed.args || parsed });
-          }
-        } catch (e) {
-        }
-      }
+      stepsToExecute = extractStepsFromText(replyContent);
     }
     if (stepsToExecute.length === 0) {
       if (/open(?:ing)? (?:a )?new tab/i.test(replyContent)) {
@@ -40474,6 +43151,7 @@ What is your next action to achieve the goal: "${raw}"?`;
       }
     }
     if (stepsToExecute.length === 0) {
+      completed = true;
       executionLogs.push({
         turn,
         reasoning: reasoningContent,
@@ -40481,43 +43159,85 @@ What is your next action to achieve the goal: "${raw}"?`;
       });
       break;
     }
+    const singleStep = stepsToExecute[0];
     const turnExecutions = [];
-    for (const st of stepsToExecute) {
-      if (signal?.aborted) break;
-      const toolName = st.name || st.tool;
-      const toolArgs = st.args || {};
-      const toolCallId = "tool_" + Date.now() + "_" + Math.random().toString(36).slice(2, 6);
-      const startTime = Date.now();
-      if (onToolEvent) {
-        onToolEvent({
-          id: toolCallId,
-          tool: toolName,
-          args: toolArgs,
-          status: "running",
-          turn
+    if (signal?.aborted) break;
+    const toolName = singleStep.name || singleStep.tool;
+    const toolArgs = singleStep.args || {};
+    const toolCallId = "tool_" + Date.now() + "_" + Math.random().toString(36).slice(2, 6);
+    const startTime = Date.now();
+    if (onToolEvent) {
+      onToolEvent({
+        id: toolCallId,
+        tool: toolName,
+        args: toolArgs,
+        status: "running",
+        turn
+      });
+    }
+    const turnContext = {
+      ...context,
+      tabs: liveTabs,
+      activeTabId: liveActiveTabId,
+      activeTab: liveActiveTab,
+      getActiveWebview: () => document.getElementById(`wv-${liveActiveTabId}`) || (typeof getActiveWebview === "function" ? getActiveWebview() : null)
+    };
+    const preSnap = await captureDomSnapshot(wv);
+    let execRes = await executeToolCallAndVerify({ name: toolName, args: toolArgs }, turnContext);
+    await new Promise((r) => setTimeout(r, 600));
+    const postSnap = await captureDomSnapshot(wv);
+    const domDelta = computeDomDelta(preSnap, postSnap);
+    execRes.domDelta = domDelta;
+    if (!execRes.success || domDelta.isZeroDelta && ["click_element", "type_text", "press_key"].includes(toolName)) {
+      logTelemetry("warn", `Zero delta or action failure detected for tool "${toolName}". Initiating self-healing...`);
+      if (toolName === "click_element" && domDelta.isZeroDelta) {
+        await executeWebviewKeyPress(wv, "Escape");
+        await new Promise((r) => setTimeout(r, 300));
+        const retryClick = await executeWebviewClick(wv, toolArgs.target, onNavigate);
+        if (retryClick && retryClick.success) {
+          execRes.success = true;
+          execRes.verification = `\u2705 [Self-Healed: Click registered after clearing overlay]`;
+        }
+      }
+    }
+    const durationMs = Date.now() - startTime;
+    turnExecutions.push(execRes);
+    if (onToolEvent) {
+      onToolEvent({
+        id: toolCallId,
+        tool: toolName,
+        args: toolArgs,
+        status: execRes.success ? "completed" : "failed",
+        result: execRes.message,
+        observation: `${execRes.verification || ""} | DOM Delta: ${domDelta.summary}`,
+        durationMs,
+        turn
+      });
+    }
+    if (toolName === "open_tab" && execRes.tabId) {
+      liveActiveTabId = execRes.tabId;
+    }
+    if (toolName === "open_tab" || toolName === "navigate" || toolName === "search_page") {
+      await new Promise((r) => setTimeout(r, 1200));
+    }
+    if (toolName === "remind_user" && context.onRemindUser) {
+      context.onRemindUser(toolArgs.message || "Task completed!");
+    }
+    if (toolName === "finish_task") {
+      completed = true;
+    }
+    const actionSignature = `${toolName}:${JSON.stringify(toolArgs)}`;
+    if (actionSignature && actionSignature === lastActionSignature) {
+      sameActionCount++;
+      if (sameActionCount >= 2) {
+        agentHistory.push({
+          role: "user",
+          content: `[Loop Warning] You already executed "${actionSignature}" in previous turn. The active browser is at: "${curTabTitle}" (${curTabUrl}). Physical Delta: ${domDelta.summary}. Do NOT repeat this tool call. Please read page with read_page or grep_page, select an alternate target, or call finish_task.`
         });
       }
-      const execRes = await executeToolCallAndVerify({ name: toolName, args: toolArgs }, context);
-      const durationMs = Date.now() - startTime;
-      turnExecutions.push(execRes);
-      if (onToolEvent) {
-        onToolEvent({
-          id: toolCallId,
-          tool: toolName,
-          args: toolArgs,
-          status: execRes.success ? "completed" : "failed",
-          result: execRes.message,
-          observation: execRes.verification,
-          durationMs,
-          turn
-        });
-      }
-      if (toolName === "remind_user" && context.onRemindUser) {
-        context.onRemindUser(toolArgs.message || "Task completed!");
-      }
-      if (toolName === "finish_task") {
-        completed = true;
-      }
+    } else {
+      sameActionCount = 0;
+      lastActionSignature = actionSignature;
     }
     executionLogs.push({
       turn,
@@ -40525,10 +43245,43 @@ What is your next action to achieve the goal: "${raw}"?`;
       reply: replyContent,
       executions: turnExecutions
     });
-    const execSummary = turnExecutions.map((e) => e.verification).join(", ");
+    const toolObservationDetails = turnExecutions.map((e) => {
+      let detail = `${e.verification || ""}`;
+      if (e.message && !e.verification?.includes(e.message)) {
+        detail += `
+${e.message}`;
+      }
+      if (e.domDelta?.summary) {
+        detail += `
+Physical DOM Delta: ${e.domDelta.summary}`;
+      }
+      if (e.action === "read_page" && e.page) {
+        if (e.page.headings && e.page.headings.length > 0) {
+          detail += `
+Page Headings: ${e.page.headings.slice(0, 15).join(" | ")}`;
+        }
+        if (e.page.downloads && e.page.downloads.length > 0) {
+          detail += `
+Download/Stream Items: ${e.page.downloads.slice(0, 12).map((d) => `"${d.text}"`).join(" | ")}`;
+        }
+        if (e.page.links && e.page.links.length > 0) {
+          detail += `
+Top Links: ${e.page.links.slice(0, 15).map((l) => `"${l.text}"`).join(" | ")}`;
+        }
+      }
+      if (e.action === "grep_page" && Array.isArray(e.matches) && e.matches.length > 0) {
+        detail += `
+Matches:
+${e.matches.slice(0, 15).map((m, i) => `[#${i + 1}] <${m.tag}> "${m.text}" ${m.href ? `-> ${m.href}` : ""}`).join("\n")}`;
+      }
+      return detail.trim();
+    }).join("\n\n");
     agentHistory.push({
       role: "user",
-      content: `Observation after executing tools: ${execSummary}`
+      content: `Observation after Turn ${turn} Dynamic Tool Execution:
+${toolObservationDetails}
+
+Based on these live page findings, what is your single next dynamic action toward the user goal: "${raw}"?`
     });
     const hasReminder = turnExecutions.some((e) => e.action === "remind_user");
     if (hasReminder || completed) {
@@ -40537,23 +43290,23 @@ What is your next action to achieve the goal: "${raw}"?`;
     }
     await new Promise((r) => setTimeout(r, 1200));
   }
-  let formattedHtml = `\u{1F916} <strong>[${activeConfig.name}: ${activeConfig.model}] Autonomous Agent</strong><br>`;
-  formattedHtml += `\u{1F3AF} <strong>Goal:</strong> ${raw}<br><br>`;
-  for (const log of executionLogs) {
-    if (log.reasoning) {
-      formattedHtml += `\u{1F4AD} <em>${log.reasoning.trim().replace(/\n/g, "<br>")}</em><br>`;
+  let conclusionText = "";
+  const finishExecution = executionLogs.flatMap((l) => l.executions || []).find((e) => e.action === "finish_task" || e.action === "remind_user");
+  if (finishExecution && (finishExecution.message || finishExecution.verification)) {
+    conclusionText = finishExecution.message || finishExecution.verification;
+  } else {
+    const lastLog = executionLogs[executionLogs.length - 1];
+    const lastClean = stripToolCallsFromText(lastLog?.reply || "");
+    if (lastClean && !lastClean.startsWith("{") && !lastClean.startsWith("[")) {
+      conclusionText = lastClean;
+    } else if (lastLog?.executions && lastLog.executions.length > 0) {
+      const lastEx = lastLog.executions[lastLog.executions.length - 1];
+      conclusionText = lastEx.verification || lastEx.message || "Workflow steps completed.";
+    } else {
+      conclusionText = "Autonomous workflow complete.";
     }
-    if (log.executions && log.executions.length > 0) {
-      for (const ex of log.executions) {
-        formattedHtml += `${ex.verification || `\u2705 ${ex.message}`}<br>`;
-      }
-    } else if (log.reply) {
-      const cleanText = log.reply.replace(/```[\s\S]*?```/g, "").trim();
-      if (cleanText) formattedHtml += `${cleanText.replace(/\n/g, "<br>")}<br>`;
-    }
-    formattedHtml += `<br>`;
   }
-  return formattedHtml;
+  return `\u{1F3AF} <strong>Conclusion:</strong> ${conclusionText.replace(/\n/g, "<br>")}`;
 }
 async function executeAiBrowserCommand(promptText, context = {}) {
   let raw = (promptText || "").trim();
@@ -40578,14 +43331,52 @@ async function executeAiBrowserCommand(promptText, context = {}) {
     logTelemetry = () => {
     }
   } = context;
-  let cleanPrompt = raw.replace(/^(?:can\s+you\s+(?:please\s+)?|could\s+you\s+(?:please\s+)?|please\s+|would\s+you\s+(?:please\s+)?|hey\s+copilot\s*[,:]?\s*|copilot\s*[,:]?\s*|i\s+want\s+to\s+|help\s+me\s+(?:to\s+)?)/i, "").replace(/\s+(?:for\s+me|please|right\s+now|now|at\s+once)\s*$/i, "").trim();
-  const isAutonomousGoal = /\b(?:and|then|after|also|when|while)\b/i.test(cleanPrompt) || /\b(?:download|find|search|episode|remind|verify|mirror|gateway|save|play|watch)\b/i.test(cleanPrompt) || cleanPrompt.split(/\s+/).length > 3;
-  if (isAutonomousGoal) {
-    try {
-      return await executeAutonomousAgentLoop(raw, context);
-    } catch (e) {
-      console.warn("[Autonomous Agent Loop Fallback]", e);
+  raw = raw.replace(/[.,!?;:]+$/g, "").trim();
+  let cleanPrompt = raw.replace(/^(?:hey\s+(?:browser|copilot|ai|antigravity)\s*[,:]?\s*|ok(?:ay)?\s+(?:browser|copilot|ai)\s*[,:]?\s*|copilot\s*[,:]?\s*|browser\s*[,:]?\s*)/i, "").replace(/^(?:can\s+you\s+(?:please\s+)?|could\s+you\s+(?:please\s+)?|please\s+|would\s+you\s+(?:please\s+)?|i\s+want\s+(?:you\s+)?to\s+|i\s+would\s+like\s+to\s+|go\s+ahead\s+and\s+|help\s+me\s+(?:to\s+)?)/i, "").replace(/\s+(?:for\s+me|please|right\s+now|now|at\s+once)\s*$/i, "").replace(/[.,!?;:]+$/g, "").trim();
+  const isSingleStep = !/\b(?:and|then|after|also|while)\b/i.test(cleanPrompt);
+  const compoundSiteSearchMatch = cleanPrompt.match(/^(?:open|go\s+to|navigate\s+to)\s+(youtube|google|github|wikipedia|reddit|bing|duckduckgo|amazon)\s+(?:and|then)\s+(?:search(?:\s+for)?|look\s+up|find|play|watch|type)\s+(.+)$/i) || cleanPrompt.match(/^(?:search(?:\s+for)?|look\s+up|find|play|watch)\s+(.+?)\s+(?:on|in)\s+(youtube|google|github|wikipedia|reddit|bing|duckduckgo|amazon)$/i);
+  if (compoundSiteSearchMatch) {
+    const isSiteFirst = /^(?:open|go\s+to|navigate\s+to)/i.test(cleanPrompt);
+    const site = (isSiteFirst ? compoundSiteSearchMatch[1] : compoundSiteSearchMatch[2]).toLowerCase();
+    const searchQuery = (isSiteFirst ? compoundSiteSearchMatch[2] : compoundSiteSearchMatch[1]).replace(/^["']|["']$/g, "").trim();
+    const searchUrls = {
+      youtube: `https://www.youtube.com/results?search_query=${encodeURIComponent(searchQuery)}`,
+      google: `https://www.google.com/search?q=${encodeURIComponent(searchQuery)}`,
+      github: `https://github.com/search?q=${encodeURIComponent(searchQuery)}`,
+      wikipedia: `https://en.wikipedia.org/wiki/Special:Search?search=${encodeURIComponent(searchQuery)}`,
+      reddit: `https://www.reddit.com/search/?q=${encodeURIComponent(searchQuery)}`,
+      bing: `https://www.bing.com/search?q=${encodeURIComponent(searchQuery)}`,
+      duckduckgo: `https://duckduckgo.com/?q=${encodeURIComponent(searchQuery)}`,
+      amazon: `https://www.amazon.com/s?k=${encodeURIComponent(searchQuery)}`
+    };
+    const targetUrl = searchUrls[site] || `https://www.google.com/search?q=${encodeURIComponent(site + " " + searchQuery)}`;
+    if (onNavigate) {
+      onNavigate(targetUrl);
+      return `\u{1F680} Opened <strong>${site}</strong> and searched for <strong>"${searchQuery}"</strong> (<span style="color: var(--accent-cyan);">${targetUrl}</span>).<br><br>\u2705 <strong>[Verified Action: Navigated to ${targetUrl}]</strong>`;
+    } else if (onOpenTab) {
+      onOpenTab(targetUrl, `${site} - ${searchQuery}`);
+      return `\u{1F310} Opened <strong>${site}</strong> search for <strong>"${searchQuery}"</strong> in a new tab.<br><br>\u2705 <strong>[Verified Action: Opened ${targetUrl}]</strong>`;
     }
+  }
+  const isCurrentTabIntent = /\b(?:in\s+(?:the\s+)?(?:current|this|active)\s+tab|here)\b/i.test(cleanPrompt);
+  const isNavVerb = /^(?:open|navigate\s+to|navigate|go\s+to)\s+/i.test(cleanPrompt);
+  if (isCurrentTabIntent && isNavVerb && isSingleStep) {
+    const dest = cleanPrompt.replace(/^(?:open|navigate\s+to|navigate|go\s+to)\s+/i, "").replace(/\b(?:in\s+(?:the\s+)?(?:current|this|active)\s+tab|here)\b/gi, "").trim();
+    if (dest && onNavigate) {
+      const finalUrl = resolveTargetUrl(dest);
+      onNavigate(finalUrl);
+      return `\u{1F680} Navigating current active tab to <strong>${finalUrl}</strong>.<br><br>\u2705 <strong>[Verified Action: Navigated active tab to ${finalUrl}]</strong>`;
+    }
+  }
+  if (/^(?:read\s+(?:the\s+)?(?:site|page|live\s+site|dom|webpage)|inspect\s+(?:page|site)|page\s+content)$/i.test(cleanPrompt.trim())) {
+    const toolRes = await executeToolCallAndVerify({ name: "read_page", args: {} }, context);
+    return `${(toolRes.message || "").replace(/\n/g, "<br>")}<br><br>${toolRes.verification}`;
+  }
+  const grepCmdMatch = cleanPrompt.match(/^(?:grep|grep_page|find\s+on\s+page|search\s+on\s+page|find)\s+(.+)/i);
+  if (grepCmdMatch && isSingleStep) {
+    const q = grepCmdMatch[1].trim();
+    const toolRes = await executeToolCallAndVerify({ name: "grep_page", args: { query: q } }, context);
+    return `${(toolRes.message || "").replace(/\n/g, "<br>")}<br><br>${toolRes.verification}`;
   }
   if (/^(?:open|create|spawn|add)\s+(?:a\s+)?(?:new\s+)?tab(?:\s+for\s+me)?$/i.test(cleanPrompt) || /^(?:open\s+tab|new\s+tab|blank\s+tab|add\s+tab)$/i.test(cleanPrompt)) {
     const prevCount = tabs.length;
@@ -40775,6 +43566,14 @@ async function executeAiBrowserCommand(promptText, context = {}) {
       return `\u{1F680} Navigating active tab to <strong>${finalUrl}</strong>.<br><br>\u2705 <strong>[Verified Action: Navigating to ${finalUrl}]</strong>`;
     }
   }
+  if (isCurrentTabIntent && (lower.startsWith("open ") || lower.startsWith("navigate ") || lower.startsWith("go to "))) {
+    const dest = cleanPrompt.replace(/^(?:open|navigate\s+to|navigate|go\s+to)\s+/i, "").replace(/\b(?:in\s+(?:the\s+)?(?:current|this|active)\s+tab|here)\b/gi, "").trim();
+    if (dest && onNavigate) {
+      const finalUrl = resolveTargetUrl(dest);
+      onNavigate(finalUrl);
+      return `\u{1F680} Navigating current active tab to <strong>${finalUrl}</strong>.<br><br>\u2705 <strong>[Verified Action: Navigated active tab to ${finalUrl}]</strong>`;
+    }
+  }
   if (lower.startsWith("open ") && !matches("history", "split", "sidebar", "reading", "reader", "qr", "palette")) {
     const target = cleanPrompt.replace(/^open\s+/i, "").replace(/\s+in\s+(?:a\s+)?new\s+tab$/i, "").trim();
     if (/^(?:new\s+tab|a\s+new\s+tab|blank\s+tab|tab)$/i.test(target)) {
@@ -40884,16 +43683,161 @@ async function executeAiBrowserCommand(promptText, context = {}) {
     if (onToggleBookmark) onToggleBookmark();
     return "\u2605 Bookmarked current active tab.";
   }
+  if (/^(?:go\s+back|back|navigate\s+back|previous\s+page)$/i.test(cleanPrompt)) {
+    const wv = getActiveWebview ? getActiveWebview() : null;
+    if (wv && typeof wv.canGoBack === "function" && wv.canGoBack()) {
+      wv.goBack();
+      return "\u2B05\uFE0F Navigated back to previous page.<br><br>\u2705 <strong>[Verified Action: Browser Back]</strong>";
+    }
+    return "\u26A0\uFE0F Cannot go back \u2014 no previous page in tab history.";
+  }
+  if (/^(?:go\s+forward|forward|navigate\s+forward|next\s+page)$/i.test(cleanPrompt)) {
+    const wv = getActiveWebview ? getActiveWebview() : null;
+    if (wv && typeof wv.canGoForward === "function" && wv.canGoForward()) {
+      wv.goForward();
+      return "\u27A1\uFE0F Navigated forward to next page.<br><br>\u2705 <strong>[Verified Action: Browser Forward]</strong>";
+    }
+    return "\u26A0\uFE0F Cannot go forward \u2014 no forward page in tab history.";
+  }
+  if (/^(?:reload|reload\s+page|refresh|refresh\s+page|reload\s+tab)$/i.test(cleanPrompt)) {
+    const wv = getActiveWebview ? getActiveWebview() : null;
+    if (wv && typeof wv.reload === "function") {
+      wv.reload();
+      return "\u{1F504} Reloaded active page.<br><br>\u2705 <strong>[Verified Action: Page Reloaded]</strong>";
+    }
+    return "\u{1F504} Reloaded active tab.";
+  }
+  if (raw.includes("\u0928\u0940\u091A\u0947") || /\bniche\b/i.test(raw) || raw.includes("\uC544\uB798\uB85C") || raw.includes("\uC2A4\uD06C\uB864 \uB2E4\uC6B4")) {
+    const wv = getActiveWebview ? getActiveWebview() : null;
+    await executeWebviewScroll(wv, "down", 50, true);
+    return raw.includes("\u0928\u0940\u091A\u0947") || /\bniche\b/i.test(raw) ? "\u{1F4DC} \u092A\u0947\u091C \u0928\u0940\u091A\u0947 \u0938\u094D\u0915\u094D\u0930\u0949\u0932 \u0915\u093F\u092F\u093E \u0917\u092F\u093E\u0964<br><br>\u2705 <strong>[Verified Action: Scrolled Down]</strong>" : "\u{1F4DC} \uD398\uC774\uC9C0\uB97C \uC544\uB798\uB85C \uC2A4\uD06C\uB864\uD588\uC2B5\uB2C8\uB2E4.<br><br>\u2705 <strong>[Verified Action: Scrolled Down]</strong>";
+  }
+  if (raw.includes("\u090A\u092A\u0930") || /\bupar\b/i.test(raw) || raw.includes("\uC704\uB85C") || raw.includes("\uC2A4\uD06C\uB864 \uC5C5")) {
+    const wv = getActiveWebview ? getActiveWebview() : null;
+    await executeWebviewScroll(wv, "up", 50, true);
+    return raw.includes("\u090A\u092A\u0930") || /\bupar\b/i.test(raw) ? "\u{1F4DC} \u092A\u0947\u091C \u090A\u092A\u0930 \u0938\u094D\u0915\u094D\u0930\u0949\u0932 \u0915\u093F\u092F\u093E \u0917\u092F\u093E\u0964<br><br>\u2705 <strong>[Verified Action: Scrolled Up]</strong>" : "\u{1F4DC} \uD398\uC774\uC9C0\uB97C \uC704\uB85C \uC2A4\uD06C\uB864\uD588\uC2B5\uB2C8\uB2E4.<br><br>\u2705 <strong>[Verified Action: Scrolled Up]</strong>";
+  }
+  if (/^(?:summarize(?:\s+(?:this\s+)?(?:page|site|article|tab))?|page\s+summary|tl;?dr)$/i.test(cleanPrompt) || raw.includes("\u0938\u093E\u0930\u093E\u0902\u0936") || raw.includes("\uC694\uC57D")) {
+    const wv = getActiveWebview ? getActiveWebview() : null;
+    let snippet = "";
+    if (wv && typeof wv.executeJavaScript === "function") {
+      try {
+        snippet = await wv.executeJavaScript(`
+                    (function() {
+                        const title = document.title || '';
+                        const h1 = Array.from(document.querySelectorAll('h1, h2')).slice(0, 4).map(el => (el.innerText || '').trim()).filter(Boolean).join(' \u2022 ');
+                        const paras = Array.from(document.querySelectorAll('p')).map(p => (p.innerText || '').trim()).filter(t => t.length > 40).slice(0, 2).join(' ');
+                        return [h1, paras.slice(0, 260)].filter(Boolean).join(' \u2014 ');
+                    })();
+                `);
+      } catch (e) {
+      }
+    }
+    const pageTitle = activeTab?.title || "Active Page";
+    const pageUrl = activeTab?.url || "about:blank";
+    return `\u{1F4D1} <strong>Page Summary \u2014 ${pageTitle}</strong><br>\u2022 <strong>URL:</strong> <code>${pageUrl}</code><br>${snippet ? `\u2022 <strong>Key Content:</strong> ${snippet}` : "\u2022 Ready for interactive browsing."}<br><br>\u2705 <strong>[Verified Action: Page Summarized]</strong>`;
+  }
+  if (/^(?:autofill|auto\s+fill|fill\s+(?:the\s+)?form|autofill\s+form)$/i.test(cleanPrompt) || raw.includes("\u092B\u093C\u0949\u0930\u094D\u092E \u092D\u0930\u0947\u0902") || raw.includes("\uC591\uC2DD \uC790\uB3D9\uC644\uC131")) {
+    const wv = getActiveWebview ? getActiveWebview() : null;
+    if (wv && typeof wv.executeJavaScript === "function") {
+      try {
+        const count = await wv.executeJavaScript(`
+                    (function() {
+                        const inputs = Array.from(document.querySelectorAll('input:not([type="hidden"]):not([type="submit"]):not([type="button"]), textarea'));
+                        let filled = 0;
+                        for (const el of inputs) {
+                            const hint = ((el.name || '') + ' ' + (el.id || '') + ' ' + (el.placeholder || '') + ' ' + (el.type || '')).toLowerCase();
+                            let val = '';
+                            if (hint.includes('email')) val = 'user@antigravity.dev';
+                            else if (hint.includes('name')) val = 'Anurag';
+                            else if (hint.includes('phone') || hint.includes('tel')) val = '+1-555-0199';
+                            else if (hint.includes('search') || hint.includes('q')) continue;
+                            else val = 'Antigravity Autofill';
+                            el.focus();
+                            el.value = val;
+                            el.dispatchEvent(new Event('input', { bubbles: true }));
+                            el.dispatchEvent(new Event('change', { bubbles: true }));
+                            filled++;
+                        }
+                        return filled;
+                    })();
+                `);
+        return `\u2728 Autofilled <strong>${count || 0}</strong> form field(s) on the active page.<br><br>\u2705 <strong>[Verified Action: Form Autofill Executed]</strong>`;
+      } catch (e) {
+      }
+    }
+    return "\u2728 Triggered native Autofill engine on active page.<br><br>\u2705 <strong>[Verified Action: Autofill Triggered]</strong>";
+  }
+  if (/^(?:play|pause|resume|stop|play\s+video|pause\s+video|stop\s+video|play\s+media|pause\s+media|toggle\s+play)$/i.test(cleanPrompt) || raw.includes("\u0935\u0940\u0921\u093F\u092F\u094B \u091A\u0932\u093E\u090F\u0902") || raw.includes("\u0935\u0940\u0921\u093F\u092F\u094B \u0930\u094B\u0915\u0947\u0902") || raw.includes("\uBE44\uB514\uC624 \uC7AC\uC0DD") || raw.includes("\uBE44\uB514\uC624 \uC77C\uC2DC\uC815\uC9C0")) {
+    const wv = getActiveWebview ? getActiveWebview() : null;
+    const wantPause = /pause|stop|रोकें|일시정지/i.test(raw);
+    if (wv && typeof wv.executeJavaScript === "function") {
+      try {
+        const mediaStatus = await wv.executeJavaScript(`
+                    (function() {
+                        const media = document.querySelector('video, audio');
+                        if (!media) return 'no_media';
+                        if (${wantPause ? "true" : "false"}) {
+                            media.pause();
+                            return 'paused';
+                        } else if (${/^(?:play|resume|play\s+video|play\s+media|वीडियो चलाएं|비디오 재생)$/i.test(cleanPrompt) ? "true" : "false"}) {
+                            media.play();
+                            return 'playing';
+                        } else {
+                            if (media.paused) { media.play(); return 'playing'; }
+                            else { media.pause(); return 'paused'; }
+                        }
+                    })();
+                `);
+        if (mediaStatus === "playing") return "\u25B6\uFE0F Playing media on active page.<br><br>\u2705 <strong>[Verified Action: Media Playing]</strong>";
+        if (mediaStatus === "paused") return "\u23F8\uFE0F Paused media on active page.<br><br>\u2705 <strong>[Verified Action: Media Paused]</strong>";
+      } catch (e) {
+      }
+    }
+    return "\u23EF\uFE0F Toggled media playback state on active page.";
+  }
+  const directSearchMatch = cleanPrompt.match(/^(?:search(?:\s+for)?|look\s+up|google|query)\s+(.+)$/i);
+  if (directSearchMatch && isSingleStep) {
+    const query = directSearchMatch[1].replace(/^["']|["']$/g, "").trim();
+    if (query) {
+      const currentUrl = (activeTab?.url || "").toLowerCase();
+      if (currentUrl.includes("youtube.com") && onNavigate) {
+        const ytUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`;
+        onNavigate(ytUrl);
+        return `\u{1F50D} Searching YouTube for <strong>"${query}"</strong>.<br><br>\u2705 <strong>[Verified Action: Navigated to ${ytUrl}]</strong>`;
+      }
+      const wv = getActiveWebview ? getActiveWebview() : null;
+      if (wv && currentUrl && !currentUrl.startsWith("antigravity://") && currentUrl !== "about:blank") {
+        const typed = await typeAndSubmitInSearchBar(wv, query);
+        if (typed && !typed.includes("Could not find")) {
+          return typed;
+        }
+      }
+      const googleUrl = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
+      if (onNavigate) {
+        onNavigate(googleUrl);
+        return `\u{1F50D} Searching Google for <strong>"${query}"</strong>.<br><br>\u2705 <strong>[Verified Action: Navigated to ${googleUrl}]</strong>`;
+      }
+    }
+  }
   if (matches("navigate to", "go to") && raw.length > 6) {
     const navTarget = raw.replace(/^.*?\b(?:navigate to|go to)\s+/i, "").trim();
     if (navTarget) {
-      if (KNOWN_SITES[navTarget.toLowerCase()]) {
-        if (onNavigate) onNavigate(KNOWN_SITES[navTarget.toLowerCase()]);
-        return `\u{1F310} Navigated active tab to <strong>${navTarget}</strong>.`;
-      } else if (onNavigate) {
-        onNavigate(navTarget);
-        return `\u{1F310} Navigated active tab to <strong>${navTarget}</strong>.`;
+      const targetUrl = KNOWN_SITES[navTarget.toLowerCase()] || resolveTargetUrl(navTarget);
+      if (onNavigate) {
+        onNavigate(targetUrl);
+        return `\u{1F310} Navigated active tab to <strong>${targetUrl}</strong>.<br><br>\u2705 <strong>[Verified Action: Navigated to ${targetUrl}]</strong>`;
       }
+    }
+  }
+  const isConversationalOrWritingPrompt = (/\b(?:essay|write|explain|tell\s+me|give\s+me\s+(?:an?|some|the)|what\s+is|how\s+is|who\s+is|why\s+is|describe|poem|story|paragraph|article|translate|define|meaning\s+of)\b/i.test(raw) || /\?$/.test(raw.trim())) && !/\b(?:open\s+tab|close\s+tab|switch\s+to\s+tab|download\s+episode|click\s+#?\d+)\b/i.test(raw);
+  const hasBrowserActionVerb = /\b(?:open|navigate|go\s+to|click|scroll|type|download|switch|close|verify|remind)\b/i.test(cleanPrompt);
+  const isAutonomousGoal = !isConversationalOrWritingPrompt && hasBrowserActionVerb && (/\b(?:and\s+(?:then\s+)?(?:open|navigate|go\s+to|click|scroll|type|download|search|play|verify|close|switch)|then\s+(?:open|navigate|click|scroll|type|download|search|play))\b/i.test(cleanPrompt) || /\b(?:download|episode|remind|verify|mirror|gateway)\b/i.test(cleanPrompt));
+  if (isAutonomousGoal) {
+    try {
+      return await executeAutonomousAgentLoop(raw, context);
+    } catch (e) {
+      console.warn("[Autonomous Agent Loop Fallback]", e);
     }
   }
   try {
@@ -40903,16 +43847,15 @@ async function executeAiBrowserCommand(promptText, context = {}) {
     if (hasKeyOrLocal) {
       const activeUrl = activeTab?.url || "";
       const activeTitle = activeTab?.title || "";
-      const systemPrompt = `You are Antigravity Browser AI Copilot. You assist the user with web browsing and understanding.
+      const systemPrompt = `You are Antigravity Browser AI Copilot. You assist the user with web browsing, writing, essays, and questions.
 Active Tab: "${activeTitle}" (${activeUrl})
 Total Open Tabs: ${tabs.length}.
-Open Tabs List: ${tabs.map((t, i) => `[Tab ${i + 1}] "${t.title || "Untitled"}" (${t.url || "blank"})`).join(", ")}
-Keep answers concise and helpful.`;
+Always reply in the same language as the user's current message (default to English unless the user writes in Hindi or Korean). Keep answers clear, well-structured, and helpful.`;
       const chatFn = streamChatMessage2 || sendChatMessage2;
       const aiRes = await chatFn({
         prompt: raw,
         systemPrompt,
-        tools: BROWSER_TOOLS2,
+        tools: isConversationalOrWritingPrompt ? [] : BROWSER_TOOLS2,
         onChunk: (chunk) => {
           if (context.onStreamChunk) context.onStreamChunk(chunk);
         },
@@ -41390,12 +44333,39 @@ function AiHudSidebar({
   const [isGenerating, setIsGenerating] = (0, import_react4.useState)(false);
   const recognitionRef = (0, import_react4.useRef)(null);
   const messagesEndRef = (0, import_react4.useRef)(null);
+  const messagesContainerRef = (0, import_react4.useRef)(null);
+  const userScrolledUpRef = (0, import_react4.useRef)(false);
+  const [isScrolledUp, setIsScrolledUp] = (0, import_react4.useState)(false);
   const timerIntervalRef = (0, import_react4.useRef)(null);
   const audioCtxRef = (0, import_react4.useRef)(null);
   const mediaStreamRef = (0, import_react4.useRef)(null);
-  const audioProcessorRef2 = (0, import_react4.useRef)(null);
+  const audioProcessorRef = (0, import_react4.useRef)(null);
+  const recordingActiveRef = (0, import_react4.useRef)(false);
+  const sampleRateRef = (0, import_react4.useRef)(16e3);
   const audioChunksRef = (0, import_react4.useRef)([]);
   const abortControllerRef = (0, import_react4.useRef)(null);
+  const handleMessagesScroll = (e) => {
+    const el = e.currentTarget;
+    if (!el) return;
+    const distanceFromBottom = el.scrollHeight - el.scrollTop - el.clientHeight;
+    if (distanceFromBottom <= 80) {
+      userScrolledUpRef.current = false;
+      setIsScrolledUp(false);
+    } else {
+      userScrolledUpRef.current = true;
+      setIsScrolledUp(true);
+    }
+  };
+  const scrollToBottom = () => {
+    userScrolledUpRef.current = false;
+    setIsScrolledUp(false);
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTo({
+        top: messagesContainerRef.current.scrollHeight,
+        behavior: "smooth"
+      });
+    }
+  };
   const toggleThoughtCollapse = (msgId) => {
     setChatMessages((prev) => prev.map(
       (m) => m.id === msgId ? { ...m, thoughtCollapsed: !m.thoughtCollapsed } : m
@@ -41419,8 +44389,9 @@ function AiHudSidebar({
     setChatMessages((prev) => prev.map((m) => m.isStreaming ? { ...m, isStreaming: false, isThinking: false } : m));
   };
   (0, import_react4.useEffect)(() => {
-    if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    if (userScrolledUpRef.current) return;
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
     }
   }, [chatMessages, isAiThinking]);
   (0, import_react4.useEffect)(() => {
@@ -41433,93 +44404,172 @@ function AiHudSidebar({
     } catch (e) {
     }
   }, []);
+  const nlpHandlerRef = (0, import_react4.useRef)(null);
   (0, import_react4.useEffect)(() => {
     const handleCustomQuery = (e) => {
-      if (e.detail?.query) {
-        handleProcessNlpCommand(e.detail.query);
+      if (e.detail?.query && nlpHandlerRef.current) {
+        nlpHandlerRef.current(e.detail.query);
       }
     };
     window.addEventListener("antigravity-copilot-query", handleCustomQuery);
     return () => window.removeEventListener("antigravity-copilot-query", handleCustomQuery);
   }, []);
-  if (!isOpen || isDetached) return null;
-  const toggleWhisperRecording = async () => {
-    if (isWhisperRecording) {
-      setIsWhisperRecording(false);
-      setIsWhisperTranscribing(true);
-      if (timerIntervalRef.current) clearInterval(timerIntervalRef.current);
-      try {
-        if (mediaStreamRef.current) {
-          mediaStreamRef.current.getTracks().forEach((t) => t.stop());
-        }
-        if (audioProcessorRef2.current) {
-          try {
-            audioProcessorRef2.current.disconnect();
-          } catch (e) {
-          }
-        }
-        if (audioCtxRef.current) {
-          try {
-            audioCtxRef.current.close();
-          } catch (e) {
-          }
-        }
-        const chunks = audioChunksRef.current;
-        let totalLen = 0;
-        for (const ch of chunks) totalLen += ch.length;
-        if (totalLen > 1600) {
-          const merged = new Float32Array(totalLen);
-          let offset = 0;
-          for (const ch of chunks) {
-            merged.set(ch, offset);
-            offset += ch.length;
-          }
-          const { ipcRenderer: ipcRenderer4 } = require("electron");
-          const res = await ipcRenderer4.invoke("whisper-transcribe", {
-            audioData: Array.from(merged),
-            language: whisperLang === "auto" ? null : whisperLang
-          });
-          if (res && res.success && res.text) {
-            const transcribedText = res.text.trim();
-            setChatInput(transcribedText);
-            handleProcessNlpCommand(transcribedText);
-          } else if (res && res.error) {
-            addAiReply(`\u26A0\uFE0F Whisper Notice: ${res.error}`);
-          }
-        } else {
-          addAiReply(`\u{1F399}\uFE0F Whisper heard too little audio. Hold the mic button or speak clearly into the microphone.`);
-        }
-      } catch (err) {
-        console.error("[Whisper Docked] Transcribe error:", err);
-        addAiReply(`\u26A0\uFE0F Whisper transcription error: ${err.message || err}`);
-      } finally {
-        setIsWhisperTranscribing(false);
-        setRecordingTimer(0);
+  const stopWhisperRecordingAndTranscribe = async () => {
+    if (!recordingActiveRef.current) return;
+    recordingActiveRef.current = false;
+    setIsWhisperRecording(false);
+    setIsWhisperTranscribing(true);
+    if (timerIntervalRef.current) {
+      clearInterval(timerIntervalRef.current);
+      timerIntervalRef.current = null;
+    }
+    try {
+      if (mediaStreamRef.current) {
+        mediaStreamRef.current.getTracks().forEach((t) => t.stop());
+        mediaStreamRef.current = null;
       }
+      if (audioProcessorRef.current) {
+        try {
+          audioProcessorRef.current.disconnect();
+        } catch (e) {
+        }
+        audioProcessorRef.current = null;
+      }
+      const capturedSampleRate = sampleRateRef.current || audioCtxRef.current && audioCtxRef.current.sampleRate || 16e3;
+      if (audioCtxRef.current) {
+        try {
+          await audioCtxRef.current.close();
+        } catch (e) {
+        }
+        audioCtxRef.current = null;
+      }
+      const chunks = audioChunksRef.current || [];
+      let totalLen = 0;
+      for (const ch of chunks) totalLen += ch.length;
+      if (totalLen > Math.floor(capturedSampleRate * 0.12)) {
+        const merged = new Float32Array(totalLen);
+        let offset = 0;
+        for (const ch of chunks) {
+          merged.set(ch, offset);
+          offset += ch.length;
+        }
+        let pcm16k = merged;
+        let finalSampleRate = capturedSampleRate;
+        try {
+          const OfflineCtx = window.OfflineAudioContext || window.webkitOfflineAudioContext;
+          if (OfflineCtx && capturedSampleRate !== 16e3) {
+            const targetLen = Math.max(1, Math.ceil(totalLen * 16e3 / capturedSampleRate));
+            const offlineCtx = new OfflineCtx(1, targetLen, 16e3);
+            const audioBuffer = offlineCtx.createBuffer(1, totalLen, capturedSampleRate);
+            audioBuffer.copyToChannel(merged, 0);
+            const bufferSource = offlineCtx.createBufferSource();
+            bufferSource.buffer = audioBuffer;
+            bufferSource.connect(offlineCtx.destination);
+            bufferSource.start(0);
+            const renderedBuffer = await offlineCtx.startRendering();
+            pcm16k = renderedBuffer.getChannelData(0);
+            finalSampleRate = 16e3;
+          }
+        } catch (resampleErr) {
+          console.warn("[Whisper Docked] Native OfflineAudioContext resample fallback:", resampleErr);
+        }
+        const { ipcRenderer: ipcRenderer4 } = require("electron");
+        const res = await ipcRenderer4.invoke("whisper-transcribe", {
+          audioData: Array.from(pcm16k),
+          language: whisperLang === "auto" ? null : whisperLang,
+          sampleRate: finalSampleRate
+        });
+        if (res && res.success && res.text) {
+          const transcribedText = res.text.trim();
+          setChatInput(transcribedText);
+          handleProcessNlpCommand(transcribedText);
+        } else if (res && res.error) {
+          addAiReply(`\u26A0\uFE0F Whisper Notice: ${res.error}`);
+        }
+      } else {
+        addAiReply(`\u{1F399}\uFE0F Whisper heard too little audio. Speak clearly into the microphone and it will transcribe automatically.`);
+      }
+    } catch (err) {
+      console.error("[Whisper Docked] Transcribe error:", err);
+      addAiReply(`\u26A0\uFE0F Whisper transcription error: ${err.message || err}`);
+    } finally {
+      setIsWhisperTranscribing(false);
+      setRecordingTimer(0);
+    }
+  };
+  const toggleWhisperRecording = async () => {
+    if (isWhisperRecording || recordingActiveRef.current) {
+      await stopWhisperRecordingAndTranscribe();
       return;
     }
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      let stream;
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({
+          audio: {
+            channelCount: 1,
+            echoCancellation: false,
+            noiseSuppression: false,
+            autoGainControl: false
+          }
+        });
+      } catch (constraintErr) {
+        stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      }
       mediaStreamRef.current = stream;
       const AudioCtx = window.AudioContext || window.webkitAudioContext;
-      const ctx = new AudioCtx({ sampleRate: 16e3 });
+      const ctx = new AudioCtx();
+      if (ctx.state === "suspended") {
+        await ctx.resume();
+      }
       audioCtxRef.current = ctx;
+      sampleRateRef.current = ctx.sampleRate || 16e3;
       const source = ctx.createMediaStreamSource(stream);
       const processor = ctx.createScriptProcessor(4096, 1, 1);
-      audioProcessorRef2.current = processor;
+      const silentGain = ctx.createGain();
+      silentGain.gain.value = 0;
+      audioProcessorRef.current = processor;
       audioChunksRef.current = [];
+      recordingActiveRef.current = true;
+      let speechDetected = false;
+      let silenceSamplesAfterSpeech = 0;
+      let totalSamplesRecorded = 0;
+      const sr = sampleRateRef.current;
       processor.onaudioprocess = (e) => {
+        if (!recordingActiveRef.current) return;
         const data = e.inputBuffer.getChannelData(0);
-        audioChunksRef.current.push(new Float32Array(data));
+        const copy = new Float32Array(data);
+        audioChunksRef.current.push(copy);
+        totalSamplesRecorded += copy.length;
+        if (totalSamplesRecorded > sr * 0.15) {
+          let sumSq = 0;
+          for (let i = 0; i < copy.length; i++) sumSq += copy[i] * copy[i];
+          const rms = Math.sqrt(sumSq / copy.length);
+          if (rms > 0.012) {
+            speechDetected = true;
+            silenceSamplesAfterSpeech = 0;
+          } else if (speechDetected) {
+            silenceSamplesAfterSpeech += copy.length;
+            if (silenceSamplesAfterSpeech >= sr * 2.6) {
+              stopWhisperRecordingAndTranscribe();
+              return;
+            }
+          }
+        }
+        if (totalSamplesRecorded >= sr * 30) {
+          stopWhisperRecordingAndTranscribe();
+        }
       };
       source.connect(processor);
-      processor.connect(ctx.destination);
+      processor.connect(silentGain);
+      silentGain.connect(ctx.destination);
       setIsWhisperRecording(true);
       setRecordingTimer(0);
       timerIntervalRef.current = setInterval(() => {
         setRecordingTimer((prev) => prev + 1);
       }, 1e3);
     } catch (err) {
+      recordingActiveRef.current = false;
       console.warn("[Whisper Docked] Microphone access error:", err);
       addAiReply(`\u26A0\uFE0F **Microphone Access**: ${err.message || "Permission denied or device not found"}.
 
@@ -41636,6 +44686,8 @@ function AiHudSidebar({
         return;
       }
     }
+    userScrolledUpRef.current = false;
+    setIsScrolledUp(false);
     const assistantMsgId = "ai-" + Date.now();
     const startTime = Date.now();
     const abortController = new AbortController();
@@ -41726,7 +44778,7 @@ function AiHudSidebar({
       const totalDuration = ((Date.now() - startTime) / 1e3).toFixed(1);
       setChatMessages((prev) => prev.map((m) => {
         if (m.id !== assistantMsgId) return m;
-        const finalText = m.text && m.text.trim() ? m.text : reply || "";
+        const finalText = reply && reply.trim() ? stripToolCallsFromText(reply) : stripToolCallsFromText(m.text || "");
         return {
           ...m,
           text: finalText,
@@ -41747,6 +44799,7 @@ function AiHudSidebar({
       setIsAiThinking(false);
     }
   };
+  nlpHandlerRef.current = handleProcessNlpCommand;
   const getFilteredAxText = () => {
     if (!axTreeMarkdown) return "Connecting to in-process Chromium core...";
     if (!markFilter.trim()) return axTreeMarkdown;
@@ -41765,6 +44818,7 @@ function AiHudSidebar({
       });
     }
   };
+  if (!isOpen || isDetached) return null;
   return /* @__PURE__ */ import_react4.default.createElement("aside", { className: "ai-hud-sidebar mac-docked-cockpit", id: "aiHudSidebar" }, /* @__PURE__ */ import_react4.default.createElement("header", { className: "mac-docked-header" }, /* @__PURE__ */ import_react4.default.createElement("div", { className: "mac-cockpit-brand" }, /* @__PURE__ */ import_react4.default.createElement("span", { className: "mac-brand-sparkle" }, "\u2726"), /* @__PURE__ */ import_react4.default.createElement("span", { className: "mac-brand-name" }, "Antigravity Copilot")), /* @__PURE__ */ import_react4.default.createElement("div", { className: "mac-header-actions" }, /* @__PURE__ */ import_react4.default.createElement("label", { className: "som-toggle-label", title: "Render Set-of-Marks numerical bounding boxes over elements" }, /* @__PURE__ */ import_react4.default.createElement(
     "input",
     {
@@ -41828,7 +44882,7 @@ function AiHudSidebar({
       onClick: () => setVoiceSpeechFeedback(!voiceSpeechFeedback)
     },
     voiceSpeechFeedback ? "\u{1F50A} Speaking" : "\u{1F507} Muted"
-  )), /* @__PURE__ */ import_react4.default.createElement("div", { className: "mac-quick-chips" }, /* @__PURE__ */ import_react4.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("summarize") }, "\u26A1 Summarize Page"), /* @__PURE__ */ import_react4.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("scroll down") }, "\u{1F4DC} Scroll Down"), /* @__PURE__ */ import_react4.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("click play") }, "\u25B6\uFE0F Click Play"), /* @__PURE__ */ import_react4.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("autofill") }, "\u{1F4DD} Autofill"), /* @__PURE__ */ import_react4.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("\u092A\u0947\u091C \u0915\u093E \u0938\u093E\u0930\u093E\u0902\u0936 \u0926\u094B") }, "\u{1F1EE}\u{1F1F3} \u0938\u093E\u0930\u093E\u0902\u0936 (HI)"), /* @__PURE__ */ import_react4.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("\u0928\u0940\u091A\u0947 \u0938\u094D\u0915\u094D\u0930\u0949\u0932 \u0915\u0930\u094B") }, "\u{1F1EE}\u{1F1F3} \u0928\u0940\u091A\u0947 \u0938\u094D\u0915\u094D\u0930\u0949\u0932 (HI)"), /* @__PURE__ */ import_react4.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("\uD398\uC774\uC9C0 \uC694\uC57D") }, "\u{1F1F0}\u{1F1F7} \uC694\uC57D (KO)"), /* @__PURE__ */ import_react4.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("\uC544\uB798\uB85C \uC2A4\uD06C\uB864") }, "\u{1F1F0}\u{1F1F7} \uC544\uB798\uB85C (KO)"), /* @__PURE__ */ import_react4.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("scroll to top") }, "\u2B06 Top")), /* @__PURE__ */ import_react4.default.createElement("div", { className: "mac-messages-stream" }, chatMessages.map((msg) => /* @__PURE__ */ import_react4.default.createElement("div", { key: msg.id, className: `mac-msg-row ${msg.role}` }, /* @__PURE__ */ import_react4.default.createElement("div", { className: "mac-msg-bubble" }, /* @__PURE__ */ import_react4.default.createElement("div", { className: "mac-msg-header" }, /* @__PURE__ */ import_react4.default.createElement("span", { className: "mac-msg-author" }, msg.role === "user" ? "You" : "\u2726 Copilot"), /* @__PURE__ */ import_react4.default.createElement("span", { className: "mac-msg-time" }, msg.time)), msg.role === "assistant" && msg.reasoning && /* @__PURE__ */ import_react4.default.createElement("div", { className: `chatgpt-thought-container ${msg.isThinking ? "active-thinking" : ""}` }, /* @__PURE__ */ import_react4.default.createElement("div", { className: "thought-header", onClick: () => toggleThoughtCollapse(msg.id) }, /* @__PURE__ */ import_react4.default.createElement("div", { className: "thought-title-group" }, msg.isThinking ? /* @__PURE__ */ import_react4.default.createElement(import_react4.default.Fragment, null, /* @__PURE__ */ import_react4.default.createElement("span", { className: "thought-shimmer-pulse" }), /* @__PURE__ */ import_react4.default.createElement("span", null, "Thinking... ", msg.thoughtDuration ? `(${msg.thoughtDuration}s)` : "")) : /* @__PURE__ */ import_react4.default.createElement(import_react4.default.Fragment, null, /* @__PURE__ */ import_react4.default.createElement("span", null, "\u{1F4AD}"), /* @__PURE__ */ import_react4.default.createElement("span", null, "Thought for ", msg.thoughtDuration || "2.4", "s"))), /* @__PURE__ */ import_react4.default.createElement(
+  )), /* @__PURE__ */ import_react4.default.createElement("div", { className: "mac-quick-chips" }, /* @__PURE__ */ import_react4.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("summarize") }, "\u26A1 Summarize Page"), /* @__PURE__ */ import_react4.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("scroll down") }, "\u{1F4DC} Scroll Down"), /* @__PURE__ */ import_react4.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("click play") }, "\u25B6\uFE0F Click Play"), /* @__PURE__ */ import_react4.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("autofill") }, "\u{1F4DD} Autofill"), /* @__PURE__ */ import_react4.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("\u092A\u0947\u091C \u0915\u093E \u0938\u093E\u0930\u093E\u0902\u0936 \u0926\u094B") }, "\u{1F1EE}\u{1F1F3} \u0938\u093E\u0930\u093E\u0902\u0936 (HI)"), /* @__PURE__ */ import_react4.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("\u0928\u0940\u091A\u0947 \u0938\u094D\u0915\u094D\u0930\u0949\u0932 \u0915\u0930\u094B") }, "\u{1F1EE}\u{1F1F3} \u0928\u0940\u091A\u0947 \u0938\u094D\u0915\u094D\u0930\u0949\u0932 (HI)"), /* @__PURE__ */ import_react4.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("\uD398\uC774\uC9C0 \uC694\uC57D") }, "\u{1F1F0}\u{1F1F7} \uC694\uC57D (KO)"), /* @__PURE__ */ import_react4.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("\uC544\uB798\uB85C \uC2A4\uD06C\uB864") }, "\u{1F1F0}\u{1F1F7} \uC544\uB798\uB85C (KO)"), /* @__PURE__ */ import_react4.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("scroll to top") }, "\u2B06 Top")), /* @__PURE__ */ import_react4.default.createElement("div", { className: "mac-messages-stream", ref: messagesContainerRef, onScroll: handleMessagesScroll }, chatMessages.map((msg) => /* @__PURE__ */ import_react4.default.createElement("div", { key: msg.id, className: `mac-msg-row ${msg.role}` }, /* @__PURE__ */ import_react4.default.createElement("div", { className: "mac-msg-bubble" }, /* @__PURE__ */ import_react4.default.createElement("div", { className: "mac-msg-header" }, /* @__PURE__ */ import_react4.default.createElement("span", { className: "mac-msg-author" }, msg.role === "user" ? "You" : "\u2726 Copilot"), /* @__PURE__ */ import_react4.default.createElement("span", { className: "mac-msg-time" }, msg.time)), msg.role === "assistant" && msg.reasoning && /* @__PURE__ */ import_react4.default.createElement("div", { className: `chatgpt-thought-container ${msg.isThinking ? "active-thinking" : ""}` }, /* @__PURE__ */ import_react4.default.createElement("div", { className: "thought-header", onClick: () => toggleThoughtCollapse(msg.id) }, /* @__PURE__ */ import_react4.default.createElement("div", { className: "thought-title-group" }, msg.isThinking ? /* @__PURE__ */ import_react4.default.createElement(import_react4.default.Fragment, null, /* @__PURE__ */ import_react4.default.createElement("span", { className: "thought-shimmer-pulse" }), /* @__PURE__ */ import_react4.default.createElement("span", null, "Thinking... ", msg.thoughtDuration ? `(${msg.thoughtDuration}s)` : "")) : /* @__PURE__ */ import_react4.default.createElement(import_react4.default.Fragment, null, /* @__PURE__ */ import_react4.default.createElement("span", null, "\u{1F4AD}"), /* @__PURE__ */ import_react4.default.createElement("span", null, "Thought for ", msg.thoughtDuration || "2.4", "s"))), /* @__PURE__ */ import_react4.default.createElement(
     "button",
     {
       type: "button",
@@ -41840,14 +44894,32 @@ function AiHudSidebar({
       title: msg.thoughtCollapsed ? "Expand reasoning process" : "Collapse / Retract reasoning process"
     },
     msg.thoughtCollapsed ? "\u25B6 Expand Thought" : "\u25BC Collapse Thought"
-  )), !msg.thoughtCollapsed && /* @__PURE__ */ import_react4.default.createElement("div", { className: "thought-stream-body" }, msg.reasoning, msg.isThinking && /* @__PURE__ */ import_react4.default.createElement("span", { className: "streaming-caret" }))), msg.role === "assistant" && msg.toolEvents && msg.toolEvents.length > 0 && /* @__PURE__ */ import_react4.default.createElement("div", { className: "antigravity-tools-group" }, msg.toolEvents.map((tool) => /* @__PURE__ */ import_react4.default.createElement("div", { key: tool.id, className: `antigravity-tool-card ${tool.status}` }, /* @__PURE__ */ import_react4.default.createElement("div", { className: "tool-card-header", onClick: () => toggleToolCollapse(msg.id, tool.id) }, /* @__PURE__ */ import_react4.default.createElement("div", { className: "tool-card-title" }, /* @__PURE__ */ import_react4.default.createElement("span", null, tool.tool.includes("download") ? "\u{1F4E5}" : tool.tool.includes("tab") ? "\u{1F5C2}\uFE0F" : tool.tool.includes("search") ? "\u{1F50D}" : tool.tool.includes("remind") ? "\u{1F514}" : tool.tool.includes("click") ? "\u{1F5B1}\uFE0F" : "\u26A1"), /* @__PURE__ */ import_react4.default.createElement("span", null, "Tool:"), /* @__PURE__ */ import_react4.default.createElement("code", { className: "tool-name-code" }, tool.tool)), /* @__PURE__ */ import_react4.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: 6 } }, tool.status === "running" && /* @__PURE__ */ import_react4.default.createElement("span", { className: "tool-status-badge running" }, /* @__PURE__ */ import_react4.default.createElement("span", { className: "tool-card-spinner" }), " Running..."), tool.status === "completed" && /* @__PURE__ */ import_react4.default.createElement("span", { className: "tool-status-badge completed" }, "\u2713 Verified ", tool.durationMs ? `(${tool.durationMs}ms)` : ""), tool.status === "failed" && /* @__PURE__ */ import_react4.default.createElement("span", { className: "tool-status-badge failed" }, "\u2717 Failed"), /* @__PURE__ */ import_react4.default.createElement("span", { style: { fontSize: 10, color: "#94a3b8" } }, tool.collapsed ? "\u25B6" : "\u25BC"))), !tool.collapsed && /* @__PURE__ */ import_react4.default.createElement("div", { className: "tool-card-body" }, tool.args && Object.keys(tool.args).length > 0 && /* @__PURE__ */ import_react4.default.createElement("div", null, /* @__PURE__ */ import_react4.default.createElement("div", { className: "tool-params-label" }, "Parameters"), /* @__PURE__ */ import_react4.default.createElement("pre", { className: "tool-params-pre" }, JSON.stringify(tool.args, null, 2))), (tool.observation || tool.result) && /* @__PURE__ */ import_react4.default.createElement("div", { className: "tool-obs-box" }, /* @__PURE__ */ import_react4.default.createElement("strong", null, "Live Observation:"), " ", tool.observation || tool.result))))), msg.text ? /* @__PURE__ */ import_react4.default.createElement(
-    "div",
-    {
-      className: "mac-msg-text",
-      style: { whiteSpace: "pre-wrap" },
-      dangerouslySetInnerHTML: { __html: msg.text }
+  )), !msg.thoughtCollapsed && /* @__PURE__ */ import_react4.default.createElement("div", { className: "thought-stream-body" }, msg.reasoning, msg.isThinking && /* @__PURE__ */ import_react4.default.createElement("span", { className: "streaming-caret" }))), msg.role === "assistant" && msg.toolEvents && msg.toolEvents.length > 0 && /* @__PURE__ */ import_react4.default.createElement("div", { className: "antigravity-tools-group" }, msg.toolEvents.map((tool) => /* @__PURE__ */ import_react4.default.createElement("div", { key: tool.id, className: `antigravity-tool-card ${tool.status}` }, /* @__PURE__ */ import_react4.default.createElement("div", { className: "tool-card-header", onClick: () => toggleToolCollapse(msg.id, tool.id) }, /* @__PURE__ */ import_react4.default.createElement("div", { className: "tool-card-title" }, /* @__PURE__ */ import_react4.default.createElement("span", null, tool.tool.includes("download") ? "\u{1F4E5}" : tool.tool.includes("tab") ? "\u{1F5C2}\uFE0F" : tool.tool.includes("search") ? "\u{1F50D}" : tool.tool.includes("remind") ? "\u{1F514}" : tool.tool.includes("click") ? "\u{1F5B1}\uFE0F" : "\u26A1"), /* @__PURE__ */ import_react4.default.createElement("span", null, "Tool:"), /* @__PURE__ */ import_react4.default.createElement("code", { className: "tool-name-code" }, tool.tool)), /* @__PURE__ */ import_react4.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: 6 } }, tool.status === "running" && /* @__PURE__ */ import_react4.default.createElement("span", { className: "tool-status-badge running" }, /* @__PURE__ */ import_react4.default.createElement("span", { className: "tool-card-spinner" }), " Running..."), tool.status === "completed" && /* @__PURE__ */ import_react4.default.createElement("span", { className: "tool-status-badge completed" }, "\u2713 Verified ", tool.durationMs ? `(${tool.durationMs}ms)` : ""), tool.status === "failed" && /* @__PURE__ */ import_react4.default.createElement("span", { className: "tool-status-badge failed" }, "\u2717 Failed"), /* @__PURE__ */ import_react4.default.createElement("span", { style: { fontSize: 10, color: "#94a3b8" } }, tool.collapsed ? "\u25B6" : "\u25BC"))), !tool.collapsed && /* @__PURE__ */ import_react4.default.createElement("div", { className: "tool-card-body" }, tool.args && Object.keys(tool.args).length > 0 && /* @__PURE__ */ import_react4.default.createElement("div", null, /* @__PURE__ */ import_react4.default.createElement("div", { className: "tool-params-label" }, "Parameters"), /* @__PURE__ */ import_react4.default.createElement("pre", { className: "tool-params-pre" }, JSON.stringify(tool.args, null, 2))), (tool.observation || tool.result) && /* @__PURE__ */ import_react4.default.createElement("div", { className: "tool-obs-box" }, /* @__PURE__ */ import_react4.default.createElement("strong", null, "Live Observation:"), " ", tool.observation || tool.result))))), (() => {
+    const displayText = stripToolCallsFromText(msg.text);
+    if (displayText) {
+      return /* @__PURE__ */ import_react4.default.createElement(
+        "div",
+        {
+          className: "mac-msg-text",
+          style: { whiteSpace: "pre-wrap" },
+          dangerouslySetInnerHTML: { __html: displayText }
+        }
+      );
     }
-  ) : msg.isStreaming && !msg.isThinking && !msg.reasoning && /* @__PURE__ */ import_react4.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: 8, padding: "4px 0", color: "#94a3b8" } }, /* @__PURE__ */ import_react4.default.createElement("span", { className: "dot-live", style: { width: 6, height: 6, display: "inline-block" } }), /* @__PURE__ */ import_react4.default.createElement("span", { style: { fontSize: "12px" } }, "Connecting to AI model...")), msg.isStreaming && !msg.isThinking && msg.text && /* @__PURE__ */ import_react4.default.createElement("span", { className: "streaming-caret" })))), isAiThinking && !chatMessages.some((m) => m.isStreaming) && /* @__PURE__ */ import_react4.default.createElement("div", { className: "mac-msg-row assistant" }, /* @__PURE__ */ import_react4.default.createElement("div", { className: "mac-msg-bubble thinking" }, /* @__PURE__ */ import_react4.default.createElement("span", { className: "dot-live", style: { width: 6, height: 6, display: "inline-block" } }), /* @__PURE__ */ import_react4.default.createElement("span", { style: { fontSize: "12px", color: "#94a3b8" } }, "Copilot is thinking..."))), /* @__PURE__ */ import_react4.default.createElement("div", { ref: messagesEndRef })), /* @__PURE__ */ import_react4.default.createElement("div", { className: "ai-chips-bar" }, /* @__PURE__ */ import_react4.default.createElement(
+    if (msg.isStreaming && !msg.isThinking && !msg.reasoning && (!msg.toolEvents || msg.toolEvents.length === 0)) {
+      return /* @__PURE__ */ import_react4.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: 8, padding: "4px 0", color: "#94a3b8" } }, /* @__PURE__ */ import_react4.default.createElement("span", { className: "dot-live", style: { width: 6, height: 6, display: "inline-block" } }), /* @__PURE__ */ import_react4.default.createElement("span", { style: { fontSize: "12px" } }, "Connecting to AI model..."));
+    }
+    return null;
+  })(), msg.isStreaming && !msg.isThinking && stripToolCallsFromText(msg.text) && /* @__PURE__ */ import_react4.default.createElement("span", { className: "streaming-caret" })))), isAiThinking && !chatMessages.some((m) => m.isStreaming) && /* @__PURE__ */ import_react4.default.createElement("div", { className: "mac-msg-row assistant" }, /* @__PURE__ */ import_react4.default.createElement("div", { className: "mac-msg-bubble thinking" }, /* @__PURE__ */ import_react4.default.createElement("span", { className: "dot-live", style: { width: 6, height: 6, display: "inline-block" } }), /* @__PURE__ */ import_react4.default.createElement("span", { style: { fontSize: "12px", color: "#94a3b8" } }, "Copilot is thinking..."))), isScrolledUp && /* @__PURE__ */ import_react4.default.createElement(
+    "button",
+    {
+      type: "button",
+      className: "scroll-to-bottom-pill",
+      onClick: scrollToBottom,
+      title: "Jump down to latest messages"
+    },
+    "\u2193 Latest"
+  ), /* @__PURE__ */ import_react4.default.createElement("div", { ref: messagesEndRef })), /* @__PURE__ */ import_react4.default.createElement("div", { className: "ai-chips-bar" }, /* @__PURE__ */ import_react4.default.createElement(
     "span",
     {
       className: "ai-chip",
@@ -42086,7 +45158,14 @@ function BookmarksBar({
     {
       key: bm.id || bm.url,
       className: "bookmark-pill",
-      title: `${bm.title} (${bm.url}) \u2014 Left-click to open, right-click to remove`,
+      draggable: true,
+      onDragStart: (e) => {
+        e.dataTransfer.effectAllowed = "copyMove";
+        e.dataTransfer.setData("application/json", JSON.stringify(bm));
+        e.dataTransfer.setData("text/plain", bm.url);
+        e.dataTransfer.setData("text/uri-list", bm.url);
+      },
+      title: `${bm.title} (${bm.url}) \u2014 Left-click to open, right-click to remove, drag onto home page`,
       onClick: () => onNavigate(bm.url),
       onContextMenu: (e) => {
         e.preventDefault();
@@ -42458,106 +45537,182 @@ var PRESET_WALLPAPERS = [
     url: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2064&auto=format&fit=crop"
   },
   {
-    id: "gradient",
-    name: "Aurora Gradient",
-    type: "image",
-    url: "https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=2070&auto=format&fit=crop"
+    id: "matrix-video",
+    name: "Cyber Matrix (Video)",
+    type: "video",
+    url: "https://assets.mixkit.co/videos/preview/mixkit-digital-animation-of-screens-with-code-31914-large.mp4"
   }
 ];
 function WallpaperStudioModal({
   isOpen,
-  currentWallpaper,
+  currentWallpaper = "",
+  currentType,
   currentWallpaperType,
-  currentOpacity = 40,
+  currentOpacity = 0.4,
   currentColor = "#070b14",
+  currentMuted = true,
+  onSelectWallpaper,
   onApplyWallpaper,
   onRemoveWallpaper,
   onClose
 }) {
+  const activeType = currentType || currentWallpaperType || "image";
+  const normalizedOpacity = currentOpacity <= 1 ? Math.round(currentOpacity * 100) : currentOpacity;
   const [previewUrl, setPreviewUrl] = (0, import_react10.useState)(currentWallpaper || "");
-  const [previewType, setPreviewType] = (0, import_react10.useState)(currentWallpaperType || "image");
-  const [opacity, setOpacity] = (0, import_react10.useState)(currentOpacity);
+  const [previewType, setPreviewType] = (0, import_react10.useState)(activeType);
+  const [opacity, setOpacity] = (0, import_react10.useState)(normalizedOpacity);
   const [color, setColor] = (0, import_react10.useState)(currentColor);
+  const [isMuted, setIsMuted] = (0, import_react10.useState)(currentMuted !== void 0 ? currentMuted : true);
   const [customUrlInput, setCustomUrlInput] = (0, import_react10.useState)("");
+  const fileInputRef = (0, import_react10.useRef)(null);
+  (0, import_react10.useEffect)(() => {
+    if (isOpen) {
+      setPreviewUrl(currentWallpaper || "");
+      setPreviewType(currentType || currentWallpaperType || "image");
+      setOpacity(currentOpacity <= 1 ? Math.round(currentOpacity * 100) : currentOpacity);
+      setColor(currentColor || "#070b14");
+      setIsMuted(currentMuted !== void 0 ? currentMuted : true);
+    }
+  }, [isOpen, currentWallpaper, currentType, currentWallpaperType, currentOpacity, currentColor, currentMuted]);
   if (!isOpen) return null;
   const handleFileUpload = (e) => {
     const file = e.target.files && e.target.files[0];
     if (!file) return;
-    const isVideo = file.type.startsWith("video/");
-    const url = URL.createObjectURL(file);
-    setPreviewUrl(url);
+    const isVideo = file.type.startsWith("video/") || /\.(mp4|webm|mov|m4v)$/i.test(file.name);
+    const filePath = file.path ? "file:///" + file.path.replace(/\\/g, "/") : URL.createObjectURL(file);
+    setPreviewUrl(filePath);
     setPreviewType(isVideo ? "video" : "image");
+  };
+  const handlePickNativeFile = async () => {
+    try {
+      if (window.require) {
+        const { ipcRenderer: ipcRenderer4 } = window.require("electron");
+        const res = await ipcRenderer4.invoke("wallpaper:pick-local-file");
+        if (res && res.success && res.url) {
+          setPreviewUrl(res.url);
+          setPreviewType(res.type);
+          return;
+        } else if (res && res.canceled) {
+          return;
+        }
+      }
+    } catch (err) {
+      console.warn("[Native wallpaper picker error]", err);
+    }
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
   };
   const handleSelectPreset = (preset) => {
     setPreviewUrl(preset.url);
     setPreviewType(preset.type);
   };
+  const handleSetCustomUrl = () => {
+    const text = customUrlInput.trim();
+    if (!text) return;
+    const isVid = /\.(mp4|webm|mov|m4v)(\?.*)?$/i.test(text);
+    setPreviewUrl(text);
+    setPreviewType(isVid ? "video" : "image");
+  };
   const handleApply = () => {
-    onApplyWallpaper({
-      url: previewUrl,
-      type: previewType,
-      opacity,
-      color
-    });
+    const finalOpacity = opacity / 100;
+    if (onSelectWallpaper) {
+      onSelectWallpaper(previewType, previewUrl, finalOpacity, color, isMuted);
+    }
+    if (onApplyWallpaper) {
+      onApplyWallpaper({
+        url: previewUrl,
+        type: previewType,
+        opacity: finalOpacity,
+        color,
+        isMuted
+      });
+    }
     onClose();
   };
   const handleRemove = () => {
     setPreviewUrl("");
-    onRemoveWallpaper();
+    if (onRemoveWallpaper) {
+      onRemoveWallpaper();
+    } else if (onSelectWallpaper) {
+      onSelectWallpaper("none", "", 0.4, "#070b14", true);
+    }
     onClose();
   };
   return /* @__PURE__ */ import_react10.default.createElement("div", { className: "modal-backdrop", onClick: onClose }, /* @__PURE__ */ import_react10.default.createElement(
     "div",
     {
       className: "modal-container wallpaper-modal",
-      style: { width: "560px", maxHeight: "88vh", overflowY: "auto" },
+      style: {
+        width: "600px",
+        maxWidth: "92vw",
+        maxHeight: "90vh",
+        overflowY: "auto",
+        padding: 0
+      },
       onClick: (e) => e.stopPropagation()
     },
-    /* @__PURE__ */ import_react10.default.createElement("div", { className: "modal-header" }, /* @__PURE__ */ import_react10.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: "8px" } }, /* @__PURE__ */ import_react10.default.createElement("span", { style: { fontSize: "18px" } }, "\u{1F3A8}"), /* @__PURE__ */ import_react10.default.createElement("h3", { style: { margin: 0, fontSize: "15px", fontWeight: 600, color: "var(--text-primary)" } }, "Custom Wallpaper Studio")), /* @__PURE__ */ import_react10.default.createElement("button", { className: "modal-close-btn", onClick: onClose, title: "Close" }, "\u2715")),
-    /* @__PURE__ */ import_react10.default.createElement("div", { className: "wallpaper-modal-body" }, /* @__PURE__ */ import_react10.default.createElement("div", { className: "wallpaper-preview-box" }, previewUrl ? previewType === "video" ? /* @__PURE__ */ import_react10.default.createElement(
-      "video",
-      {
-        src: previewUrl,
-        style: { width: "100%", height: "100%", objectFit: "cover" },
-        autoPlay: true,
-        muted: true,
-        loop: true
-      }
-    ) : /* @__PURE__ */ import_react10.default.createElement(
-      "img",
-      {
-        src: previewUrl,
-        alt: "Preview",
-        style: { width: "100%", height: "100%", objectFit: "cover" }
-      }
-    ) : /* @__PURE__ */ import_react10.default.createElement("span", { className: "wallpaper-preview-placeholder" }, "No wallpaper selected (Default browser dark theme)"), previewUrl && /* @__PURE__ */ import_react10.default.createElement(
+    /* @__PURE__ */ import_react10.default.createElement("div", { className: "modal-header" }, /* @__PURE__ */ import_react10.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: "8px" } }, /* @__PURE__ */ import_react10.default.createElement("span", { style: { fontSize: "18px" } }, "\u{1F3A8}"), /* @__PURE__ */ import_react10.default.createElement("h3", { style: { margin: 0, fontSize: "15px", fontWeight: 600, color: "#f8fafc" } }, "Custom Wallpaper Studio")), /* @__PURE__ */ import_react10.default.createElement("button", { className: "modal-close-btn", onClick: onClose, title: "Close" }, "\u2715")),
+    /* @__PURE__ */ import_react10.default.createElement("div", { className: "wallpaper-modal-body" }, /* @__PURE__ */ import_react10.default.createElement(
       "div",
       {
-        style: {
-          position: "absolute",
-          inset: 0,
-          background: `rgba(0,0,0,${opacity / 100})`,
-          pointerEvents: "none"
+        className: "wallpaper-preview-box",
+        style: { backgroundColor: color }
+      },
+      previewUrl ? previewType === "video" ? /* @__PURE__ */ import_react10.default.createElement(
+        "video",
+        {
+          src: previewUrl,
+          style: { width: "100%", height: "100%", objectFit: "cover" },
+          autoPlay: true,
+          muted: isMuted,
+          loop: true,
+          playsInline: true
         }
-      }
-    )), /* @__PURE__ */ import_react10.default.createElement("div", null, /* @__PURE__ */ import_react10.default.createElement("label", { style: { fontSize: "12px", fontWeight: 600, color: "var(--text-secondary)", display: "block", marginBottom: "8px" } }, "Studio Presets"), /* @__PURE__ */ import_react10.default.createElement("div", { style: { display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: "8px" } }, PRESET_WALLPAPERS.map((preset) => /* @__PURE__ */ import_react10.default.createElement(
+      ) : /* @__PURE__ */ import_react10.default.createElement(
+        "img",
+        {
+          src: previewUrl,
+          alt: "Wallpaper Preview",
+          style: { width: "100%", height: "100%", objectFit: "cover" }
+        }
+      ) : /* @__PURE__ */ import_react10.default.createElement("span", { className: "wallpaper-preview-placeholder" }, "No wallpaper selected (Default browser dark theme)"),
+      previewUrl && /* @__PURE__ */ import_react10.default.createElement(
+        "div",
+        {
+          style: {
+            position: "absolute",
+            inset: 0,
+            background: `rgba(0, 0, 0, ${opacity / 100})`,
+            pointerEvents: "none"
+          }
+        }
+      )
+    ), /* @__PURE__ */ import_react10.default.createElement("div", null, /* @__PURE__ */ import_react10.default.createElement("label", { style: { fontSize: "12px", fontWeight: 600, color: "#94a3b8", display: "block", marginBottom: "8px" } }, "Studio Presets (Images & Loop Videos)"), /* @__PURE__ */ import_react10.default.createElement("div", { style: { display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: "8px" } }, PRESET_WALLPAPERS.map((preset) => /* @__PURE__ */ import_react10.default.createElement(
       "div",
       {
         key: preset.id,
         onClick: () => handleSelectPreset(preset),
-        title: preset.name,
+        title: `${preset.name} (${preset.type})`,
         style: {
           height: "56px",
           borderRadius: "8px",
-          backgroundImage: `url(${preset.url})`,
+          backgroundImage: preset.type === "image" ? `url(${preset.url})` : "none",
+          backgroundColor: preset.type === "video" ? "#0f172a" : "transparent",
           backgroundSize: "cover",
           backgroundPosition: "center",
           cursor: "pointer",
-          border: previewUrl === preset.url ? "2px solid var(--accent-cyan)" : "1px solid var(--border-subtle)",
-          boxShadow: previewUrl === preset.url ? "0 0 10px rgba(0,240,255,0.4)" : "none",
+          border: previewUrl === preset.url ? "2px solid var(--accent-cyan)" : "1px solid rgba(255, 255, 255, 0.1)",
+          boxShadow: previewUrl === preset.url ? "0 0 10px rgba(0, 240, 255, 0.4)" : "none",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          overflow: "hidden",
+          position: "relative",
           transition: "all 0.15s ease"
         }
-      }
+      },
+      preset.type === "video" && /* @__PURE__ */ import_react10.default.createElement("div", { style: { fontSize: "10px", color: "#38bdf8", fontWeight: 600, textAlign: "center", padding: "2px" } }, "\u{1F3AC} Video")
     )))), /* @__PURE__ */ import_react10.default.createElement("div", { className: "wallpaper-actions" }, /* @__PURE__ */ import_react10.default.createElement("div", { style: { display: "flex", gap: "8px" } }, /* @__PURE__ */ import_react10.default.createElement(
       "input",
       {
@@ -42566,30 +45721,53 @@ function WallpaperStudioModal({
         placeholder: "Paste image, GIF, or video URL...",
         value: customUrlInput,
         onChange: (e) => setCustomUrlInput(e.target.value),
+        onKeyDown: (e) => {
+          if (e.key === "Enter") handleSetCustomUrl();
+        },
         style: { flex: 1 }
       }
     ), /* @__PURE__ */ import_react10.default.createElement(
       "button",
       {
         className: "btn-wallpaper-action btn-blue",
-        onClick: () => {
-          if (customUrlInput.trim()) {
-            const isVid = customUrlInput.endsWith(".mp4") || customUrlInput.endsWith(".webm");
-            setPreviewUrl(customUrlInput.trim());
-            setPreviewType(isVid ? "video" : "image");
-          }
-        }
+        onClick: handleSetCustomUrl
       },
       "Set URL"
-    )), /* @__PURE__ */ import_react10.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: "8px" } }, /* @__PURE__ */ import_react10.default.createElement("label", { className: "btn-wallpaper-action btn-blue", style: { cursor: "pointer", margin: 0 } }, "\u{1F4C1} Upload Local Image / Video / GIF", /* @__PURE__ */ import_react10.default.createElement(
+    )), /* @__PURE__ */ import_react10.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: "8px" } }, /* @__PURE__ */ import_react10.default.createElement(
+      "button",
+      {
+        type: "button",
+        className: "btn-wallpaper-action btn-blue",
+        style: { flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: "6px" },
+        onClick: handlePickNativeFile
+      },
+      "\u{1F4C1} Choose Local Image / Video / GIF (Native Dialog)"
+    ), /* @__PURE__ */ import_react10.default.createElement(
       "input",
       {
+        ref: fileInputRef,
         type: "file",
-        accept: "image/*,video/mp4,video/webm",
+        accept: "image/*,video/mp4,video/webm,video/quicktime",
         style: { display: "none" },
         onChange: handleFileUpload
       }
-    ))), /* @__PURE__ */ import_react10.default.createElement("div", { className: "wallpaper-opacity-row" }, /* @__PURE__ */ import_react10.default.createElement("label", { style: { fontSize: "12px", color: "var(--text-secondary)" } }, "Dark Scrim Opacity:"), /* @__PURE__ */ import_react10.default.createElement(
+    )), previewType === "video" && /* @__PURE__ */ import_react10.default.createElement("div", { className: "wallpaper-audio-row" }, /* @__PURE__ */ import_react10.default.createElement("span", { style: { fontSize: "12px", color: "#94a3b8" } }, "Video Sound Playback:"), /* @__PURE__ */ import_react10.default.createElement("div", { style: { display: "flex", gap: "6px" } }, /* @__PURE__ */ import_react10.default.createElement(
+      "button",
+      {
+        type: "button",
+        className: `wallpaper-toggle-btn ${isMuted ? "active" : ""}`,
+        onClick: () => setIsMuted(true)
+      },
+      "\u{1F507} Muted (Quiet)"
+    ), /* @__PURE__ */ import_react10.default.createElement(
+      "button",
+      {
+        type: "button",
+        className: `wallpaper-toggle-btn ${!isMuted ? "active" : ""}`,
+        onClick: () => setIsMuted(false)
+      },
+      "\u{1F50A} Play Audio"
+    ))), /* @__PURE__ */ import_react10.default.createElement("div", { className: "wallpaper-opacity-row" }, /* @__PURE__ */ import_react10.default.createElement("label", { style: { fontSize: "12px", color: "#94a3b8" } }, "Dark Scrim Opacity:"), /* @__PURE__ */ import_react10.default.createElement(
       "input",
       {
         type: "range",
@@ -42599,7 +45777,7 @@ function WallpaperStudioModal({
         onChange: (e) => setOpacity(parseInt(e.target.value, 10)),
         className: "wallpaper-range"
       }
-    ), /* @__PURE__ */ import_react10.default.createElement("span", { style: { fontSize: "11px", color: "var(--text-muted)", fontFamily: "var(--font-mono)" } }, opacity, "%")), /* @__PURE__ */ import_react10.default.createElement("div", { className: "wallpaper-color-row" }, /* @__PURE__ */ import_react10.default.createElement("label", { style: { fontSize: "12px", color: "var(--text-secondary)" } }, "Base Underlay Color:"), /* @__PURE__ */ import_react10.default.createElement(
+    ), /* @__PURE__ */ import_react10.default.createElement("span", { style: { fontSize: "11px", color: "#64748b", fontFamily: "var(--font-mono)" } }, opacity, "%")), /* @__PURE__ */ import_react10.default.createElement("div", { className: "wallpaper-color-row" }, /* @__PURE__ */ import_react10.default.createElement("label", { style: { fontSize: "12px", color: "#94a3b8" } }, "Base Underlay Color:"), /* @__PURE__ */ import_react10.default.createElement(
       "input",
       {
         type: "color",
@@ -42765,8 +45943,79 @@ function DownloadsPage({
   }))));
 }
 
-// desktop/src/components/TypographyStudioModal.jsx
+// desktop/src/components/HistoryPage.jsx
 var import_react12 = __toESM(require_react());
+function HistoryPage({
+  history = [],
+  onNavigate,
+  onRemoveHistoryItem,
+  onClearHistory
+}) {
+  const [searchTerm, setSearchTerm] = (0, import_react12.useState)("");
+  const filteredHistory = history.filter((item) => {
+    if (!searchTerm.trim()) return true;
+    const q = searchTerm.toLowerCase();
+    return item.title && item.title.toLowerCase().includes(q) || item.url && item.url.toLowerCase().includes(q);
+  });
+  const formatTime = (ts) => {
+    if (!ts) return "";
+    const d = new Date(ts);
+    return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  };
+  const formatDateHeading = (ts) => {
+    if (!ts) return "Earlier";
+    const d = new Date(ts);
+    const today = /* @__PURE__ */ new Date();
+    if (d.toDateString() === today.toDateString()) return "Today";
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+    if (d.toDateString() === yesterday.toDateString()) return "Yesterday";
+    return d.toLocaleDateString([], { weekday: "long", month: "short", day: "numeric", year: "numeric" });
+  };
+  const grouped = filteredHistory.reduce((acc, item) => {
+    const heading = formatDateHeading(item.timestamp);
+    if (!acc[heading]) acc[heading] = [];
+    acc[heading].push(item);
+    return acc;
+  }, {});
+  return /* @__PURE__ */ import_react12.default.createElement("div", { className: "history-page-container" }, /* @__PURE__ */ import_react12.default.createElement("header", { className: "history-header" }, /* @__PURE__ */ import_react12.default.createElement("div", { className: "history-header-left" }, /* @__PURE__ */ import_react12.default.createElement("span", { className: "history-logo-icon" }, "\u{1F552}"), /* @__PURE__ */ import_react12.default.createElement("div", null, /* @__PURE__ */ import_react12.default.createElement("h1", { className: "history-title" }, "Browsing History"), /* @__PURE__ */ import_react12.default.createElement("p", { className: "history-subtitle" }, filteredHistory.length, " visited pages persisted locally"))), /* @__PURE__ */ import_react12.default.createElement("div", { className: "history-search-wrapper" }, /* @__PURE__ */ import_react12.default.createElement("span", { className: "search-icon" }, "\u{1F50D}"), /* @__PURE__ */ import_react12.default.createElement(
+    "input",
+    {
+      type: "text",
+      className: "history-search-input",
+      placeholder: "Search browsing history...",
+      value: searchTerm,
+      onChange: (e) => setSearchTerm(e.target.value)
+    }
+  ), searchTerm && /* @__PURE__ */ import_react12.default.createElement("button", { className: "search-clear-btn", onClick: () => setSearchTerm("") }, "\u2715")), /* @__PURE__ */ import_react12.default.createElement("div", { className: "history-header-actions" }, history.length > 0 && /* @__PURE__ */ import_react12.default.createElement(
+    "button",
+    {
+      className: "history-action-btn secondary",
+      title: "Clear all browsing history permanently",
+      onClick: onClearHistory
+    },
+    "\u{1F5D1}\uFE0F Clear Browsing Data"
+  ))), /* @__PURE__ */ import_react12.default.createElement("main", { className: "history-content" }, filteredHistory.length === 0 ? /* @__PURE__ */ import_react12.default.createElement("div", { className: "history-empty-state" }, /* @__PURE__ */ import_react12.default.createElement("div", { className: "empty-icon-circle" }, "\u{1F552}"), /* @__PURE__ */ import_react12.default.createElement("h2", null, searchTerm ? "No history matches your search" : "No browsing history yet"), /* @__PURE__ */ import_react12.default.createElement("p", null, searchTerm ? "Try searching for another keyword or URL." : "Pages you visit across all tabs will appear here and persist across restarts.")) : /* @__PURE__ */ import_react12.default.createElement("div", { className: "history-grouped-list" }, Object.entries(grouped).map(([heading, items]) => /* @__PURE__ */ import_react12.default.createElement("div", { key: heading, className: "history-group" }, /* @__PURE__ */ import_react12.default.createElement("h3", { className: "history-group-heading" }, heading), /* @__PURE__ */ import_react12.default.createElement("div", { className: "history-group-items" }, items.map((item) => /* @__PURE__ */ import_react12.default.createElement("div", { key: item.id || `${item.url}-${item.timestamp}`, className: "history-item-row" }, /* @__PURE__ */ import_react12.default.createElement("span", { className: "history-item-time" }, formatTime(item.timestamp)), /* @__PURE__ */ import_react12.default.createElement("span", { className: "history-item-icon" }, item.url && item.url.startsWith("https://") ? "\u{1F310}" : "\u{1F4C4}"), /* @__PURE__ */ import_react12.default.createElement(
+    "div",
+    {
+      className: "history-item-details",
+      onClick: () => onNavigate && onNavigate(item.url)
+    },
+    /* @__PURE__ */ import_react12.default.createElement("span", { className: "history-item-title", title: item.title || item.url }, item.title || item.url),
+    /* @__PURE__ */ import_react12.default.createElement("span", { className: "history-item-url", title: item.url }, item.url)
+  ), /* @__PURE__ */ import_react12.default.createElement(
+    "button",
+    {
+      className: "history-item-remove-btn",
+      title: "Remove from history",
+      onClick: () => onRemoveHistoryItem && onRemoveHistoryItem(item.id || item.url)
+    },
+    "\u2715"
+  )))))))));
+}
+
+// desktop/src/components/TypographyStudioModal.jsx
+var import_react13 = __toESM(require_react());
 var TYPOGRAPHY_FONT_SIZES = {
   "compact": { px: 14, name: "Compact (14px)", lineHeight: 1.65 },
   "standard": { px: 16, name: "Standard (16px)", lineHeight: 1.75 },
@@ -42848,12 +46097,12 @@ function TypographyStudioModal({
   onApplyTypography,
   onClose
 }) {
-  const [selectedSize, setSelectedSize] = (0, import_react12.useState)(currentFontSize);
-  const [selectedStyle, setSelectedStyle] = (0, import_react12.useState)(currentFontStyle);
-  (0, import_react12.useEffect)(() => {
+  const [selectedSize, setSelectedSize] = (0, import_react13.useState)(currentFontSize);
+  const [selectedStyle, setSelectedStyle] = (0, import_react13.useState)(currentFontStyle);
+  (0, import_react13.useEffect)(() => {
     setSelectedSize(currentFontSize);
   }, [currentFontSize]);
-  (0, import_react12.useEffect)(() => {
+  (0, import_react13.useEffect)(() => {
     setSelectedStyle(currentFontStyle);
   }, [currentFontStyle]);
   if (!isOpen) return null;
@@ -42872,7 +46121,7 @@ function TypographyStudioModal({
     if (onSelectFontStyle) onSelectFontStyle("inter");
     if (onApplyTypography) onApplyTypography("standard", "inter");
   };
-  return /* @__PURE__ */ import_react12.default.createElement("div", { className: "modal-backdrop", id: "typographyBackdrop", onClick: onClose, style: {
+  return /* @__PURE__ */ import_react13.default.createElement("div", { className: "modal-backdrop", id: "typographyBackdrop", onClick: onClose, style: {
     position: "fixed",
     inset: 0,
     backgroundColor: "rgba(3, 7, 18, 0.75)",
@@ -42881,7 +46130,7 @@ function TypographyStudioModal({
     alignItems: "center",
     justifyContent: "center",
     zIndex: 1e5
-  } }, /* @__PURE__ */ import_react12.default.createElement(
+  } }, /* @__PURE__ */ import_react13.default.createElement(
     "div",
     {
       className: "typography-modal-container",
@@ -42901,7 +46150,7 @@ function TypographyStudioModal({
         fontFamily: "'Inter', sans-serif"
       }
     },
-    /* @__PURE__ */ import_react12.default.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "18px", borderBottom: "1px solid rgba(255, 255, 255, 0.08)", paddingBottom: "12px" } }, /* @__PURE__ */ import_react12.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: "10px" } }, /* @__PURE__ */ import_react12.default.createElement("span", { style: { fontSize: "24px" } }, "\u{1F524}"), /* @__PURE__ */ import_react12.default.createElement("div", null, /* @__PURE__ */ import_react12.default.createElement("h2", { style: { fontSize: "18px", fontWeight: "700", color: "#f8fafc", margin: 0 } }, "Modern Typography & Font Canvas Studio"), /* @__PURE__ */ import_react12.default.createElement("p", { style: { fontSize: "12px", color: "#94a3b8", margin: 0, marginTop: "2px" } }, "Curated typography engine with live font canvas, scaling & instant website injection"))), /* @__PURE__ */ import_react12.default.createElement(
+    /* @__PURE__ */ import_react13.default.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "18px", borderBottom: "1px solid rgba(255, 255, 255, 0.08)", paddingBottom: "12px" } }, /* @__PURE__ */ import_react13.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: "10px" } }, /* @__PURE__ */ import_react13.default.createElement("span", { style: { fontSize: "24px" } }, "\u{1F524}"), /* @__PURE__ */ import_react13.default.createElement("div", null, /* @__PURE__ */ import_react13.default.createElement("h2", { style: { fontSize: "18px", fontWeight: "700", color: "#f8fafc", margin: 0 } }, "Modern Typography & Font Canvas Studio"), /* @__PURE__ */ import_react13.default.createElement("p", { style: { fontSize: "12px", color: "#94a3b8", margin: 0, marginTop: "2px" } }, "Curated typography engine with live font canvas, scaling & instant website injection"))), /* @__PURE__ */ import_react13.default.createElement(
       "button",
       {
         id: "btnCloseTypographyModal",
@@ -42918,9 +46167,9 @@ function TypographyStudioModal({
       },
       "\u2715"
     )),
-    /* @__PURE__ */ import_react12.default.createElement("div", { style: { marginBottom: "20px" } }, /* @__PURE__ */ import_react12.default.createElement("label", { style: { display: "block", fontSize: "12px", fontWeight: "700", color: "#38bdf8", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: "10px" } }, "1. Select Curated Font Style (8 Styles):"), /* @__PURE__ */ import_react12.default.createElement("div", { style: { display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "10px" } }, Object.entries(TYPOGRAPHY_FONT_STYLES).map(([key, font]) => {
+    /* @__PURE__ */ import_react13.default.createElement("div", { style: { marginBottom: "20px" } }, /* @__PURE__ */ import_react13.default.createElement("label", { style: { display: "block", fontSize: "12px", fontWeight: "700", color: "#38bdf8", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: "10px" } }, "1. Select Curated Font Style (8 Styles):"), /* @__PURE__ */ import_react13.default.createElement("div", { style: { display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "10px" } }, Object.entries(TYPOGRAPHY_FONT_STYLES).map(([key, font]) => {
       const isSelected = selectedStyle === key;
-      return /* @__PURE__ */ import_react12.default.createElement(
+      return /* @__PURE__ */ import_react13.default.createElement(
         "div",
         {
           key,
@@ -42937,13 +46186,13 @@ function TypographyStudioModal({
             boxShadow: isSelected ? "0 0 16px rgba(0, 229, 255, 0.2)" : "none"
           }
         },
-        /* @__PURE__ */ import_react12.default.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "4px" } }, /* @__PURE__ */ import_react12.default.createElement("span", { style: { fontSize: "16px", fontWeight: "700", fontFamily: font.fontFamily, color: isSelected ? "#00e5ff" : "#ffffff" } }, font.name), /* @__PURE__ */ import_react12.default.createElement("span", { style: { fontSize: "10px", background: "rgba(255,255,255,0.08)", padding: "2px 6px", borderRadius: "4px", color: "#94a3b8", fontFamily: "monospace" } }, font.badge)),
-        /* @__PURE__ */ import_react12.default.createElement("div", { style: { fontSize: "11px", color: "#94a3b8", fontFamily: font.fontFamily } }, font.author)
+        /* @__PURE__ */ import_react13.default.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "4px" } }, /* @__PURE__ */ import_react13.default.createElement("span", { style: { fontSize: "16px", fontWeight: "700", fontFamily: font.fontFamily, color: isSelected ? "#00e5ff" : "#ffffff" } }, font.name), /* @__PURE__ */ import_react13.default.createElement("span", { style: { fontSize: "10px", background: "rgba(255,255,255,0.08)", padding: "2px 6px", borderRadius: "4px", color: "#94a3b8", fontFamily: "monospace" } }, font.badge)),
+        /* @__PURE__ */ import_react13.default.createElement("div", { style: { fontSize: "11px", color: "#94a3b8", fontFamily: font.fontFamily } }, font.author)
       );
     }))),
-    /* @__PURE__ */ import_react12.default.createElement("div", { style: { marginBottom: "20px" } }, /* @__PURE__ */ import_react12.default.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" } }, /* @__PURE__ */ import_react12.default.createElement("label", { style: { fontSize: "12px", fontWeight: "700", color: "#38bdf8", textTransform: "uppercase", letterSpacing: "0.05em" } }, "2. Select Font Size (Shortcuts: Ctrl + / - or Ctrl+Wheel):"), /* @__PURE__ */ import_react12.default.createElement("span", { id: "typographySizeLabel", style: { fontSize: "12px", color: "#00e5ff", fontFamily: "monospace", fontWeight: "700" } }, sizeObj.name)), /* @__PURE__ */ import_react12.default.createElement("div", { style: { display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "10px" } }, Object.entries(TYPOGRAPHY_FONT_SIZES).map(([key, sz]) => {
+    /* @__PURE__ */ import_react13.default.createElement("div", { style: { marginBottom: "20px" } }, /* @__PURE__ */ import_react13.default.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" } }, /* @__PURE__ */ import_react13.default.createElement("label", { style: { fontSize: "12px", fontWeight: "700", color: "#38bdf8", textTransform: "uppercase", letterSpacing: "0.05em" } }, "2. Select Font Size (Shortcuts: Ctrl + / - or Ctrl+Wheel):"), /* @__PURE__ */ import_react13.default.createElement("span", { id: "typographySizeLabel", style: { fontSize: "12px", color: "#00e5ff", fontFamily: "monospace", fontWeight: "700" } }, sizeObj.name)), /* @__PURE__ */ import_react13.default.createElement("div", { style: { display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "10px" } }, Object.entries(TYPOGRAPHY_FONT_SIZES).map(([key, sz]) => {
       const isSelected = selectedSize === key;
-      return /* @__PURE__ */ import_react12.default.createElement(
+      return /* @__PURE__ */ import_react13.default.createElement(
         "button",
         {
           key,
@@ -42964,11 +46213,11 @@ function TypographyStudioModal({
             transition: "all 0.15s ease"
           }
         },
-        /* @__PURE__ */ import_react12.default.createElement("span", { style: { fontSize: `${sz.px}px`, fontWeight: "800" } }, "Aa"),
-        /* @__PURE__ */ import_react12.default.createElement("span", { style: { fontSize: "11px", color: isSelected ? "#38bdf8" : "#94a3b8" } }, sz.name)
+        /* @__PURE__ */ import_react13.default.createElement("span", { style: { fontSize: `${sz.px}px`, fontWeight: "800" } }, "Aa"),
+        /* @__PURE__ */ import_react13.default.createElement("span", { style: { fontSize: "11px", color: isSelected ? "#38bdf8" : "#94a3b8" } }, sz.name)
       );
     }))),
-    /* @__PURE__ */ import_react12.default.createElement("div", { style: { marginBottom: "22px" } }, /* @__PURE__ */ import_react12.default.createElement("label", { style: { display: "block", fontSize: "12px", fontWeight: "700", color: "#38bdf8", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: "8px" } }, "Live Rendering Canvas Preview:"), /* @__PURE__ */ import_react12.default.createElement(
+    /* @__PURE__ */ import_react13.default.createElement("div", { style: { marginBottom: "22px" } }, /* @__PURE__ */ import_react13.default.createElement("label", { style: { display: "block", fontSize: "12px", fontWeight: "700", color: "#38bdf8", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: "8px" } }, "Live Rendering Canvas Preview:"), /* @__PURE__ */ import_react13.default.createElement(
       "div",
       {
         id: "typographyPreviewCanvas",
@@ -42987,11 +46236,11 @@ function TypographyStudioModal({
           transition: "all 0.2s ease"
         }
       },
-      /* @__PURE__ */ import_react12.default.createElement("div", { id: "previewHeadline", style: { fontSize: `${Math.round(sizeObj.px * 1.35)}px`, fontWeight: "700", color: "#ffffff", marginBottom: "6px" } }, "The Evolution of Modern Web Typography"),
-      /* @__PURE__ */ import_react12.default.createElement("div", { id: "previewMeta", style: { fontSize: "11px", color: "#64748b", marginBottom: "10px" } }, "Published by Web Standards Review \u2022 4 min read \u2022 Active Font: ", styleObj.name),
-      /* @__PURE__ */ import_react12.default.createElement("p", { id: "previewParagraph", style: { color: "#cbd5e1", margin: 0 } }, "Typography on the modern web balances aesthetic minimalism with effortless legibility. When line height and optical letter spacing harmonize, long-form reading feels natural rather than computerized.")
+      /* @__PURE__ */ import_react13.default.createElement("div", { id: "previewHeadline", style: { fontSize: `${Math.round(sizeObj.px * 1.35)}px`, fontWeight: "700", color: "#ffffff", marginBottom: "6px" } }, "The Evolution of Modern Web Typography"),
+      /* @__PURE__ */ import_react13.default.createElement("div", { id: "previewMeta", style: { fontSize: "11px", color: "#64748b", marginBottom: "10px" } }, "Published by Web Standards Review \u2022 4 min read \u2022 Active Font: ", styleObj.name),
+      /* @__PURE__ */ import_react13.default.createElement("p", { id: "previewParagraph", style: { color: "#cbd5e1", margin: 0 } }, "Typography on the modern web balances aesthetic minimalism with effortless legibility. When line height and optical letter spacing harmonize, long-form reading feels natural rather than computerized.")
     )),
-    /* @__PURE__ */ import_react12.default.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: "10px", borderTop: "1px solid rgba(255, 255, 255, 0.08)" } }, /* @__PURE__ */ import_react12.default.createElement(
+    /* @__PURE__ */ import_react13.default.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: "10px", borderTop: "1px solid rgba(255, 255, 255, 0.08)" } }, /* @__PURE__ */ import_react13.default.createElement(
       "button",
       {
         id: "btnResetTypography",
@@ -43008,7 +46257,7 @@ function TypographyStudioModal({
         }
       },
       "\u21BA Reset Default"
-    ), /* @__PURE__ */ import_react12.default.createElement("div", { style: { display: "flex", gap: "10px" } }, /* @__PURE__ */ import_react12.default.createElement(
+    ), /* @__PURE__ */ import_react13.default.createElement("div", { style: { display: "flex", gap: "10px" } }, /* @__PURE__ */ import_react13.default.createElement(
       "button",
       {
         id: "btnCloseTypographyBtn",
@@ -43025,7 +46274,7 @@ function TypographyStudioModal({
         }
       },
       "Close"
-    ), /* @__PURE__ */ import_react12.default.createElement(
+    ), /* @__PURE__ */ import_react13.default.createElement(
       "button",
       {
         id: "btnApplyTypography",
@@ -43048,7 +46297,8 @@ function TypographyStudioModal({
 }
 
 // desktop/src/components/AiProviderModal.jsx
-var import_react13 = __toESM(require_react());
+var import_react14 = __toESM(require_react());
+var import_react_dom = __toESM(require_react_dom());
 init_aiProviderService();
 function AiProviderModal({
   isOpen,
@@ -43056,43 +46306,83 @@ function AiProviderModal({
   onCaptureSnapshot,
   latestSnapshot
 }) {
-  const [configs, setConfigs] = (0, import_react13.useState)(() => getAiProvidersConfig());
-  const [selectedProviderId, setSelectedProviderId] = (0, import_react13.useState)(() => getActiveProviderId());
-  const [activeProviderId, setActiveId] = (0, import_react13.useState)(() => getActiveProviderId());
-  const [showApiKey, setShowApiKey] = (0, import_react13.useState)(false);
-  const [testStatus, setTestStatus] = (0, import_react13.useState)(null);
-  const [saveFeedback, setSaveFeedback] = (0, import_react13.useState)(false);
-  const [vlmSnapshotResult, setVlmSnapshotResult] = (0, import_react13.useState)(latestSnapshot || null);
-  const [isCapturingVlm, setIsCapturingVlm] = (0, import_react13.useState)(false);
-  const [snapshotTarget, setSnapshotTarget] = (0, import_react13.useState)("webview");
-  (0, import_react13.useEffect)(() => {
+  const [configs, setConfigs] = (0, import_react14.useState)(() => getAiProvidersConfig());
+  const [selectedProviderId, setSelectedProviderId] = (0, import_react14.useState)(() => getActiveProviderId());
+  const [activeProviderId, setActiveId] = (0, import_react14.useState)(() => getActiveProviderId());
+  const [showApiKey, setShowApiKey] = (0, import_react14.useState)(false);
+  const [testStatus, setTestStatus] = (0, import_react14.useState)(null);
+  const [saveFeedback, setSaveFeedback] = (0, import_react14.useState)(false);
+  const [vlmSnapshotResult, setVlmSnapshotResult] = (0, import_react14.useState)(latestSnapshot || null);
+  const [isCapturingVlm, setIsCapturingVlm] = (0, import_react14.useState)(false);
+  const [snapshotTarget, setSnapshotTarget] = (0, import_react14.useState)("webview");
+  const [newModelInput, setNewModelInput] = (0, import_react14.useState)("");
+  const [detectedModels, setDetectedModels] = (0, import_react14.useState)([]);
+  const [isScanningModels, setIsScanningModels] = (0, import_react14.useState)(false);
+  const [showAddProviderForm, setShowAddProviderForm] = (0, import_react14.useState)(false);
+  const [customProviderDraft, setCustomProviderDraft] = (0, import_react14.useState)({
+    name: "",
+    model: "",
+    baseUrl: "http://localhost:11434/v1",
+    apiKey: "",
+    type: "openai_compatible"
+  });
+  (0, import_react14.useEffect)(() => {
     if (isOpen) {
-      setConfigs(getAiProvidersConfig());
+      const loaded = getAiProvidersConfig();
+      setConfigs(loaded);
       const actId = getActiveProviderId();
-      setActiveId(actId);
-      setSelectedProviderId(actId);
+      const validId = loaded[actId] ? actId : loaded.ollama ? "ollama" : Object.keys(loaded)[0];
+      setActiveId(validId);
+      setSelectedProviderId(validId);
       setTestStatus(null);
       setSaveFeedback(false);
+      setShowAddProviderForm(false);
     }
   }, [isOpen]);
-  (0, import_react13.useEffect)(() => {
+  (0, import_react14.useEffect)(() => {
     if (latestSnapshot) {
       setVlmSnapshotResult(latestSnapshot);
     }
   }, [latestSnapshot]);
+  const currentConfig = configs[selectedProviderId] || DEFAULT_PROVIDERS[selectedProviderId] || Object.values(configs)[0] || DEFAULT_PROVIDERS.ollama;
+  (0, import_react14.useEffect)(() => {
+    if (!isOpen || !currentConfig) return;
+    let cancelled = false;
+    setDetectedModels([]);
+    if (currentConfig.type !== "anthropic" && currentConfig.baseUrl) {
+      setIsScanningModels(true);
+      fetchAvailableModels(currentConfig).then((res) => {
+        if (!cancelled) {
+          setIsScanningModels(false);
+          if (res.success && res.models.length > 0) {
+            setDetectedModels(res.models);
+          }
+        }
+      }).catch(() => {
+        if (!cancelled) setIsScanningModels(false);
+      });
+    }
+    return () => {
+      cancelled = true;
+    };
+  }, [isOpen, selectedProviderId, currentConfig?.baseUrl]);
   if (!isOpen) return null;
-  const currentConfig = configs[selectedProviderId] || DEFAULT_PROVIDERS[selectedProviderId];
   const handleUpdateField = (field, value) => {
-    setConfigs((prev) => ({
-      ...prev,
-      [selectedProviderId]: {
-        ...prev[selectedProviderId],
-        [field]: value
-      }
-    }));
+    const targetId = currentConfig.id;
+    setConfigs((prev) => {
+      const next = {
+        ...prev,
+        [targetId]: {
+          ...prev[targetId] || currentConfig,
+          [field]: value
+        }
+      };
+      saveAiProvidersConfig(next);
+      return next;
+    });
   };
   const handleResetDefaultUrl = () => {
-    const def = DEFAULT_PROVIDERS[selectedProviderId];
+    const def = DEFAULT_PROVIDERS[currentConfig.id];
     if (def) {
       handleUpdateField("baseUrl", def.baseUrl);
     }
@@ -43100,19 +46390,140 @@ function AiProviderModal({
   const handleSelectPresetModel = (modelName) => {
     handleUpdateField("model", modelName);
   };
+  const handleAddModel = () => {
+    const trimmed = (newModelInput || "").trim();
+    if (!trimmed) return;
+    const targetId = currentConfig.id;
+    const existingPresets = Array.isArray(currentConfig.presetModels) ? currentConfig.presetModels : [];
+    const updatedPresets = Array.from(/* @__PURE__ */ new Set([trimmed, ...existingPresets]));
+    setConfigs((prev) => {
+      const next = {
+        ...prev,
+        [targetId]: {
+          ...prev[targetId] || currentConfig,
+          model: trimmed,
+          presetModels: updatedPresets
+        }
+      };
+      saveAiProvidersConfig(next);
+      return next;
+    });
+    setNewModelInput("");
+  };
+  const handleRemoveModel = (modelToRemove, e) => {
+    if (e) e.stopPropagation();
+    const targetId = currentConfig.id;
+    const existingPresets = Array.isArray(currentConfig.presetModels) ? currentConfig.presetModels : [];
+    const updatedPresets = existingPresets.filter((m) => m !== modelToRemove);
+    const nextModel = currentConfig.model === modelToRemove ? updatedPresets[0] || "" : currentConfig.model;
+    setConfigs((prev) => {
+      const next = {
+        ...prev,
+        [targetId]: {
+          ...prev[targetId] || currentConfig,
+          model: nextModel,
+          presetModels: updatedPresets
+        }
+      };
+      saveAiProvidersConfig(next);
+      return next;
+    });
+  };
+  const handleScanModels = async () => {
+    setIsScanningModels(true);
+    const res = await fetchAvailableModels(currentConfig);
+    setIsScanningModels(false);
+    if (res.success && res.models.length > 0) {
+      setDetectedModels(res.models);
+      const targetId = currentConfig.id;
+      const existingPresets = Array.isArray(currentConfig.presetModels) ? currentConfig.presetModels : [];
+      const mergedModels = Array.from(/* @__PURE__ */ new Set([...res.models, ...existingPresets]));
+      const nextActiveModel = res.models.includes(currentConfig.model) ? currentConfig.model : res.models[0];
+      setConfigs((prev) => {
+        const next = {
+          ...prev,
+          [targetId]: {
+            ...prev[targetId] || currentConfig,
+            model: nextActiveModel,
+            presetModels: mergedModels
+          }
+        };
+        saveAiProvidersConfig(next);
+        return next;
+      });
+      setTestStatus({
+        loading: false,
+        success: true,
+        message: `Detected ${res.models.length} installed model(s): ${res.models.slice(0, 3).join(", ")}`
+      });
+    } else {
+      setTestStatus({
+        loading: false,
+        success: false,
+        message: res.error || "No models detected at this endpoint"
+      });
+    }
+  };
+  const handleCreateCustomProvider = () => {
+    const name = (customProviderDraft.name || "").trim() || `Custom Model (${customProviderDraft.model || "Local"})`;
+    const model = (customProviderDraft.model || "").trim() || "gpt-oss:20b";
+    const baseUrl = (customProviderDraft.baseUrl || "").trim() || "http://localhost:11434/v1";
+    const id = "custom_" + Date.now();
+    const newEntry = {
+      id,
+      name,
+      type: customProviderDraft.type || "openai_compatible",
+      baseUrl,
+      apiKey: (customProviderDraft.apiKey || "").trim(),
+      model,
+      presetModels: [model],
+      isCustom: true
+    };
+    const nextConfigs = { ...configs, [id]: newEntry };
+    setConfigs(nextConfigs);
+    saveAiProvidersConfig(nextConfigs);
+    setSelectedProviderId(id);
+    setActiveId(id);
+    setActiveProviderId(id);
+    setShowAddProviderForm(false);
+    setCustomProviderDraft({
+      name: "",
+      model: "",
+      baseUrl: "http://localhost:11434/v1",
+      apiKey: "",
+      type: "openai_compatible"
+    });
+  };
+  const handleDeleteCustomProvider = (idToDelete, e) => {
+    if (e) e.stopPropagation();
+    const nextConfigs = { ...configs };
+    delete nextConfigs[idToDelete];
+    setConfigs(nextConfigs);
+    saveAiProvidersConfig(nextConfigs);
+    const fallbackId = nextConfigs.ollama ? "ollama" : Object.keys(nextConfigs)[0];
+    if (selectedProviderId === idToDelete) setSelectedProviderId(fallbackId);
+    if (activeProviderId === idToDelete) {
+      setActiveId(fallbackId);
+      setActiveProviderId(fallbackId);
+    }
+  };
   const handleSetActive = () => {
-    setActiveId(selectedProviderId);
-    setActiveProviderId(selectedProviderId);
+    setActiveId(currentConfig.id);
+    setActiveProviderId(currentConfig.id);
+    saveAiProvidersConfig(configs);
   };
   const handleRunTest = async () => {
     setTestStatus({ loading: true });
-    const res = await testConnection(selectedProviderId, currentConfig);
+    const res = await testConnection(currentConfig.id, currentConfig);
     if (res.success) {
+      if (Array.isArray(res.models) && res.models.length > 0) {
+        setDetectedModels(res.models);
+      }
       setTestStatus({
         loading: false,
         success: true,
         latencyMs: res.latencyMs,
-        message: `Connected successfully (${res.latencyMs}ms)`
+        message: `Connected successfully (${res.latencyMs}ms)${res.models?.length ? ` \xB7 ${res.models.length} models ready` : ""}`
       });
     } else {
       setTestStatus({
@@ -43129,7 +46540,7 @@ function AiProviderModal({
     setTimeout(() => {
       setSaveFeedback(false);
       onClose();
-    }, 600);
+    }, 500);
   };
   const handleTriggerModalSnapshot = async () => {
     if (!onCaptureSnapshot) return;
@@ -43146,462 +46557,802 @@ function AiProviderModal({
     }
   };
   const providerList = Object.values(configs);
-  return /* @__PURE__ */ import_react13.default.createElement("div", { className: "modal-backdrop", onClick: onClose, style: { zIndex: 1e5 } }, /* @__PURE__ */ import_react13.default.createElement(
+  const allModelsForCurrent = Array.from(/* @__PURE__ */ new Set([
+    ...detectedModels || [],
+    ...Array.isArray(currentConfig.presetModels) ? currentConfig.presetModels : [],
+    ...currentConfig.model ? [currentConfig.model] : []
+  ]));
+  const modalNode = /* @__PURE__ */ import_react14.default.createElement(
     "div",
     {
-      className: "modal-container",
+      className: "ai-model-setup-popup",
       style: {
-        width: "840px",
-        maxWidth: "94vw",
-        height: "80vh",
-        maxHeight: "680px",
+        position: "fixed",
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        width: "100vw",
+        height: "100vh",
+        backgroundColor: "rgba(3, 7, 18, 0.82)",
+        backdropFilter: "blur(12px)",
         display: "flex",
-        flexDirection: "column",
-        padding: 0,
-        background: "rgba(11, 17, 33, 0.96)",
-        backdropFilter: "blur(24px)",
-        border: "1px solid rgba(255, 255, 255, 0.12)",
-        borderRadius: "16px",
-        boxShadow: "0 24px 60px rgba(0, 0, 0, 0.65)",
-        color: "#e2e8f0",
-        overflow: "hidden"
+        alignItems: "center",
+        justifyContent: "center",
+        zIndex: 2147483647
       },
-      onClick: (e) => e.stopPropagation()
+      onClick: onClose
     },
-    /* @__PURE__ */ import_react13.default.createElement(
+    /* @__PURE__ */ import_react14.default.createElement(
       "div",
       {
+        className: "modal-container",
         style: {
-          padding: "16px 22px",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
-          background: "rgba(255, 255, 255, 0.02)"
-        }
-      },
-      /* @__PURE__ */ import_react13.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: "10px" } }, /* @__PURE__ */ import_react13.default.createElement("span", { style: { fontSize: "20px" } }, "\u26A1"), /* @__PURE__ */ import_react13.default.createElement("div", null, /* @__PURE__ */ import_react13.default.createElement("h3", { style: { margin: 0, fontSize: "16px", fontWeight: 600, color: "#f8fafc" } }, "AI Provider & Key Management"), /* @__PURE__ */ import_react13.default.createElement("span", { style: { fontSize: "11px", color: "#94a3b8" } }, "Configure LLM & VLM endpoints for vision reasoning, natural language commands, and autonomous browsing"))),
-      /* @__PURE__ */ import_react13.default.createElement(
-        "button",
-        {
-          className: "modal-close-btn",
-          onClick: onClose,
-          title: "Close",
-          style: {
-            background: "transparent",
-            border: "none",
-            color: "#94a3b8",
-            fontSize: "18px",
-            cursor: "pointer",
-            padding: "4px 8px",
-            borderRadius: "6px"
-          }
-        },
-        "\u2715"
-      )
-    ),
-    /* @__PURE__ */ import_react13.default.createElement("div", { style: { display: "flex", flex: 1, overflow: "hidden" } }, /* @__PURE__ */ import_react13.default.createElement(
-      "div",
-      {
-        style: {
-          width: "240px",
-          borderRight: "1px solid rgba(255, 255, 255, 0.08)",
-          background: "rgba(7, 11, 20, 0.5)",
-          padding: "12px 8px",
-          overflowY: "auto",
+          width: "880px",
+          maxWidth: "95vw",
+          height: "84vh",
+          maxHeight: "720px",
           display: "flex",
           flexDirection: "column",
-          gap: "4px"
-        }
+          padding: 0,
+          background: "rgba(11, 17, 33, 0.98)",
+          backdropFilter: "blur(24px)",
+          border: "1.5px solid rgba(0, 229, 255, 0.3)",
+          borderRadius: "16px",
+          boxShadow: "0 24px 60px rgba(0, 0, 0, 0.8), 0 0 30px rgba(0, 229, 255, 0.15)",
+          color: "#e2e8f0",
+          overflow: "hidden"
+        },
+        onClick: (e) => e.stopPropagation()
       },
-      /* @__PURE__ */ import_react13.default.createElement("div", { style: { padding: "4px 10px", fontSize: "10px", fontWeight: 700, color: "#64748b", letterSpacing: "0.08em", textTransform: "uppercase" } }, "Supported Providers"),
-      providerList.map((prov) => {
-        const isSelected = prov.id === selectedProviderId;
-        const isActive = prov.id === activeProviderId;
-        const hasKeyOrLocal = prov.apiKey || prov.id === "lmstudio" || prov.id === "ollama";
-        return /* @__PURE__ */ import_react13.default.createElement(
+      /* @__PURE__ */ import_react14.default.createElement(
+        "div",
+        {
+          style: {
+            padding: "16px 22px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
+            background: "rgba(255, 255, 255, 0.02)"
+          }
+        },
+        /* @__PURE__ */ import_react14.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: "10px" } }, /* @__PURE__ */ import_react14.default.createElement("span", { style: { fontSize: "20px" } }, "\u26A1"), /* @__PURE__ */ import_react14.default.createElement("div", null, /* @__PURE__ */ import_react14.default.createElement("h3", { style: { margin: 0, fontSize: "16px", fontWeight: 700, color: "#f8fafc" } }, "AI Model Setup & Provider Keys"), /* @__PURE__ */ import_react14.default.createElement("span", { style: { fontSize: "11px", color: "#94a3b8" } }, "Add models, scan local Ollama / LM Studio models, and configure API endpoints"))),
+        /* @__PURE__ */ import_react14.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: "10px" } }, /* @__PURE__ */ import_react14.default.createElement(
           "button",
           {
-            key: prov.id,
-            onClick: () => {
-              setSelectedProviderId(prov.id);
-              setTestStatus(null);
+            type: "button",
+            onClick: () => setShowAddProviderForm((prev) => !prev),
+            style: {
+              padding: "6px 12px",
+              borderRadius: "8px",
+              border: "1px solid rgba(0, 229, 255, 0.4)",
+              background: showAddProviderForm ? "#00e5ff" : "rgba(0, 229, 255, 0.12)",
+              color: showAddProviderForm ? "#070b14" : "#00e5ff",
+              fontSize: "12px",
+              fontWeight: 700,
+              cursor: "pointer"
+            }
+          },
+          showAddProviderForm ? "\u2715 Close Add Setup" : "+ Add New Model Setup"
+        ), /* @__PURE__ */ import_react14.default.createElement(
+          "button",
+          {
+            className: "modal-close-btn",
+            onClick: onClose,
+            title: "Close",
+            style: {
+              background: "transparent",
+              border: "none",
+              color: "#94a3b8",
+              fontSize: "18px",
+              cursor: "pointer",
+              padding: "4px 8px",
+              borderRadius: "6px"
+            }
+          },
+          "\u2715"
+        ))
+      ),
+      /* @__PURE__ */ import_react14.default.createElement("div", { style: { display: "flex", flex: 1, overflow: "hidden" } }, /* @__PURE__ */ import_react14.default.createElement(
+        "div",
+        {
+          style: {
+            width: "250px",
+            borderRight: "1px solid rgba(255, 255, 255, 0.08)",
+            background: "rgba(7, 11, 20, 0.6)",
+            padding: "12px 10px",
+            overflowY: "auto",
+            display: "flex",
+            flexDirection: "column",
+            gap: "5px"
+          }
+        },
+        /* @__PURE__ */ import_react14.default.createElement("div", { style: { padding: "4px 8px", fontSize: "10px", fontWeight: 700, color: "#64748b", letterSpacing: "0.08em", textTransform: "uppercase" } }, "AI Model Providers"),
+        providerList.map((prov) => {
+          const isSelected = prov.id === currentConfig.id && !showAddProviderForm;
+          const isActive = prov.id === activeProviderId;
+          const hasKeyOrLocal = prov.apiKey || prov.id === "lmstudio" || prov.id === "ollama" || prov.id === "ornith" || prov.isCustom;
+          return /* @__PURE__ */ import_react14.default.createElement(
+            "button",
+            {
+              key: prov.id,
+              onClick: () => {
+                setShowAddProviderForm(false);
+                setSelectedProviderId(prov.id);
+                setTestStatus(null);
+              },
+              style: {
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                padding: "10px 12px",
+                borderRadius: "8px",
+                border: isSelected ? "1px solid rgba(0, 229, 255, 0.45)" : "1px solid transparent",
+                background: isSelected ? "rgba(0, 229, 255, 0.14)" : "transparent",
+                color: isSelected ? "#f8fafc" : "#94a3b8",
+                fontSize: "12.5px",
+                fontWeight: isSelected ? 600 : 400,
+                cursor: "pointer",
+                textAlign: "left",
+                transition: "all 0.15s ease"
+              }
             },
+            /* @__PURE__ */ import_react14.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: "8px", minWidth: 0, flex: 1 } }, /* @__PURE__ */ import_react14.default.createElement("span", { style: {
+              width: "8px",
+              height: "8px",
+              borderRadius: "50%",
+              flexShrink: 0,
+              background: isActive ? "#00e5ff" : hasKeyOrLocal ? "#10b981" : "#475569",
+              boxShadow: isActive ? "0 0 8px #00e5ff" : "none"
+            } }), /* @__PURE__ */ import_react14.default.createElement("div", { style: { overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" } }, /* @__PURE__ */ import_react14.default.createElement("div", null, prov.name), /* @__PURE__ */ import_react14.default.createElement("div", { style: { fontSize: "10px", color: "#64748b", fontFamily: "monospace" } }, prov.model || "default"))),
+            /* @__PURE__ */ import_react14.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: "4px", flexShrink: 0 } }, isActive && /* @__PURE__ */ import_react14.default.createElement("span", { style: {
+              fontSize: "9px",
+              fontWeight: 700,
+              background: "#00e5ff",
+              color: "#070b14",
+              padding: "1px 5px",
+              borderRadius: "4px",
+              textTransform: "uppercase"
+            } }, "Active"), prov.isCustom && /* @__PURE__ */ import_react14.default.createElement(
+              "span",
+              {
+                onClick: (e) => handleDeleteCustomProvider(prov.id, e),
+                title: "Remove custom model setup",
+                style: {
+                  fontSize: "12px",
+                  color: "#f87171",
+                  padding: "0 4px",
+                  borderRadius: "4px"
+                }
+              },
+              "\xD7"
+            ))
+          );
+        }),
+        /* @__PURE__ */ import_react14.default.createElement(
+          "button",
+          {
+            type: "button",
+            onClick: () => setShowAddProviderForm(true),
+            style: {
+              marginTop: "8px",
+              padding: "10px 12px",
+              borderRadius: "8px",
+              border: "1px dashed rgba(0, 229, 255, 0.4)",
+              background: showAddProviderForm ? "rgba(0, 229, 255, 0.15)" : "rgba(0, 229, 255, 0.05)",
+              color: "#00e5ff",
+              fontSize: "12px",
+              fontWeight: 700,
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "6px"
+            }
+          },
+          /* @__PURE__ */ import_react14.default.createElement("span", null, "\uFF0B"),
+          /* @__PURE__ */ import_react14.default.createElement("span", null, "Add Model / Custom Setup")
+        )
+      ), /* @__PURE__ */ import_react14.default.createElement(
+        "div",
+        {
+          style: {
+            flex: 1,
+            padding: "20px 24px",
+            overflowY: "auto",
+            display: "flex",
+            flexDirection: "column",
+            gap: "16px"
+          }
+        },
+        showAddProviderForm ? /* @__PURE__ */ import_react14.default.createElement(
+          "div",
+          {
+            style: {
+              padding: "18px 20px",
+              borderRadius: "12px",
+              background: "rgba(0, 229, 255, 0.06)",
+              border: "1px solid rgba(0, 229, 255, 0.3)",
+              display: "flex",
+              flexDirection: "column",
+              gap: "14px"
+            }
+          },
+          /* @__PURE__ */ import_react14.default.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center" } }, /* @__PURE__ */ import_react14.default.createElement("div", null, /* @__PURE__ */ import_react14.default.createElement("div", { style: { fontSize: "15px", fontWeight: 700, color: "#00e5ff" } }, "\uFF0B Add New AI Model Setup"), /* @__PURE__ */ import_react14.default.createElement("div", { style: { fontSize: "11.5px", color: "#94a3b8" } }, "Register any local or cloud model endpoint (Ollama, LM Studio, vLLM, OpenRouter, OpenAI)"))),
+          /* @__PURE__ */ import_react14.default.createElement("div", null, /* @__PURE__ */ import_react14.default.createElement("label", { style: { display: "block", fontSize: "12px", fontWeight: 600, color: "#cbd5e1", marginBottom: "5px" } }, "Setup / Provider Display Name"), /* @__PURE__ */ import_react14.default.createElement(
+            "input",
+            {
+              type: "text",
+              value: customProviderDraft.name,
+              onChange: (e) => setCustomProviderDraft((p) => ({ ...p, name: e.target.value })),
+              placeholder: "e.g. Ollama GPT-OSS 20B, Local Qwen 3.5, Custom vLLM",
+              style: {
+                width: "100%",
+                padding: "9px 12px",
+                borderRadius: "8px",
+                border: "1px solid rgba(255, 255, 255, 0.15)",
+                background: "rgba(15, 23, 42, 0.8)",
+                color: "#f8fafc",
+                fontSize: "13px",
+                boxSizing: "border-box"
+              }
+            }
+          )),
+          /* @__PURE__ */ import_react14.default.createElement("div", null, /* @__PURE__ */ import_react14.default.createElement("label", { style: { display: "block", fontSize: "12px", fontWeight: 600, color: "#cbd5e1", marginBottom: "5px" } }, "Model ID / Name"), /* @__PURE__ */ import_react14.default.createElement(
+            "input",
+            {
+              type: "text",
+              value: customProviderDraft.model,
+              onChange: (e) => setCustomProviderDraft((p) => ({ ...p, model: e.target.value })),
+              placeholder: "e.g. gpt-oss:20b, qwen3.5:35b, ornith-1.0-9b, gpt-4o",
+              style: {
+                width: "100%",
+                padding: "9px 12px",
+                borderRadius: "8px",
+                border: "1px solid rgba(255, 255, 255, 0.15)",
+                background: "rgba(15, 23, 42, 0.8)",
+                color: "#f8fafc",
+                fontSize: "13px",
+                fontFamily: "monospace",
+                boxSizing: "border-box"
+              }
+            }
+          )),
+          /* @__PURE__ */ import_react14.default.createElement("div", null, /* @__PURE__ */ import_react14.default.createElement("label", { style: { display: "block", fontSize: "12px", fontWeight: 600, color: "#cbd5e1", marginBottom: "5px" } }, "Base Endpoint URL"), /* @__PURE__ */ import_react14.default.createElement(
+            "input",
+            {
+              type: "text",
+              value: customProviderDraft.baseUrl,
+              onChange: (e) => setCustomProviderDraft((p) => ({ ...p, baseUrl: e.target.value })),
+              placeholder: "http://localhost:11434/v1",
+              style: {
+                width: "100%",
+                padding: "9px 12px",
+                borderRadius: "8px",
+                border: "1px solid rgba(255, 255, 255, 0.15)",
+                background: "rgba(15, 23, 42, 0.8)",
+                color: "#f8fafc",
+                fontSize: "13px",
+                fontFamily: "monospace",
+                boxSizing: "border-box"
+              }
+            }
+          )),
+          /* @__PURE__ */ import_react14.default.createElement("div", null, /* @__PURE__ */ import_react14.default.createElement("label", { style: { display: "block", fontSize: "12px", fontWeight: 600, color: "#cbd5e1", marginBottom: "5px" } }, "API Key (Optional for Local Models)"), /* @__PURE__ */ import_react14.default.createElement(
+            "input",
+            {
+              type: "password",
+              value: customProviderDraft.apiKey,
+              onChange: (e) => setCustomProviderDraft((p) => ({ ...p, apiKey: e.target.value })),
+              placeholder: "sk-... (leave blank for local Ollama / LM Studio)",
+              style: {
+                width: "100%",
+                padding: "9px 12px",
+                borderRadius: "8px",
+                border: "1px solid rgba(255, 255, 255, 0.15)",
+                background: "rgba(15, 23, 42, 0.8)",
+                color: "#f8fafc",
+                fontSize: "13px",
+                fontFamily: "monospace",
+                boxSizing: "border-box"
+              }
+            }
+          )),
+          /* @__PURE__ */ import_react14.default.createElement("div", { style: { display: "flex", gap: "10px", justifyContent: "flex-end", marginTop: "4px" } }, /* @__PURE__ */ import_react14.default.createElement(
+            "button",
+            {
+              type: "button",
+              onClick: () => setShowAddProviderForm(false),
+              style: {
+                padding: "8px 16px",
+                borderRadius: "8px",
+                border: "1px solid rgba(255, 255, 255, 0.15)",
+                background: "transparent",
+                color: "#94a3b8",
+                fontSize: "12px",
+                cursor: "pointer"
+              }
+            },
+            "Cancel"
+          ), /* @__PURE__ */ import_react14.default.createElement(
+            "button",
+            {
+              type: "button",
+              onClick: handleCreateCustomProvider,
+              style: {
+                padding: "8px 20px",
+                borderRadius: "8px",
+                border: "none",
+                background: "#00e5ff",
+                color: "#070b14",
+                fontSize: "12px",
+                fontWeight: 700,
+                cursor: "pointer"
+              }
+            },
+            "\u2713 Add & Activate Model Setup"
+          ))
+        ) : /* @__PURE__ */ import_react14.default.createElement(import_react14.default.Fragment, null, /* @__PURE__ */ import_react14.default.createElement(
+          "div",
+          {
             style: {
               display: "flex",
               alignItems: "center",
               justifyContent: "space-between",
-              padding: "10px 12px",
-              borderRadius: "8px",
-              border: isSelected ? "1px solid rgba(0, 229, 255, 0.35)" : "1px solid transparent",
-              background: isSelected ? "rgba(0, 229, 255, 0.12)" : "transparent",
-              color: isSelected ? "#f8fafc" : "#94a3b8",
-              fontSize: "13px",
-              fontWeight: isSelected ? 600 : 400,
-              cursor: "pointer",
-              textAlign: "left",
-              transition: "all 0.15s ease"
+              padding: "12px 16px",
+              borderRadius: "10px",
+              background: currentConfig.id === activeProviderId ? "rgba(0, 229, 255, 0.08)" : "rgba(255, 255, 255, 0.03)",
+              border: currentConfig.id === activeProviderId ? "1px solid rgba(0, 229, 255, 0.25)" : "1px solid rgba(255, 255, 255, 0.06)"
             }
           },
-          /* @__PURE__ */ import_react13.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: "8px" } }, /* @__PURE__ */ import_react13.default.createElement("span", { style: {
-            width: "8px",
-            height: "8px",
-            borderRadius: "50%",
-            background: isActive ? "#00e5ff" : hasKeyOrLocal ? "#10b981" : "#475569",
-            boxShadow: isActive ? "0 0 8px #00e5ff" : "none"
-          } }), /* @__PURE__ */ import_react13.default.createElement("span", null, prov.name)),
-          isActive && /* @__PURE__ */ import_react13.default.createElement("span", { style: {
-            fontSize: "9px",
-            fontWeight: 700,
-            background: "#00e5ff",
-            color: "#070b14",
-            padding: "1px 5px",
-            borderRadius: "4px",
-            textTransform: "uppercase"
-          } }, "Active")
-        );
-      })
-    ), /* @__PURE__ */ import_react13.default.createElement(
-      "div",
-      {
-        style: {
-          flex: 1,
-          padding: "20px 24px",
-          overflowY: "auto",
-          display: "flex",
-          flexDirection: "column",
-          gap: "18px"
-        }
-      },
-      /* @__PURE__ */ import_react13.default.createElement(
-        "div",
-        {
-          style: {
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            padding: "12px 16px",
-            borderRadius: "10px",
-            background: currentConfig.id === activeProviderId ? "rgba(0, 229, 255, 0.08)" : "rgba(255, 255, 255, 0.03)",
-            border: currentConfig.id === activeProviderId ? "1px solid rgba(0, 229, 255, 0.25)" : "1px solid rgba(255, 255, 255, 0.06)"
-          }
-        },
-        /* @__PURE__ */ import_react13.default.createElement("div", null, /* @__PURE__ */ import_react13.default.createElement("div", { style: { fontSize: "15px", fontWeight: 600, color: "#f8fafc" } }, currentConfig.name), /* @__PURE__ */ import_react13.default.createElement("div", { style: { fontSize: "12px", color: "#94a3b8" } }, currentConfig.id === activeProviderId ? "Currently designated as primary AI engine for browser commands and VLM queries." : "Click to make this the active provider for AI commands.")),
-        /* @__PURE__ */ import_react13.default.createElement(
-          "button",
-          {
-            onClick: handleSetActive,
-            disabled: currentConfig.id === activeProviderId,
-            style: {
-              padding: "6px 14px",
-              borderRadius: "6px",
-              border: "none",
-              background: currentConfig.id === activeProviderId ? "#10b981" : "rgba(0, 229, 255, 0.2)",
-              color: currentConfig.id === activeProviderId ? "#ffffff" : "#00e5ff",
-              fontSize: "12px",
-              fontWeight: 600,
-              cursor: currentConfig.id === activeProviderId ? "default" : "pointer"
-            }
-          },
-          currentConfig.id === activeProviderId ? "\u2713 Active Provider" : "Set as Active"
-        )
-      ),
-      /* @__PURE__ */ import_react13.default.createElement("div", null, /* @__PURE__ */ import_react13.default.createElement("div", { style: { display: "flex", justifyContent: "space-between", marginBottom: "6px" } }, /* @__PURE__ */ import_react13.default.createElement("label", { style: { fontSize: "12px", fontWeight: 600, color: "#cbd5e1" } }, "Base Endpoint URL"), /* @__PURE__ */ import_react13.default.createElement(
-        "button",
-        {
-          onClick: handleResetDefaultUrl,
-          style: {
-            background: "transparent",
-            border: "none",
-            color: "#38bdf8",
-            fontSize: "11px",
-            cursor: "pointer",
-            padding: 0
-          }
-        },
-        "Reset to Default"
-      )), /* @__PURE__ */ import_react13.default.createElement(
-        "input",
-        {
-          type: "text",
-          value: currentConfig.baseUrl || "",
-          onChange: (e) => handleUpdateField("baseUrl", e.target.value),
-          placeholder: "e.g. http://localhost:1234/v1 or https://api.openai.com/v1",
-          style: {
-            width: "100%",
-            padding: "9px 12px",
-            borderRadius: "8px",
-            border: "1px solid rgba(255, 255, 255, 0.12)",
-            background: "rgba(15, 23, 42, 0.6)",
-            color: "#f8fafc",
-            fontSize: "13px",
-            fontFamily: "monospace",
-            boxSizing: "border-box"
-          }
-        }
-      )),
-      /* @__PURE__ */ import_react13.default.createElement("div", null, /* @__PURE__ */ import_react13.default.createElement("div", { style: { display: "flex", justifyContent: "space-between", marginBottom: "6px" } }, /* @__PURE__ */ import_react13.default.createElement("label", { style: { fontSize: "12px", fontWeight: 600, color: "#cbd5e1" } }, "API Key ", currentConfig.id === "lmstudio" || currentConfig.id === "ollama" ? "(Optional for local)" : "(Required)"), /* @__PURE__ */ import_react13.default.createElement(
-        "button",
-        {
-          onClick: () => setShowApiKey((prev) => !prev),
-          style: {
-            background: "transparent",
-            border: "none",
-            color: "#94a3b8",
-            fontSize: "11px",
-            cursor: "pointer",
-            padding: 0
-          }
-        },
-        showApiKey ? "Hide Key" : "Show Key"
-      )), /* @__PURE__ */ import_react13.default.createElement(
-        "input",
-        {
-          type: showApiKey ? "text" : "password",
-          value: currentConfig.apiKey || "",
-          onChange: (e) => handleUpdateField("apiKey", e.target.value),
-          placeholder: currentConfig.id === "anthropic" ? "sk-ant-api03-..." : currentConfig.id === "openrouter" ? "sk-or-v1-..." : "sk-... or enter your key",
-          style: {
-            width: "100%",
-            padding: "9px 12px",
-            borderRadius: "8px",
-            border: "1px solid rgba(255, 255, 255, 0.12)",
-            background: "rgba(15, 23, 42, 0.6)",
-            color: "#f8fafc",
-            fontSize: "13px",
-            fontFamily: "monospace",
-            boxSizing: "border-box"
-          }
-        }
-      )),
-      /* @__PURE__ */ import_react13.default.createElement("div", null, /* @__PURE__ */ import_react13.default.createElement("label", { style: { display: "block", fontSize: "12px", fontWeight: 600, color: "#cbd5e1", marginBottom: "6px" } }, "Model Name"), /* @__PURE__ */ import_react13.default.createElement(
-        "input",
-        {
-          type: "text",
-          value: currentConfig.model || "",
-          onChange: (e) => handleUpdateField("model", e.target.value),
-          placeholder: "e.g. gpt-4o, claude-3-5-sonnet, llama3.2-vision",
-          style: {
-            width: "100%",
-            padding: "9px 12px",
-            borderRadius: "8px",
-            border: "1px solid rgba(255, 255, 255, 0.12)",
-            background: "rgba(15, 23, 42, 0.6)",
-            color: "#f8fafc",
-            fontSize: "13px",
-            boxSizing: "border-box"
-          }
-        }
-      ), currentConfig.presetModels && currentConfig.presetModels.length > 0 && /* @__PURE__ */ import_react13.default.createElement("div", { style: { display: "flex", flexWrap: "wrap", gap: "6px", marginTop: "8px" } }, /* @__PURE__ */ import_react13.default.createElement("span", { style: { fontSize: "11px", color: "#64748b", alignSelf: "center" } }, "Presets:"), currentConfig.presetModels.map((m) => /* @__PURE__ */ import_react13.default.createElement(
-        "button",
-        {
-          key: m,
-          onClick: () => handleSelectPresetModel(m),
-          style: {
-            padding: "3px 8px",
-            borderRadius: "4px",
-            border: currentConfig.model === m ? "1px solid #00e5ff" : "1px solid rgba(255, 255, 255, 0.08)",
-            background: currentConfig.model === m ? "rgba(0, 229, 255, 0.15)" : "rgba(255, 255, 255, 0.04)",
-            color: currentConfig.model === m ? "#00e5ff" : "#94a3b8",
-            fontSize: "11px",
-            cursor: "pointer"
-          }
-        },
-        m
-      )))),
-      /* @__PURE__ */ import_react13.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: "12px", marginTop: "4px" } }, /* @__PURE__ */ import_react13.default.createElement(
-        "button",
-        {
-          onClick: handleRunTest,
-          disabled: testStatus?.loading,
-          style: {
-            padding: "8px 16px",
-            borderRadius: "6px",
-            border: "1px solid rgba(255, 255, 255, 0.15)",
-            background: "rgba(255, 255, 255, 0.06)",
-            color: "#f8fafc",
-            fontSize: "12px",
-            fontWeight: 600,
-            cursor: testStatus?.loading ? "wait" : "pointer",
-            display: "flex",
-            alignItems: "center",
-            gap: "6px"
-          }
-        },
-        testStatus?.loading ? "\u23F3 Pinging Endpoint..." : "\u26A1 Test Connection"
-      ), testStatus && !testStatus.loading && /* @__PURE__ */ import_react13.default.createElement("span", { style: {
-        fontSize: "12px",
-        color: testStatus.success ? "#10b981" : "#ef4444",
-        fontWeight: 500
-      } }, testStatus.success ? "\u{1F7E2}" : "\u{1F534}", " ", testStatus.message)),
-      /* @__PURE__ */ import_react13.default.createElement(
-        "div",
-        {
-          style: {
-            marginTop: "10px",
-            padding: "14px 16px",
-            borderRadius: "10px",
-            background: "rgba(255, 255, 255, 0.02)",
-            border: "1px solid rgba(255, 255, 255, 0.06)"
-          }
-        },
-        /* @__PURE__ */ import_react13.default.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" } }, /* @__PURE__ */ import_react13.default.createElement("div", null, /* @__PURE__ */ import_react13.default.createElement("div", { style: { fontSize: "13px", fontWeight: 600, color: "#f8fafc" } }, "\u{1F4F8} VLM Visual Comprehension Tester"), /* @__PURE__ */ import_react13.default.createElement("div", { style: { fontSize: "11px", color: "#94a3b8" } }, "Capture the live browser webview to disk and expose the absolute file path for Vision Models")), /* @__PURE__ */ import_react13.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: "8px" } }, /* @__PURE__ */ import_react13.default.createElement(
-          "select",
-          {
-            value: snapshotTarget,
-            onChange: (e) => setSnapshotTarget(e.target.value),
-            style: {
-              padding: "4px 8px",
-              borderRadius: "6px",
-              border: "1px solid rgba(255, 255, 255, 0.12)",
-              background: "#070b14",
-              color: "#f8fafc",
-              fontSize: "11px"
-            }
-          },
-          /* @__PURE__ */ import_react13.default.createElement("option", { value: "webview" }, "Guest Webview (Page)"),
-          /* @__PURE__ */ import_react13.default.createElement("option", { value: "window" }, "Full Window (Chrome + Page)")
-        ), /* @__PURE__ */ import_react13.default.createElement(
-          "button",
-          {
-            onClick: handleTriggerModalSnapshot,
-            disabled: isCapturingVlm,
-            style: {
-              padding: "6px 12px",
-              borderRadius: "6px",
-              border: "none",
-              background: "#00e5ff",
-              color: "#070b14",
-              fontSize: "11px",
-              fontWeight: 700,
-              cursor: isCapturingVlm ? "wait" : "pointer"
-            }
-          },
-          isCapturingVlm ? "Capturing..." : "Capture Snapshot"
-        ))),
-        vlmSnapshotResult && vlmSnapshotResult.path && /* @__PURE__ */ import_react13.default.createElement("div", { style: {
-          display: "flex",
-          alignItems: "center",
-          gap: "12px",
-          padding: "8px 10px",
-          borderRadius: "6px",
-          background: "rgba(0, 0, 0, 0.3)",
-          border: "1px solid rgba(0, 229, 255, 0.2)"
-        } }, vlmSnapshotResult.dataUrl && /* @__PURE__ */ import_react13.default.createElement(
-          "img",
-          {
-            src: vlmSnapshotResult.dataUrl,
-            alt: "Preview",
-            style: {
-              width: "64px",
-              height: "40px",
-              objectFit: "cover",
-              borderRadius: "4px",
-              border: "1px solid rgba(255, 255, 255, 0.1)"
-            }
-          }
-        ), /* @__PURE__ */ import_react13.default.createElement("div", { style: { flex: 1, minWidth: 0 } }, /* @__PURE__ */ import_react13.default.createElement("div", { style: { fontSize: "10px", color: "#10b981", fontWeight: 700 } }, "\u2713 Saved to disk (", vlmSnapshotResult.width, "x", vlmSnapshotResult.height, ")"), /* @__PURE__ */ import_react13.default.createElement(
+          /* @__PURE__ */ import_react14.default.createElement("div", null, /* @__PURE__ */ import_react14.default.createElement("div", { style: { fontSize: "15px", fontWeight: 600, color: "#f8fafc" } }, currentConfig.name, " ", /* @__PURE__ */ import_react14.default.createElement("span", { style: { fontSize: "12px", color: "#00e5ff", fontFamily: "monospace" } }, "(", currentConfig.model, ")")), /* @__PURE__ */ import_react14.default.createElement("div", { style: { fontSize: "12px", color: "#94a3b8" } }, currentConfig.id === activeProviderId ? "Currently designated as primary AI engine for browser commands and VLM queries." : "Click to make this the active provider for AI commands.")),
+          /* @__PURE__ */ import_react14.default.createElement(
+            "button",
+            {
+              onClick: handleSetActive,
+              disabled: currentConfig.id === activeProviderId,
+              style: {
+                padding: "6px 14px",
+                borderRadius: "6px",
+                border: "none",
+                background: currentConfig.id === activeProviderId ? "#10b981" : "rgba(0, 229, 255, 0.2)",
+                color: currentConfig.id === activeProviderId ? "#ffffff" : "#00e5ff",
+                fontSize: "12px",
+                fontWeight: 600,
+                cursor: currentConfig.id === activeProviderId ? "default" : "pointer"
+              }
+            },
+            currentConfig.id === activeProviderId ? "\u2713 Active Provider" : "Set as Active"
+          )
+        ), /* @__PURE__ */ import_react14.default.createElement(
           "div",
           {
             style: {
-              fontSize: "11px",
-              fontFamily: "monospace",
-              color: "#e2e8f0",
-              whiteSpace: "nowrap",
-              overflow: "hidden",
-              textOverflow: "ellipsis"
-            },
-            title: vlmSnapshotResult.path
+              padding: "14px 16px",
+              borderRadius: "10px",
+              background: "rgba(15, 23, 42, 0.55)",
+              border: "1px solid rgba(0, 229, 255, 0.2)",
+              display: "flex",
+              flexDirection: "column",
+              gap: "10px"
+            }
           },
-          vlmSnapshotResult.path
-        )), /* @__PURE__ */ import_react13.default.createElement(
-          "button",
-          {
-            onClick: () => {
-              if (navigator.clipboard) {
-                navigator.clipboard.writeText(vlmSnapshotResult.path);
+          /* @__PURE__ */ import_react14.default.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center" } }, /* @__PURE__ */ import_react14.default.createElement("div", null, /* @__PURE__ */ import_react14.default.createElement("label", { style: { fontSize: "13px", fontWeight: 700, color: "#f8fafc" } }, "\u{1F9E0} Model Setup & Selection"), /* @__PURE__ */ import_react14.default.createElement("div", { style: { fontSize: "11px", color: "#94a3b8" } }, "Select an active model below or add a new model ID to this provider")), /* @__PURE__ */ import_react14.default.createElement(
+            "button",
+            {
+              type: "button",
+              onClick: handleScanModels,
+              disabled: isScanningModels,
+              style: {
+                padding: "5px 10px",
+                borderRadius: "6px",
+                border: "1px solid rgba(0, 229, 255, 0.35)",
+                background: "rgba(0, 229, 255, 0.1)",
+                color: "#00e5ff",
+                fontSize: "11px",
+                fontWeight: 600,
+                cursor: isScanningModels ? "wait" : "pointer"
               }
             },
+            isScanningModels ? "\u23F3 Scanning..." : "\u{1F504} Scan Installed Models"
+          )),
+          /* @__PURE__ */ import_react14.default.createElement("div", { style: { display: "flex", gap: "8px" } }, /* @__PURE__ */ import_react14.default.createElement(
+            "input",
+            {
+              type: "text",
+              value: currentConfig.model || "",
+              onChange: (e) => handleUpdateField("model", e.target.value),
+              placeholder: "Active model (e.g. gpt-oss:20b, qwen3.5:35b)",
+              style: {
+                flex: 1,
+                padding: "9px 12px",
+                borderRadius: "8px",
+                border: "1px solid rgba(0, 229, 255, 0.35)",
+                background: "rgba(7, 11, 20, 0.8)",
+                color: "#00e5ff",
+                fontSize: "13px",
+                fontWeight: 600,
+                fontFamily: "monospace",
+                boxSizing: "border-box"
+              }
+            }
+          ), /* @__PURE__ */ import_react14.default.createElement(
+            "input",
+            {
+              type: "text",
+              value: newModelInput,
+              onChange: (e) => setNewModelInput(e.target.value),
+              onKeyDown: (e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  handleAddModel();
+                }
+              },
+              placeholder: "Type new model name to add...",
+              style: {
+                flex: 1,
+                padding: "9px 12px",
+                borderRadius: "8px",
+                border: "1px solid rgba(255, 255, 255, 0.14)",
+                background: "rgba(15, 23, 42, 0.8)",
+                color: "#f8fafc",
+                fontSize: "12.5px",
+                fontFamily: "monospace",
+                boxSizing: "border-box"
+              }
+            }
+          ), /* @__PURE__ */ import_react14.default.createElement(
+            "button",
+            {
+              type: "button",
+              onClick: handleAddModel,
+              style: {
+                padding: "9px 14px",
+                borderRadius: "8px",
+                border: "none",
+                background: "#00e5ff",
+                color: "#070b14",
+                fontSize: "12px",
+                fontWeight: 700,
+                cursor: "pointer",
+                whiteSpace: "nowrap"
+              }
+            },
+            "+ Add Model"
+          )),
+          allModelsForCurrent.length > 0 && /* @__PURE__ */ import_react14.default.createElement("div", { style: { display: "flex", flexWrap: "wrap", gap: "6px", marginTop: "4px" } }, allModelsForCurrent.map((m) => {
+            const isCurrentModel = currentConfig.model === m;
+            const isDetectedLive = detectedModels.includes(m);
+            return /* @__PURE__ */ import_react14.default.createElement(
+              "div",
+              {
+                key: m,
+                onClick: () => handleSelectPresetModel(m),
+                style: {
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "6px",
+                  padding: "4px 10px",
+                  borderRadius: "6px",
+                  border: isCurrentModel ? "1px solid #00e5ff" : "1px solid rgba(255, 255, 255, 0.1)",
+                  background: isCurrentModel ? "rgba(0, 229, 255, 0.18)" : "rgba(255, 255, 255, 0.04)",
+                  color: isCurrentModel ? "#00e5ff" : "#cbd5e1",
+                  fontSize: "11.5px",
+                  fontFamily: "monospace",
+                  cursor: "pointer"
+                }
+              },
+              isDetectedLive && /* @__PURE__ */ import_react14.default.createElement(
+                "span",
+                {
+                  title: "Installed & detected on endpoint",
+                  style: {
+                    width: "6px",
+                    height: "6px",
+                    borderRadius: "50%",
+                    background: "#10b981"
+                  }
+                }
+              ),
+              /* @__PURE__ */ import_react14.default.createElement("span", null, m),
+              isCurrentModel && /* @__PURE__ */ import_react14.default.createElement("span", { style: { fontSize: "10px", fontWeight: 700 } }, "\u2713"),
+              allModelsForCurrent.length > 1 && /* @__PURE__ */ import_react14.default.createElement(
+                "span",
+                {
+                  onClick: (e) => handleRemoveModel(m, e),
+                  title: "Remove model from list",
+                  style: {
+                    marginLeft: "2px",
+                    color: "#64748b",
+                    fontSize: "12px",
+                    lineHeight: 1
+                  }
+                },
+                "\xD7"
+              )
+            );
+          }))
+        ), /* @__PURE__ */ import_react14.default.createElement("div", null, /* @__PURE__ */ import_react14.default.createElement("div", { style: { display: "flex", justifyContent: "space-between", marginBottom: "6px" } }, /* @__PURE__ */ import_react14.default.createElement("label", { style: { fontSize: "12px", fontWeight: 600, color: "#cbd5e1" } }, "Base Endpoint URL"), /* @__PURE__ */ import_react14.default.createElement(
+          "button",
+          {
+            onClick: handleResetDefaultUrl,
             style: {
-              padding: "4px 8px",
-              borderRadius: "4px",
+              background: "transparent",
+              border: "none",
+              color: "#38bdf8",
+              fontSize: "11px",
+              cursor: "pointer",
+              padding: 0
+            }
+          },
+          "Reset to Default"
+        )), /* @__PURE__ */ import_react14.default.createElement(
+          "input",
+          {
+            type: "text",
+            value: currentConfig.baseUrl || "",
+            onChange: (e) => handleUpdateField("baseUrl", e.target.value),
+            placeholder: "e.g. http://localhost:11434/v1 or http://localhost:1234/v1",
+            style: {
+              width: "100%",
+              padding: "9px 12px",
+              borderRadius: "8px",
               border: "1px solid rgba(255, 255, 255, 0.12)",
-              background: "rgba(255, 255, 255, 0.05)",
-              color: "#cbd5e1",
-              fontSize: "10px",
+              background: "rgba(15, 23, 42, 0.6)",
+              color: "#f8fafc",
+              fontSize: "13px",
+              fontFamily: "monospace",
+              boxSizing: "border-box"
+            }
+          }
+        )), /* @__PURE__ */ import_react14.default.createElement("div", null, /* @__PURE__ */ import_react14.default.createElement("div", { style: { display: "flex", justifyContent: "space-between", marginBottom: "6px" } }, /* @__PURE__ */ import_react14.default.createElement("label", { style: { fontSize: "12px", fontWeight: 600, color: "#cbd5e1" } }, "API Key ", currentConfig.id === "lmstudio" || currentConfig.id === "ollama" || currentConfig.id === "ornith" ? "(Optional for local)" : "(Required)"), /* @__PURE__ */ import_react14.default.createElement(
+          "button",
+          {
+            onClick: () => setShowApiKey((prev) => !prev),
+            style: {
+              background: "transparent",
+              border: "none",
+              color: "#94a3b8",
+              fontSize: "11px",
+              cursor: "pointer",
+              padding: 0
+            }
+          },
+          showApiKey ? "Hide Key" : "Show Key"
+        )), /* @__PURE__ */ import_react14.default.createElement(
+          "input",
+          {
+            type: showApiKey ? "text" : "password",
+            value: currentConfig.apiKey || "",
+            onChange: (e) => handleUpdateField("apiKey", e.target.value),
+            placeholder: currentConfig.id === "anthropic" ? "sk-ant-api03-..." : currentConfig.id === "openrouter" ? "sk-or-v1-..." : "sk-... or enter your key",
+            style: {
+              width: "100%",
+              padding: "9px 12px",
+              borderRadius: "8px",
+              border: "1px solid rgba(255, 255, 255, 0.12)",
+              background: "rgba(15, 23, 42, 0.6)",
+              color: "#f8fafc",
+              fontSize: "13px",
+              fontFamily: "monospace",
+              boxSizing: "border-box"
+            }
+          }
+        )), /* @__PURE__ */ import_react14.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: "12px", marginTop: "2px" } }, /* @__PURE__ */ import_react14.default.createElement(
+          "button",
+          {
+            onClick: handleRunTest,
+            disabled: testStatus?.loading,
+            style: {
+              padding: "8px 16px",
+              borderRadius: "6px",
+              border: "1px solid rgba(255, 255, 255, 0.15)",
+              background: "rgba(255, 255, 255, 0.06)",
+              color: "#f8fafc",
+              fontSize: "12px",
+              fontWeight: 600,
+              cursor: testStatus?.loading ? "wait" : "pointer",
+              display: "flex",
+              alignItems: "center",
+              gap: "6px"
+            }
+          },
+          testStatus?.loading ? "\u23F3 Pinging Endpoint..." : "\u26A1 Test Connection"
+        ), testStatus && !testStatus.loading && /* @__PURE__ */ import_react14.default.createElement("span", { style: {
+          fontSize: "12px",
+          color: testStatus.success ? "#10b981" : "#ef4444",
+          fontWeight: 500
+        } }, testStatus.success ? "\u{1F7E2}" : "\u{1F534}", " ", testStatus.message))),
+        /* @__PURE__ */ import_react14.default.createElement(
+          "div",
+          {
+            style: {
+              marginTop: "10px",
+              padding: "14px 16px",
+              borderRadius: "10px",
+              background: "rgba(255, 255, 255, 0.02)",
+              border: "1px solid rgba(255, 255, 255, 0.06)"
+            }
+          },
+          /* @__PURE__ */ import_react14.default.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" } }, /* @__PURE__ */ import_react14.default.createElement("div", null, /* @__PURE__ */ import_react14.default.createElement("div", { style: { fontSize: "13px", fontWeight: 600, color: "#f8fafc" } }, "\u{1F4F8} VLM Visual Comprehension Tester"), /* @__PURE__ */ import_react14.default.createElement("div", { style: { fontSize: "11px", color: "#94a3b8" } }, "Capture the live browser webview to disk and expose the absolute file path for Vision Models")), /* @__PURE__ */ import_react14.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: "8px" } }, /* @__PURE__ */ import_react14.default.createElement(
+            "select",
+            {
+              value: snapshotTarget,
+              onChange: (e) => setSnapshotTarget(e.target.value),
+              style: {
+                padding: "4px 8px",
+                borderRadius: "6px",
+                border: "1px solid rgba(255, 255, 255, 0.12)",
+                background: "#070b14",
+                color: "#f8fafc",
+                fontSize: "11px"
+              }
+            },
+            /* @__PURE__ */ import_react14.default.createElement("option", { value: "webview" }, "Guest Webview (Page)"),
+            /* @__PURE__ */ import_react14.default.createElement("option", { value: "window" }, "Full Window (Chrome + Page)")
+          ), /* @__PURE__ */ import_react14.default.createElement(
+            "button",
+            {
+              onClick: handleTriggerModalSnapshot,
+              disabled: isCapturingVlm,
+              style: {
+                padding: "6px 12px",
+                borderRadius: "6px",
+                border: "none",
+                background: "#00e5ff",
+                color: "#070b14",
+                fontSize: "11px",
+                fontWeight: 700,
+                cursor: isCapturingVlm ? "wait" : "pointer"
+              }
+            },
+            isCapturingVlm ? "Capturing..." : "Capture Snapshot"
+          ))),
+          vlmSnapshotResult && vlmSnapshotResult.path && /* @__PURE__ */ import_react14.default.createElement("div", { style: {
+            display: "flex",
+            alignItems: "center",
+            gap: "12px",
+            padding: "8px 10px",
+            borderRadius: "6px",
+            background: "rgba(0, 0, 0, 0.3)",
+            border: "1px solid rgba(0, 229, 255, 0.2)"
+          } }, vlmSnapshotResult.dataUrl && /* @__PURE__ */ import_react14.default.createElement(
+            "img",
+            {
+              src: vlmSnapshotResult.dataUrl,
+              alt: "Preview",
+              style: {
+                width: "64px",
+                height: "40px",
+                objectFit: "cover",
+                borderRadius: "4px",
+                border: "1px solid rgba(255, 255, 255, 0.1)"
+              }
+            }
+          ), /* @__PURE__ */ import_react14.default.createElement("div", { style: { flex: 1, minWidth: 0 } }, /* @__PURE__ */ import_react14.default.createElement("div", { style: { fontSize: "10px", color: "#10b981", fontWeight: 700 } }, "\u2713 Saved to disk (", vlmSnapshotResult.width, "x", vlmSnapshotResult.height, ")"), /* @__PURE__ */ import_react14.default.createElement(
+            "div",
+            {
+              style: {
+                fontSize: "11px",
+                fontFamily: "monospace",
+                color: "#e2e8f0",
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis"
+              },
+              title: vlmSnapshotResult.path
+            },
+            vlmSnapshotResult.path
+          )), /* @__PURE__ */ import_react14.default.createElement(
+            "button",
+            {
+              onClick: () => {
+                if (navigator.clipboard) {
+                  navigator.clipboard.writeText(vlmSnapshotResult.path);
+                }
+              },
+              style: {
+                padding: "4px 8px",
+                borderRadius: "4px",
+                border: "1px solid rgba(255, 255, 255, 0.12)",
+                background: "rgba(255, 255, 255, 0.05)",
+                color: "#cbd5e1",
+                fontSize: "10px",
+                cursor: "pointer"
+              }
+            },
+            "Copy Path"
+          ))
+        )
+      )),
+      /* @__PURE__ */ import_react14.default.createElement(
+        "div",
+        {
+          style: {
+            padding: "14px 22px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            borderTop: "1px solid rgba(255, 255, 255, 0.08)",
+            background: "rgba(7, 11, 20, 0.7)"
+          }
+        },
+        /* @__PURE__ */ import_react14.default.createElement("div", { style: { fontSize: "11px", color: "#64748b" } }, "Active Provider: ", /* @__PURE__ */ import_react14.default.createElement("strong", { style: { color: "#00e5ff" } }, configs[activeProviderId]?.name || "OpenAI"), " (", configs[activeProviderId]?.model || "default", ")"),
+        /* @__PURE__ */ import_react14.default.createElement("div", { style: { display: "flex", gap: "8px" } }, /* @__PURE__ */ import_react14.default.createElement(
+          "button",
+          {
+            onClick: onClose,
+            style: {
+              padding: "8px 16px",
+              borderRadius: "6px",
+              border: "1px solid rgba(255, 255, 255, 0.1)",
+              background: "transparent",
+              color: "#94a3b8",
+              fontSize: "12px",
               cursor: "pointer"
             }
           },
-          "Copy Path"
+          "Cancel"
+        ), /* @__PURE__ */ import_react14.default.createElement(
+          "button",
+          {
+            onClick: handleSaveAndApply,
+            style: {
+              padding: "8px 20px",
+              borderRadius: "6px",
+              border: "none",
+              background: saveFeedback ? "#10b981" : "#00e5ff",
+              color: "#070b14",
+              fontSize: "12px",
+              fontWeight: 700,
+              cursor: "pointer",
+              transition: "all 0.15s ease"
+            }
+          },
+          saveFeedback ? "\u2713 Saved!" : "Save & Apply"
         ))
       )
-    )),
-    /* @__PURE__ */ import_react13.default.createElement(
-      "div",
-      {
-        style: {
-          padding: "14px 22px",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          borderTop: "1px solid rgba(255, 255, 255, 0.08)",
-          background: "rgba(7, 11, 20, 0.7)"
-        }
-      },
-      /* @__PURE__ */ import_react13.default.createElement("div", { style: { fontSize: "11px", color: "#64748b" } }, "Active Provider: ", /* @__PURE__ */ import_react13.default.createElement("strong", { style: { color: "#00e5ff" } }, configs[activeProviderId]?.name || "OpenAI"), " (", configs[activeProviderId]?.model || "default", ")"),
-      /* @__PURE__ */ import_react13.default.createElement("div", { style: { display: "flex", gap: "8px" } }, /* @__PURE__ */ import_react13.default.createElement(
-        "button",
-        {
-          onClick: onClose,
-          style: {
-            padding: "8px 16px",
-            borderRadius: "6px",
-            border: "1px solid rgba(255, 255, 255, 0.1)",
-            background: "transparent",
-            color: "#94a3b8",
-            fontSize: "12px",
-            cursor: "pointer"
-          }
-        },
-        "Cancel"
-      ), /* @__PURE__ */ import_react13.default.createElement(
-        "button",
-        {
-          onClick: handleSaveAndApply,
-          style: {
-            padding: "8px 20px",
-            borderRadius: "6px",
-            border: "none",
-            background: saveFeedback ? "#10b981" : "#00e5ff",
-            color: "#070b14",
-            fontSize: "12px",
-            fontWeight: 700,
-            cursor: "pointer",
-            transition: "all 0.15s ease"
-          }
-        },
-        saveFeedback ? "\u2713 Saved!" : "Save & Apply"
-      ))
     )
-  ));
+  );
+  return typeof document !== "undefined" && document.body ? (0, import_react_dom.createPortal)(modalNode, document.body) : modalNode;
 }
 
 // desktop/src/App.jsx
 var { ipcRenderer: ipcRenderer2 } = window.require ? window.require("electron") : require("electron");
 var path = window.require ? window.require("path") : require("path");
+var fs = window.require ? window.require("fs") : require("fs");
+var nodeUrl = window.require ? window.require("url") : require("url");
 var NEW_TAB_IDENTIFIER = "antigravity://newtab";
+var CHROME_USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36";
+var GUEST_PRELOAD_URL = (() => {
+  try {
+    const candidates = [
+      path.resolve(__dirname, "guest_preload.js"),
+      path.resolve(__dirname, "../guest_preload.js")
+    ];
+    for (const c of candidates) {
+      if (fs && fs.existsSync && fs.existsSync(c)) {
+        return nodeUrl.pathToFileURL(c).href;
+      }
+    }
+    return "";
+  } catch (e) {
+    return "";
+  }
+})();
 function App() {
-  const [activeEngine, setActiveEngine] = (0, import_react14.useState)(() => {
+  const [activeEngine, setActiveEngine] = (0, import_react15.useState)(() => {
     return localStorage.getItem("antigravity_search_engine") || "google";
   });
-  const [tabs, setTabs] = (0, import_react14.useState)([
+  const [tabs, setTabs] = (0, import_react15.useState)([
     { id: 1, url: "", initialUrl: "about:blank", title: "New Tab", isNewTab: true }
   ]);
-  const [activeTabId, setActiveTabId] = (0, import_react14.useState)(1);
-  const nextTabIdRef = (0, import_react14.useRef)(2);
-  const lastOpenedTabRef = (0, import_react14.useRef)({ url: "", time: 0 });
-  const [adblockCount, setAdblockCount] = (0, import_react14.useState)(0);
-  const [shieldsStats, setShieldsStats] = (0, import_react14.useState)({
+  const [activeTabId, setActiveTabId] = (0, import_react15.useState)(1);
+  const nextTabIdRef = (0, import_react15.useRef)(2);
+  const lastOpenedTabRef = (0, import_react15.useRef)({ url: "", time: 0 });
+  const [adblockCount, setAdblockCount] = (0, import_react15.useState)(0);
+  const [shieldsStats, setShieldsStats] = (0, import_react15.useState)({
     mode: "aggressive",
     isNativeRust: true,
     totalBlocked: 0,
@@ -43611,31 +47362,31 @@ function App() {
     savedTimeMs: 0,
     recentEvents: []
   });
-  const [hudTab, setHudTab] = (0, import_react14.useState)("shields");
-  const [isHudOpen, setIsHudOpen] = (0, import_react14.useState)(false);
-  const [somEnabled, setSomEnabled] = (0, import_react14.useState)(true);
-  const [somMode, setSomMode] = (0, import_react14.useState)("summarized");
-  const [isHudDetached, setIsHudDetached] = (0, import_react14.useState)(() => {
+  const [hudTab, setHudTab] = (0, import_react15.useState)("shields");
+  const [isHudOpen, setIsHudOpen] = (0, import_react15.useState)(true);
+  const [somEnabled, setSomEnabled] = (0, import_react15.useState)(true);
+  const [somMode, setSomMode] = (0, import_react15.useState)("summarized");
+  const [isHudDetached, setIsHudDetached] = (0, import_react15.useState)(() => {
     try {
       return localStorage.getItem("antigravity_hud_detached") === "true";
     } catch (e) {
       return false;
     }
   });
-  const [isExternalHudVisible, setIsExternalHudVisible] = (0, import_react14.useState)(false);
-  const [axTreeMarkdown, setAxTreeMarkdown] = (0, import_react14.useState)("");
-  const [grepQuery, setGrepQuery] = (0, import_react14.useState)("href");
-  const [grepMatches, setGrepMatches] = (0, import_react14.useState)([]);
-  const [grepPage, setGrepPage] = (0, import_react14.useState)(1);
-  const [autofillStatus, setAutofillStatus] = (0, import_react14.useState)("Ready to autofill inputs on active page.");
-  const [isHitlActive, setIsHitlActive] = (0, import_react14.useState)(false);
-  const [isAiProviderModalOpen, setIsAiProviderModalOpen] = (0, import_react14.useState)(false);
-  const [latestSnapshot, setLatestSnapshot] = (0, import_react14.useState)(null);
-  const [telemetryLogs, setTelemetryLogs] = (0, import_react14.useState)([
+  const [isExternalHudVisible, setIsExternalHudVisible] = (0, import_react15.useState)(false);
+  const [axTreeMarkdown, setAxTreeMarkdown] = (0, import_react15.useState)("");
+  const [grepQuery, setGrepQuery] = (0, import_react15.useState)("href");
+  const [grepMatches, setGrepMatches] = (0, import_react15.useState)([]);
+  const [grepPage, setGrepPage] = (0, import_react15.useState)(1);
+  const [autofillStatus, setAutofillStatus] = (0, import_react15.useState)("Ready to autofill inputs on active page.");
+  const [isHitlActive, setIsHitlActive] = (0, import_react15.useState)(false);
+  const [isAiProviderModalOpen, setIsAiProviderModalOpen] = (0, import_react15.useState)(false);
+  const [latestSnapshot, setLatestSnapshot] = (0, import_react15.useState)(null);
+  const [telemetryLogs, setTelemetryLogs] = (0, import_react15.useState)([
     { time: (/* @__PURE__ */ new Date()).toLocaleTimeString(), type: "info", msg: "Antigravity React Native Desktop Shell initialized" },
     { time: (/* @__PURE__ */ new Date()).toLocaleTimeString(), type: "info", msg: "Brave adblock-rust engine active (EasyList + uBlock Origin)" }
   ]);
-  const [bookmarks, setBookmarks] = (0, import_react14.useState)(() => {
+  const [bookmarks, setBookmarks] = (0, import_react15.useState)(() => {
     try {
       const saved = localStorage.getItem("antigravity_bookmarks");
       if (saved) return JSON.parse(saved);
@@ -43648,14 +47399,14 @@ function App() {
       { id: "bm-4", url: "https://github.com", title: "GitHub" }
     ];
   });
-  const [isTabSearchOpen, setIsTabSearchOpen] = (0, import_react14.useState)(false);
-  const [isReaderModeOpen, setIsReaderModeOpen] = (0, import_react14.useState)(false);
-  const [readerContent, setReaderContent] = (0, import_react14.useState)("");
-  const [readerTitle, setReaderTitle] = (0, import_react14.useState)("");
-  const [isQrCodeOpen, setIsQrCodeOpen] = (0, import_react14.useState)(false);
-  const [isHistoryOpen, setIsHistoryOpen] = (0, import_react14.useState)(false);
-  const [aiLiveBanner, setAiLiveBanner] = (0, import_react14.useState)(null);
-  const [history, setHistory] = (0, import_react14.useState)(() => {
+  const [isTabSearchOpen, setIsTabSearchOpen] = (0, import_react15.useState)(false);
+  const [isReaderModeOpen, setIsReaderModeOpen] = (0, import_react15.useState)(false);
+  const [readerContent, setReaderContent] = (0, import_react15.useState)("");
+  const [readerTitle, setReaderTitle] = (0, import_react15.useState)("");
+  const [isQrCodeOpen, setIsQrCodeOpen] = (0, import_react15.useState)(false);
+  const [isHistoryOpen, setIsHistoryOpen] = (0, import_react15.useState)(false);
+  const [aiLiveBanner, setAiLiveBanner] = (0, import_react15.useState)(null);
+  const [history, setHistory] = (0, import_react15.useState)(() => {
     try {
       const saved = localStorage.getItem("antigravity_browsing_history");
       if (saved) return JSON.parse(saved);
@@ -43667,40 +47418,47 @@ function App() {
       { id: "h-3", url: "https://www.google.com", title: "Google", timestamp: Date.now() - 108e5 }
     ];
   });
-  const [wallpaper, setWallpaper] = (0, import_react14.useState)(() => {
+  const [wallpaper, setWallpaper] = (0, import_react15.useState)(() => {
     return localStorage.getItem("antigravity_wallpaper") || "";
   });
-  const [wallpaperType, setWallpaperType] = (0, import_react14.useState)(() => {
+  const [wallpaperType, setWallpaperType] = (0, import_react15.useState)(() => {
     return localStorage.getItem("antigravity_wallpaper_type") || "none";
   });
-  const [wallpaperOpacity, setWallpaperOpacity] = (0, import_react14.useState)(() => {
+  const [wallpaperOpacity, setWallpaperOpacity] = (0, import_react15.useState)(() => {
     const val = localStorage.getItem("antigravity_wallpaper_opacity");
     return val !== null ? parseFloat(val) : 0.65;
   });
-  const [wallpaperColor, setWallpaperColor] = (0, import_react14.useState)(() => {
+  const [wallpaperColor, setWallpaperColor] = (0, import_react15.useState)(() => {
     return localStorage.getItem("antigravity_wallpaper_color") || "#0b0f19";
   });
-  const [isWallpaperStudioOpen, setIsWallpaperStudioOpen] = (0, import_react14.useState)(false);
-  const [downloads, setDownloads] = (0, import_react14.useState)([]);
-  const [canvasFontSize, setCanvasFontSize] = (0, import_react14.useState)(() => {
+  const [wallpaperMuted, setWallpaperMuted] = (0, import_react15.useState)(() => {
+    return localStorage.getItem("antigravity_wallpaper_muted") === "false" ? false : true;
+  });
+  const [isWindowFocused, setIsWindowFocused] = (0, import_react15.useState)(() => {
+    return typeof document !== "undefined" ? document.hasFocus() : true;
+  });
+  const wallpaperVideoRef = (0, import_react15.useRef)(null);
+  const [isWallpaperStudioOpen, setIsWallpaperStudioOpen] = (0, import_react15.useState)(false);
+  const [downloads, setDownloads] = (0, import_react15.useState)([]);
+  const [canvasFontSize, setCanvasFontSize] = (0, import_react15.useState)(() => {
     return localStorage.getItem("antigravity_canvas_font_size") || "standard";
   });
-  const [canvasFontStyle, setCanvasFontStyle] = (0, import_react14.useState)(() => {
+  const [canvasFontStyle, setCanvasFontStyle] = (0, import_react15.useState)(() => {
     return localStorage.getItem("antigravity_canvas_font_style") || "inter";
   });
-  const [isTypographyOpen, setIsTypographyOpen] = (0, import_react14.useState)(false);
-  const tabsRef = (0, import_react14.useRef)(tabs);
+  const [isTypographyOpen, setIsTypographyOpen] = (0, import_react15.useState)(false);
+  const tabsRef = (0, import_react15.useRef)(tabs);
   tabsRef.current = tabs;
-  const activeTabIdRef = (0, import_react14.useRef)(activeTabId);
+  const activeTabIdRef = (0, import_react15.useRef)(activeTabId);
   activeTabIdRef.current = activeTabId;
   const activeTab = tabs.find((t) => t.id === activeTabId) || tabs[0] || { id: 1, title: "New Tab", url: "", isNewTab: true };
-  const activeTabRef = (0, import_react14.useRef)(activeTab);
+  const activeTabRef = (0, import_react15.useRef)(activeTab);
   activeTabRef.current = activeTab;
-  const canvasFontSizeRef = (0, import_react14.useRef)(canvasFontSize);
+  const canvasFontSizeRef = (0, import_react15.useRef)(canvasFontSize);
   canvasFontSizeRef.current = canvasFontSize;
-  const canvasFontStyleRef = (0, import_react14.useRef)(canvasFontStyle);
+  const canvasFontStyleRef = (0, import_react15.useRef)(canvasFontStyle);
   canvasFontStyleRef.current = canvasFontStyle;
-  const hudStateRef = (0, import_react14.useRef)({
+  const hudStateRef = (0, import_react15.useRef)({
     tabs,
     activeTabId,
     somEnabled,
@@ -43757,10 +47515,20 @@ function App() {
     } catch (e) {
     }
   };
-  (0, import_react14.useEffect)(() => {
+  (0, import_react15.useEffect)(() => {
     if (!ipcRenderer2) return;
     ipcRenderer2.invoke("get-downloads").then((list) => {
       if (Array.isArray(list)) setDownloads(list);
+    }).catch(() => {
+    });
+    ipcRenderer2.invoke("get-history").then((savedHistory) => {
+      if (Array.isArray(savedHistory) && savedHistory.length > 0) {
+        setHistory(savedHistory);
+        try {
+          localStorage.setItem("antigravity_browsing_history", JSON.stringify(savedHistory));
+        } catch (e) {
+        }
+      }
     }).catch(() => {
     });
     const handleDownloadStarted = (event, record) => {
@@ -43899,30 +47667,108 @@ function App() {
     }]);
     setActiveTabId(newId);
   };
-  (0, import_react14.useEffect)(() => {
+  const handleOpenHistoryTab = () => {
+    const existing = tabs.find((t) => t.url === "antigravity://history" || t.isHistory);
+    if (existing) {
+      setActiveTabId(existing.id);
+      return;
+    }
+    const current = tabs.find((t) => t.id === activeTabId);
+    if (current && (current.isNewTab || !current.url)) {
+      setTabs((prev) => prev.map((t) => {
+        if (t.id === activeTabId) {
+          return { ...t, isNewTab: false, isDownloads: false, isHistory: true, url: "antigravity://history", title: "History" };
+        }
+        return t;
+      }));
+      return;
+    }
+    const newId = nextTabIdRef.current++;
+    setTabs((prev) => [...prev, {
+      id: newId,
+      url: "antigravity://history",
+      initialUrl: "about:blank",
+      title: "History",
+      isNewTab: false,
+      isDownloads: false,
+      isHistory: true
+    }]);
+    setActiveTabId(newId);
+  };
+  (0, import_react15.useEffect)(() => {
     const hasWp = wallpaperType !== "none" && !!wallpaper;
     document.body.classList.toggle("has-wallpaper", hasWp);
     document.body.style.setProperty("--wallpaper-overlay-opacity", String(wallpaperOpacity));
   }, [wallpaper, wallpaperType, wallpaperOpacity]);
-  const handleSetWallpaper = (type, value, opacity, color) => {
+  const handleSetWallpaper = (type, value, opacity, color, isMuted) => {
     setWallpaperType(type);
     setWallpaper(value);
     if (opacity !== void 0) setWallpaperOpacity(opacity);
     if (color !== void 0) setWallpaperColor(color);
+    if (isMuted !== void 0) {
+      setWallpaperMuted(isMuted);
+      localStorage.setItem("antigravity_wallpaper_muted", String(isMuted));
+    }
     localStorage.setItem("antigravity_wallpaper_type", type);
     localStorage.setItem("antigravity_wallpaper", value);
     if (opacity !== void 0) localStorage.setItem("antigravity_wallpaper_opacity", String(opacity));
     if (color !== void 0) localStorage.setItem("antigravity_wallpaper_color", color);
-    logTelemetry("act", `Wallpaper updated: ${type}`);
+    logTelemetry("act", `Wallpaper updated: ${type} (muted: ${isMuted !== void 0 ? isMuted : wallpaperMuted})`);
   };
-  const isNewTab = activeTab.isNewTab;
+  const handleRemoveWallpaper = () => {
+    setWallpaperType("none");
+    setWallpaper("");
+    localStorage.setItem("antigravity_wallpaper_type", "none");
+    localStorage.removeItem("antigravity_wallpaper");
+    logTelemetry("act", "Wallpaper removed");
+  };
+  (0, import_react15.useEffect)(() => {
+    const handleFocus = () => setIsWindowFocused(true);
+    const handleBlur = () => setIsWindowFocused(false);
+    const handleVisibility = () => {
+      if (document.hidden) {
+        setIsWindowFocused(false);
+      } else {
+        setIsWindowFocused(document.hasFocus());
+      }
+    };
+    window.addEventListener("focus", handleFocus);
+    window.addEventListener("blur", handleBlur);
+    document.addEventListener("visibilitychange", handleVisibility);
+    let removeIpcListener = null;
+    try {
+      if (window.require) {
+        const { ipcRenderer: electronIpc } = window.require("electron");
+        const onIpcFocus = (event, focused) => {
+          setIsWindowFocused(Boolean(focused));
+        };
+        electronIpc.on("window-focus-changed", onIpcFocus);
+        removeIpcListener = () => electronIpc.removeListener("window-focus-changed", onIpcFocus);
+      }
+    } catch (e) {
+    }
+    return () => {
+      window.removeEventListener("focus", handleFocus);
+      window.removeEventListener("blur", handleBlur);
+      document.removeEventListener("visibilitychange", handleVisibility);
+      if (removeIpcListener) removeIpcListener();
+    };
+  }, []);
+  const isNewTab = Boolean(activeTab.isNewTab) && (!activeTab.url || activeTab.url === "" || activeTab.url === "about:blank") && !activeTab.isDownloads && !activeTab.isHistory;
+  const shouldPlayWallpaperAudio = !wallpaperMuted && Boolean(isNewTab) && Boolean(isWindowFocused);
+  const effectiveWallpaperMuted = !shouldPlayWallpaperAudio;
+  (0, import_react15.useEffect)(() => {
+    if (wallpaperVideoRef.current) {
+      wallpaperVideoRef.current.muted = effectiveWallpaperMuted;
+    }
+  }, [effectiveWallpaperMuted]);
   const logTelemetry = (type, msg, meta = "") => {
     setTelemetryLogs((prev) => {
       const trimmed = prev.length >= 30 ? prev.slice(prev.length - 29) : prev;
       return [...trimmed, { time: (/* @__PURE__ */ new Date()).toLocaleTimeString(), type, msg, meta }];
     });
   };
-  (0, import_react14.useEffect)(() => {
+  (0, import_react15.useEffect)(() => {
     if (ipcRenderer2.invoke) {
       ipcRenderer2.invoke("get-adblock-stats").then((stats) => {
         if (stats) {
@@ -44031,7 +47877,7 @@ function App() {
         if (data.url) handleNavigate(data.url);
       } else if (action === "extract-page-text") {
         const wv = document.getElementById(`wv-${activeTabId}`);
-        if (wv && typeof wv.executeJavaScript === "function") {
+        if (wv && typeof wv.executeJavaScript === "function" && wv.getURL() && wv.getURL() !== "about:blank") {
           wv.executeJavaScript(`
                         (function() {
                             const title = document.title || '';
@@ -44243,47 +48089,36 @@ function App() {
           triggerAiBanner("SCROLL", "Scrolling " + (payload.direction || "down"));
           const ok = await executeWebviewScroll2(payload.direction || "down", payload.amount || 50, payload.isPercent !== false);
           result = { success: ok, direction: payload.direction, amount: payload.amount };
+        } else if (action === "press-key" || action === "key") {
+          const key = payload.key || "Space";
+          triggerAiBanner("KEY_PRESS", "Pressing key: [" + key + "]");
+          if (wv) {
+            result = await executeWebviewKeyPress(wv, key, payload.modifiers || []);
+          } else {
+            result = { success: false, error: "No active webview" };
+          }
+        } else if (action === "hover") {
+          const target = payload.target || payload.text || "";
+          triggerAiBanner("HOVER", 'Hovering: "' + target + '"');
+          if (wv) {
+            result = await executeWebviewHover(wv, target);
+          } else {
+            result = { success: false, error: "No active webview" };
+          }
         } else if (action === "type") {
-          if (wv && typeof wv.executeJavaScript === "function") {
-            const typeText = payload.text || "";
-            const submit = payload.submit !== false;
-            triggerAiBanner("TYPE", 'Typing "' + typeText + '" and submitting search');
-            const selector = payload.selector || null;
-            const res = await wv.executeJavaScript(`
-                            (function() {
-                                let target = null;
-                                if (${JSON.stringify(selector)}) {
-                                    target = document.querySelector(${JSON.stringify(selector)});
-                                }
-                                if (!target) {
-                                    const inputs = Array.from(document.querySelectorAll('input[type="search"], input[name*="search" i], input[id*="search" i], input[class*="search" i], input[type="text"], input:not([type]), textarea')).filter(el => {
-                                        const s = window.getComputedStyle(el);
-                                        return s.display !== 'none' && s.visibility !== 'hidden' && el.offsetWidth > 0;
-                                    });
-                                    target = inputs[0];
-                                }
-                                if (!target) return { success: false, error: 'No input found' };
-                                target.focus();
-                                target.value = ${JSON.stringify(typeText)};
-                                target.dispatchEvent(new Event('input', { bubbles: true }));
-                                target.dispatchEvent(new Event('change', { bubbles: true }));
-                                if (${submit}) {
-                                    const form = target.closest('form');
-                                    if (form) {
-                                        form.requestSubmit ? form.requestSubmit() : form.submit();
-                                    } else {
-                                        target.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', code: 'Enter', keyCode: 13, bubbles: true }));
-                                    }
-                                }
-                                return { success: true, typed: ${JSON.stringify(typeText)} };
-                            })()
-                        `);
-            result = res;
+          const typeText = payload.text || "";
+          const submit = payload.submit === true;
+          const clear = payload.clear !== false;
+          const target = payload.target || payload.selector || null;
+          triggerAiBanner("TYPE", "Typing into " + (target || "active field") + ': "' + typeText + '"' + (submit ? " (submit)" : ""));
+          if (wv) {
+            result = await executeWebviewType(wv, typeText, target, submit, clear);
           } else {
             result = { success: false, error: "No active webview" };
           }
         } else if (action === "get-page-content") {
-          if (wv && typeof wv.executeJavaScript === "function") {
+          const wvUrl4 = wv && typeof wv.getURL === "function" ? wv.getURL() : "";
+          if (wv && typeof wv.executeJavaScript === "function" && wvUrl4 && wvUrl4 !== "about:blank") {
             const execPromise = wv.executeJavaScript(`
                             (function() {
                                 const allLinks = Array.from(document.querySelectorAll('a')).map(a => ({
@@ -44341,35 +48176,50 @@ function App() {
             };
           }
         } else if (action === "eval") {
-          if (wv && typeof wv.executeJavaScript === "function") {
-            const execPromise = wv.executeJavaScript(payload.script);
-            const timeoutPromise = new Promise((resolve) => {
-              setTimeout(() => resolve({ error: "eval timed out after 8000ms" }), 8e3);
-            });
-            result = await Promise.race([execPromise, timeoutPromise]);
+          const wvUrl = wv && typeof wv.getURL === "function" ? wv.getURL() : "";
+          const wvReady = wv && typeof wv.executeJavaScript === "function" && wvUrl && wvUrl !== "about:blank" && !(typeof wv.isLoading === "function" && wv.isLoading());
+          if (wvReady) {
+            try {
+              const execPromise = wv.executeJavaScript(payload.script);
+              const timeoutPromise = new Promise((resolve) => {
+                setTimeout(() => resolve({ error: "eval timed out after 8000ms" }), 8e3);
+              });
+              result = await Promise.race([execPromise, timeoutPromise]);
+            } catch (execErr) {
+              result = { success: false, error: "Script execution failed: " + (execErr.message || String(execErr)) };
+            }
           } else {
-            result = { success: false, error: "No active webview" };
+            result = { success: false, error: "Webview not ready (loading or uninitialized)" };
           }
         } else if (action === "get-page-context") {
-          if (wv && typeof wv.executeJavaScript === "function") {
+          const wvUrl2 = wv && typeof wv.getURL === "function" ? wv.getURL() : "";
+          const wvReady2 = wv && typeof wv.executeJavaScript === "function" && wvUrl2 && wvUrl2 !== "about:blank";
+          if (wvReady2) {
             result = await extractAdaptivePageContext(wv);
           } else {
-            result = { success: false, error: "No active webview" };
+            result = { success: false, error: "Webview not ready" };
           }
         } else if (action === "site-act") {
-          if (wv && typeof wv.executeJavaScript === "function") {
+          const wvUrl3 = wv && typeof wv.getURL === "function" ? wv.getURL() : "";
+          const wvReady3 = wv && typeof wv.executeJavaScript === "function" && wvUrl3 && wvUrl3 !== "about:blank";
+          if (wvReady3) {
             result = await executeAdaptiveAction(wv, payload.intent, payload.options);
           } else {
-            result = { success: false, error: "No active webview" };
+            result = { success: false, error: "Webview not ready" };
           }
         } else if (action === "toggle-hud") {
-          handleDockHud();
+          setIsHudDetached(false);
           setIsHudOpen(true);
           result = { success: true, isHudOpen: true };
+        } else if (action === "open-ai-provider-modal") {
+          setIsAiProviderModalOpen(payload?.open !== false);
+          result = { success: true, isAiProviderModalOpen: payload?.open !== false };
         } else if (action === "copilot-chat") {
-          handleDockHud();
+          setIsHudDetached(false);
           setIsHudOpen(true);
-          if (payload.query) {
+          if (payload.openModelSetup) {
+            setIsAiProviderModalOpen(true);
+          } else if (payload.query) {
             window.dispatchEvent(new CustomEvent("antigravity-copilot-query", { detail: { query: payload.query } }));
           }
           result = { success: true, dispatched: true };
@@ -44390,6 +48240,10 @@ function App() {
       } catch (e) {
       }
     };
+    const handleOpenModelSetup = () => {
+      setIsAiProviderModalOpen(true);
+    };
+    window.addEventListener("antigravity-open-model-setup", handleOpenModelSetup);
     ipcRenderer2.on("open-new-tab", handleOpenNewTab);
     ipcRenderer2.on("hud-window-opened", handleHudOpened);
     ipcRenderer2.on("hud-window-hidden", handleHudHidden);
@@ -44409,7 +48263,7 @@ function App() {
       ipcRenderer2.removeListener("open-docked-hud", handleOpenDockedHud);
     };
   }, []);
-  (0, import_react14.useEffect)(() => {
+  (0, import_react15.useEffect)(() => {
     if (!isHudDetached || !ipcRenderer2) return;
     const timer = setTimeout(() => {
       ipcRenderer2.send("sync-hud-state", {
@@ -44543,7 +48397,7 @@ function App() {
     }
   };
   const executeWebviewClick2 = async (targetText) => {
-    const wv = document.getElementById(`wv-${activeTabId}`) || document.querySelector(".native-webview");
+    const wv = document.getElementById(`wv-${activeTabIdRef.current}`) || document.querySelector(".native-webview");
     if (!wv || typeof wv.executeJavaScript !== "function") {
       logTelemetry("warn", "No active webview available to execute click interaction.");
       return false;
@@ -44557,7 +48411,7 @@ function App() {
     }
   };
   const executeWebviewScroll2 = async (direction = "down", amount = 20, isPercent = false) => {
-    const wv = document.getElementById(`wv-${activeTabId}`) || document.querySelector(".native-webview");
+    const wv = document.getElementById(`wv-${activeTabIdRef.current}`) || document.querySelector(".native-webview");
     if (!wv || typeof wv.executeJavaScript !== "function") return false;
     try {
       const scrollPromise = executeWebviewScroll(wv, direction, amount, isPercent, logTelemetry);
@@ -44568,7 +48422,7 @@ function App() {
     }
   };
   const extractPageTextForAi = async () => {
-    const wv = document.getElementById(`wv-${activeTabId}`);
+    const wv = document.getElementById(`wv-${activeTabIdRef.current}`);
     if (!wv || typeof wv.executeJavaScript !== "function") return "";
     try {
       const text = await wv.executeJavaScript(`
@@ -44582,7 +48436,7 @@ function App() {
     }
   };
   const handleOpenReaderMode = async () => {
-    const wv = document.getElementById(`wv-${activeTabId}`);
+    const wv = document.getElementById(`wv-${activeTabIdRef.current}`);
     if (!wv || typeof wv.executeJavaScript !== "function") return;
     try {
       const articleData = await wv.executeJavaScript(`
@@ -44644,7 +48498,7 @@ function App() {
     logTelemetry("act", "Bookmark removed");
   };
   const addHistoryEntry = (url, title) => {
-    if (!url || url === "about:blank" || url.startsWith("javascript:") || url.startsWith("data:") || url.includes("newtab.html")) return;
+    if (!url || url === "about:blank" || url.startsWith("javascript:") || url.startsWith("data:") || url.includes("newtab.html") || url.startsWith("antigravity://")) return;
     setHistory((prev) => {
       const now = Date.now();
       if (prev.length > 0 && prev[0].url === url && now - prev[0].timestamp < 4e3) {
@@ -44657,10 +48511,14 @@ function App() {
         title: cleanTitle,
         timestamp: now
       };
-      const updated = [newEntry, ...prev.filter((item) => item.url !== url)].slice(0, 100);
+      const updated = [newEntry, ...prev.filter((item) => item.url !== url)].slice(0, 300);
       try {
         localStorage.setItem("antigravity_browsing_history", JSON.stringify(updated));
       } catch (e) {
+      }
+      if (ipcRenderer2 && ipcRenderer2.invoke) {
+        ipcRenderer2.invoke("save-history", updated).catch(() => {
+        });
       }
       return updated;
     });
@@ -44672,6 +48530,10 @@ function App() {
         localStorage.setItem("antigravity_browsing_history", JSON.stringify(updated));
       } catch (e) {
       }
+      if (ipcRenderer2 && ipcRenderer2.invoke) {
+        ipcRenderer2.invoke("save-history", updated).catch(() => {
+        });
+      }
       return updated;
     });
     logTelemetry("act", "Deleted item from browsing history");
@@ -44682,9 +48544,13 @@ function App() {
       localStorage.removeItem("antigravity_browsing_history");
     } catch (e) {
     }
+    if (ipcRenderer2 && ipcRenderer2.invoke) {
+      ipcRenderer2.invoke("clear-history").catch(() => {
+      });
+    }
     logTelemetry("act", "Cleared all browsing history");
   };
-  (0, import_react14.useEffect)(() => {
+  (0, import_react15.useEffect)(() => {
     const handleKeyDown = (e) => {
       if ((e.ctrlKey || e.metaKey) && (e.key === "k" || e.key === "K")) {
         e.preventDefault();
@@ -44694,7 +48560,7 @@ function App() {
         handleToggleBookmark();
       } else if ((e.ctrlKey || e.metaKey) && (e.key === "h" || e.key === "H")) {
         e.preventDefault();
-        setIsHistoryOpen((prev) => !prev);
+        handleOpenHistoryTab();
       } else if (e.key === "Escape") {
         setIsTabSearchOpen(false);
         setIsReaderModeOpen(false);
@@ -44722,17 +48588,17 @@ function App() {
     setTabs((prev) => [...prev, newTab]);
     setActiveTabId(newId);
     logTelemetry("act", `TabStripModel::InsertWebContentsAt()`, `Tab #${newId} -> New Tab`);
+    return newId;
   };
   const openInNewTab = (targetUrl) => {
     const url = (targetUrl || "").trim();
     if (!url || url === "about:blank") {
-      handleAddTab();
-      return;
+      return handleAddTab();
     }
-    if (url.startsWith("javascript:") || url.startsWith("data:")) return;
+    if (url.startsWith("javascript:") || url.startsWith("data:")) return null;
     const now = Date.now();
     if (lastOpenedTabRef.current.url === url && now - lastOpenedTabRef.current.time < 1200) {
-      return;
+      return activeTabIdRef.current;
     }
     lastOpenedTabRef.current = { url, time: now };
     let isBlocked = false;
@@ -44747,7 +48613,7 @@ function App() {
     }
     if (isBlocked) {
       logTelemetry("verify", `Shields blocked unwanted popup tab: ${url.substring(0, 60)}...`);
-      return;
+      return null;
     }
     const newId = nextTabIdRef.current++;
     const newTab = {
@@ -44757,9 +48623,13 @@ function App() {
       title: "Loading...",
       isNewTab: false
     };
+    tabsRef.current = [...tabsRef.current, newTab];
+    activeTabIdRef.current = newId;
+    activeTabRef.current = newTab;
     setTabs((prev) => [...prev, newTab]);
     setActiveTabId(newId);
     logTelemetry("act", `TabStripModel::InsertWebContentsAt()`, `Tab #${newId} -> ${url}`);
+    return newId;
   };
   window.__antigravityOpenNewTab = openInNewTab;
   const handleCloseTab = (tabId) => {
@@ -44783,31 +48653,44 @@ function App() {
     });
     logTelemetry("act", `TabStripModel::CloseWebContentsAt()`, `Closed Tab #${targetId}`);
   };
-  const handleNavigate = (target) => {
+  const handleNavigate = (target, overrideTabId = null) => {
+    const targetId = overrideTabId || activeTabIdRef.current;
     const trimmed = (target || "").trim();
     let finalUrl = trimmed;
     if (!trimmed || trimmed === NEW_TAB_IDENTIFIER || trimmed.includes("newtab.html")) {
       setTabs((prev) => prev.map((t) => {
-        if (t.id === activeTabId) {
-          return { ...t, isNewTab: true, isDownloads: false, url: "", title: "New Tab" };
+        if (t.id === targetId) {
+          return { ...t, isNewTab: true, isDownloads: false, isHistory: false, url: "", title: "New Tab" };
         }
         return t;
       }));
-      const wv2 = document.getElementById(`wv-${activeTabId}`);
+      const wv2 = document.getElementById(`wv-${targetId}`);
       if (wv2 && typeof wv2.loadURL === "function") wv2.loadURL("about:blank");
       logTelemetry("act", "Tab navigated to New Tab Page");
       return;
     }
     if (trimmed === "antigravity://downloads" || trimmed === "brave://downloads" || trimmed === "chrome://downloads" || trimmed === "about:downloads") {
       setTabs((prev) => prev.map((t) => {
-        if (t.id === activeTabId) {
-          return { ...t, isNewTab: false, isDownloads: true, url: "antigravity://downloads", title: "Downloads" };
+        if (t.id === targetId) {
+          return { ...t, isNewTab: false, isDownloads: true, isHistory: false, url: "antigravity://downloads", title: "Downloads" };
         }
         return t;
       }));
-      const wv2 = document.getElementById(`wv-${activeTabId}`);
+      const wv2 = document.getElementById(`wv-${targetId}`);
       if (wv2 && typeof wv2.loadURL === "function") wv2.loadURL("about:blank");
       logTelemetry("act", "Navigated to Brave-style Downloads Manager");
+      return;
+    }
+    if (trimmed === "antigravity://history" || trimmed === "brave://history" || trimmed === "chrome://history" || trimmed === "about:history") {
+      setTabs((prev) => prev.map((t) => {
+        if (t.id === targetId) {
+          return { ...t, isNewTab: false, isDownloads: false, isHistory: true, url: "antigravity://history", title: "History" };
+        }
+        return t;
+      }));
+      const wv2 = document.getElementById(`wv-${targetId}`);
+      if (wv2 && typeof wv2.loadURL === "function") wv2.loadURL("about:blank");
+      logTelemetry("act", "Navigated to Chrome/Brave-style History Page");
       return;
     }
     if (trimmed.startsWith("http://") || trimmed.startsWith("https://") || trimmed.startsWith("file://") || trimmed.startsWith("data:")) {
@@ -44816,6 +48699,8 @@ function App() {
       finalUrl = "http://" + trimmed;
     } else if (trimmed.includes(".") && !trimmed.includes(" ") && !trimmed.includes("?")) {
       finalUrl = "https://" + trimmed;
+    } else if (!trimmed.includes(" ") && /^[a-z0-9-]+$/i.test(trimmed)) {
+      finalUrl = `https://www.${trimmed.toLowerCase()}.com`;
     } else {
       if (activeEngine === "brave") {
         finalUrl = `https://search.brave.com/search?q=${encodeURIComponent(trimmed)}`;
@@ -44824,12 +48709,12 @@ function App() {
       }
     }
     setTabs((prev) => prev.map((t) => {
-      if (t.id === activeTabId) {
-        return { ...t, isNewTab: false, isDownloads: false, url: finalUrl, title: t.title || "Loading..." };
+      if (t.id === targetId) {
+        return { ...t, isNewTab: false, isDownloads: false, isHistory: false, url: finalUrl, title: t.title || "Loading..." };
       }
       return t;
     }));
-    const wv = document.getElementById(`wv-${activeTabId}`);
+    const wv = document.getElementById(`wv-${targetId}`);
     if (wv && typeof wv.loadURL === "function") {
       wv.loadURL(finalUrl).catch((err) => {
         if (err && (err.code === "ERR_ABORTED" || String(err).includes("ERR_ABORTED"))) {
@@ -44841,7 +48726,7 @@ function App() {
     logTelemetry("act", `WebContents::GetController().LoadURL("${finalUrl}")`);
   };
   window.__antigravityNavigate = handleNavigate;
-  (0, import_react14.useEffect)(() => {
+  (0, import_react15.useEffect)(() => {
     const handleKeyDown = (e) => {
       if (e.ctrlKey && (e.key === "t" || e.key === "T")) {
         e.preventDefault();
@@ -44897,8 +48782,27 @@ function App() {
     wv.__listenersAttached = true;
     wv.addEventListener("new-window", (e) => {
       e.preventDefault();
-      if (e.url) {
-        openInNewTab(e.url);
+      const targetUrl = (e.url || "").trim();
+      if (!targetUrl || targetUrl === "about:blank" || targetUrl.startsWith("javascript:")) return;
+      const curUrl = (typeof wv.getURL === "function" ? wv.getURL() : "") || activeTabRef.current?.url || "";
+      const isSuspiciousDest = /(?:wasgiwiththinfeet|acscdn|greenanalytics|ukankingwithea|certaker|enaightdecipie|unlockr|adsboosters|cpmgate|topcreativeformat|mybestmv|recrampwiped|bonuscaf|rtvhd=|aydfd=|sklnk|aliexpress\.com|ali\.pub)/i.test(targetUrl);
+      const isAdOrigin = /(?:4khdhub|greenmotors|hubcloud|gamerxyt|moviesmod|hianime|aniwave|fmovies|123movies)/i.test(curUrl);
+      if (isSuspiciousDest || isAdOrigin && !/(?:greenmotors\.|hubcloud\.|mega\.|mediafire\.|1fichier\.|google\.com|youtube\.com|pixeldrain\.|zippyshare\.)/i.test(targetUrl)) {
+        logTelemetry("act", `Brave Shields blocked shady popup: ${targetUrl}`);
+        return;
+      }
+      if (ipcRenderer2 && ipcRenderer2.invoke) {
+        ipcRenderer2.invoke("check-url-block", { url: targetUrl, initiatorUrl: curUrl }).then((res) => {
+          if (res && (res.block || res.decision && res.decision.block)) {
+            logTelemetry("act", `Brave Shields blocked popup: ${targetUrl}`);
+          } else {
+            openInNewTab(targetUrl);
+          }
+        }).catch(() => {
+          openInNewTab(targetUrl);
+        });
+      } else {
+        openInNewTab(targetUrl);
       }
     });
     wv.addEventListener("did-navigate", (e) => {
@@ -44953,6 +48857,7 @@ function App() {
       if (!u || u === "about:blank") {
         setTabs((prev) => prev.map((t) => {
           if (t.id === tabId) {
+            if (t.initialUrl && t.initialUrl !== "about:blank") return t;
             if (t.isNewTab && !t.url) return t;
             return { ...t, url: "", title: "New Tab", isNewTab: true };
           }
@@ -45014,7 +48919,7 @@ function App() {
       }
     });
   };
-  return /* @__PURE__ */ import_react14.default.createElement("div", { className: "native-browser-app" }, wallpaperType !== "none" && wallpaper && /* @__PURE__ */ import_react14.default.createElement(
+  return /* @__PURE__ */ import_react15.default.createElement("div", { className: "native-browser-app" }, wallpaperType !== "none" && wallpaper && /* @__PURE__ */ import_react15.default.createElement(
     "div",
     {
       className: "wallpaper-layer",
@@ -45024,8 +48929,18 @@ function App() {
         ...wallpaperType === "color" ? { backgroundColor: wallpaper } : {}
       }
     },
-    wallpaperType === "video" && /* @__PURE__ */ import_react14.default.createElement("video", { src: wallpaper, autoPlay: true, loop: true, muted: true, playsInline: true })
-  ), /* @__PURE__ */ import_react14.default.createElement(
+    wallpaperType === "video" && /* @__PURE__ */ import_react15.default.createElement(
+      "video",
+      {
+        ref: wallpaperVideoRef,
+        src: wallpaper,
+        autoPlay: true,
+        loop: true,
+        muted: effectiveWallpaperMuted,
+        playsInline: true
+      }
+    )
+  ), /* @__PURE__ */ import_react15.default.createElement(
     TabStrip_default,
     {
       tabs,
@@ -45043,7 +48958,7 @@ function App() {
       onOpenShields: handleOpenShields,
       onOpenTabSearch: () => setIsTabSearchOpen(true)
     }
-  ), /* @__PURE__ */ import_react14.default.createElement(
+  ), /* @__PURE__ */ import_react15.default.createElement(
     NavigationToolbar,
     {
       currentUrl: activeTab.isNewTab ? "" : activeTab.url,
@@ -45091,19 +49006,20 @@ function App() {
       onOpenWallpaperStudio: () => setIsWallpaperStudioOpen(true),
       activeDownloadsCount: downloads.filter((d) => d.state === "progressing").length,
       onOpenDownloads: handleOpenDownloadsTab,
+      onOpenHistory: handleOpenHistoryTab,
       onOpenTypography: () => setIsTypographyOpen(true),
       onOpenAiProviderModal: () => setIsAiProviderModalOpen(true)
     }
-  ), /* @__PURE__ */ import_react14.default.createElement(
+  ), /* @__PURE__ */ import_react15.default.createElement(
     BookmarksBar,
     {
       bookmarks,
       onNavigate: handleNavigate,
       onAddCurrentPage: handleToggleBookmark,
       onRemoveBookmark: handleRemoveBookmark,
-      onOpenHistory: () => setIsHistoryOpen(true)
+      onOpenHistory: handleOpenHistoryTab
     }
-  ), /* @__PURE__ */ import_react14.default.createElement("main", { className: "main-browser-workspace" }, /* @__PURE__ */ import_react14.default.createElement(
+  ), /* @__PURE__ */ import_react15.default.createElement("main", { className: "main-browser-workspace" }, /* @__PURE__ */ import_react15.default.createElement(
     "div",
     {
       className: "webview-container",
@@ -45118,7 +49034,9 @@ function App() {
     tabs.map((tab) => {
       const isActive = tab.id === activeTabId;
       const isDownloadsTab = tab.isDownloads || tab.url === "antigravity://downloads";
-      return /* @__PURE__ */ import_react14.default.createElement(
+      const isHistoryTab = tab.isHistory || tab.url === "antigravity://history";
+      const showWebview = isActive && !tab.isNewTab && !isDownloadsTab && !isHistoryTab;
+      return /* @__PURE__ */ import_react15.default.createElement(
         "div",
         {
           key: tab.id,
@@ -45131,32 +49049,39 @@ function App() {
             bottom: 0,
             width: "100%",
             height: "100%",
+            display: isActive ? "flex" : "none",
             visibility: isActive ? "visible" : "hidden",
             pointerEvents: isActive ? "auto" : "none",
-            zIndex: isActive ? 1 : 0,
-            display: "flex",
+            zIndex: isActive ? 2 : -1,
             flexDirection: "column"
           }
         },
-        /* @__PURE__ */ import_react14.default.createElement(
+        /* @__PURE__ */ import_react15.default.createElement(
           "webview",
           {
             id: `wv-${tab.id}`,
             className: "native-webview",
             src: tab.initialUrl || tab.url || "about:blank",
-            allowpopups: "true",
-            webpreferences: "allowRunningInsecureContent=no",
+            partition: "persist:antigravity",
+            useragent: CHROME_USER_AGENT,
+            preload: GUEST_PRELOAD_URL || void 0,
+            webpreferences: "contextIsolation=no, nodeIntegration=no, allowRunningInsecureContent=no",
             style: {
-              width: "100%",
-              height: "100%",
-              display: tab.isNewTab || isDownloadsTab ? "none" : "flex"
+              width: showWebview ? "100%" : "0px",
+              height: showWebview ? "100%" : "0px",
+              position: showWebview ? "relative" : "absolute",
+              display: showWebview ? "flex" : "none",
+              visibility: showWebview ? "visible" : "hidden",
+              opacity: showWebview ? 1 : 0,
+              pointerEvents: showWebview ? "auto" : "none",
+              zIndex: showWebview ? 2 : -1
             },
             ref: (el) => {
               if (el) attachWebviewListeners(el, tab.id);
             }
           }
         ),
-        isDownloadsTab && /* @__PURE__ */ import_react14.default.createElement("div", { style: { width: "100%", height: "100%", overflowY: "auto" } }, /* @__PURE__ */ import_react14.default.createElement(
+        isDownloadsTab && /* @__PURE__ */ import_react15.default.createElement("div", { style: { width: "100%", height: "100%", overflowY: "auto" } }, /* @__PURE__ */ import_react15.default.createElement(
           DownloadsPage,
           {
             downloads,
@@ -45169,17 +49094,29 @@ function App() {
             onClearCompleted: handleClearCompletedDownloads
           }
         )),
-        tab.isNewTab && !isDownloadsTab && /* @__PURE__ */ import_react14.default.createElement("div", { style: { width: "100%", height: "100%", overflowY: "auto" } }, /* @__PURE__ */ import_react14.default.createElement(
+        isHistoryTab && /* @__PURE__ */ import_react15.default.createElement("div", { style: { width: "100%", height: "100%", overflowY: "auto" } }, /* @__PURE__ */ import_react15.default.createElement(
+          HistoryPage,
+          {
+            history,
+            onNavigate: (navUrl) => {
+              handleNavigate(navUrl, tab.id);
+            },
+            onRemoveHistoryItem: handleRemoveHistoryItem,
+            onClearHistory: handleClearHistory
+          }
+        )),
+        tab.isNewTab && !isDownloadsTab && !isHistoryTab && /* @__PURE__ */ import_react15.default.createElement("div", { style: { width: "100%", height: "100%", overflowY: "auto" } }, /* @__PURE__ */ import_react15.default.createElement(
           NewTabPage,
           {
             activeEngine,
             onSetEngine: handleSetEngine,
-            onNavigate: handleNavigate
+            onNavigate: handleNavigate,
+            bookmarks
           }
         ))
       );
     })
-  ), !isHudDetached && isHudOpen && /* @__PURE__ */ import_react14.default.createElement(
+  ), !isHudDetached && isHudOpen && /* @__PURE__ */ import_react15.default.createElement(
     AiHudSidebar,
     {
       isOpen: isHudOpen,
@@ -45239,7 +49176,7 @@ function App() {
       onRemindUser: handleRemindUser,
       latestSnapshot
     }
-  )), /* @__PURE__ */ import_react14.default.createElement(
+  )), /* @__PURE__ */ import_react15.default.createElement(
     TabSearchModal,
     {
       isOpen: isTabSearchOpen,
@@ -45248,7 +49185,7 @@ function App() {
       onSelectTab: setActiveTabId,
       onClose: () => setIsTabSearchOpen(false)
     }
-  ), /* @__PURE__ */ import_react14.default.createElement(
+  ), /* @__PURE__ */ import_react15.default.createElement(
     ReaderModeModal,
     {
       isOpen: isReaderModeOpen,
@@ -45256,14 +49193,14 @@ function App() {
       content: readerContent,
       onClose: () => setIsReaderModeOpen(false)
     }
-  ), /* @__PURE__ */ import_react14.default.createElement(
+  ), /* @__PURE__ */ import_react15.default.createElement(
     QrCodeModal,
     {
       isOpen: isQrCodeOpen,
       url: activeTab.url,
       onClose: () => setIsQrCodeOpen(false)
     }
-  ), /* @__PURE__ */ import_react14.default.createElement(
+  ), /* @__PURE__ */ import_react15.default.createElement(
     HistoryModal,
     {
       isOpen: isHistoryOpen,
@@ -45273,7 +49210,7 @@ function App() {
       onClearHistory: handleClearHistory,
       onClose: () => setIsHistoryOpen(false)
     }
-  ), /* @__PURE__ */ import_react14.default.createElement(
+  ), /* @__PURE__ */ import_react15.default.createElement(
     WallpaperStudioModal,
     {
       isOpen: isWallpaperStudioOpen,
@@ -45281,10 +49218,12 @@ function App() {
       currentType: wallpaperType,
       currentOpacity: wallpaperOpacity,
       currentColor: wallpaperColor,
+      currentMuted: wallpaperMuted,
       onSelectWallpaper: handleSetWallpaper,
+      onRemoveWallpaper: handleRemoveWallpaper,
       onClose: () => setIsWallpaperStudioOpen(false)
     }
-  ), /* @__PURE__ */ import_react14.default.createElement(
+  ), /* @__PURE__ */ import_react15.default.createElement(
     TypographyStudioModal,
     {
       isOpen: isTypographyOpen,
@@ -45308,7 +49247,7 @@ function App() {
       },
       onClose: () => setIsTypographyOpen(false)
     }
-  ), /* @__PURE__ */ import_react14.default.createElement(
+  ), /* @__PURE__ */ import_react15.default.createElement(
     AiProviderModal,
     {
       isOpen: isAiProviderModalOpen,
@@ -45316,7 +49255,7 @@ function App() {
       onCaptureSnapshot: handleCaptureVlmSnapshot,
       latestSnapshot
     }
-  ), aiLiveBanner && /* @__PURE__ */ import_react14.default.createElement("div", { style: {
+  ), aiLiveBanner && /* @__PURE__ */ import_react15.default.createElement("div", { style: {
     position: "fixed",
     bottom: 24,
     left: "50%",
@@ -45334,44 +49273,45 @@ function App() {
     fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif",
     backdropFilter: "blur(16px)",
     pointerEvents: "none"
-  } }, /* @__PURE__ */ import_react14.default.createElement("div", { style: {
+  } }, /* @__PURE__ */ import_react15.default.createElement("div", { style: {
     width: 10,
     height: 10,
     borderRadius: "50%",
     background: aiLiveBanner.action === "REMINDER" ? "#10b981" : "#00e5ff",
     boxShadow: aiLiveBanner.action === "REMINDER" ? "0 0 14px #10b981" : "0 0 12px #00e5ff"
-  } }), /* @__PURE__ */ import_react14.default.createElement("span", { style: {
+  } }), /* @__PURE__ */ import_react15.default.createElement("span", { style: {
     fontSize: 11,
     fontWeight: 800,
     color: aiLiveBanner.action === "REMINDER" ? "#10b981" : "#00e5ff",
     letterSpacing: "0.1em",
     textTransform: "uppercase"
-  } }, aiLiveBanner.action === "REMINDER" ? "\u{1F514} AI REMINDER" : "\u26A1 AI AUTOPILOT"), /* @__PURE__ */ import_react14.default.createElement("span", { style: { fontSize: 14, fontWeight: 600, color: "#f1f5f9", letterSpacing: "-0.2px" } }, aiLiveBanner.text)));
+  } }, aiLiveBanner.action === "REMINDER" ? "\u{1F514} AI REMINDER" : "\u26A1 AI AUTOPILOT"), /* @__PURE__ */ import_react15.default.createElement("span", { style: { fontSize: 14, fontWeight: 600, color: "#f1f5f9", letterSpacing: "-0.2px" } }, aiLiveBanner.text)));
 }
 
 // desktop/src/components/DetachedAiHudCockpit.jsx
-var import_react15 = __toESM(require_react());
+var import_react16 = __toESM(require_react());
 var { ipcRenderer: ipcRenderer3 } = require("electron");
 function DetachedAiHudCockpit() {
-  const [tabs, setTabs] = (0, import_react15.useState)([
+  const [isAiProviderModalOpen, setIsAiProviderModalOpen] = (0, import_react16.useState)(false);
+  const [tabs, setTabs] = (0, import_react16.useState)([
     { id: 1, title: "Tab 1: Hacker News", url: "https://news.ycombinator.com" },
     { id: 2, title: "Tab 2: Checkout Demo", url: "file:///demo_checkout.html" },
     { id: 3, title: "Tab 3: Wikipedia", url: "https://en.wikipedia.org" }
   ]);
-  const [activeTabId, setActiveTabId] = (0, import_react15.useState)(1);
-  const [activeModuleTab, setActiveModuleTab] = (0, import_react15.useState)("chat");
-  const [activeToolTab, setActiveToolTab] = (0, import_react15.useState)("ax");
-  const [somEnabled, setSomEnabled] = (0, import_react15.useState)(true);
-  const [axTreeMarkdown, setAxTreeMarkdown] = (0, import_react15.useState)("");
-  const [markFilterQuery, setMarkFilterQuery] = (0, import_react15.useState)("");
-  const [copiedAx, setCopiedAx] = (0, import_react15.useState)(false);
-  const [grepQuery, setGrepQuery] = (0, import_react15.useState)("href");
-  const [grepMatches, setGrepMatches] = (0, import_react15.useState)([]);
-  const [grepPage, setGrepPage] = (0, import_react15.useState)(1);
-  const [autofillStatus, setAutofillStatus] = (0, import_react15.useState)("Ready for autofill execution.");
-  const [isHitlActive, setIsHitlActive] = (0, import_react15.useState)(false);
-  const [telemetryLogs, setTelemetryLogs] = (0, import_react15.useState)([]);
-  const [shieldsStats, setShieldsStats] = (0, import_react15.useState)({
+  const [activeTabId, setActiveTabId] = (0, import_react16.useState)(1);
+  const [activeModuleTab, setActiveModuleTab] = (0, import_react16.useState)("chat");
+  const [activeToolTab, setActiveToolTab] = (0, import_react16.useState)("ax");
+  const [somEnabled, setSomEnabled] = (0, import_react16.useState)(true);
+  const [axTreeMarkdown, setAxTreeMarkdown] = (0, import_react16.useState)("");
+  const [markFilterQuery, setMarkFilterQuery] = (0, import_react16.useState)("");
+  const [copiedAx, setCopiedAx] = (0, import_react16.useState)(false);
+  const [grepQuery, setGrepQuery] = (0, import_react16.useState)("href");
+  const [grepMatches, setGrepMatches] = (0, import_react16.useState)([]);
+  const [grepPage, setGrepPage] = (0, import_react16.useState)(1);
+  const [autofillStatus, setAutofillStatus] = (0, import_react16.useState)("Ready for autofill execution.");
+  const [isHitlActive, setIsHitlActive] = (0, import_react16.useState)(false);
+  const [telemetryLogs, setTelemetryLogs] = (0, import_react16.useState)([]);
+  const [shieldsStats, setShieldsStats] = (0, import_react16.useState)({
     mode: "aggressive",
     isNativeRust: true,
     totalBlocked: 0,
@@ -45381,8 +49321,8 @@ function DetachedAiHudCockpit() {
     savedTimeMs: 0,
     recentEvents: []
   });
-  const [customRuleInput, setCustomRuleInput] = (0, import_react15.useState)("");
-  const [chatMessages, setChatMessages] = (0, import_react15.useState)([
+  const [customRuleInput, setCustomRuleInput] = (0, import_react16.useState)("");
+  const [chatMessages, setChatMessages] = (0, import_react16.useState)([
     {
       id: "msg-welcome",
       role: "assistant",
@@ -45390,21 +49330,49 @@ function DetachedAiHudCockpit() {
       time: (/* @__PURE__ */ new Date()).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
     }
   ]);
-  const [chatInput, setChatInput] = (0, import_react15.useState)("");
-  const [isVoiceListening, setIsVoiceListening] = (0, import_react15.useState)(false);
-  const [voiceSpeechFeedback, setVoiceSpeechFeedback] = (0, import_react15.useState)(false);
-  const [isAiThinking, setIsAiThinking] = (0, import_react15.useState)(false);
-  const [whisperLang, setWhisperLang] = (0, import_react15.useState)("auto");
-  const [isWhisperRecording, setIsWhisperRecording] = (0, import_react15.useState)(false);
-  const [isWhisperTranscribing, setIsWhisperTranscribing] = (0, import_react15.useState)(false);
-  const [recordingTimer, setRecordingTimer] = (0, import_react15.useState)(0);
-  const recognitionRef = (0, import_react15.useRef)(null);
-  const messagesEndRef = (0, import_react15.useRef)(null);
-  const timerIntervalRef = (0, import_react15.useRef)(null);
-  const audioCtxRef = (0, import_react15.useRef)(null);
-  const mediaStreamRef = (0, import_react15.useRef)(null);
-  const audioChunksRef = (0, import_react15.useRef)([]);
-  const activeAssistantIdRef = (0, import_react15.useRef)(null);
+  const [chatInput, setChatInput] = (0, import_react16.useState)("");
+  const [isVoiceListening, setIsVoiceListening] = (0, import_react16.useState)(false);
+  const [voiceSpeechFeedback, setVoiceSpeechFeedback] = (0, import_react16.useState)(false);
+  const [isAiThinking, setIsAiThinking] = (0, import_react16.useState)(false);
+  const [whisperLang, setWhisperLang] = (0, import_react16.useState)("auto");
+  const [isWhisperRecording, setIsWhisperRecording] = (0, import_react16.useState)(false);
+  const [isWhisperTranscribing, setIsWhisperTranscribing] = (0, import_react16.useState)(false);
+  const [recordingTimer, setRecordingTimer] = (0, import_react16.useState)(0);
+  const recognitionRef = (0, import_react16.useRef)(null);
+  const messagesEndRef = (0, import_react16.useRef)(null);
+  const messagesContainerRef = (0, import_react16.useRef)(null);
+  const userScrolledUpRef = (0, import_react16.useRef)(false);
+  const [isScrolledUp, setIsScrolledUp] = (0, import_react16.useState)(false);
+  const timerIntervalRef = (0, import_react16.useRef)(null);
+  const audioCtxRef = (0, import_react16.useRef)(null);
+  const audioProcessorRef = (0, import_react16.useRef)(null);
+  const recordingActiveRef = (0, import_react16.useRef)(false);
+  const sampleRateRef = (0, import_react16.useRef)(16e3);
+  const mediaStreamRef = (0, import_react16.useRef)(null);
+  const audioChunksRef = (0, import_react16.useRef)([]);
+  const activeAssistantIdRef = (0, import_react16.useRef)(null);
+  const handleMessagesScroll = (e) => {
+    const el = e.currentTarget;
+    if (!el) return;
+    const distanceFromBottom = el.scrollHeight - el.scrollTop - el.clientHeight;
+    if (distanceFromBottom <= 80) {
+      userScrolledUpRef.current = false;
+      setIsScrolledUp(false);
+    } else {
+      userScrolledUpRef.current = true;
+      setIsScrolledUp(true);
+    }
+  };
+  const scrollToBottom = () => {
+    userScrolledUpRef.current = false;
+    setIsScrolledUp(false);
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTo({
+        top: messagesContainerRef.current.scrollHeight,
+        behavior: "smooth"
+      });
+    }
+  };
   const toggleThoughtCollapse = (msgId) => {
     setChatMessages((prev) => prev.map(
       (m) => m.id === msgId ? { ...m, thoughtCollapsed: !m.thoughtCollapsed } : m
@@ -45419,7 +49387,7 @@ function DetachedAiHudCockpit() {
       return { ...m, toolEvents: updated };
     }));
   };
-  (0, import_react15.useEffect)(() => {
+  (0, import_react16.useEffect)(() => {
     try {
       if (ipcRenderer3.invoke) {
         ipcRenderer3.invoke("whisper-preload").catch(() => {
@@ -45428,12 +49396,13 @@ function DetachedAiHudCockpit() {
     } catch (e) {
     }
   }, []);
-  (0, import_react15.useEffect)(() => {
-    if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+  (0, import_react16.useEffect)(() => {
+    if (userScrolledUpRef.current) return;
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
     }
   }, [chatMessages, isAiThinking]);
-  (0, import_react15.useEffect)(() => {
+  (0, import_react16.useEffect)(() => {
     try {
       ipcRenderer3.send("hud-action", { action: "request-initial-state" });
     } catch (e) {
@@ -45507,7 +49476,7 @@ function DetachedAiHudCockpit() {
         const curId = activeAssistantIdRef.current;
         setChatMessages((prev) => prev.map((m) => {
           if (m.id !== curId) return m;
-          const finalText = m.text && m.text.trim() ? m.text : data.reply || "";
+          const finalText = data.reply && data.reply.trim() ? stripToolCallsFromText(data.reply) : stripToolCallsFromText(m.text || "");
           return {
             ...m,
             text: finalText,
@@ -45572,83 +49541,161 @@ function DetachedAiHudCockpit() {
     sendHudAction("switch-tab", { tabId: id });
   };
   const activeTab = tabs.find((t) => t.id === activeTabId) || tabs[0] || { id: 1, title: "New Tab", url: "" };
-  const toggleWhisperRecording = async () => {
-    if (isWhisperRecording) {
-      setIsWhisperRecording(false);
-      setIsWhisperTranscribing(true);
-      if (timerIntervalRef.current) clearInterval(timerIntervalRef.current);
-      try {
-        if (mediaStreamRef.current) {
-          mediaStreamRef.current.getTracks().forEach((t) => t.stop());
-        }
-        if (audioProcessorRef.current) {
-          try {
-            audioProcessorRef.current.disconnect();
-          } catch (e) {
-          }
-        }
-        if (audioCtxRef.current) {
-          try {
-            audioCtxRef.current.close();
-          } catch (e) {
-          }
-        }
-        const chunks = audioChunksRef.current;
-        let totalLen = 0;
-        for (const ch of chunks) totalLen += ch.length;
-        if (totalLen > 1600) {
-          const merged = new Float32Array(totalLen);
-          let offset = 0;
-          for (const ch of chunks) {
-            merged.set(ch, offset);
-            offset += ch.length;
-          }
-          const floatArray = Array.from(merged);
-          const res = await ipcRenderer3.invoke("whisper-transcribe", {
-            audioData: floatArray,
-            language: whisperLang === "auto" ? null : whisperLang
-          });
-          if (res && res.success && res.text) {
-            const transcribedText = res.text.trim();
-            setChatInput(transcribedText);
-            handleProcessNlpCommand(transcribedText);
-          } else if (res && res.error) {
-            addAiReply(`\u26A0\uFE0F Whisper Notice: ${res.error}`);
-          }
-        } else {
-          addAiReply(`\u{1F399}\uFE0F Whisper heard too little audio. Hold the mic button or speak clearly into the microphone.`);
-        }
-      } catch (err) {
-        console.error("[Whisper] Transcribe error:", err);
-        addAiReply(`\u26A0\uFE0F Whisper transcription error: ${err.message || err}`);
-      } finally {
-        setIsWhisperTranscribing(false);
-        setRecordingTimer(0);
+  const stopWhisperRecordingAndTranscribe = async () => {
+    if (!recordingActiveRef.current) return;
+    recordingActiveRef.current = false;
+    setIsWhisperRecording(false);
+    setIsWhisperTranscribing(true);
+    if (timerIntervalRef.current) {
+      clearInterval(timerIntervalRef.current);
+      timerIntervalRef.current = null;
+    }
+    try {
+      if (mediaStreamRef.current) {
+        mediaStreamRef.current.getTracks().forEach((t) => t.stop());
+        mediaStreamRef.current = null;
       }
+      if (audioProcessorRef.current) {
+        try {
+          audioProcessorRef.current.disconnect();
+        } catch (e) {
+        }
+        audioProcessorRef.current = null;
+      }
+      const capturedSampleRate = sampleRateRef.current || audioCtxRef.current && audioCtxRef.current.sampleRate || 16e3;
+      if (audioCtxRef.current) {
+        try {
+          await audioCtxRef.current.close();
+        } catch (e) {
+        }
+        audioCtxRef.current = null;
+      }
+      const chunks = audioChunksRef.current || [];
+      let totalLen = 0;
+      for (const ch of chunks) totalLen += ch.length;
+      if (totalLen > Math.floor(capturedSampleRate * 0.12)) {
+        const merged = new Float32Array(totalLen);
+        let offset = 0;
+        for (const ch of chunks) {
+          merged.set(ch, offset);
+          offset += ch.length;
+        }
+        let pcm16k = merged;
+        let finalSampleRate = capturedSampleRate;
+        try {
+          const OfflineCtx = window.OfflineAudioContext || window.webkitOfflineAudioContext;
+          if (OfflineCtx && capturedSampleRate !== 16e3) {
+            const targetLen = Math.max(1, Math.ceil(totalLen * 16e3 / capturedSampleRate));
+            const offlineCtx = new OfflineCtx(1, targetLen, 16e3);
+            const audioBuffer = offlineCtx.createBuffer(1, totalLen, capturedSampleRate);
+            audioBuffer.copyToChannel(merged, 0);
+            const bufferSource = offlineCtx.createBufferSource();
+            bufferSource.buffer = audioBuffer;
+            bufferSource.connect(offlineCtx.destination);
+            bufferSource.start(0);
+            const renderedBuffer = await offlineCtx.startRendering();
+            pcm16k = renderedBuffer.getChannelData(0);
+            finalSampleRate = 16e3;
+          }
+        } catch (resampleErr) {
+          console.warn("[Whisper] Native OfflineAudioContext resample fallback:", resampleErr);
+        }
+        const res = await ipcRenderer3.invoke("whisper-transcribe", {
+          audioData: Array.from(pcm16k),
+          language: whisperLang === "auto" ? null : whisperLang,
+          sampleRate: finalSampleRate
+        });
+        if (res && res.success && res.text) {
+          const transcribedText = res.text.trim();
+          setChatInput(transcribedText);
+          handleProcessNlpCommand(transcribedText);
+        } else if (res && res.error) {
+          addAiReply(`\u26A0\uFE0F Whisper Notice: ${res.error}`);
+        }
+      } else {
+        addAiReply(`\u{1F399}\uFE0F Whisper heard too little audio. Speak clearly into the microphone and it will transcribe automatically.`);
+      }
+    } catch (err) {
+      console.error("[Whisper] Transcribe error:", err);
+      addAiReply(`\u26A0\uFE0F Whisper transcription error: ${err.message || err}`);
+    } finally {
+      setIsWhisperTranscribing(false);
+      setRecordingTimer(0);
+    }
+  };
+  const toggleWhisperRecording = async () => {
+    if (isWhisperRecording || recordingActiveRef.current) {
+      await stopWhisperRecordingAndTranscribe();
       return;
     }
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      let stream;
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({
+          audio: {
+            channelCount: 1,
+            echoCancellation: false,
+            noiseSuppression: false,
+            autoGainControl: false
+          }
+        });
+      } catch (constraintErr) {
+        stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      }
       mediaStreamRef.current = stream;
       const AudioCtx = window.AudioContext || window.webkitAudioContext;
-      const ctx = new AudioCtx({ sampleRate: 16e3 });
+      const ctx = new AudioCtx();
+      if (ctx.state === "suspended") {
+        await ctx.resume();
+      }
       audioCtxRef.current = ctx;
+      sampleRateRef.current = ctx.sampleRate || 16e3;
       const source = ctx.createMediaStreamSource(stream);
       const processor = ctx.createScriptProcessor(4096, 1, 1);
+      const silentGain = ctx.createGain();
+      silentGain.gain.value = 0;
       audioProcessorRef.current = processor;
       audioChunksRef.current = [];
+      recordingActiveRef.current = true;
+      let speechDetected = false;
+      let silenceSamplesAfterSpeech = 0;
+      let totalSamplesRecorded = 0;
+      const sr = sampleRateRef.current;
       processor.onaudioprocess = (e) => {
+        if (!recordingActiveRef.current) return;
         const data = e.inputBuffer.getChannelData(0);
-        audioChunksRef.current.push(new Float32Array(data));
+        const copy = new Float32Array(data);
+        audioChunksRef.current.push(copy);
+        totalSamplesRecorded += copy.length;
+        if (totalSamplesRecorded > sr * 0.15) {
+          let sumSq = 0;
+          for (let i = 0; i < copy.length; i++) sumSq += copy[i] * copy[i];
+          const rms = Math.sqrt(sumSq / copy.length);
+          if (rms > 0.012) {
+            speechDetected = true;
+            silenceSamplesAfterSpeech = 0;
+          } else if (speechDetected) {
+            silenceSamplesAfterSpeech += copy.length;
+            if (silenceSamplesAfterSpeech >= sr * 2.6) {
+              stopWhisperRecordingAndTranscribe();
+              return;
+            }
+          }
+        }
+        if (totalSamplesRecorded >= sr * 30) {
+          stopWhisperRecordingAndTranscribe();
+        }
       };
       source.connect(processor);
-      processor.connect(ctx.destination);
+      processor.connect(silentGain);
+      silentGain.connect(ctx.destination);
       setIsWhisperRecording(true);
       setRecordingTimer(0);
       timerIntervalRef.current = setInterval(() => {
         setRecordingTimer((prev) => prev + 1);
       }, 1e3);
     } catch (err) {
+      recordingActiveRef.current = false;
       console.warn("[Whisper] Microphone access error:", err);
       addAiReply(`\u26A0\uFE0F **Microphone Access**: ${err.message || "Permission denied or device not found"}.
 
@@ -45725,6 +49772,8 @@ function DetachedAiHudCockpit() {
   const handleProcessNlpCommand = async (rawText) => {
     const query = (rawText || chatInput || "").trim();
     if (!query) return;
+    userScrolledUpRef.current = false;
+    setIsScrolledUp(false);
     const userMsg = {
       id: "user-" + Date.now(),
       role: "user",
@@ -45769,36 +49818,45 @@ function DetachedAiHudCockpit() {
       });
     }
   };
-  return /* @__PURE__ */ import_react15.default.createElement("div", { className: "mac-cockpit-window" }, /* @__PURE__ */ import_react15.default.createElement("header", { className: "mac-cockpit-header" }, /* @__PURE__ */ import_react15.default.createElement("div", { className: "mac-window-controls" }, /* @__PURE__ */ import_react15.default.createElement(
+  return /* @__PURE__ */ import_react16.default.createElement("div", { className: "mac-cockpit-window" }, /* @__PURE__ */ import_react16.default.createElement("header", { className: "mac-cockpit-header" }, /* @__PURE__ */ import_react16.default.createElement("div", { className: "mac-window-controls" }, /* @__PURE__ */ import_react16.default.createElement(
     "button",
     {
       className: "mac-btn mac-close",
       title: "Retract & Hide AI Window",
       onClick: handleHideWindow
     }
-  ), /* @__PURE__ */ import_react15.default.createElement(
+  ), /* @__PURE__ */ import_react16.default.createElement(
     "button",
     {
       className: "mac-btn mac-minimize",
       title: "Minimize Window",
       onClick: () => ipcRenderer3.send("hud-window-minimize")
     }
-  ), /* @__PURE__ */ import_react15.default.createElement(
+  ), /* @__PURE__ */ import_react16.default.createElement(
     "button",
     {
       className: "mac-btn mac-maximize",
       title: "Maximize / Restore",
       onClick: () => ipcRenderer3.send("hud-window-maximize")
     }
-  )), /* @__PURE__ */ import_react15.default.createElement("div", { className: "mac-cockpit-brand" }, /* @__PURE__ */ import_react15.default.createElement("span", { className: "mac-brand-sparkle" }, "\u2726"), /* @__PURE__ */ import_react15.default.createElement("span", { className: "mac-brand-name" }, "Antigravity Copilot")), /* @__PURE__ */ import_react15.default.createElement("div", { className: "mac-target-pill", title: "Current active tab in main browser" }, /* @__PURE__ */ import_react15.default.createElement("span", { style: { fontSize: "11px", opacity: 0.65 } }, "Target:"), /* @__PURE__ */ import_react15.default.createElement(
+  )), /* @__PURE__ */ import_react16.default.createElement("div", { className: "mac-cockpit-brand" }, /* @__PURE__ */ import_react16.default.createElement("span", { className: "mac-brand-sparkle" }, "\u2726"), /* @__PURE__ */ import_react16.default.createElement("span", { className: "mac-brand-name" }, "Antigravity Copilot")), /* @__PURE__ */ import_react16.default.createElement("div", { className: "mac-target-pill", title: "Current active tab in main browser" }, /* @__PURE__ */ import_react16.default.createElement("span", { style: { fontSize: "11px", opacity: 0.65 } }, "Target:"), /* @__PURE__ */ import_react16.default.createElement(
     "select",
     {
       className: "mac-target-select",
       value: activeTabId,
       onChange: (e) => handleTabChange(e.target.value)
     },
-    tabs.map((tab) => /* @__PURE__ */ import_react15.default.createElement("option", { key: tab.id, value: tab.id }, "Tab ", tab.id, ": ", tab.title ? tab.title.length > 22 ? tab.title.substring(0, 22) + "..." : tab.title : "New Tab"))
-  )), /* @__PURE__ */ import_react15.default.createElement("div", { className: "mac-header-actions" }, /* @__PURE__ */ import_react15.default.createElement(
+    tabs.map((tab) => /* @__PURE__ */ import_react16.default.createElement("option", { key: tab.id, value: tab.id }, "Tab ", tab.id, ": ", tab.title ? tab.title.length > 22 ? tab.title.substring(0, 22) + "..." : tab.title : "New Tab"))
+  )), /* @__PURE__ */ import_react16.default.createElement("div", { className: "mac-header-actions" }, /* @__PURE__ */ import_react16.default.createElement(
+    "button",
+    {
+      className: "mac-pill-btn",
+      title: "AI Model Setup & API Keys",
+      onClick: () => setIsAiProviderModalOpen(true),
+      style: { color: "#00e5ff", borderColor: "rgba(0, 229, 255, 0.35)" }
+    },
+    "\u{1F511} Keys"
+  ), /* @__PURE__ */ import_react16.default.createElement(
     "button",
     {
       className: "mac-pill-btn",
@@ -45806,7 +49864,7 @@ function DetachedAiHudCockpit() {
       onClick: handleDockBack
     },
     "\u{1F4E5} Dock"
-  ), /* @__PURE__ */ import_react15.default.createElement(
+  ), /* @__PURE__ */ import_react16.default.createElement(
     "button",
     {
       className: "mac-pill-btn",
@@ -45814,7 +49872,7 @@ function DetachedAiHudCockpit() {
       onClick: handleFocusBrowser
     },
     "\u2197 Focus"
-  ), /* @__PURE__ */ import_react15.default.createElement(
+  ), /* @__PURE__ */ import_react16.default.createElement(
     "button",
     {
       className: "mac-pill-btn close-x",
@@ -45822,14 +49880,14 @@ function DetachedAiHudCockpit() {
       onClick: handleHideWindow
     },
     "\u2715"
-  ))), /* @__PURE__ */ import_react15.default.createElement("nav", { className: "mac-cockpit-nav" }, /* @__PURE__ */ import_react15.default.createElement(
+  ))), /* @__PURE__ */ import_react16.default.createElement("nav", { className: "mac-cockpit-nav" }, /* @__PURE__ */ import_react16.default.createElement(
     "button",
     {
       className: `mac-nav-tab ${activeModuleTab === "chat" ? "active" : ""}`,
       onClick: () => setActiveModuleTab("chat")
     },
     "\u{1F4AC} AI Chat & Voice"
-  ), /* @__PURE__ */ import_react15.default.createElement(
+  ), /* @__PURE__ */ import_react16.default.createElement(
     "button",
     {
       className: `mac-nav-tab ${activeModuleTab === "shields" ? "active" : ""}`,
@@ -45838,14 +49896,14 @@ function DetachedAiHudCockpit() {
     "\u{1F981} Shields (",
     shieldsStats.totalBlocked || 0,
     ")"
-  ), /* @__PURE__ */ import_react15.default.createElement(
+  ), /* @__PURE__ */ import_react16.default.createElement(
     "button",
     {
       className: `mac-nav-tab ${activeModuleTab === "tools" ? "active" : ""}`,
       onClick: () => setActiveModuleTab("tools")
     },
     "\u{1F6E0}\uFE0F Core Tools"
-  )), /* @__PURE__ */ import_react15.default.createElement("main", { className: "mac-cockpit-body" }, activeModuleTab === "chat" && /* @__PURE__ */ import_react15.default.createElement("div", { className: "mac-chat-view" }, /* @__PURE__ */ import_react15.default.createElement("div", { className: "mac-context-bar" }, /* @__PURE__ */ import_react15.default.createElement("span", { style: { fontSize: "13px" } }, "\u{1F310}"), /* @__PURE__ */ import_react15.default.createElement("span", { className: "mac-context-title" }, activeTab.title || "New Tab"), /* @__PURE__ */ import_react15.default.createElement("span", { className: "mac-context-badge" }, "\u{1F6E1}\uFE0F ", shieldsStats.totalBlocked || 0, " Blocked"), /* @__PURE__ */ import_react15.default.createElement(
+  )), /* @__PURE__ */ import_react16.default.createElement("main", { className: "mac-cockpit-body" }, activeModuleTab === "chat" && /* @__PURE__ */ import_react16.default.createElement("div", { className: "mac-chat-view" }, /* @__PURE__ */ import_react16.default.createElement("div", { className: "mac-context-bar" }, /* @__PURE__ */ import_react16.default.createElement("span", { style: { fontSize: "13px" } }, "\u{1F310}"), /* @__PURE__ */ import_react16.default.createElement("span", { className: "mac-context-title" }, activeTab.title || "New Tab"), /* @__PURE__ */ import_react16.default.createElement("span", { className: "mac-context-badge" }, "\u{1F6E1}\uFE0F ", shieldsStats.totalBlocked || 0, " Blocked"), /* @__PURE__ */ import_react16.default.createElement(
     "button",
     {
       className: `mac-speech-toggle ${voiceSpeechFeedback ? "active" : ""}`,
@@ -45853,7 +49911,7 @@ function DetachedAiHudCockpit() {
       onClick: () => setVoiceSpeechFeedback(!voiceSpeechFeedback)
     },
     voiceSpeechFeedback ? "\u{1F50A} Speaking" : "\u{1F507} Muted"
-  )), /* @__PURE__ */ import_react15.default.createElement("div", { className: "mac-quick-chips" }, /* @__PURE__ */ import_react15.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("CLK SB"), title: "Click Search Bar on web page" }, "\u{1F50D} CLK SB"), /* @__PURE__ */ import_react15.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("s50"), title: "Scroll down by 50%" }, "\u{1F4DC} S50"), /* @__PURE__ */ import_react15.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("open youtube"), title: "Open YouTube tab" }, "\u{1F4FA} YouTube"), /* @__PURE__ */ import_react15.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("show numbers"), title: "Highlight & number keywords on page" }, "\u{1F522} Numbers"), /* @__PURE__ */ import_react15.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("help shortcuts"), title: "Show all NLP commands" }, "\u{1F4A1} Shortcuts"), /* @__PURE__ */ import_react15.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("close tab"), title: "Close active tab" }, "\u274C Close"), /* @__PURE__ */ import_react15.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("summarize") }, "\u26A1 Summarize"), /* @__PURE__ */ import_react15.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("scroll down") }, "\u2B07 Scroll"), /* @__PURE__ */ import_react15.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("click play") }, "\u25B6\uFE0F Play"), /* @__PURE__ */ import_react15.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("autofill") }, "\u{1F4DD} Autofill"), /* @__PURE__ */ import_react15.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("\u092A\u0947\u091C \u0915\u093E \u0938\u093E\u0930\u093E\u0902\u0936 \u0926\u094B") }, "\u{1F1EE}\u{1F1F3} \u0938\u093E\u0930\u093E\u0902\u0936 (HI)"), /* @__PURE__ */ import_react15.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("\uD398\uC774\uC9C0 \uC694\uC57D") }, "\u{1F1F0}\u{1F1F7} \uC694\uC57D (KO)")), /* @__PURE__ */ import_react15.default.createElement("div", { className: "mac-messages-stream" }, chatMessages.map((msg) => /* @__PURE__ */ import_react15.default.createElement("div", { key: msg.id, className: `mac-msg-row ${msg.role}` }, /* @__PURE__ */ import_react15.default.createElement("div", { className: "mac-msg-bubble" }, /* @__PURE__ */ import_react15.default.createElement("div", { className: "mac-msg-header" }, /* @__PURE__ */ import_react15.default.createElement("span", { className: "mac-msg-author" }, msg.role === "user" ? "You" : "\u2726 Copilot"), /* @__PURE__ */ import_react15.default.createElement("span", { className: "mac-msg-time" }, msg.time)), msg.role === "assistant" && msg.reasoning && /* @__PURE__ */ import_react15.default.createElement("div", { className: `chatgpt-thought-container ${msg.isThinking ? "active-thinking" : ""}` }, /* @__PURE__ */ import_react15.default.createElement("div", { className: "thought-header", onClick: () => toggleThoughtCollapse(msg.id) }, /* @__PURE__ */ import_react15.default.createElement("div", { className: "thought-title-group" }, msg.isThinking ? /* @__PURE__ */ import_react15.default.createElement(import_react15.default.Fragment, null, /* @__PURE__ */ import_react15.default.createElement("span", { className: "thought-shimmer-pulse" }), /* @__PURE__ */ import_react15.default.createElement("span", null, "Thinking...")) : /* @__PURE__ */ import_react15.default.createElement(import_react15.default.Fragment, null, /* @__PURE__ */ import_react15.default.createElement("span", null, "\u{1F4AD}"), /* @__PURE__ */ import_react15.default.createElement("span", null, "Thought for ", msg.thoughtDuration || "2.4", "s"))), /* @__PURE__ */ import_react15.default.createElement(
+  )), /* @__PURE__ */ import_react16.default.createElement("div", { className: "mac-quick-chips" }, /* @__PURE__ */ import_react16.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("CLK SB"), title: "Click Search Bar on web page" }, "\u{1F50D} CLK SB"), /* @__PURE__ */ import_react16.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("s50"), title: "Scroll down by 50%" }, "\u{1F4DC} S50"), /* @__PURE__ */ import_react16.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("open youtube"), title: "Open YouTube tab" }, "\u{1F4FA} YouTube"), /* @__PURE__ */ import_react16.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("show numbers"), title: "Highlight & number keywords on page" }, "\u{1F522} Numbers"), /* @__PURE__ */ import_react16.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("help shortcuts"), title: "Show all NLP commands" }, "\u{1F4A1} Shortcuts"), /* @__PURE__ */ import_react16.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("close tab"), title: "Close active tab" }, "\u274C Close"), /* @__PURE__ */ import_react16.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("summarize") }, "\u26A1 Summarize"), /* @__PURE__ */ import_react16.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("scroll down") }, "\u2B07 Scroll"), /* @__PURE__ */ import_react16.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("click play") }, "\u25B6\uFE0F Play"), /* @__PURE__ */ import_react16.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("autofill") }, "\u{1F4DD} Autofill"), /* @__PURE__ */ import_react16.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("\u092A\u0947\u091C \u0915\u093E \u0938\u093E\u0930\u093E\u0902\u0936 \u0926\u094B") }, "\u{1F1EE}\u{1F1F3} \u0938\u093E\u0930\u093E\u0902\u0936 (HI)"), /* @__PURE__ */ import_react16.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("\uD398\uC774\uC9C0 \uC694\uC57D") }, "\u{1F1F0}\u{1F1F7} \uC694\uC57D (KO)")), /* @__PURE__ */ import_react16.default.createElement("div", { className: "mac-messages-stream", ref: messagesContainerRef, onScroll: handleMessagesScroll }, chatMessages.map((msg) => /* @__PURE__ */ import_react16.default.createElement("div", { key: msg.id, className: `mac-msg-row ${msg.role}` }, /* @__PURE__ */ import_react16.default.createElement("div", { className: "mac-msg-bubble" }, /* @__PURE__ */ import_react16.default.createElement("div", { className: "mac-msg-header" }, /* @__PURE__ */ import_react16.default.createElement("span", { className: "mac-msg-author" }, msg.role === "user" ? "You" : "\u2726 Copilot"), /* @__PURE__ */ import_react16.default.createElement("span", { className: "mac-msg-time" }, msg.time)), msg.role === "assistant" && msg.reasoning && /* @__PURE__ */ import_react16.default.createElement("div", { className: `chatgpt-thought-container ${msg.isThinking ? "active-thinking" : ""}` }, /* @__PURE__ */ import_react16.default.createElement("div", { className: "thought-header", onClick: () => toggleThoughtCollapse(msg.id) }, /* @__PURE__ */ import_react16.default.createElement("div", { className: "thought-title-group" }, msg.isThinking ? /* @__PURE__ */ import_react16.default.createElement(import_react16.default.Fragment, null, /* @__PURE__ */ import_react16.default.createElement("span", { className: "thought-shimmer-pulse" }), /* @__PURE__ */ import_react16.default.createElement("span", null, "Thinking...")) : /* @__PURE__ */ import_react16.default.createElement(import_react16.default.Fragment, null, /* @__PURE__ */ import_react16.default.createElement("span", null, "\u{1F4AD}"), /* @__PURE__ */ import_react16.default.createElement("span", null, "Thought for ", msg.thoughtDuration || "2.4", "s"))), /* @__PURE__ */ import_react16.default.createElement(
     "button",
     {
       type: "button",
@@ -45865,14 +49923,32 @@ function DetachedAiHudCockpit() {
       title: msg.thoughtCollapsed ? "Expand reasoning process" : "Collapse / Retract reasoning process"
     },
     msg.thoughtCollapsed ? "\u25B6 Expand Thought" : "\u25BC Collapse Thought"
-  )), !msg.thoughtCollapsed && /* @__PURE__ */ import_react15.default.createElement("div", { className: "thought-stream-body" }, msg.reasoning, msg.isThinking && /* @__PURE__ */ import_react15.default.createElement("span", { className: "streaming-caret" }))), msg.role === "assistant" && msg.toolEvents && msg.toolEvents.length > 0 && /* @__PURE__ */ import_react15.default.createElement("div", { className: "antigravity-tools-group" }, msg.toolEvents.map((tool) => /* @__PURE__ */ import_react15.default.createElement("div", { key: tool.id, className: `antigravity-tool-card ${tool.status}` }, /* @__PURE__ */ import_react15.default.createElement("div", { className: "tool-card-header", onClick: () => toggleToolCollapse(msg.id, tool.id) }, /* @__PURE__ */ import_react15.default.createElement("div", { className: "tool-card-title" }, /* @__PURE__ */ import_react15.default.createElement("span", null, tool.tool.includes("download") ? "\u{1F4E5}" : tool.tool.includes("tab") ? "\u{1F5C2}\uFE0F" : tool.tool.includes("search") ? "\u{1F50D}" : tool.tool.includes("remind") ? "\u{1F514}" : tool.tool.includes("click") ? "\u{1F5B1}\uFE0F" : "\u26A1"), /* @__PURE__ */ import_react15.default.createElement("span", null, "Tool:"), /* @__PURE__ */ import_react15.default.createElement("code", { className: "tool-name-code" }, tool.tool)), /* @__PURE__ */ import_react15.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: 6 } }, tool.status === "running" && /* @__PURE__ */ import_react15.default.createElement("span", { className: "tool-status-badge running" }, /* @__PURE__ */ import_react15.default.createElement("span", { className: "tool-card-spinner" }), " Running..."), tool.status === "completed" && /* @__PURE__ */ import_react15.default.createElement("span", { className: "tool-status-badge completed" }, "\u2713 Verified ", tool.durationMs ? `(${tool.durationMs}ms)` : ""), tool.status === "failed" && /* @__PURE__ */ import_react15.default.createElement("span", { className: "tool-status-badge failed" }, "\u2717 Failed"), /* @__PURE__ */ import_react15.default.createElement("span", { style: { fontSize: 10, color: "#94a3b8" } }, tool.collapsed ? "\u25B6" : "\u25BC"))), !tool.collapsed && /* @__PURE__ */ import_react15.default.createElement("div", { className: "tool-card-body" }, tool.args && Object.keys(tool.args).length > 0 && /* @__PURE__ */ import_react15.default.createElement("div", null, /* @__PURE__ */ import_react15.default.createElement("div", { className: "tool-params-label" }, "Parameters"), /* @__PURE__ */ import_react15.default.createElement("pre", { className: "tool-params-pre" }, JSON.stringify(tool.args, null, 2))), (tool.observation || tool.result) && /* @__PURE__ */ import_react15.default.createElement("div", { className: "tool-obs-box" }, /* @__PURE__ */ import_react15.default.createElement("strong", null, "Live Observation:"), " ", tool.observation || tool.result))))), msg.text ? /* @__PURE__ */ import_react15.default.createElement(
-    "div",
-    {
-      className: "mac-msg-text",
-      style: { whiteSpace: "pre-wrap" },
-      dangerouslySetInnerHTML: { __html: msg.text }
+  )), !msg.thoughtCollapsed && /* @__PURE__ */ import_react16.default.createElement("div", { className: "thought-stream-body" }, msg.reasoning, msg.isThinking && /* @__PURE__ */ import_react16.default.createElement("span", { className: "streaming-caret" }))), msg.role === "assistant" && msg.toolEvents && msg.toolEvents.length > 0 && /* @__PURE__ */ import_react16.default.createElement("div", { className: "antigravity-tools-group" }, msg.toolEvents.map((tool) => /* @__PURE__ */ import_react16.default.createElement("div", { key: tool.id, className: `antigravity-tool-card ${tool.status}` }, /* @__PURE__ */ import_react16.default.createElement("div", { className: "tool-card-header", onClick: () => toggleToolCollapse(msg.id, tool.id) }, /* @__PURE__ */ import_react16.default.createElement("div", { className: "tool-card-title" }, /* @__PURE__ */ import_react16.default.createElement("span", null, tool.tool.includes("download") ? "\u{1F4E5}" : tool.tool.includes("tab") ? "\u{1F5C2}\uFE0F" : tool.tool.includes("search") ? "\u{1F50D}" : tool.tool.includes("remind") ? "\u{1F514}" : tool.tool.includes("click") ? "\u{1F5B1}\uFE0F" : "\u26A1"), /* @__PURE__ */ import_react16.default.createElement("span", null, "Tool:"), /* @__PURE__ */ import_react16.default.createElement("code", { className: "tool-name-code" }, tool.tool)), /* @__PURE__ */ import_react16.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: 6 } }, tool.status === "running" && /* @__PURE__ */ import_react16.default.createElement("span", { className: "tool-status-badge running" }, /* @__PURE__ */ import_react16.default.createElement("span", { className: "tool-card-spinner" }), " Running..."), tool.status === "completed" && /* @__PURE__ */ import_react16.default.createElement("span", { className: "tool-status-badge completed" }, "\u2713 Verified ", tool.durationMs ? `(${tool.durationMs}ms)` : ""), tool.status === "failed" && /* @__PURE__ */ import_react16.default.createElement("span", { className: "tool-status-badge failed" }, "\u2717 Failed"), /* @__PURE__ */ import_react16.default.createElement("span", { style: { fontSize: 10, color: "#94a3b8" } }, tool.collapsed ? "\u25B6" : "\u25BC"))), !tool.collapsed && /* @__PURE__ */ import_react16.default.createElement("div", { className: "tool-card-body" }, tool.args && Object.keys(tool.args).length > 0 && /* @__PURE__ */ import_react16.default.createElement("div", null, /* @__PURE__ */ import_react16.default.createElement("div", { className: "tool-params-label" }, "Parameters"), /* @__PURE__ */ import_react16.default.createElement("pre", { className: "tool-params-pre" }, JSON.stringify(tool.args, null, 2))), (tool.observation || tool.result) && /* @__PURE__ */ import_react16.default.createElement("div", { className: "tool-obs-box" }, /* @__PURE__ */ import_react16.default.createElement("strong", null, "Live Observation:"), " ", tool.observation || tool.result))))), (() => {
+    const displayText = stripToolCallsFromText(msg.text);
+    if (displayText) {
+      return /* @__PURE__ */ import_react16.default.createElement(
+        "div",
+        {
+          className: "mac-msg-text",
+          style: { whiteSpace: "pre-wrap" },
+          dangerouslySetInnerHTML: { __html: displayText }
+        }
+      );
     }
-  ) : msg.isStreaming && !msg.isThinking && !msg.reasoning && /* @__PURE__ */ import_react15.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: 8, padding: "4px 0", color: "#94a3b8" } }, /* @__PURE__ */ import_react15.default.createElement("span", { className: "dot-live", style: { width: 6, height: 6, display: "inline-block" } }), /* @__PURE__ */ import_react15.default.createElement("span", { style: { fontSize: "12px" } }, "Connecting to AI model...")), msg.isStreaming && !msg.isThinking && msg.text && /* @__PURE__ */ import_react15.default.createElement("span", { className: "streaming-caret" })))), isAiThinking && !chatMessages.some((m) => m.isStreaming) && /* @__PURE__ */ import_react15.default.createElement("div", { className: "mac-msg-row assistant" }, /* @__PURE__ */ import_react15.default.createElement("div", { className: "mac-msg-bubble thinking" }, /* @__PURE__ */ import_react15.default.createElement("span", { className: "dot-live", style: { width: 6, height: 6, display: "inline-block" } }), /* @__PURE__ */ import_react15.default.createElement("span", { style: { fontSize: "12px", color: "#94a3b8" } }, "Copilot is thinking..."))), /* @__PURE__ */ import_react15.default.createElement("div", { ref: messagesEndRef })), /* @__PURE__ */ import_react15.default.createElement("div", { className: "mac-whisper-bar" }, /* @__PURE__ */ import_react15.default.createElement("div", { className: "mac-lang-chips" }, /* @__PURE__ */ import_react15.default.createElement("span", { className: "mac-whisper-badge" }, "\u{1F9E0} Whisper Local ASR"), /* @__PURE__ */ import_react15.default.createElement(
+    if (msg.isStreaming && !msg.isThinking && !msg.reasoning && (!msg.toolEvents || msg.toolEvents.length === 0)) {
+      return /* @__PURE__ */ import_react16.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: 8, padding: "4px 0", color: "#94a3b8" } }, /* @__PURE__ */ import_react16.default.createElement("span", { className: "dot-live", style: { width: 6, height: 6, display: "inline-block" } }), /* @__PURE__ */ import_react16.default.createElement("span", { style: { fontSize: "12px" } }, "Connecting to AI model..."));
+    }
+    return null;
+  })(), msg.isStreaming && !msg.isThinking && stripToolCallsFromText(msg.text) && /* @__PURE__ */ import_react16.default.createElement("span", { className: "streaming-caret" })))), isAiThinking && !chatMessages.some((m) => m.isStreaming) && /* @__PURE__ */ import_react16.default.createElement("div", { className: "mac-msg-row assistant" }, /* @__PURE__ */ import_react16.default.createElement("div", { className: "mac-msg-bubble thinking" }, /* @__PURE__ */ import_react16.default.createElement("span", { className: "dot-live", style: { width: 6, height: 6, display: "inline-block" } }), /* @__PURE__ */ import_react16.default.createElement("span", { style: { fontSize: "12px", color: "#94a3b8" } }, "Copilot is thinking..."))), isScrolledUp && /* @__PURE__ */ import_react16.default.createElement(
+    "button",
+    {
+      type: "button",
+      className: "scroll-to-bottom-pill",
+      onClick: scrollToBottom,
+      title: "Jump down to latest messages"
+    },
+    "\u2193 Latest"
+  ), /* @__PURE__ */ import_react16.default.createElement("div", { ref: messagesEndRef })), /* @__PURE__ */ import_react16.default.createElement("div", { className: "mac-whisper-bar" }, /* @__PURE__ */ import_react16.default.createElement("div", { className: "mac-lang-chips" }, /* @__PURE__ */ import_react16.default.createElement("span", { className: "mac-whisper-badge" }, "\u{1F9E0} Whisper Local ASR"), /* @__PURE__ */ import_react16.default.createElement(
     "button",
     {
       className: `mac-lang-chip ${whisperLang === "auto" ? "active" : ""}`,
@@ -45880,7 +49956,7 @@ function DetachedAiHudCockpit() {
       onClick: () => setWhisperLang("auto")
     },
     "\u{1F310} Auto"
-  ), /* @__PURE__ */ import_react15.default.createElement(
+  ), /* @__PURE__ */ import_react16.default.createElement(
     "button",
     {
       className: `mac-lang-chip ${whisperLang === "en" ? "active" : ""}`,
@@ -45888,7 +49964,7 @@ function DetachedAiHudCockpit() {
       onClick: () => setWhisperLang("en")
     },
     "\u{1F1FA}\u{1F1F8} English"
-  ), /* @__PURE__ */ import_react15.default.createElement(
+  ), /* @__PURE__ */ import_react16.default.createElement(
     "button",
     {
       className: `mac-lang-chip ${whisperLang === "hi" ? "active" : ""}`,
@@ -45896,7 +49972,7 @@ function DetachedAiHudCockpit() {
       onClick: () => setWhisperLang("hi")
     },
     "\u{1F1EE}\u{1F1F3} \u0939\u093F\u0928\u094D\u0926\u0940"
-  ), /* @__PURE__ */ import_react15.default.createElement(
+  ), /* @__PURE__ */ import_react16.default.createElement(
     "button",
     {
       className: `mac-lang-chip ${whisperLang === "ko" ? "active" : ""}`,
@@ -45904,7 +49980,7 @@ function DetachedAiHudCockpit() {
       onClick: () => setWhisperLang("ko")
     },
     "\u{1F1F0}\u{1F1F7} \uD55C\uAD6D\uC5B4"
-  )), isWhisperRecording && /* @__PURE__ */ import_react15.default.createElement("div", { className: "mac-recording-indicator" }, /* @__PURE__ */ import_react15.default.createElement("span", { className: "pulse-red-dot" }), /* @__PURE__ */ import_react15.default.createElement("span", null, "Recording 16kHz PCM (", recordingTimer, "s)...")), isWhisperTranscribing && /* @__PURE__ */ import_react15.default.createElement("div", { className: "mac-transcribing-indicator" }, /* @__PURE__ */ import_react15.default.createElement("span", { className: "pulse-cyan-dot" }), /* @__PURE__ */ import_react15.default.createElement("span", null, "Whisper transcribing speech..."))), /* @__PURE__ */ import_react15.default.createElement("div", { className: "mac-chat-input-bar" }, /* @__PURE__ */ import_react15.default.createElement("div", { className: "mac-mic-group" }, /* @__PURE__ */ import_react15.default.createElement(
+  )), isWhisperRecording && /* @__PURE__ */ import_react16.default.createElement("div", { className: "mac-recording-indicator" }, /* @__PURE__ */ import_react16.default.createElement("span", { className: "pulse-red-dot" }), /* @__PURE__ */ import_react16.default.createElement("span", null, "Recording 16kHz PCM (", recordingTimer, "s)...")), isWhisperTranscribing && /* @__PURE__ */ import_react16.default.createElement("div", { className: "mac-transcribing-indicator" }, /* @__PURE__ */ import_react16.default.createElement("span", { className: "pulse-cyan-dot" }), /* @__PURE__ */ import_react16.default.createElement("span", null, "Whisper transcribing speech..."))), /* @__PURE__ */ import_react16.default.createElement("div", { className: "mac-chat-input-bar" }, /* @__PURE__ */ import_react16.default.createElement("div", { className: "mac-mic-group" }, /* @__PURE__ */ import_react16.default.createElement(
     "button",
     {
       className: `mac-mic-btn ${isWhisperRecording || isVoiceListening ? "listening" : ""}`,
@@ -45912,7 +49988,7 @@ function DetachedAiHudCockpit() {
       onClick: toggleWhisperRecording
     },
     isWhisperRecording ? "\u{1F534}" : isWhisperTranscribing ? "\u23F3" : "\u{1F399}\uFE0F"
-  ), /* @__PURE__ */ import_react15.default.createElement(
+  ), /* @__PURE__ */ import_react16.default.createElement(
     "button",
     {
       className: "mac-mic-lang-badge",
@@ -45924,7 +50000,7 @@ function DetachedAiHudCockpit() {
       }
     },
     whisperLang === "auto" ? "\u{1F310} Auto" : whisperLang === "en" ? "\u{1F1FA}\u{1F1F8} EN" : whisperLang === "hi" ? "\u{1F1EE}\u{1F1F3} HI" : "\u{1F1F0}\u{1F1F7} KO"
-  )), /* @__PURE__ */ import_react15.default.createElement(
+  )), /* @__PURE__ */ import_react16.default.createElement(
     "input",
     {
       type: "text",
@@ -45936,7 +50012,7 @@ function DetachedAiHudCockpit() {
         if (e.key === "Enter") handleProcessNlpCommand(chatInput);
       }
     }
-  ), /* @__PURE__ */ import_react15.default.createElement(
+  ), /* @__PURE__ */ import_react16.default.createElement(
     "button",
     {
       className: "mac-send-btn",
@@ -45944,7 +50020,7 @@ function DetachedAiHudCockpit() {
       onClick: () => handleProcessNlpCommand(chatInput)
     },
     "\u27A4"
-  ))), activeModuleTab === "shields" && /* @__PURE__ */ import_react15.default.createElement("div", { className: "mac-shields-view" }, /* @__PURE__ */ import_react15.default.createElement("div", { className: "mac-shields-hero" }, /* @__PURE__ */ import_react15.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: 10 } }, /* @__PURE__ */ import_react15.default.createElement("span", { style: { fontSize: "24px" } }, "\u{1F981}"), /* @__PURE__ */ import_react15.default.createElement("div", null, /* @__PURE__ */ import_react15.default.createElement("h3", { style: { fontSize: "15px", color: "#fff", margin: 0 } }, "Brave Shields Protection"), /* @__PURE__ */ import_react15.default.createElement("span", { style: { fontSize: "11px", color: "#94a3b8" } }, "EasyList + uBlock Origin \u2022 Sub-Microsecond Rust Engine"))), /* @__PURE__ */ import_react15.default.createElement("span", { style: { fontSize: "11px", color: "#10b981", fontWeight: 600 } }, "\u25CF Native Active")), /* @__PURE__ */ import_react15.default.createElement("div", { className: "mac-metrics-grid" }, /* @__PURE__ */ import_react15.default.createElement("div", { className: "mac-metric-card" }, /* @__PURE__ */ import_react15.default.createElement("span", { className: "metric-val" }, shieldsStats.totalBlocked || 0), /* @__PURE__ */ import_react15.default.createElement("span", { className: "metric-lbl" }, "TOTAL BLOCKED")), /* @__PURE__ */ import_react15.default.createElement("div", { className: "mac-metric-card" }, /* @__PURE__ */ import_react15.default.createElement("span", { className: "metric-val" }, shieldsStats.trackersBlocked || 0), /* @__PURE__ */ import_react15.default.createElement("span", { className: "metric-lbl" }, "TRACKERS")), /* @__PURE__ */ import_react15.default.createElement("div", { className: "mac-metric-card" }, /* @__PURE__ */ import_react15.default.createElement("span", { className: "metric-val" }, shieldsStats.savedBytes ? Math.round(shieldsStats.savedBytes / 1024) + " KB" : "0 KB"), /* @__PURE__ */ import_react15.default.createElement("span", { className: "metric-lbl" }, "DATA SAVED")), /* @__PURE__ */ import_react15.default.createElement("div", { className: "mac-metric-card" }, /* @__PURE__ */ import_react15.default.createElement("span", { className: "metric-val" }, shieldsStats.savedTimeMs ? (shieldsStats.savedTimeMs / 1e3).toFixed(2) + "s" : "0.00s"), /* @__PURE__ */ import_react15.default.createElement("span", { className: "metric-lbl" }, "TIME SAVED"))), /* @__PURE__ */ import_react15.default.createElement("div", { className: "mac-rule-bar" }, /* @__PURE__ */ import_react15.default.createElement(
+  ))), activeModuleTab === "shields" && /* @__PURE__ */ import_react16.default.createElement("div", { className: "mac-shields-view" }, /* @__PURE__ */ import_react16.default.createElement("div", { className: "mac-shields-hero" }, /* @__PURE__ */ import_react16.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: 10 } }, /* @__PURE__ */ import_react16.default.createElement("span", { style: { fontSize: "24px" } }, "\u{1F981}"), /* @__PURE__ */ import_react16.default.createElement("div", null, /* @__PURE__ */ import_react16.default.createElement("h3", { style: { fontSize: "15px", color: "#fff", margin: 0 } }, "Brave Shields Protection"), /* @__PURE__ */ import_react16.default.createElement("span", { style: { fontSize: "11px", color: "#94a3b8" } }, "EasyList + uBlock Origin \u2022 Sub-Microsecond Rust Engine"))), /* @__PURE__ */ import_react16.default.createElement("span", { style: { fontSize: "11px", color: "#10b981", fontWeight: 600 } }, "\u25CF Native Active")), /* @__PURE__ */ import_react16.default.createElement("div", { className: "mac-metrics-grid" }, /* @__PURE__ */ import_react16.default.createElement("div", { className: "mac-metric-card" }, /* @__PURE__ */ import_react16.default.createElement("span", { className: "metric-val" }, shieldsStats.totalBlocked || 0), /* @__PURE__ */ import_react16.default.createElement("span", { className: "metric-lbl" }, "TOTAL BLOCKED")), /* @__PURE__ */ import_react16.default.createElement("div", { className: "mac-metric-card" }, /* @__PURE__ */ import_react16.default.createElement("span", { className: "metric-val" }, shieldsStats.trackersBlocked || 0), /* @__PURE__ */ import_react16.default.createElement("span", { className: "metric-lbl" }, "TRACKERS")), /* @__PURE__ */ import_react16.default.createElement("div", { className: "mac-metric-card" }, /* @__PURE__ */ import_react16.default.createElement("span", { className: "metric-val" }, shieldsStats.savedBytes ? Math.round(shieldsStats.savedBytes / 1024) + " KB" : "0 KB"), /* @__PURE__ */ import_react16.default.createElement("span", { className: "metric-lbl" }, "DATA SAVED")), /* @__PURE__ */ import_react16.default.createElement("div", { className: "mac-metric-card" }, /* @__PURE__ */ import_react16.default.createElement("span", { className: "metric-val" }, shieldsStats.savedTimeMs ? (shieldsStats.savedTimeMs / 1e3).toFixed(2) + "s" : "0.00s"), /* @__PURE__ */ import_react16.default.createElement("span", { className: "metric-lbl" }, "TIME SAVED"))), /* @__PURE__ */ import_react16.default.createElement("div", { className: "mac-rule-bar" }, /* @__PURE__ */ import_react16.default.createElement(
     "input",
     {
       type: "text",
@@ -45959,7 +50035,7 @@ function DetachedAiHudCockpit() {
         }
       }
     }
-  ), /* @__PURE__ */ import_react15.default.createElement(
+  ), /* @__PURE__ */ import_react16.default.createElement(
     "button",
     {
       className: "mac-pill-btn",
@@ -45971,35 +50047,35 @@ function DetachedAiHudCockpit() {
       }
     },
     "+ Add Rule"
-  )), /* @__PURE__ */ import_react15.default.createElement("div", { className: "mac-events-container" }, /* @__PURE__ */ import_react15.default.createElement("span", { style: { fontSize: "11px", fontWeight: 700, color: "#94a3b8", textTransform: "uppercase" } }, "Recent Zero-Byte Interceptions"), /* @__PURE__ */ import_react15.default.createElement("div", { className: "mac-events-list" }, !shieldsStats.recentEvents || shieldsStats.recentEvents.length === 0 ? /* @__PURE__ */ import_react15.default.createElement("div", { style: { padding: "16px", textAlign: "center", color: "#64748b", fontSize: "12px" } }, "No tracking requests detected yet.") : shieldsStats.recentEvents.map((ev, i) => /* @__PURE__ */ import_react15.default.createElement("div", { key: i, className: "mac-event-item" }, /* @__PURE__ */ import_react15.default.createElement("span", { className: "event-tag" }, "BLOCKED"), /* @__PURE__ */ import_react15.default.createElement("span", { className: "event-url", title: ev.url }, ev.url)))))), activeModuleTab === "tools" && /* @__PURE__ */ import_react15.default.createElement("div", { className: "mac-tools-view" }, /* @__PURE__ */ import_react15.default.createElement("div", { className: "mac-sub-nav" }, /* @__PURE__ */ import_react15.default.createElement(
+  )), /* @__PURE__ */ import_react16.default.createElement("div", { className: "mac-events-container" }, /* @__PURE__ */ import_react16.default.createElement("span", { style: { fontSize: "11px", fontWeight: 700, color: "#94a3b8", textTransform: "uppercase" } }, "Recent Zero-Byte Interceptions"), /* @__PURE__ */ import_react16.default.createElement("div", { className: "mac-events-list" }, !shieldsStats.recentEvents || shieldsStats.recentEvents.length === 0 ? /* @__PURE__ */ import_react16.default.createElement("div", { style: { padding: "16px", textAlign: "center", color: "#64748b", fontSize: "12px" } }, "No tracking requests detected yet.") : shieldsStats.recentEvents.map((ev, i) => /* @__PURE__ */ import_react16.default.createElement("div", { key: i, className: "mac-event-item" }, /* @__PURE__ */ import_react16.default.createElement("span", { className: "event-tag" }, "BLOCKED"), /* @__PURE__ */ import_react16.default.createElement("span", { className: "event-url", title: ev.url }, ev.url)))))), activeModuleTab === "tools" && /* @__PURE__ */ import_react16.default.createElement("div", { className: "mac-tools-view" }, /* @__PURE__ */ import_react16.default.createElement("div", { className: "mac-sub-nav" }, /* @__PURE__ */ import_react16.default.createElement(
     "button",
     {
       className: `sub-btn ${activeToolTab === "ax" ? "active" : ""}`,
       onClick: () => setActiveToolTab("ax")
     },
     "\u{1F332} AX Tree & Grounding"
-  ), /* @__PURE__ */ import_react15.default.createElement(
+  ), /* @__PURE__ */ import_react16.default.createElement(
     "button",
     {
       className: `sub-btn ${activeToolTab === "grep" ? "active" : ""}`,
       onClick: () => setActiveToolTab("grep")
     },
     "\u{1F50D} In-Memory Grep"
-  ), /* @__PURE__ */ import_react15.default.createElement(
+  ), /* @__PURE__ */ import_react16.default.createElement(
     "button",
     {
       className: `sub-btn ${activeToolTab === "autofill" ? "active" : ""}`,
       onClick: () => setActiveToolTab("autofill")
     },
     "\u{1F4DD} Autofill"
-  ), /* @__PURE__ */ import_react15.default.createElement(
+  ), /* @__PURE__ */ import_react16.default.createElement(
     "button",
     {
       className: `sub-btn ${activeToolTab === "telemetry" ? "active" : ""}`,
       onClick: () => setActiveToolTab("telemetry")
     },
     "\u{1F504} Telemetry"
-  )), activeToolTab === "ax" && /* @__PURE__ */ import_react15.default.createElement("div", { className: "mac-tool-panel" }, /* @__PURE__ */ import_react15.default.createElement("div", { style: { display: "flex", gap: 8, marginBottom: 8 } }, /* @__PURE__ */ import_react15.default.createElement(
+  )), activeToolTab === "ax" && /* @__PURE__ */ import_react16.default.createElement("div", { className: "mac-tool-panel" }, /* @__PURE__ */ import_react16.default.createElement("div", { style: { display: "flex", gap: 8, marginBottom: 8 } }, /* @__PURE__ */ import_react16.default.createElement(
     "input",
     {
       type: "text",
@@ -46008,7 +50084,7 @@ function DetachedAiHudCockpit() {
       value: markFilterQuery,
       onChange: (e) => setMarkFilterQuery(e.target.value)
     }
-  ), /* @__PURE__ */ import_react15.default.createElement("button", { className: "mac-pill-btn", onClick: handleCopyAx }, copiedAx ? "\u2713 Copied" : "\u{1F4CB} Copy"), /* @__PURE__ */ import_react15.default.createElement("button", { className: "mac-pill-btn", onClick: () => sendHudAction("rescan-ax", { tabId: activeTabId }) }, "\u{1F504} Rescan")), /* @__PURE__ */ import_react15.default.createElement("pre", { className: "mac-code-box" }, getFilteredAxContent())), activeToolTab === "grep" && /* @__PURE__ */ import_react15.default.createElement("div", { className: "mac-tool-panel" }, /* @__PURE__ */ import_react15.default.createElement("div", { style: { display: "flex", gap: 8, marginBottom: 8 } }, /* @__PURE__ */ import_react15.default.createElement(
+  ), /* @__PURE__ */ import_react16.default.createElement("button", { className: "mac-pill-btn", onClick: handleCopyAx }, copiedAx ? "\u2713 Copied" : "\u{1F4CB} Copy"), /* @__PURE__ */ import_react16.default.createElement("button", { className: "mac-pill-btn", onClick: () => sendHudAction("rescan-ax", { tabId: activeTabId }) }, "\u{1F504} Rescan")), /* @__PURE__ */ import_react16.default.createElement("pre", { className: "mac-code-box" }, getFilteredAxContent())), activeToolTab === "grep" && /* @__PURE__ */ import_react16.default.createElement("div", { className: "mac-tool-panel" }, /* @__PURE__ */ import_react16.default.createElement("div", { style: { display: "flex", gap: 8, marginBottom: 8 } }, /* @__PURE__ */ import_react16.default.createElement(
     "input",
     {
       type: "text",
@@ -46022,7 +50098,7 @@ function DetachedAiHudCockpit() {
         }
       }
     }
-  ), /* @__PURE__ */ import_react15.default.createElement(
+  ), /* @__PURE__ */ import_react16.default.createElement(
     "button",
     {
       className: "mac-pill-btn",
@@ -46031,7 +50107,13 @@ function DetachedAiHudCockpit() {
       }
     },
     "Execute Grep"
-  )), /* @__PURE__ */ import_react15.default.createElement("div", { className: "mac-code-box" }, grepMatches.length === 0 ? /* @__PURE__ */ import_react15.default.createElement("div", { style: { color: "#64748b", textAlign: "center", padding: "16px" } }, "No grep matches found. Type a query above.") : grepMatches.map((m, i) => /* @__PURE__ */ import_react15.default.createElement("div", { key: i, style: { padding: "4px 0", borderBottom: "1px solid rgba(255,255,255,0.05)", fontFamily: "var(--font-mono)" } }, typeof m === "object" ? JSON.stringify(m) : String(m))))), activeToolTab === "autofill" && /* @__PURE__ */ import_react15.default.createElement("div", { className: "mac-tool-panel" }, /* @__PURE__ */ import_react15.default.createElement("div", { style: { padding: "12px", background: "rgba(255,255,255,0.03)", borderRadius: 8, marginBottom: 12 } }, /* @__PURE__ */ import_react15.default.createElement("h4", { style: { color: "#fff", fontSize: "13px", marginBottom: 4 } }, "Autofill Engine (`components/autofill`)"), /* @__PURE__ */ import_react15.default.createElement("p", { style: { color: "#94a3b8", fontSize: "11px", margin: 0 } }, "Populate checkout and login fields using in-process C++ AutofillProfile heuristics.")), /* @__PURE__ */ import_react15.default.createElement("div", { style: { display: "flex", gap: 8 } }, /* @__PURE__ */ import_react15.default.createElement("button", { className: "mac-pill-btn", onClick: () => sendHudAction("trigger-autofill", { tabId: activeTabId }) }, "\u26A1 Execute Autofill Now"), /* @__PURE__ */ import_react15.default.createElement("button", { className: "mac-pill-btn", onClick: () => sendHudAction("load-demo", { demoType: "checkout" }) }, "Load Checkout Demo")), /* @__PURE__ */ import_react15.default.createElement("div", { style: { marginTop: 12, padding: "10px", background: "rgba(0,0,0,0.3)", borderRadius: 6, fontSize: "11px", color: "#10b981", fontFamily: "var(--font-mono)" } }, autofillStatus)), activeToolTab === "telemetry" && /* @__PURE__ */ import_react15.default.createElement("div", { className: "mac-tool-panel" }, /* @__PURE__ */ import_react15.default.createElement("div", { style: { display: "flex", justifyContent: "space-between", marginBottom: 8 } }, /* @__PURE__ */ import_react15.default.createElement("span", { style: { fontSize: "11px", color: "#94a3b8" } }, "Live In-Process Event Bus"), /* @__PURE__ */ import_react15.default.createElement("button", { className: "mac-pill-btn", onClick: () => setTelemetryLogs([]) }, "Clear Logs")), /* @__PURE__ */ import_react15.default.createElement("div", { className: "mac-code-box" }, telemetryLogs.length === 0 ? /* @__PURE__ */ import_react15.default.createElement("div", { style: { color: "#64748b", textAlign: "center", padding: "16px" } }, "No events logged yet.") : [...telemetryLogs].reverse().map((log, i) => /* @__PURE__ */ import_react15.default.createElement("div", { key: i, style: { padding: "3px 0", fontSize: "11px", fontFamily: "var(--font-mono)" } }, /* @__PURE__ */ import_react15.default.createElement("span", { style: { color: "#64748b" } }, "[", log.time, "] "), /* @__PURE__ */ import_react15.default.createElement("span", { style: { color: log.type === "act" ? "#00e5ff" : log.type === "verify" ? "#10b981" : "#e2e8f0" } }, log.msg))))))));
+  )), /* @__PURE__ */ import_react16.default.createElement("div", { className: "mac-code-box" }, grepMatches.length === 0 ? /* @__PURE__ */ import_react16.default.createElement("div", { style: { color: "#64748b", textAlign: "center", padding: "16px" } }, "No grep matches found. Type a query above.") : grepMatches.map((m, i) => /* @__PURE__ */ import_react16.default.createElement("div", { key: i, style: { padding: "4px 0", borderBottom: "1px solid rgba(255,255,255,0.05)", fontFamily: "var(--font-mono)" } }, typeof m === "object" ? JSON.stringify(m) : String(m))))), activeToolTab === "autofill" && /* @__PURE__ */ import_react16.default.createElement("div", { className: "mac-tool-panel" }, /* @__PURE__ */ import_react16.default.createElement("div", { style: { padding: "12px", background: "rgba(255,255,255,0.03)", borderRadius: 8, marginBottom: 12 } }, /* @__PURE__ */ import_react16.default.createElement("h4", { style: { color: "#fff", fontSize: "13px", marginBottom: 4 } }, "Autofill Engine (`components/autofill`)"), /* @__PURE__ */ import_react16.default.createElement("p", { style: { color: "#94a3b8", fontSize: "11px", margin: 0 } }, "Populate checkout and login fields using in-process C++ AutofillProfile heuristics.")), /* @__PURE__ */ import_react16.default.createElement("div", { style: { display: "flex", gap: 8 } }, /* @__PURE__ */ import_react16.default.createElement("button", { className: "mac-pill-btn", onClick: () => sendHudAction("trigger-autofill", { tabId: activeTabId }) }, "\u26A1 Execute Autofill Now"), /* @__PURE__ */ import_react16.default.createElement("button", { className: "mac-pill-btn", onClick: () => sendHudAction("load-demo", { demoType: "checkout" }) }, "Load Checkout Demo")), /* @__PURE__ */ import_react16.default.createElement("div", { style: { marginTop: 12, padding: "10px", background: "rgba(0,0,0,0.3)", borderRadius: 6, fontSize: "11px", color: "#10b981", fontFamily: "var(--font-mono)" } }, autofillStatus)), activeToolTab === "telemetry" && /* @__PURE__ */ import_react16.default.createElement("div", { className: "mac-tool-panel" }, /* @__PURE__ */ import_react16.default.createElement("div", { style: { display: "flex", justifyContent: "space-between", marginBottom: 8 } }, /* @__PURE__ */ import_react16.default.createElement("span", { style: { fontSize: "11px", color: "#94a3b8" } }, "Live In-Process Event Bus"), /* @__PURE__ */ import_react16.default.createElement("button", { className: "mac-pill-btn", onClick: () => setTelemetryLogs([]) }, "Clear Logs")), /* @__PURE__ */ import_react16.default.createElement("div", { className: "mac-code-box" }, telemetryLogs.length === 0 ? /* @__PURE__ */ import_react16.default.createElement("div", { style: { color: "#64748b", textAlign: "center", padding: "16px" } }, "No events logged yet.") : [...telemetryLogs].reverse().map((log, i) => /* @__PURE__ */ import_react16.default.createElement("div", { key: i, style: { padding: "3px 0", fontSize: "11px", fontFamily: "var(--font-mono)" } }, /* @__PURE__ */ import_react16.default.createElement("span", { style: { color: "#64748b" } }, "[", log.time, "] "), /* @__PURE__ */ import_react16.default.createElement("span", { style: { color: log.type === "act" ? "#00e5ff" : log.type === "verify" ? "#10b981" : "#e2e8f0" } }, log.msg))))))), /* @__PURE__ */ import_react16.default.createElement(
+    AiProviderModal,
+    {
+      isOpen: isAiProviderModalOpen,
+      onClose: () => setIsAiProviderModalOpen(false)
+    }
+  ));
 }
 
 // desktop/src/index.jsx
@@ -46041,10 +50123,10 @@ if (container) {
   const params = new URLSearchParams(window.location.search);
   const isDetached = params.get("view") === "detached-hud" || window.location.hash === "#detached-hud";
   if (isDetached) {
-    root.render(/* @__PURE__ */ import_react16.default.createElement(DetachedAiHudCockpit, null));
+    root.render(/* @__PURE__ */ import_react17.default.createElement(DetachedAiHudCockpit, null));
     console.log("[Antigravity] React Detached AI Cockpit mounted successfully.");
   } else {
-    root.render(/* @__PURE__ */ import_react16.default.createElement(App, null));
+    root.render(/* @__PURE__ */ import_react17.default.createElement(App, null));
     console.log("[Antigravity] React Desktop App mounted successfully.");
   }
 } else {

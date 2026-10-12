@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { executeAiBrowserCommand } from '../ai_harness_engine.js';
+import { executeAiBrowserCommand, stripToolCallsFromText } from '../ai_harness_engine.js';
 
 export default function AiHudSidebar({
     isOpen,
@@ -80,12 +80,41 @@ export default function AiHudSidebar({
 
     const recognitionRef = useRef(null);
     const messagesEndRef = useRef(null);
+    const messagesContainerRef = useRef(null);
+    const userScrolledUpRef = useRef(false);
+    const [isScrolledUp, setIsScrolledUp] = useState(false);
     const timerIntervalRef = useRef(null);
     const audioCtxRef = useRef(null);
     const mediaStreamRef = useRef(null);
     const audioProcessorRef = useRef(null);
+    const recordingActiveRef = useRef(false);
+    const sampleRateRef = useRef(16000);
     const audioChunksRef = useRef([]);
     const abortControllerRef = useRef(null);
+
+    const handleMessagesScroll = (e) => {
+        const el = e.currentTarget;
+        if (!el) return;
+        const distanceFromBottom = el.scrollHeight - el.scrollTop - el.clientHeight;
+        if (distanceFromBottom <= 80) {
+            userScrolledUpRef.current = false;
+            setIsScrolledUp(false);
+        } else {
+            userScrolledUpRef.current = true;
+            setIsScrolledUp(true);
+        }
+    };
+
+    const scrollToBottom = () => {
+        userScrolledUpRef.current = false;
+        setIsScrolledUp(false);
+        if (messagesContainerRef.current) {
+            messagesContainerRef.current.scrollTo({
+                top: messagesContainerRef.current.scrollHeight,
+                behavior: 'smooth'
+            });
+        }
+    };
 
     const toggleThoughtCollapse = (msgId) => {
         setChatMessages(prev => prev.map(m =>
@@ -112,10 +141,11 @@ export default function AiHudSidebar({
         setChatMessages(prev => prev.map(m => m.isStreaming ? { ...m, isStreaming: false, isThinking: false } : m));
     };
 
-    // Scroll chat to bottom on new message
+    // Smart auto-scroll: Keep at bottom only if user hasn't scrolled up to read earlier history
     useEffect(() => {
-        if (messagesEndRef.current) {
-            messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+        if (userScrolledUpRef.current) return;
+        if (messagesContainerRef.current) {
+            messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
         }
     }, [chatMessages, isAiThinking]);
 
@@ -129,92 +159,183 @@ export default function AiHudSidebar({
         } catch (e) {}
     }, []);
 
+    const nlpHandlerRef = useRef(null);
+
     // Listen for dispatched Copilot queries (from REST gateway or external agent)
     useEffect(() => {
         const handleCustomQuery = (e) => {
-            if (e.detail?.query) {
-                handleProcessNlpCommand(e.detail.query);
+            if (e.detail?.query && nlpHandlerRef.current) {
+                nlpHandlerRef.current(e.detail.query);
             }
         };
         window.addEventListener('antigravity-copilot-query', handleCustomQuery);
         return () => window.removeEventListener('antigravity-copilot-query', handleCustomQuery);
     }, []);
 
-    if (!isOpen || isDetached) return null;
+    // Whisper Audio Recording & Transcription (with C++ OfflineAudioContext 16kHz resampling + multi-sentence VAD)
+    const stopWhisperRecordingAndTranscribe = async () => {
+        if (!recordingActiveRef.current) return;
+        recordingActiveRef.current = false;
+        setIsWhisperRecording(false);
+        setIsWhisperTranscribing(true);
+        if (timerIntervalRef.current) {
+            clearInterval(timerIntervalRef.current);
+            timerIntervalRef.current = null;
+        }
 
-    // Whisper 16kHz Audio Recording & Transcription
-    const toggleWhisperRecording = async () => {
-        if (isWhisperRecording) {
-            setIsWhisperRecording(false);
-            setIsWhisperTranscribing(true);
-            if (timerIntervalRef.current) clearInterval(timerIntervalRef.current);
-
-            try {
-                if (mediaStreamRef.current) {
-                    mediaStreamRef.current.getTracks().forEach(t => t.stop());
-                }
-                if (audioProcessorRef.current) {
-                    try { audioProcessorRef.current.disconnect(); } catch (e) {}
-                }
-                if (audioCtxRef.current) {
-                    try { audioCtxRef.current.close(); } catch (e) {}
-                }
-
-                const chunks = audioChunksRef.current;
-                let totalLen = 0;
-                for (const ch of chunks) totalLen += ch.length;
-
-                if (totalLen > 1600) { // at least 0.1s of audio
-                    const merged = new Float32Array(totalLen);
-                    let offset = 0;
-                    for (const ch of chunks) {
-                        merged.set(ch, offset);
-                        offset += ch.length;
-                    }
-                    const { ipcRenderer } = require('electron');
-                    const res = await ipcRenderer.invoke('whisper-transcribe', {
-                        audioData: Array.from(merged),
-                        language: whisperLang === 'auto' ? null : whisperLang
-                    });
-                    if (res && res.success && res.text) {
-                        const transcribedText = res.text.trim();
-                        setChatInput(transcribedText);
-                        handleProcessNlpCommand(transcribedText);
-                    } else if (res && res.error) {
-                        addAiReply(`⚠️ Whisper Notice: ${res.error}`);
-                    }
-                } else {
-                    addAiReply(`🎙️ Whisper heard too little audio. Hold the mic button or speak clearly into the microphone.`);
-                }
-            } catch (err) {
-                console.error('[Whisper Docked] Transcribe error:', err);
-                addAiReply(`⚠️ Whisper transcription error: ${err.message || err}`);
-            } finally {
-                setIsWhisperTranscribing(false);
-                setRecordingTimer(0);
+        try {
+            if (mediaStreamRef.current) {
+                mediaStreamRef.current.getTracks().forEach(t => t.stop());
+                mediaStreamRef.current = null;
             }
+            if (audioProcessorRef.current) {
+                try { audioProcessorRef.current.disconnect(); } catch (e) {}
+                audioProcessorRef.current = null;
+            }
+            const capturedSampleRate = sampleRateRef.current || (audioCtxRef.current && audioCtxRef.current.sampleRate) || 16000;
+            if (audioCtxRef.current) {
+                try { await audioCtxRef.current.close(); } catch (e) {}
+                audioCtxRef.current = null;
+            }
+
+            const chunks = audioChunksRef.current || [];
+            let totalLen = 0;
+            for (const ch of chunks) totalLen += ch.length;
+
+            if (totalLen > Math.floor(capturedSampleRate * 0.12)) {
+                const merged = new Float32Array(totalLen);
+                let offset = 0;
+                for (const ch of chunks) {
+                    merged.set(ch, offset);
+                    offset += ch.length;
+                }
+
+                // Use Chromium's native C++ OfflineAudioContext sinc resampler to convert directly to 16,000 Hz
+                let pcm16k = merged;
+                let finalSampleRate = capturedSampleRate;
+                try {
+                    const OfflineCtx = window.OfflineAudioContext || window.webkitOfflineAudioContext;
+                    if (OfflineCtx && capturedSampleRate !== 16000) {
+                        const targetLen = Math.max(1, Math.ceil((totalLen * 16000) / capturedSampleRate));
+                        const offlineCtx = new OfflineCtx(1, targetLen, 16000);
+                        const audioBuffer = offlineCtx.createBuffer(1, totalLen, capturedSampleRate);
+                        audioBuffer.copyToChannel(merged, 0);
+                        const bufferSource = offlineCtx.createBufferSource();
+                        bufferSource.buffer = audioBuffer;
+                        bufferSource.connect(offlineCtx.destination);
+                        bufferSource.start(0);
+                        const renderedBuffer = await offlineCtx.startRendering();
+                        pcm16k = renderedBuffer.getChannelData(0);
+                        finalSampleRate = 16000;
+                    }
+                } catch (resampleErr) {
+                    console.warn('[Whisper Docked] Native OfflineAudioContext resample fallback:', resampleErr);
+                }
+
+                const { ipcRenderer } = require('electron');
+                const res = await ipcRenderer.invoke('whisper-transcribe', {
+                    audioData: Array.from(pcm16k),
+                    language: whisperLang === 'auto' ? null : whisperLang,
+                    sampleRate: finalSampleRate
+                });
+                if (res && res.success && res.text) {
+                    const transcribedText = res.text.trim();
+                    setChatInput(transcribedText);
+                    handleProcessNlpCommand(transcribedText);
+                } else if (res && res.error) {
+                    addAiReply(`⚠️ Whisper Notice: ${res.error}`);
+                }
+            } else {
+                addAiReply(`🎙️ Whisper heard too little audio. Speak clearly into the microphone and it will transcribe automatically.`);
+            }
+        } catch (err) {
+            console.error('[Whisper Docked] Transcribe error:', err);
+            addAiReply(`⚠️ Whisper transcription error: ${err.message || err}`);
+        } finally {
+            setIsWhisperTranscribing(false);
+            setRecordingTimer(0);
+        }
+    };
+
+    const toggleWhisperRecording = async () => {
+        if (isWhisperRecording || recordingActiveRef.current) {
+            await stopWhisperRecordingAndTranscribe();
             return;
         }
 
         try {
-            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            let stream;
+            try {
+                // Disable WebRTC call-compression DSP (noiseSuppression/autoGainControl) so consonant plosives (/k/, /s/, /t/) are preserved cleanly for Whisper
+                stream = await navigator.mediaDevices.getUserMedia({
+                    audio: {
+                        channelCount: 1,
+                        echoCancellation: false,
+                        noiseSuppression: false,
+                        autoGainControl: false
+                    }
+                });
+            } catch (constraintErr) {
+                stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            }
             mediaStreamRef.current = stream;
             const AudioCtx = window.AudioContext || window.webkitAudioContext;
-            const ctx = new AudioCtx({ sampleRate: 16000 });
+            const ctx = new AudioCtx();
+            if (ctx.state === 'suspended') {
+                await ctx.resume();
+            }
             audioCtxRef.current = ctx;
+            sampleRateRef.current = ctx.sampleRate || 16000;
 
             const source = ctx.createMediaStreamSource(stream);
             const processor = ctx.createScriptProcessor(4096, 1, 1);
+            const silentGain = ctx.createGain();
+            silentGain.gain.value = 0;
+
             audioProcessorRef.current = processor;
             audioChunksRef.current = [];
+            recordingActiveRef.current = true;
+
+            let speechDetected = false;
+            let silenceSamplesAfterSpeech = 0;
+            let totalSamplesRecorded = 0;
+            const sr = sampleRateRef.current;
 
             processor.onaudioprocess = (e) => {
+                if (!recordingActiveRef.current) return;
                 const data = e.inputBuffer.getChannelData(0);
-                audioChunksRef.current.push(new Float32Array(data));
+                const copy = new Float32Array(data);
+                audioChunksRef.current.push(copy);
+                totalSamplesRecorded += copy.length;
+
+                // Compute frame RMS for Voice Activity Detection (ignore first 150ms button click transient)
+                if (totalSamplesRecorded > sr * 0.15) {
+                    let sumSq = 0;
+                    for (let i = 0; i < copy.length; i++) sumSq += copy[i] * copy[i];
+                    const rms = Math.sqrt(sumSq / copy.length);
+
+                    if (rms > 0.012) {
+                        speechDetected = true;
+                        silenceSamplesAfterSpeech = 0;
+                    } else if (speechDetected) {
+                        silenceSamplesAfterSpeech += copy.length;
+                        // Auto-stop after 2.6 seconds of post-speech silence (allows natural pauses between sentences)
+                        if (silenceSamplesAfterSpeech >= sr * 2.6) {
+                            stopWhisperRecordingAndTranscribe();
+                            return;
+                        }
+                    }
+                }
+
+                // Safety auto-stop at 30 seconds max recording length
+                if (totalSamplesRecorded >= sr * 30) {
+                    stopWhisperRecordingAndTranscribe();
+                }
             };
 
             source.connect(processor);
-            processor.connect(ctx.destination);
+            processor.connect(silentGain);
+            silentGain.connect(ctx.destination);
 
             setIsWhisperRecording(true);
             setRecordingTimer(0);
@@ -222,6 +343,7 @@ export default function AiHudSidebar({
                 setRecordingTimer(prev => prev + 1);
             }, 1000);
         } catch (err) {
+            recordingActiveRef.current = false;
             console.warn('[Whisper Docked] Microphone access error:', err);
             addAiReply(`⚠️ **Microphone Access**: ${err.message || 'Permission denied or device not found'}.\n\n💡 Ensure microphone access is allowed in Windows Settings. You can also click any of the multilingual quick action chips above (e.g. 🇮🇳 सारांश or 🇰🇷 요약) to test local NLP.`);
         }
@@ -348,6 +470,8 @@ export default function AiHudSidebar({
         }
 
         // Execute unified AI Harness Command Engine with Response Streaming & Live Tool Usage
+        userScrolledUpRef.current = false;
+        setIsScrolledUp(false);
         const assistantMsgId = 'ai-' + Date.now();
         const startTime = Date.now();
         const abortController = new AbortController();
@@ -444,7 +568,7 @@ export default function AiHudSidebar({
             const totalDuration = ((Date.now() - startTime) / 1000).toFixed(1);
             setChatMessages(prev => prev.map(m => {
                 if (m.id !== assistantMsgId) return m;
-                const finalText = (m.text && m.text.trim()) ? m.text : (reply || '');
+                const finalText = (reply && reply.trim()) ? stripToolCallsFromText(reply) : stripToolCallsFromText(m.text || '');
                 return {
                     ...m,
                     text: finalText,
@@ -466,6 +590,7 @@ export default function AiHudSidebar({
             setIsAiThinking(false);
         }
     };
+    nlpHandlerRef.current = handleProcessNlpCommand;
 
     // Tools AX Tree Helpers
     const getFilteredAxText = () => {
@@ -486,6 +611,8 @@ export default function AiHudSidebar({
             }).catch(() => {});
         }
     };
+
+    if (!isOpen || isDetached) return null;
 
     return (
         <aside className="ai-hud-sidebar mac-docked-cockpit" id="aiHudSidebar">
@@ -609,7 +736,7 @@ export default function AiHudSidebar({
                         </div>
 
                         {/* Chat Messages Stream */}
-                        <div className="mac-messages-stream">
+                        <div className="mac-messages-stream" ref={messagesContainerRef} onScroll={handleMessagesScroll}>
                             {chatMessages.map(msg => (
                                 <div key={msg.id} className={`mac-msg-row ${msg.role}`}>
                                     <div className="mac-msg-bubble">
@@ -717,21 +844,28 @@ export default function AiHudSidebar({
                                         )}
 
                                         {/* Response Message Text with Streaming Caret */}
-                                        {msg.text ? (
-                                            <div
-                                                className="mac-msg-text"
-                                                style={{ whiteSpace: 'pre-wrap' }}
-                                                dangerouslySetInnerHTML={{ __html: msg.text }}
-                                            />
-                                        ) : (
-                                            msg.isStreaming && !msg.isThinking && !msg.reasoning && (
-                                                <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '4px 0', color: '#94a3b8' }}>
-                                                    <span className="dot-live" style={{ width: 6, height: 6, display: 'inline-block' }} />
-                                                    <span style={{ fontSize: '12px' }}>Connecting to AI model...</span>
-                                                </div>
-                                            )
-                                        )}
-                                        {msg.isStreaming && !msg.isThinking && msg.text && (
+                                        {(() => {
+                                            const displayText = stripToolCallsFromText(msg.text);
+                                            if (displayText) {
+                                                return (
+                                                    <div
+                                                        className="mac-msg-text"
+                                                        style={{ whiteSpace: 'pre-wrap' }}
+                                                        dangerouslySetInnerHTML={{ __html: displayText }}
+                                                    />
+                                                );
+                                            }
+                                            if (msg.isStreaming && !msg.isThinking && !msg.reasoning && (!msg.toolEvents || msg.toolEvents.length === 0)) {
+                                                return (
+                                                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '4px 0', color: '#94a3b8' }}>
+                                                        <span className="dot-live" style={{ width: 6, height: 6, display: 'inline-block' }} />
+                                                        <span style={{ fontSize: '12px' }}>Connecting to AI model...</span>
+                                                    </div>
+                                                );
+                                            }
+                                            return null;
+                                        })()}
+                                        {msg.isStreaming && !msg.isThinking && stripToolCallsFromText(msg.text) && (
                                             <span className="streaming-caret" />
                                         )}
                                     </div>
@@ -744,6 +878,16 @@ export default function AiHudSidebar({
                                         <span style={{ fontSize: '12px', color: '#94a3b8' }}>Copilot is thinking...</span>
                                     </div>
                                 </div>
+                            )}
+                            {isScrolledUp && (
+                                <button
+                                    type="button"
+                                    className="scroll-to-bottom-pill"
+                                    onClick={scrollToBottom}
+                                    title="Jump down to latest messages"
+                                >
+                                    ↓ Latest
+                                </button>
                             )}
                             <div ref={messagesEndRef} />
                         </div>

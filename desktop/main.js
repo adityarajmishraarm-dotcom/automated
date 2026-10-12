@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, session, shell } = require('electron');
+const { app, BrowserWindow, ipcMain, session, shell, dialog } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const http = require('http');
@@ -35,6 +35,9 @@ app.commandLine.appendSwitch('high-dpi-support', '1');
 app.commandLine.appendSwitch('force-color-profile', 'srgb');
 app.commandLine.appendSwitch('enable-smooth-scrolling');
 
+// Universal Instant Autoplay for YouTube, Streaming Sites & Audio Players
+app.commandLine.appendSwitch('autoplay-policy', 'no-user-gesture-required');
+
 // Filter benign redirect navigation cancellations
 process.on('unhandledRejection', (reason) => {
     if (reason && (reason.code === 'ERR_ABORTED' || String(reason).includes('ERR_ABORTED'))) return;
@@ -60,16 +63,110 @@ const blockedPatterns = [
     '*://*/*ads.js*',
     '*://*/*analytics.js*',
     '*://*/*prebid.js*',
-    '*://*/*gtag/js*'
+    '*://*/*gtag/js*',
+    '*://*.hotstarads.com/*',
+    '*://*.jioads.*/*',
+    '*://ads.jio.com/*',
+    '*://*.spotify.com/ad-logic/*',
+    '*://*.spotify.com/commercial-break/*',
+    '*://spclient.wg.spotify.com/ads/*'
 ];
+
+// Precompile regexes once at startup to avoid per-request regex construction
+const blockedRegexes = blockedPatterns.map(pattern => {
+    return new RegExp('^' + pattern.replace(/\*/g, '.*').replace(/\?/g, '.') + '$');
+});
 
 let adblockStats = {
     blockedCount: 0
 };
 
-// In-Process Download Manager Storage
+// Global A/B/C Test Harness Configuration & Request Logger
+global.__testConfig = {
+    networkBlocker: true,
+    testMode: null
+};
+global.__networkLog = [];
+
+const CHROME_USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36';
+
+// Persistent Storage Paths
+const DOWNLOADS_FILE = path.join(app.getPath('userData'), 'downloads.json');
+const HISTORY_FILE = path.join(app.getPath('userData'), 'history.json');
+
+function loadPersistedDownloads() {
+    try {
+        if (fs.existsSync(DOWNLOADS_FILE)) {
+            const data = fs.readFileSync(DOWNLOADS_FILE, 'utf8');
+            const parsed = JSON.parse(data);
+            if (Array.isArray(parsed)) return parsed;
+        }
+    } catch (e) {
+        console.error('[Downloads] Error loading persisted downloads:', e.message);
+    }
+    return [];
+}
+
+let saveDownloadsTimer = null;
+function savePersistedDownloads() {
+    if (saveDownloadsTimer) return;
+    saveDownloadsTimer = setTimeout(() => {
+        saveDownloadsTimer = null;
+        try {
+            const serializable = downloadsList.slice(0, 300).map(item => ({
+                id: item.id,
+                filename: item.filename,
+                totalBytes: item.totalBytes,
+                totalBytesFormatted: item.totalBytesFormatted,
+                receivedBytes: item.receivedBytes,
+                receivedBytesFormatted: item.receivedBytesFormatted,
+                percent: item.percent,
+                speed: item.speed,
+                speedBps: item.speedBps,
+                state: item.state,
+                isPaused: item.isPaused,
+                canResume: item.canResume,
+                url: item.url,
+                mimeType: item.mimeType,
+                savePath: item.savePath,
+                startTime: item.startTime,
+                endTime: item.endTime
+            }));
+            fs.writeFileSync(DOWNLOADS_FILE, JSON.stringify(serializable, null, 2), 'utf8');
+        } catch (e) {
+            console.error('[Downloads] Error saving persisted downloads:', e.message);
+        }
+    }, 400);
+}
+
+function loadPersistedHistory() {
+    try {
+        if (fs.existsSync(HISTORY_FILE)) {
+            const data = fs.readFileSync(HISTORY_FILE, 'utf8');
+            const parsed = JSON.parse(data);
+            if (Array.isArray(parsed)) return parsed;
+        }
+    } catch (e) {
+        console.error('[History] Error loading persisted history:', e.message);
+    }
+    return [];
+}
+
+function savePersistedHistory(historyList) {
+    try {
+        if (Array.isArray(historyList)) {
+            fs.writeFileSync(HISTORY_FILE, JSON.stringify(historyList.slice(0, 500), null, 2), 'utf8');
+            return true;
+        }
+    } catch (e) {
+        console.error('[History] Error saving persisted history:', e.message);
+    }
+    return false;
+}
+
+// In-Process Download Manager Storage (persisted to disk)
 const downloadsMap = new Map();
-const downloadsList = [];
+const downloadsList = loadPersistedDownloads();
 
 function formatBytes(bytes, decimals = 2) {
     if (!bytes || bytes <= 0) return '0 B';
@@ -112,45 +209,46 @@ function createWindow() {
         return { action: 'deny' };
     });
 
+    mainWindow.webContents.on('will-attach-webview', (event, webPreferences, params) => {
+        webPreferences.contextIsolation = false;
+        webPreferences.nodeIntegration = false;
+    });
+
     mainWindow.once('ready-to-show', () => {
         mainWindow.show();
         mainWindow.maximize();
         mainWindow.focus();
+        if (typeof mainWindow.moveTop === 'function') mainWindow.moveTop();
+    });
+
+    mainWindow.on('focus', () => {
+        if (mainWindow && !mainWindow.isDestroyed()) {
+            mainWindow.webContents.send('window-focus-changed', true);
+        }
+    });
+
+    mainWindow.on('blur', () => {
+        if (mainWindow && !mainWindow.isDestroyed()) {
+            mainWindow.webContents.send('window-focus-changed', false);
+        }
+    });
+
+    mainWindow.on('minimize', () => {
+        if (mainWindow && !mainWindow.isDestroyed()) {
+            mainWindow.webContents.send('window-focus-changed', false);
+        }
+    });
+
+    mainWindow.on('restore', () => {
+        if (mainWindow && !mainWindow.isDestroyed()) {
+            mainWindow.webContents.send('window-focus-changed', true);
+        }
     });
 
     mainWindow.webContents.on('console-message', (event, level, message, line, sourceId) => {
         // Suppress expected deprecation or minor warnings in console
         if (message.includes('Electron Security Warning')) return;
         console.log(`[Renderer Console] ${message}`);
-    });
-
-    // Automatic permission suppression (blocks notification spam, allows local microphone)
-    session.defaultSession.setPermissionRequestHandler((webContents, permission, callback) => {
-        if (permission === 'notifications' || permission === 'mediaKeySystem') {
-            return callback(false);
-        }
-        if (permission === 'media') {
-            return callback(true);
-        }
-        callback(true);
-    });
-
-    session.defaultSession.setPermissionCheckHandler((webContents, permission) => {
-        if (permission === 'media') {
-            return true;
-        }
-        return true;
-    });
-
-    // Strip restrictive Content-Security-Policy headers so external typography stylesheets can load on every website
-    session.defaultSession.webRequest.onHeadersReceived({ urls: ['*://*/*'] }, (details, callback) => {
-        const responseHeaders = Object.assign({}, details.responseHeaders);
-        for (const key of Object.keys(responseHeaders)) {
-            if (key.toLowerCase() === 'content-security-policy') {
-                delete responseHeaders[key];
-            }
-        }
-        callback({ cancel: false, responseHeaders });
     });
 
     let shieldsThrottleTimer = null;
@@ -166,133 +264,267 @@ function createWindow() {
         }, 400);
     };
 
-    // In-Process Network Interception: Brave adblock-rust engine + fallback pattern filtering
-    session.defaultSession.webRequest.onBeforeRequest({ urls: ['*://*/*'] }, (details, callback) => {
-        const url = details.url;
+    function configureBrowserSession(targetSession) {
+        if (!targetSession) return;
 
-        // 1. Primary: High-speed Brave adblock-rust engine inspection
-        const decision = braveAdblock.shouldBlock(url, details.referrer, details.resourceType);
-        if (decision.block) {
-            adblockStats.blockedCount++;
-            braveAdblock.recordBlocked(url, decision);
-            broadcastShieldsThrottled();
-            return callback({ cancel: true });
+        // Set genuine Chrome User Agent (Bypasses Google OAuth "This browser or app may not be secure" block)
+        targetSession.setUserAgent(CHROME_USER_AGENT);
+
+        // Configure guest preload script for zero-latency ad purging at document-start
+        const guestPreloadPath = path.join(__dirname, 'guest_preload.js');
+        if (typeof targetSession.registerPreloadScript === 'function') {
+            try {
+                targetSession.registerPreloadScript({ type: 'frame', filePath: guestPreloadPath });
+            } catch(e) {
+                console.warn('[Session] Failed to register preload script:', e.message);
+            }
+        } else if (typeof targetSession.setPreloads === 'function') {
+            try {
+                targetSession.setPreloads([guestPreloadPath]);
+            } catch(e) {
+                console.warn('[Session] Failed to set session preloads:', e.message);
+            }
         }
 
-        // 2. Secondary fallback: Check against pattern rules
-        const matchesPattern = blockedPatterns.some(pattern => {
-            const regex = new RegExp('^' + pattern.replace(/\*/g, '.*').replace(/\?/g, '.') + '$');
-            return regex.test(url);
+        targetSession.setPermissionRequestHandler((webContents, permission, callback) => {
+            if (permission === 'notifications') {
+                return callback(false);
+            }
+            callback(true);
         });
 
-        if (matchesPattern) {
-            adblockStats.blockedCount++;
-            braveAdblock.recordBlocked(url, { block: true, rule: 'Pattern Filter Rule', category: 'ad' });
-            broadcastShieldsThrottled();
+        targetSession.setPermissionCheckHandler((webContents, permission) => {
+            return true;
+        });
+
+        // Strip Electron signature and enforce standard Chrome client hints for Google accounts and secure services
+        targetSession.webRequest.onBeforeSendHeaders((details, callback) => {
+            const url = details.url.toLowerCase();
+            // Fast-path media streams: direct wire throughput
+            if (url.includes('googlevideo.com') || url.includes('videoplayback')) {
+                return callback({ cancel: false });
+            }
+            const requestHeaders = Object.assign({}, details.requestHeaders);
+            requestHeaders['User-Agent'] = CHROME_USER_AGENT;
+            requestHeaders['sec-ch-ua'] = '"Chromium";v="134", "Not:A-Brand";v="24", "Google Chrome";v="134"';
+            requestHeaders['sec-ch-ua-mobile'] = '?0';
+            requestHeaders['sec-ch-ua-platform'] = '"Windows"';
+            callback({ cancel: false, requestHeaders });
+        });
+
+        // Strip restrictive Content-Security-Policy headers so external typography stylesheets and clean playback run on every website
+        targetSession.webRequest.onHeadersReceived({ urls: ['*://*/*'] }, (details, callback) => {
+            const url = details.url.toLowerCase();
+            // Fast-path media chunks: avoid header mutation on video streams
+            if (url.includes('googlevideo.com') || url.includes('videoplayback') || url.includes('.mp4') || url.includes('.m3u8') || url.includes('.mpd')) {
+                return callback({ cancel: false });
+            }
+            const responseHeaders = Object.assign({}, details.responseHeaders);
+            for (const key of Object.keys(responseHeaders)) {
+                const lowerKey = key.toLowerCase();
+                if (lowerKey === 'content-security-policy' || lowerKey === 'content-security-policy-report-only' || lowerKey === 'x-content-security-policy') {
+                    delete responseHeaders[key];
+                }
+            }
+            callback({ cancel: false, responseHeaders });
+        });
+
+        // Universal Network Interception: Brave adblock-rust filter matches
+                // 1s silent black mp4 (uBlock 'noopmp4') - served in place of YouTube ad media so the player
+        // sees a successful, instantly-ending ad stream and falls through to content with zero stall.
+        const YT_AD_NOOP_VIDEO = 'data:video/mp4;base64,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';
+
+        function respondToBlockedAd(url, details, callback) {
+            const rType = details.resourceType;
+
+            // 1. Image, beacon, and ping trackers: neutral 1x1 transparent GIF
+            if (rType === 'image' || rType === 'ping') {
+                return callback({ redirectURL: 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7' });
+            }
+
+            // 2. Ad scripts: neutral no-op JS
+            if (rType === 'script') {
+                return callback({ redirectURL: 'data:application/javascript;base64,Lyogbm9vcCAqLw==' });
+            }
+
+            // 3. Media ad chunks (video/audio ads): neutral 1s black silent mp4 to cleanly finish ad stream
+            if (rType === 'media') {
+                return callback({ redirectURL: YT_AD_NOOP_VIDEO });
+            }
+
+            // 4. All other ad/tracker network requests (XHR, fetch, frames, etc.): clean cancel
             return callback({ cancel: true });
         }
 
-        return callback({ cancel: false });
-    });
+        targetSession.webRequest.onBeforeRequest({ urls: ['*://*/*'] }, (details, callback) => {
+            const url = details.url;
+            const lowerUrl = url.toLowerCase();
 
-    // Native In-Process Download Manager (Tracks all webview and browser downloads)
-    session.defaultSession.on('will-download', (event, item, webContents) => {
-        const id = 'dl-' + Date.now() + '-' + Math.random().toString(36).substring(2, 7);
-        const filename = item.getFilename();
-        const totalBytes = item.getTotalBytes();
-        const url = item.getURL();
-        const mimeType = item.getMimeType();
-        const startTime = Date.now();
-        let lastBytes = 0;
-        let lastTime = startTime;
-        let speedBps = 0;
+            // Record network requests around playback startup for A/B/C testing diagnostics
+            if (global.__networkLog && global.__networkLog.length < 500) {
+                global.__networkLog.push({
+                    t: Date.now(),
+                    url: url,
+                    resourceType: details.resourceType || 'other',
+                    method: details.method || 'GET'
+                });
+            }
 
-        const defaultDownloads = app.getPath('downloads');
-        const defaultSavePath = path.join(defaultDownloads, filename);
+            // Universal Network Blocker Kill-Switch for A/B/C testing
+            if (global.__testConfig && global.__testConfig.networkBlocker === false) {
+                return callback({ cancel: false });
+            }
+            if (braveAdblock.mode === 'off') {
+                return callback({ cancel: false });
+            }
 
-        // If automated benchmark/test, bypass modal popup; otherwise open native Save As dialog
-        const isAutomated = process.env.AUTO_BENCHMARK === '1' || process.env.HEADLESS === '1' || global.__isAutomatedDownloadTest;
-        if (isAutomated) {
-            item.setSavePath(defaultSavePath);
-        } else {
-            item.setSaveDialogOptions({
-                defaultPath: defaultSavePath,
-                title: 'Save File to Downloads'
+            // Whitelist media streaming, video chunks, and player integrity endpoints unconditionally
+            for (const exception of braveAdblock.exceptionRules) {
+                if (lowerUrl.includes(exception)) {
+                    return callback({ cancel: false });
+                }
+            }
+
+            // 1. Primary: High-speed Brave adblock-rust engine inspection
+            const decision = braveAdblock.shouldBlock(url, details.referrer, details.resourceType);
+            if (decision.block) {
+                adblockStats.blockedCount++;
+                braveAdblock.recordBlocked(url, decision);
+                broadcastShieldsThrottled();
+                return respondToBlockedAd(url, details, callback);
+            }
+
+            // 2. Secondary fallback: Check against precompiled pattern rules
+            const matchesPattern = blockedRegexes.some(regex => regex.test(url));
+
+            if (matchesPattern) {
+                adblockStats.blockedCount++;
+                braveAdblock.recordBlocked(url, { block: true, rule: 'Pattern Filter Rule', category: 'ad' });
+                broadcastShieldsThrottled();
+                return respondToBlockedAd(url, details, callback);
+            }
+
+            return callback({ cancel: false });
+        });
+
+        // Native In-Process Download Manager (Tracks all webview and browser downloads & persists to disk)
+        targetSession.on('will-download', (event, item, webContents) => {
+            const id = 'dl-' + Date.now() + '-' + Math.random().toString(36).substring(2, 7);
+            const filename = item.getFilename();
+            const totalBytes = item.getTotalBytes();
+            const url = item.getURL();
+            const mimeType = item.getMimeType();
+            const startTime = Date.now();
+            let lastBytes = 0;
+            let lastTime = startTime;
+            let speedBps = 0;
+
+            const defaultDownloads = app.getPath('downloads');
+            const defaultSavePath = path.join(defaultDownloads, filename);
+
+            const isAutomated = process.env.AUTO_BENCHMARK === '1' || process.env.HEADLESS === '1' || global.__isAutomatedDownloadTest;
+            if (isAutomated) {
+                item.setSavePath(defaultSavePath);
+            } else {
+                item.setSaveDialogOptions({
+                    defaultPath: defaultSavePath,
+                    title: 'Save File to Downloads'
+                });
+            }
+
+            const downloadRecord = {
+                id,
+                filename,
+                totalBytes,
+                totalBytesFormatted: formatBytes(totalBytes),
+                receivedBytes: 0,
+                receivedBytesFormatted: '0 B',
+                percent: 0,
+                speed: '0 KB/s',
+                speedBps: 0,
+                state: 'progressing',
+                isPaused: false,
+                canResume: item.canResume(),
+                url,
+                mimeType,
+                savePath: defaultSavePath,
+                startTime,
+                endTime: null
+            };
+
+            downloadsMap.set(id, item);
+            downloadsList.unshift(downloadRecord);
+            savePersistedDownloads();
+
+            console.log(`[Native Downloads] Download started: "${filename}" (${formatBytes(totalBytes)}) from ${url}`);
+
+            const broadcast = (type, data) => {
+                if (mainWindow && !mainWindow.isDestroyed()) {
+                    mainWindow.webContents.send(type, data);
+                }
+            };
+
+            broadcast('download-started', downloadRecord);
+
+            item.on('updated', (evt, state) => {
+                const now = Date.now();
+                const received = item.getReceivedBytes();
+                const timeDiff = (now - lastTime) / 1000;
+                if (timeDiff >= 0.5) {
+                    speedBps = Math.round((received - lastBytes) / timeDiff);
+                    lastBytes = received;
+                    lastTime = now;
+                }
+
+                downloadRecord.savePath = item.getSavePath() || downloadRecord.savePath || defaultSavePath;
+                downloadRecord.receivedBytes = received;
+                downloadRecord.receivedBytesFormatted = formatBytes(received);
+                downloadRecord.totalBytes = item.getTotalBytes() || totalBytes;
+                downloadRecord.totalBytesFormatted = formatBytes(downloadRecord.totalBytes);
+                downloadRecord.percent = downloadRecord.totalBytes > 0 ? Math.min(100, Math.round((received / downloadRecord.totalBytes) * 100)) : 0;
+                downloadRecord.speedBps = speedBps;
+                downloadRecord.speed = formatBytes(speedBps) + '/s';
+                downloadRecord.state = state;
+                downloadRecord.isPaused = item.isPaused();
+                downloadRecord.canResume = item.canResume();
+
+                savePersistedDownloads();
+                broadcast('download-progress', downloadRecord);
+            });
+
+            item.once('done', (evt, state) => {
+                downloadRecord.savePath = item.getSavePath() || downloadRecord.savePath || defaultSavePath;
+                downloadRecord.state = state;
+                downloadRecord.receivedBytes = item.getReceivedBytes();
+                downloadRecord.receivedBytesFormatted = formatBytes(downloadRecord.receivedBytes);
+                downloadRecord.percent = state === 'completed' ? 100 : downloadRecord.percent;
+                downloadRecord.endTime = Date.now();
+                downloadRecord.speed = '0 KB/s';
+                downloadRecord.speedBps = 0;
+
+                savePersistedDownloads();
+                console.log(`[Native Downloads] Download ${state}: "${filename}" -> "${downloadRecord.savePath}" (${downloadRecord.receivedBytesFormatted})`);
+                broadcast('download-completed', downloadRecord);
+            });
+        });
+
+        // Auto-flush cookies to disk on change to guarantee session preservation
+        if (targetSession.cookies && targetSession.cookies.on) {
+            let cookieDebounce = null;
+            targetSession.cookies.on('changed', () => {
+                if (cookieDebounce) return;
+                cookieDebounce = setTimeout(() => {
+                    cookieDebounce = null;
+                    targetSession.cookies.flushStore().catch(() => {});
+                }, 1500);
             });
         }
+    }
 
-        const downloadRecord = {
-            id,
-            filename,
-            totalBytes,
-            totalBytesFormatted: formatBytes(totalBytes),
-            receivedBytes: 0,
-            receivedBytesFormatted: '0 B',
-            percent: 0,
-            speed: '0 KB/s',
-            speedBps: 0,
-            state: 'progressing',
-            isPaused: false,
-            canResume: item.canResume(),
-            url,
-            mimeType,
-            savePath: defaultSavePath,
-            startTime,
-            endTime: null
-        };
-
-        downloadsMap.set(id, item);
-        downloadsList.unshift(downloadRecord);
-
-        console.log(`[Native Downloads] Download started: "${filename}" (${formatBytes(totalBytes)}) from ${url}`);
-
-        const broadcast = (type, data) => {
-            if (mainWindow && !mainWindow.isDestroyed()) {
-                mainWindow.webContents.send(type, data);
-            }
-        };
-
-        broadcast('download-started', downloadRecord);
-
-        item.on('updated', (evt, state) => {
-            const now = Date.now();
-            const received = item.getReceivedBytes();
-            const timeDiff = (now - lastTime) / 1000;
-            if (timeDiff >= 0.5) {
-                speedBps = Math.round((received - lastBytes) / timeDiff);
-                lastBytes = received;
-                lastTime = now;
-            }
-
-            downloadRecord.savePath = item.getSavePath() || downloadRecord.savePath || defaultSavePath;
-            downloadRecord.receivedBytes = received;
-            downloadRecord.receivedBytesFormatted = formatBytes(received);
-            downloadRecord.totalBytes = item.getTotalBytes() || totalBytes;
-            downloadRecord.totalBytesFormatted = formatBytes(downloadRecord.totalBytes);
-            downloadRecord.percent = downloadRecord.totalBytes > 0 ? Math.min(100, Math.round((received / downloadRecord.totalBytes) * 100)) : 0;
-            downloadRecord.speedBps = speedBps;
-            downloadRecord.speed = formatBytes(speedBps) + '/s';
-            downloadRecord.state = state;
-            downloadRecord.isPaused = item.isPaused();
-            downloadRecord.canResume = item.canResume();
-
-            broadcast('download-progress', downloadRecord);
-        });
-
-        item.once('done', (evt, state) => {
-            downloadRecord.savePath = item.getSavePath() || downloadRecord.savePath || defaultSavePath;
-            downloadRecord.state = state;
-            downloadRecord.receivedBytes = item.getReceivedBytes();
-            downloadRecord.receivedBytesFormatted = formatBytes(downloadRecord.receivedBytes);
-            downloadRecord.percent = state === 'completed' ? 100 : downloadRecord.percent;
-            downloadRecord.endTime = Date.now();
-            downloadRecord.speed = '0 KB/s';
-            downloadRecord.speedBps = 0;
-
-            console.log(`[Native Downloads] Download ${state}: "${filename}" -> "${downloadRecord.savePath}" (${downloadRecord.receivedBytesFormatted})`);
-            broadcast('download-completed', downloadRecord);
-        });
-    });
+    // Configure both default session and persistent partition session
+    configureBrowserSession(session.defaultSession);
+    const persistSession = session.fromPartition('persist:antigravity');
+    configureBrowserSession(persistSession);
 
     // Window ready logging, URL dispatch, and automated snapshot verification
     mainWindow.webContents.on('did-finish-load', () => {
@@ -363,8 +595,12 @@ function createWindow() {
 // Universal Brave Shields injection for all guest webviews across any website
 app.on('web-contents-created', (event, contents) => {
     if (contents.getType() === 'webview') {
-        const injectUniversalShields = () => {
+        let lastInjectedUrl = '';
+        const injectUniversalShields = (force = false) => {
             const url = contents.getURL() || '';
+            if (!url || url === 'about:blank') return;
+            if (!force && lastInjectedUrl === url) return;
+            lastInjectedUrl = url;
             const cosmeticCss = braveAdblock.getCosmeticCSS(url);
             if (cosmeticCss) {
                 contents.insertCSS(cosmeticCss, { cssOrigin: 'user' }).catch(() => {});
@@ -431,10 +667,9 @@ app.on('web-contents-created', (event, contents) => {
             }
         });
 
-        contents.on('did-navigate', injectUniversalShields);
-        contents.on('dom-ready', injectUniversalShields);
-        contents.on('did-navigate-in-page', injectUniversalShields);
-        contents.on('did-frame-finish-load', injectUniversalShields);
+        contents.on('dom-ready', () => injectUniversalShields(true));
+        contents.on('did-navigate', () => { lastInjectedUrl = ''; injectUniversalShields(false); });
+        contents.on('did-navigate-in-page', () => { lastInjectedUrl = ''; injectUniversalShields(true); });
     }
 });
 
@@ -608,6 +843,52 @@ function startAiControlServer(port = 4892) {
                 });
             }
 
+            if (pathname === '/api/shield-mode' && req.method === 'POST') {
+                const body = await readBody();
+                const mode = (body && (body.mode || body.value)) || 'aggressive';
+                braveAdblock.setMode(mode);
+                const stats = braveAdblock.getStats();
+                if (mainWindow && !mainWindow.isDestroyed()) {
+                    mainWindow.webContents.send('brave-shields-updated', stats);
+                }
+                return sendJson(200, { success: true, mode, stats });
+            }
+
+            if (pathname === '/api/test/config' && req.method === 'POST') {
+                const body = await readBody();
+                if (body && body.networkBlocker !== undefined) {
+                    global.__testConfig.networkBlocker = !!body.networkBlocker;
+                    braveAdblock.setMode(body.networkBlocker ? 'aggressive' : 'off');
+                }
+                if (body && body.testMode) {
+                    global.__testConfig.testMode = body.testMode;
+                }
+                global.__networkLog = [];
+                return sendJson(200, { success: true, config: global.__testConfig });
+            }
+
+            if (pathname === '/api/test/config' && req.method === 'GET') {
+                return sendJson(200, { success: true, config: global.__testConfig });
+            }
+
+            if (pathname === '/api/test/network-log' && req.method === 'GET') {
+                return sendJson(200, { success: true, count: global.__networkLog.length, log: global.__networkLog });
+            }
+
+            if (pathname === '/api/test/network-log/clear' && req.method === 'POST') {
+                global.__networkLog = [];
+                return sendJson(200, { success: true });
+            }
+
+            if (pathname === '/api/restart' && req.method === 'POST') {
+                sendJson(200, { success: true, message: 'Relaunching Electron' });
+                setTimeout(() => {
+                    app.relaunch();
+                    app.exit(0);
+                }, 200);
+                return;
+            }
+
             if (pathname === '/api/focus' && req.method === 'POST') {
                 if (mainWindow && !mainWindow.isDestroyed()) {
                     if (mainWindow.isMinimized()) mainWindow.restore();
@@ -739,13 +1020,27 @@ function startAiControlServer(port = 4892) {
                 return sendJson(200, result);
             }
 
+            if ((pathname === '/api/press_key' || pathname === '/api/key') && req.method === 'POST') {
+                const body = await readBody();
+                const key = body.key || body.target || 'Space';
+                const result = await sendAiControlRequest('press-key', { key, modifiers: body.modifiers || [] });
+                return sendJson(200, result);
+            }
+
+            if (pathname === '/api/hover' && req.method === 'POST') {
+                const body = await readBody();
+                const target = body.target || body.text || '';
+                const result = await sendAiControlRequest('hover', { target });
+                return sendJson(200, result);
+            }
+
             if (pathname === '/api/type' && req.method === 'POST') {
                 const body = await readBody();
                 const result = await sendAiControlRequest('type', {
                     text: body.text || '',
-                    target: body.target,
-                    selector: body.selector,
-                    submit: body.submit !== false
+                    target: body.target || body.selector,
+                    submit: body.submit === true,
+                    clear: body.clear !== false
                 });
                 return sendJson(200, result);
             }
@@ -791,6 +1086,28 @@ function startAiControlServer(port = 4892) {
                 const body = await readBody();
                 const result = await sendAiControlRequest('copilot-chat', body);
                 return sendJson(200, { success: true, result });
+            }
+
+            if (pathname === '/api/whisper/status' && req.method === 'GET') {
+                return sendJson(200, {
+                    success: true,
+                    ready: whisperEngine.isReady(),
+                    initializing: whisperEngine.isInitializing(),
+                    model: 'onnx-community/whisper-base',
+                    languages: ['auto', 'en', 'hi', 'ko']
+                });
+            }
+
+            if (pathname === '/api/whisper/transcribe' && req.method === 'POST') {
+                const body = await readBody();
+                const { audioData, audio, language, sampleRate, executeCommand } = body || {};
+                const result = await whisperEngine.transcribeAudio(audioData || audio, { language, sampleRate });
+                if (result && result.success && result.text && executeCommand) {
+                    const cmdResult = await sendAiControlRequest('command', { prompt: result.text }, 90000);
+                    await sendAiControlRequest('copilot-chat', { query: result.text }).catch(() => {});
+                    return sendJson(200, { ...result, commandExecuted: true, commandResult: cmdResult });
+                }
+                return sendJson(result && result.success ? 200 : 400, result);
             }
 
             // --- Download Manager Endpoints ---
@@ -878,6 +1195,15 @@ function startAiControlServer(port = 4892) {
                 });
             }
 
+            if (pathname === '/api/restart' && req.method === 'POST') {
+                sendJson(200, { success: true, message: 'Restarting Antigravity Browser...' });
+                setTimeout(() => {
+                    app.relaunch();
+                    app.exit(0);
+                }, 200);
+                return;
+            }
+
             return sendJson(404, { error: 'Not Found', pathname });
         } catch (err) {
             console.error('[AI Control Server Error]', err);
@@ -903,6 +1229,14 @@ app.whenReady().then(() => {
             createWindow();
         }
     });
+});
+
+app.on('before-quit', async () => {
+    try {
+        await session.defaultSession.cookies.flushStore();
+        const pSess = session.fromPartition('persist:antigravity');
+        if (pSess) await pSess.cookies.flushStore();
+    } catch (e) {}
 });
 
 app.on('will-quit', () => {
@@ -945,6 +1279,51 @@ ipcMain.handle('check-url-block', (event, arg) => {
         block: braveAdblock.isSuspiciousPopup(url, initiatorUrl),
         decision: braveAdblock.shouldBlock(url, initiatorUrl)
     };
+});
+
+// Native Wallpaper File Picker & Persistent Storage IPC
+ipcMain.handle('wallpaper:pick-local-file', async () => {
+    try {
+        const { canceled, filePaths } = await dialog.showOpenDialog(mainWindow, {
+            title: 'Select Wallpaper (Image or Video)',
+            properties: ['openFile'],
+            filters: [
+                { name: 'Media Files', extensions: ['jpg', 'jpeg', 'png', 'webp', 'gif', 'mp4', 'webm', 'mov', 'm4v'] },
+                { name: 'Images', extensions: ['jpg', 'jpeg', 'png', 'webp', 'gif'] },
+                { name: 'Videos', extensions: ['mp4', 'webm', 'mov', 'm4v'] }
+            ]
+        });
+
+        if (canceled || !filePaths || filePaths.length === 0) {
+            return { canceled: true };
+        }
+
+        const sourcePath = filePaths[0];
+        const ext = path.extname(sourcePath).toLowerCase();
+        const isVideo = ['.mp4', '.webm', '.mov', '.m4v'].includes(ext);
+
+        const wallpaperDir = path.join(app.getPath('userData'), 'wallpapers');
+        if (!fs.existsSync(wallpaperDir)) {
+            fs.mkdirSync(wallpaperDir, { recursive: true });
+        }
+
+        const safeBaseName = `${Date.now()}_${path.basename(sourcePath).replace(/[^a-zA-Z0-9._-]/g, '_')}`;
+        const destPath = path.join(wallpaperDir, safeBaseName);
+        fs.copyFileSync(sourcePath, destPath);
+
+        const fileUrl = 'file:///' + destPath.replace(/\\/g, '/');
+
+        return {
+            success: true,
+            canceled: false,
+            url: fileUrl,
+            type: isVideo ? 'video' : 'image',
+            fileName: path.basename(sourcePath)
+        };
+    } catch (err) {
+        console.error('[Wallpaper Pick Error]', err);
+        return { success: false, error: err.message };
+    }
 });
 
 ipcMain.on('check-url-block-sync', (event, arg) => {
@@ -1286,8 +1665,8 @@ ipcMain.handle('whisper-preload', async () => {
 
 ipcMain.handle('whisper-transcribe', async (event, payload) => {
     try {
-        const { audioData, language } = payload || {};
-        const result = await whisperEngine.transcribeAudio(audioData, { language });
+        const { audioData, language, sampleRate } = payload || {};
+        const result = await whisperEngine.transcribeAudio(audioData, { language, sampleRate });
         return result;
     } catch (err) {
         console.error('[Main] Whisper transcription failed:', err);
@@ -1354,10 +1733,24 @@ ipcMain.handle('clear-completed-downloads', () => {
         if (idx !== -1) downloadsList.splice(idx, 1);
         downloadsMap.delete(item.id);
     }
+    savePersistedDownloads();
     if (mainWindow && !mainWindow.isDestroyed()) {
         mainWindow.webContents.send('download-list-updated', downloadsList);
     }
     return downloadsList;
+});
+
+// Browsing History IPC Handlers (Persisted to disk)
+ipcMain.handle('get-history', () => {
+    return loadPersistedHistory();
+});
+
+ipcMain.handle('save-history', (event, historyList) => {
+    return savePersistedHistory(historyList);
+});
+
+ipcMain.handle('clear-history', () => {
+    return savePersistedHistory([]);
 });
 
 
