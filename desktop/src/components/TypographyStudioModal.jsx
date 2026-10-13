@@ -115,7 +115,7 @@ export default function TypographyStudioModal({
     };
 
     return (
-        <div className="modal-backdrop" id="typographyBackdrop" onClick={onClose} style={{
+        <div className="ui-modal-backdrop" id="typographyBackdrop" onClick={onClose} style={{
             position: 'fixed',
             inset: 0,
             backgroundColor: 'rgba(3, 7, 18, 0.75)',

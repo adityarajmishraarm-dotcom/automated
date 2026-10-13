@@ -264,25 +264,27 @@ function createWindow() {
         }, 400);
     };
 
-    function configureBrowserSession(targetSession) {
+    function configureBrowserSession(targetSession, registerGuestPreload = false) {
         if (!targetSession) return;
 
         // Set genuine Chrome User Agent (Bypasses Google OAuth "This browser or app may not be secure" block)
         targetSession.setUserAgent(CHROME_USER_AGENT);
 
-        // Configure guest preload script for zero-latency ad purging at document-start
-        const guestPreloadPath = path.join(__dirname, 'guest_preload.js');
-        if (typeof targetSession.registerPreloadScript === 'function') {
-            try {
-                targetSession.registerPreloadScript({ type: 'frame', filePath: guestPreloadPath });
-            } catch(e) {
-                console.warn('[Session] Failed to register preload script:', e.message);
-            }
-        } else if (typeof targetSession.setPreloads === 'function') {
-            try {
-                targetSession.setPreloads([guestPreloadPath]);
-            } catch(e) {
-                console.warn('[Session] Failed to set session preloads:', e.message);
+        // Configure guest preload script ONLY for guest webview partitions (never on the host React shell)
+        if (registerGuestPreload) {
+            const guestPreloadPath = path.join(__dirname, 'guest_preload.js');
+            if (typeof targetSession.registerPreloadScript === 'function') {
+                try {
+                    targetSession.registerPreloadScript({ type: 'frame', filePath: guestPreloadPath });
+                } catch(e) {
+                    console.warn('[Session] Failed to register preload script:', e.message);
+                }
+            } else if (typeof targetSession.setPreloads === 'function') {
+                try {
+                    targetSession.setPreloads([guestPreloadPath]);
+                } catch(e) {
+                    console.warn('[Session] Failed to set session preloads:', e.message);
+                }
             }
         }
 
@@ -522,9 +524,9 @@ function createWindow() {
     }
 
     // Configure both default session and persistent partition session
-    configureBrowserSession(session.defaultSession);
+    configureBrowserSession(session.defaultSession, false);
     const persistSession = session.fromPartition('persist:antigravity');
-    configureBrowserSession(persistSession);
+    configureBrowserSession(persistSession, true);
 
     // Window ready logging, URL dispatch, and automated snapshot verification
     mainWindow.webContents.on('did-finish-load', () => {

@@ -1174,6 +1174,19 @@
         } catch(e) {}
 
         // 8. Universal Video Ad Neutralizer & Instant Terminator (DOM-level)
+        let isSpaNavigating = false;
+        let spaNavStartTime = 0;
+        targetWindow.addEventListener('yt-navigate-start', () => {
+            isSpaNavigating = true;
+            spaNavStartTime = Date.now();
+        }, true);
+        targetWindow.addEventListener('yt-navigate-finish', () => {
+            isSpaNavigating = false;
+        }, true);
+        targetWindow.addEventListener('yt-navigate-error', () => {
+            isSpaNavigating = false;
+        }, true);
+
         function handleVideoAds() {
             if (currentTestMode === 'A' || currentTestMode === 'B' || currentTestMode === 'C') {
                 return; // Neutral observer mode during A/B/C testing
@@ -1276,8 +1289,19 @@
                     if (ytPlayer) {
                         const state = typeof ytPlayer.getPlayerState === 'function' ? ytPlayer.getPlayerState() : null;
                         if (state === -1 || state === 5) {
-                            if (typeof ytPlayer.playVideo === 'function') {
-                                try { ytPlayer.playVideo(); } catch(e) {}
+                            // Watchdog guard: do not kickstart during SPA navigation or when
+                            // the player's active videoId does not match the watch-page URL's videoId.
+                            const urlMatch = ((targetWindow.location || {}).href || '').match(/[?&]v=([A-Za-z0-9_-]{11})/);
+                            const urlVid = urlMatch ? urlMatch[1] : null;
+                            const pData = typeof ytPlayer.getVideoData === 'function' ? ytPlayer.getVideoData() : null;
+                            const prData = typeof ytPlayer.getPlayerResponse === 'function' ? ytPlayer.getPlayerResponse() : null;
+                            const playerVid = (pData && pData.video_id) || (prData && prData.videoDetails && prData.videoDetails.videoId) || null;
+                            const isNavActive = isSpaNavigating && (Date.now() - spaNavStartTime < 8000);
+                            const isVidMatch = !!(urlVid && playerVid && urlVid === playerVid);
+                            if (!isNavActive && isVidMatch) {
+                                if (typeof ytPlayer.playVideo === 'function') {
+                                    try { ytPlayer.playVideo(); } catch(e) {}
+                                }
                             }
                         }
                     }
@@ -1294,6 +1318,7 @@
             targetWindow.document.addEventListener('timeupdate', handleVideoAds, true);
         }
         targetWindow.addEventListener('yt-navigate-finish', () => {
+            isSpaNavigating = false;
             const ytPlayer = targetWindow.document.querySelector('#movie_player, .html5-video-player');
             if (ytPlayer) {
                 ytPlayer.__auto_started = false;
@@ -1302,6 +1327,7 @@
             handleVideoAds();
         });
         targetWindow.addEventListener('yt-page-data-updated', () => {
+            isSpaNavigating = false;
             const ytPlayer = targetWindow.document.querySelector('#movie_player, .html5-video-player');
             if (ytPlayer) hookPlayerObject(ytPlayer);
             handleVideoAds();

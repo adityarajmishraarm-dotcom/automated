@@ -2547,7 +2547,8 @@ body {
 }
 
 /* Universal Centered Modal Popup System */
-.modal-backdrop {
+.modal-backdrop,
+.ui-modal-backdrop {
     position: fixed !important;
     inset: 0 !important;
     top: 0 !important;

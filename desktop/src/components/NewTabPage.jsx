@@ -1699,7 +1699,7 @@ export default function NewTabPage({
 
             {/* Add / Edit Site Modal Popup */}
             {isSiteModalOpen && (
-                <div className="modal-backdrop" onClick={() => setIsSiteModalOpen(false)}>
+                <div className="ui-modal-backdrop" onClick={() => setIsSiteModalOpen(false)}>
                     <div className="modal-container site-edit-modal" onClick={(e) => e.stopPropagation()}>
                         <div className="modal-header">
                             <h2>{editingSite ? '✏️ Edit Site Shortcut' : '➕ Add Site to Home'}</h2>

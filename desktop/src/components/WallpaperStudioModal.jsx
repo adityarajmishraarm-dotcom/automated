@@ -143,7 +143,7 @@ export default function WallpaperStudioModal({
     };
 
     return (
-        <div className="modal-backdrop" onClick={onClose}>
+        <div className="ui-modal-backdrop" onClick={onClose}>
             <div
                 className="modal-container wallpaper-modal"
                 style={{

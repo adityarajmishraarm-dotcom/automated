@@ -208,8 +208,13 @@ export default function App() {
 
     // Universal High-Priority In-Process Typography Styler
     const injectTypographyIntoWebview = (wv) => {
-        if (!wv) return;
-        const curUrl = typeof wv.getURL === 'function' ? wv.getURL() : '';
+        if (!wv || !wv.__domReady) return;
+        let curUrl = '';
+        try {
+            curUrl = typeof wv.getURL === 'function' ? wv.getURL() : '';
+        } catch (e) {
+            return;
+        }
         if (!curUrl || curUrl === 'about:blank') return;
         const fontKey = canvasFontStyleRef.current;
         const sizeKey = canvasFontSizeRef.current;
@@ -1412,6 +1417,41 @@ export default function App() {
 
     window.__antigravityOpenNewTab = openInNewTab;
 
+    const safeLoadWebviewUrl = (wv, targetUrl) => {
+        if (!wv) return;
+        try {
+            if (wv.__domReady && typeof wv.loadURL === 'function') {
+                const p = wv.loadURL(targetUrl);
+                if (p && typeof p.catch === 'function') {
+                    p.catch((err) => {
+                        if (err && (err.code === 'ERR_ABORTED' || String(err).includes('ERR_ABORTED'))) return;
+                        console.warn('[Navigation Warning]', err);
+                    });
+                }
+            } else {
+                wv.setAttribute('src', targetUrl);
+            }
+        } catch (err) {
+            try { wv.setAttribute('src', targetUrl); } catch (e) {}
+        }
+    };
+
+    const safeGetWebviewUrl = (wv) => {
+        if (!wv) return '';
+        try {
+            if (wv.__domReady && typeof wv.getURL === 'function') return wv.getURL() || '';
+        } catch (err) {}
+        return wv.getAttribute('src') || '';
+    };
+
+    const safeGetWebviewTitle = (wv) => {
+        if (!wv) return '';
+        try {
+            if (wv.__domReady && typeof wv.getTitle === 'function') return wv.getTitle() || '';
+        } catch (err) {}
+        return '';
+    };
+
     // Close a Tab
     const handleCloseTab = (tabId) => {
         const targetId = tabId !== undefined ? tabId : activeTabIdRef.current;
@@ -1419,7 +1459,7 @@ export default function App() {
             if (prevTabs.length <= 1) {
                 const firstId = prevTabs[0]?.id || 1;
                 const wv = document.getElementById(`wv-${firstId}`);
-                if (wv && typeof wv.loadURL === 'function') wv.loadURL('about:blank');
+                safeLoadWebviewUrl(wv, 'about:blank');
                 return [{ id: firstId, url: '', initialUrl: 'about:blank', title: 'New Tab', isNewTab: true }];
             }
 
@@ -1451,7 +1491,7 @@ export default function App() {
                 return t;
             }));
             const wv = document.getElementById(`wv-${targetId}`);
-            if (wv && typeof wv.loadURL === 'function') wv.loadURL('about:blank');
+            safeLoadWebviewUrl(wv, 'about:blank');
             logTelemetry('act', 'Tab navigated to New Tab Page');
             return;
         }
@@ -1469,7 +1509,7 @@ export default function App() {
                 return t;
             }));
             const wv = document.getElementById(`wv-${targetId}`);
-            if (wv && typeof wv.loadURL === 'function') wv.loadURL('about:blank');
+            safeLoadWebviewUrl(wv, 'about:blank');
             logTelemetry('act', 'Navigated to Brave-style Downloads Manager');
             return;
         }
@@ -1487,7 +1527,7 @@ export default function App() {
                 return t;
             }));
             const wv = document.getElementById(`wv-${targetId}`);
-            if (wv && typeof wv.loadURL === 'function') wv.loadURL('about:blank');
+            safeLoadWebviewUrl(wv, 'about:blank');
             logTelemetry('act', 'Navigated to Chrome/Brave-style History Page');
             return;
         }
@@ -1518,14 +1558,7 @@ export default function App() {
 
         // Imperatively load URL in webview with instant dispatch
         const wv = document.getElementById(`wv-${targetId}`);
-        if (wv && typeof wv.loadURL === 'function') {
-            wv.loadURL(finalUrl).catch((err) => {
-                if (err && (err.code === 'ERR_ABORTED' || String(err).includes('ERR_ABORTED'))) {
-                    return;
-                }
-                console.warn('[Navigation Warning]', err);
-            });
-        }
+        safeLoadWebviewUrl(wv, finalUrl);
 
         logTelemetry('act', `WebContents::GetController().LoadURL("${finalUrl}")`);
     };
@@ -1551,24 +1584,34 @@ export default function App() {
             } else if ((e.ctrlKey && (e.key === 'r' || e.key === 'R')) || e.key === 'F5') {
                 e.preventDefault();
                 const wv = document.getElementById(`wv-${activeTabId}`);
-                if (wv && typeof wv.reload === 'function') wv.reload();
+                if (wv && wv.__domReady && typeof wv.reload === 'function') {
+                    try { wv.reload(); } catch (err) {}
+                }
             } else if (e.altKey && e.key === 'ArrowLeft') {
                 e.preventDefault();
                 const wv = document.getElementById(`wv-${activeTabId}`);
-                if (wv) {
-                    if (typeof wv.canGoBack === 'function' && wv.canGoBack()) {
-                        if (typeof wv.stop === 'function') try { wv.stop(); } catch (err) {}
-                        wv.goBack();
-                    } else {
+                if (wv && wv.__domReady) {
+                    try {
+                        if (typeof wv.canGoBack === 'function' && wv.canGoBack()) {
+                            if (typeof wv.stop === 'function') try { wv.stop(); } catch (err) {}
+                            wv.goBack();
+                        } else {
+                            handleNavigate(NEW_TAB_IDENTIFIER);
+                        }
+                    } catch (err) {
                         handleNavigate(NEW_TAB_IDENTIFIER);
                     }
                 }
             } else if (e.altKey && e.key === 'ArrowRight') {
                 e.preventDefault();
                 const wv = document.getElementById(`wv-${activeTabId}`);
-                if (wv && typeof wv.canGoForward === 'function' && wv.canGoForward()) {
-                    if (typeof wv.stop === 'function') try { wv.stop(); } catch (err) {}
-                    wv.goForward();
+                if (wv && wv.__domReady) {
+                    try {
+                        if (typeof wv.canGoForward === 'function' && wv.canGoForward()) {
+                            if (typeof wv.stop === 'function') try { wv.stop(); } catch (err) {}
+                            wv.goForward();
+                        }
+                    } catch (err) {}
                 }
             }
         };
@@ -1587,7 +1630,7 @@ export default function App() {
             const targetUrl = (e.url || '').trim();
             if (!targetUrl || targetUrl === 'about:blank' || targetUrl.startsWith('javascript:')) return;
 
-            const curUrl = (typeof wv.getURL === 'function' ? wv.getURL() : '') || activeTabRef.current?.url || '';
+            const curUrl = safeGetWebviewUrl(wv) || activeTabRef.current?.url || '';
 
             // Check against shady patterns and ad rotators immediately
             const isSuspiciousDest = /(?:wasgiwiththinfeet|acscdn|greenanalytics|ukankingwithea|certaker|enaightdecipie|unlockr|adsboosters|cpmgate|topcreativeformat|mybestmv|recrampwiped|bonuscaf|rtvhd=|aydfd=|sklnk|aliexpress\.com|ali\.pub)/i.test(targetUrl);
@@ -1626,33 +1669,35 @@ export default function App() {
                 }));
                 return;
             }
+            const curTitle = safeGetWebviewTitle(wv);
             setTabs(prev => prev.map(t => {
                 if (t.id === tabId) {
-                    const newTitle = (typeof wv.getTitle === 'function' ? wv.getTitle() : '') || t.title;
+                    const newTitle = curTitle || t.title;
                     if (t.url === rawUrl && t.title === newTitle && !t.isNewTab) return t;
                     return { ...t, url: rawUrl, title: newTitle, isNewTab: false };
                 }
                 return t;
             }));
-            addHistoryEntry(rawUrl, (typeof wv.getTitle === 'function' ? wv.getTitle() : '') || rawUrl);
+            addHistoryEntry(rawUrl, curTitle || rawUrl);
         });
 
         wv.addEventListener('did-navigate-in-page', (e) => {
             const rawUrl = e.url || '';
             if (!rawUrl || rawUrl === 'about:blank') return;
+            const curTitle = safeGetWebviewTitle(wv);
             setTabs(prev => prev.map(t => {
                 if (t.id === tabId) {
-                    const newTitle = (typeof wv.getTitle === 'function' ? wv.getTitle() : '') || t.title;
+                    const newTitle = curTitle || t.title;
                     if (t.url === rawUrl && t.title === newTitle && !t.isNewTab) return t;
                     return { ...t, url: rawUrl, title: newTitle, isNewTab: false };
                 }
                 return t;
             }));
-            addHistoryEntry(rawUrl, (typeof wv.getTitle === 'function' ? wv.getTitle() : '') || rawUrl);
+            addHistoryEntry(rawUrl, curTitle || rawUrl);
         });
 
         wv.addEventListener('page-title-updated', (e) => {
-            const curUrl = typeof wv.getURL === 'function' ? wv.getURL() : '';
+            const curUrl = safeGetWebviewUrl(wv);
             if (!curUrl || curUrl === 'about:blank') return;
             setTabs(prev => prev.map(t => {
                 if (t.id === tabId && !t.isNewTab) {
@@ -1665,7 +1710,8 @@ export default function App() {
         });
 
         wv.addEventListener('dom-ready', () => {
-            const u = typeof wv.getURL === 'function' ? wv.getURL() : '';
+            wv.__domReady = true;
+            const u = safeGetWebviewUrl(wv);
             if (!u || u === 'about:blank') {
                 setTabs(prev => prev.map(t => {
                     if (t.id === tabId) {
@@ -1677,9 +1723,10 @@ export default function App() {
                 }));
                 return;
             }
+            const curTitle = safeGetWebviewTitle(wv);
             setTabs(prev => prev.map(t => {
                 if (t.id === tabId && !t.isNewTab) {
-                    const newTitle = (typeof wv.getTitle === 'function' ? wv.getTitle() : '') || t.title;
+                    const newTitle = curTitle || t.title;
                     if (t.url === u && t.title === newTitle) return t;
                     return { ...t, url: u, title: newTitle };
                 }
@@ -1792,29 +1839,41 @@ export default function App() {
                 onNavigate={handleNavigate}
                 onBack={() => {
                     const wv = document.getElementById(`wv-${activeTabId}`);
-                    if (wv) {
-                        if (typeof wv.canGoBack === 'function' && wv.canGoBack()) {
-                            if (typeof wv.stop === 'function') {
-                                try { wv.stop(); } catch (e) {}
+                    if (wv && wv.__domReady) {
+                        try {
+                            if (typeof wv.canGoBack === 'function' && wv.canGoBack()) {
+                                if (typeof wv.stop === 'function') {
+                                    try { wv.stop(); } catch (e) {}
+                                }
+                                wv.goBack();
+                            } else {
+                                handleNavigate(NEW_TAB_IDENTIFIER);
                             }
-                            wv.goBack();
-                        } else {
+                        } catch (e) {
                             handleNavigate(NEW_TAB_IDENTIFIER);
                         }
+                    } else {
+                        handleNavigate(NEW_TAB_IDENTIFIER);
                     }
                 }}
                 onForward={() => {
                     const wv = document.getElementById(`wv-${activeTabId}`);
-                    if (wv && typeof wv.canGoForward === 'function' && wv.canGoForward()) {
-                        if (typeof wv.stop === 'function') {
-                            try { wv.stop(); } catch (e) {}
-                        }
-                        wv.goForward();
+                    if (wv && wv.__domReady) {
+                        try {
+                            if (typeof wv.canGoForward === 'function' && wv.canGoForward()) {
+                                if (typeof wv.stop === 'function') {
+                                    try { wv.stop(); } catch (e) {}
+                                }
+                                wv.goForward();
+                            }
+                        } catch (e) {}
                     }
                 }}
                 onReload={() => {
                     const wv = document.getElementById(`wv-${activeTabId}`);
-                    if (wv && typeof wv.reload === 'function') wv.reload();
+                    if (wv && wv.__domReady && typeof wv.reload === 'function') {
+                        try { wv.reload(); } catch (e) {}
+                    }
                 }}
                 onHome={() => handleNavigate(NEW_TAB_IDENTIFIER)}
                 isNewTab={isNewTab}
@@ -1868,35 +1927,45 @@ export default function App() {
                                     bottom: 0,
                                     width: '100%',
                                     height: '100%',
-                                    display: isActive ? 'flex' : 'none',
+                                    display: 'flex',
                                     visibility: isActive ? 'visible' : 'hidden',
+                                    opacity: isActive ? 1 : 0,
                                     pointerEvents: isActive ? 'auto' : 'none',
                                     zIndex: isActive ? 2 : -1,
                                     flexDirection: 'column'
                                 }}
                             >
-                                <webview
-                                    id={`wv-${tab.id}`}
-                                    className="native-webview"
-                                    src={tab.initialUrl || tab.url || 'about:blank'}
-                                    partition="persist:antigravity"
-                                    useragent={CHROME_USER_AGENT}
-                                    preload={GUEST_PRELOAD_URL || undefined}
-                                    webpreferences="contextIsolation=no, nodeIntegration=no, allowRunningInsecureContent=no"
+                                <div
                                     style={{
-                                        width: showWebview ? '100%' : '0px',
-                                        height: showWebview ? '100%' : '0px',
+                                        width: showWebview ? '100%' : '1px',
+                                        height: showWebview ? '100%' : '1px',
                                         position: showWebview ? 'relative' : 'absolute',
-                                        display: showWebview ? 'flex' : 'none',
+                                        display: 'flex',
                                         visibility: showWebview ? 'visible' : 'hidden',
                                         opacity: showWebview ? 1 : 0,
                                         pointerEvents: showWebview ? 'auto' : 'none',
-                                        zIndex: showWebview ? 2 : -1
+                                        zIndex: showWebview ? 2 : -1,
+                                        overflow: 'hidden'
                                     }}
-                                    ref={(el) => {
-                                        if (el) attachWebviewListeners(el, tab.id);
-                                    }}
-                                />
+                                >
+                                    <webview
+                                        id={`wv-${tab.id}`}
+                                        className="native-webview"
+                                        src={tab.initialUrl || tab.url || 'about:blank'}
+                                        partition="persist:antigravity"
+                                        useragent={CHROME_USER_AGENT}
+                                        preload={GUEST_PRELOAD_URL || undefined}
+                                        webpreferences="contextIsolation=no, nodeIntegration=no, allowRunningInsecureContent=no"
+                                        style={{
+                                            width: '100%',
+                                            height: '100%',
+                                            display: 'flex'
+                                        }}
+                                        ref={(el) => {
+                                            if (el) attachWebviewListeners(el, tab.id);
+                                        }}
+                                    />
+                                </div>
 
                                 {isDownloadsTab && (
                                     <div style={{ width: '100%', height: '100%', overflowY: 'auto' }}>
