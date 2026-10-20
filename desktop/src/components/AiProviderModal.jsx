@@ -111,6 +111,9 @@ export default function AiProviderModal({
 
     const handleSelectPresetModel = (modelName) => {
         handleUpdateField('model', modelName);
+        window.dispatchEvent(new CustomEvent('antigravity-active-provider-changed', {
+            detail: { providerId: currentConfig.id, config: { ...currentConfig, model: modelName } }
+        }));
     };
 
     const handleAddModel = () => {
@@ -267,7 +270,11 @@ export default function AiProviderModal({
 
     const handleSaveAndApply = () => {
         saveAiProvidersConfig(configs);
-        setActiveProviderId(activeProviderId);
+        const finalActiveId = activeProviderId || selectedProviderId || 'lmstudio';
+        setActiveProviderId(finalActiveId);
+        window.dispatchEvent(new CustomEvent('antigravity-active-provider-changed', {
+            detail: { providerId: finalActiveId, config: configs[finalActiveId] || currentConfig }
+        }));
         setSaveFeedback(true);
         setTimeout(() => {
             setSaveFeedback(false);
@@ -425,6 +432,12 @@ export default function AiProviderModal({
                                     onClick={() => {
                                         setShowAddProviderForm(false);
                                         setSelectedProviderId(prov.id);
+                                        setActiveId(prov.id);
+                                        setActiveProviderId(prov.id);
+                                        saveAiProvidersConfig(configs);
+                                        window.dispatchEvent(new CustomEvent('antigravity-active-provider-changed', {
+                                            detail: { providerId: prov.id, config: configs[prov.id] || prov }
+                                        }));
                                         setTestStatus(null);
                                     }}
                                     style={{

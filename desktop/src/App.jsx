@@ -206,15 +206,44 @@ export default function App() {
         shieldsStats
     };
 
+    // Robust validation for guest webview instances to prevent Uncaught Error: Invalid guestInstanceId
+    const isWebviewValid = (wv) => {
+        if (!wv || wv.__closing || wv.__closed) return false;
+        if (typeof document !== 'undefined' && !document.contains(wv)) return false;
+        try {
+            if (typeof wv.getWebContentsId === 'function') {
+                const id = wv.getWebContentsId();
+                if (!id) return false;
+            }
+            return true;
+        } catch (e) {
+            return false;
+        }
+    };
+
+    const safeGetWebviewUrl = (wv) => {
+        if (!wv || !isWebviewValid(wv)) return '';
+        try {
+            if (typeof wv.getURL === 'function') return wv.getURL() || '';
+        } catch (err) {}
+        try {
+            return wv.getAttribute('src') || '';
+        } catch (err) {}
+        return '';
+    };
+
+    const safeGetWebviewTitle = (wv) => {
+        if (!wv || !isWebviewValid(wv)) return '';
+        try {
+            if (typeof wv.getTitle === 'function') return wv.getTitle() || '';
+        } catch (err) {}
+        return '';
+    };
+
     // Universal High-Priority In-Process Typography Styler
     const injectTypographyIntoWebview = (wv) => {
-        if (!wv || !wv.__domReady) return;
-        let curUrl = '';
-        try {
-            curUrl = typeof wv.getURL === 'function' ? wv.getURL() : '';
-        } catch (e) {
-            return;
-        }
+        if (!wv || !isWebviewValid(wv) || !wv.__domReady) return;
+        const curUrl = safeGetWebviewUrl(wv);
         if (!curUrl || curUrl === 'about:blank') return;
         const fontKey = canvasFontStyleRef.current;
         const sizeKey = canvasFontSizeRef.current;
@@ -648,23 +677,26 @@ export default function App() {
                 if (data.url) handleNavigate(data.url);
             } else if (action === 'extract-page-text') {
                 const wv = document.getElementById(`wv-${activeTabId}`);
-                if (wv && typeof wv.executeJavaScript === 'function' && wv.getURL() && wv.getURL() !== 'about:blank') {
-                    wv.executeJavaScript(`
-                        (function() {
-                            const title = document.title || '';
-                            const url = window.location.href || '';
-                            const text = (document.body ? document.body.innerText : '').substring(0, 4000);
-                            return { title, url, text };
-                        })()
-                    `).then(pageInfo => {
-                        if (pageInfo) {
-                            ipcRenderer.send('sync-hud-state', {
-                                type: 'page-text-extracted',
-                                requestId: data.requestId,
-                                pageInfo
-                            });
-                        }
-                    }).catch(() => {});
+                const curUrl = safeGetWebviewUrl(wv);
+                if (wv && isWebviewValid(wv) && typeof wv.executeJavaScript === 'function' && curUrl && curUrl !== 'about:blank') {
+                    try {
+                        wv.executeJavaScript(`
+                            (function() {
+                                const title = document.title || '';
+                                const url = window.location.href || '';
+                                const text = (document.body ? document.body.innerText : '').substring(0, 4000);
+                                return { title, url, text };
+                            })()
+                        `).then(pageInfo => {
+                            if (pageInfo) {
+                                ipcRenderer.send('sync-hud-state', {
+                                    type: 'page-text-extracted',
+                                    requestId: data.requestId,
+                                    pageInfo
+                                });
+                            }
+                        }).catch(() => {});
+                    } catch (e) {}
                 }
             } else if (action === 'ai-command') {
                 if (data.prompt) {
@@ -672,8 +704,14 @@ export default function App() {
                         tabs: tabsRef.current,
                         activeTab: activeTabRef.current,
                         activeTabId: activeTabIdRef.current,
-                        activeWebview: document.getElementById(`wv-${activeTabIdRef.current}`),
-                        getActiveWebview: () => document.getElementById(`wv-${activeTabIdRef.current}`),
+                        activeWebview: (function() {
+                            const el = document.getElementById(`wv-${activeTabIdRef.current}`);
+                            return (el && isWebviewValid(el)) ? el : null;
+                        })(),
+                        getActiveWebview: () => {
+                            const el = document.getElementById(`wv-${activeTabIdRef.current}`);
+                            return (el && isWebviewValid(el)) ? el : null;
+                        },
                         onOpenTab: openInNewTab,
                         onCloseTab: handleCloseTab,
                         onNavigate: handleNavigate,
@@ -779,13 +817,13 @@ export default function App() {
                     openInNewTab(url);
                     result = { success: true, url };
                 } else if (action === 'capture-screenshot') {
-                    if (wv && typeof wv.capturePage === 'function') {
+                    if (wv && isWebviewValid(wv) && typeof wv.capturePage === 'function') {
                         try {
                             const img = await wv.capturePage();
                             const dataUrl = img.toDataURL();
                             const size = img.getSize();
-                            const title = typeof wv.getTitle === 'function' ? wv.getTitle() : (curActiveTab ? curActiveTab.title : '');
-                            const url = typeof wv.getURL === 'function' ? wv.getURL() : (curActiveTab ? curActiveTab.url : '');
+                            const title = safeGetWebviewTitle(wv) || (curActiveTab ? curActiveTab.title : '');
+                            const url = safeGetWebviewUrl(wv) || (curActiveTab ? curActiveTab.url : '');
                             if (ipcRenderer && ipcRenderer.invoke) {
                                 result = await ipcRenderer.invoke('save-vlm-snapshot', {
                                     dataUrl,
@@ -809,13 +847,13 @@ export default function App() {
                         result = { success: false, error: 'No active webview available to capture' };
                     }
                 } else if (action === 'get-page-context') {
-                    if (wv) {
+                    if (wv && isWebviewValid(wv)) {
                         result = await extractAdaptivePageContext(wv);
                     } else {
                         result = { success: false, error: 'No active webview available' };
                     }
                 } else if (action === 'site-act') {
-                    if (wv) {
+                    if (wv && isWebviewValid(wv)) {
                         triggerAiBanner('ADAPTIVE_ACT', 'Executing adaptive action: ' + (payload.intent || ''));
                         result = await executeAdaptiveAction(wv, payload.intent, payload.options);
                     } else {
@@ -836,8 +874,11 @@ export default function App() {
                         tabs: curTabs,
                         activeTab: curActiveTab,
                         activeTabId: curActiveId,
-                        activeWebview: wv,
-                        getActiveWebview: () => document.getElementById(`wv-${activeTabIdRef.current}`),
+                        activeWebview: (wv && isWebviewValid(wv)) ? wv : null,
+                        getActiveWebview: () => {
+                            const el = document.getElementById(`wv-${activeTabIdRef.current}`);
+                            return (el && isWebviewValid(el)) ? el : null;
+                        },
                         onOpenTab: openInNewTab,
                         onCloseTab: handleCloseTab,
                         onNavigate: handleNavigate,
@@ -890,54 +931,65 @@ export default function App() {
                         result = { success: false, error: 'No active webview' };
                     }
                 } else if (action === 'get-page-content') {
-                    const wvUrl4 = wv && typeof wv.getURL === 'function' ? wv.getURL() : '';
-                    if (wv && typeof wv.executeJavaScript === 'function' && wvUrl4 && wvUrl4 !== 'about:blank') {
-                        const execPromise = wv.executeJavaScript(`
-                            (function() {
-                                const allLinks = Array.from(document.querySelectorAll('a')).map(a => ({
-                                    text: (a.innerText || a.textContent || '').trim().replace(/\\s+/g, ' '),
-                                    href: a.href || '',
-                                    id: a.id || '',
-                                    className: String(a.className || '')
-                                })).filter(l => l.text && l.href && !l.href.startsWith('javascript:'));
+                    const wvUrl4 = safeGetWebviewUrl(wv);
+                    if (wv && isWebviewValid(wv) && typeof wv.executeJavaScript === 'function' && wvUrl4 && wvUrl4 !== 'about:blank') {
+                        try {
+                            const execPromise = wv.executeJavaScript(`
+                                (function() {
+                                    const allLinks = Array.from(document.querySelectorAll('a')).map(a => ({
+                                        text: (a.innerText || a.textContent || '').trim().replace(/\\s+/g, ' '),
+                                        href: a.href || '',
+                                        id: a.id || '',
+                                        className: String(a.className || '')
+                                    })).filter(l => l.text && l.href && !l.href.startsWith('javascript:'));
 
-                                const allButtons = Array.from(document.querySelectorAll('button, input[type="submit"], input[type="button"], [role="button"], .btn, .button, [onclick]')).map(b => ({
-                                    text: (b.innerText || b.value || b.getAttribute('aria-label') || '').trim().replace(/\\s+/g, ' '),
-                                    id: b.id || '',
-                                    className: String(b.className || ''),
-                                    tag: b.tagName
-                                })).filter(b => b.text && b.text.length < 100);
+                                    const allButtons = Array.from(document.querySelectorAll('button, input[type="submit"], input[type="button"], [role="button"], .btn, .button, [onclick]')).map(b => ({
+                                        text: (b.innerText || b.value || b.getAttribute('aria-label') || '').trim().replace(/\\s+/g, ' '),
+                                        id: b.id || '',
+                                        className: String(b.className || ''),
+                                        tag: b.tagName
+                                    })).filter(b => b.text && b.text.length < 100);
 
-                                const timers = Array.from(document.querySelectorAll('*')).filter(el => {
-                                    const id = el.id || '';
-                                    const cl = String(el.className || '');
-                                    return /timer|counter|countdown|wait|second/i.test(id + ' ' + cl);
-                                }).map(el => ({
-                                    id: el.id || '',
-                                    text: (el.innerText || '').trim()
-                                })).filter(t => t.text);
+                                    const timers = Array.from(document.querySelectorAll('*')).filter(el => {
+                                        const id = el.id || '';
+                                        const cl = String(el.className || '');
+                                        return /timer|counter|countdown|wait|second/i.test(id + ' ' + cl);
+                                    }).map(el => ({
+                                        id: el.id || '',
+                                        text: (el.innerText || '').trim()
+                                    })).filter(t => t.text);
 
-                                return {
-                                    title: document.title || '',
-                                    url: window.location.href || '',
-                                    text: (document.body ? document.body.innerText : '').substring(0, 15000),
-                                    links: allLinks.slice(0, 300),
-                                    buttons: allButtons.slice(0, 100),
-                                    timers: timers.slice(0, 20)
-                                };
-                            })()
-                        `);
-                        const timeoutPromise = new Promise((resolve) => {
-                            setTimeout(() => resolve({
+                                    return {
+                                        title: document.title || '',
+                                        url: window.location.href || '',
+                                        text: (document.body ? document.body.innerText : '').substring(0, 15000),
+                                        links: allLinks.slice(0, 300),
+                                        buttons: allButtons.slice(0, 100),
+                                        timers: timers.slice(0, 20)
+                                    };
+                                })()
+                            `);
+                            const timeoutPromise = new Promise((resolve) => {
+                                setTimeout(() => resolve({
+                                    title: activeTab.title,
+                                    url: activeTab.url,
+                                    text: 'Page loading in progress...',
+                                    links: [],
+                                    buttons: [],
+                                    timers: []
+                                }), 7000);
+                            });
+                            result = await Promise.race([execPromise, timeoutPromise]);
+                        } catch (contentErr) {
+                            result = {
                                 title: activeTab.title,
                                 url: activeTab.url,
-                                text: 'Page loading in progress...',
+                                text: '',
                                 links: [],
                                 buttons: [],
                                 timers: []
-                            }), 7000);
-                        });
-                        result = await Promise.race([execPromise, timeoutPromise]);
+                            };
+                        }
                     } else {
                         result = {
                             title: activeTab.title,
@@ -949,8 +1001,8 @@ export default function App() {
                         };
                     }
                 } else if (action === 'eval') {
-                    const wvUrl = wv && typeof wv.getURL === 'function' ? wv.getURL() : '';
-                    const wvReady = wv && typeof wv.executeJavaScript === 'function' && wvUrl && wvUrl !== 'about:blank' && !(typeof wv.isLoading === 'function' && wv.isLoading());
+                    const wvUrl = safeGetWebviewUrl(wv);
+                    const wvReady = wv && isWebviewValid(wv) && typeof wv.executeJavaScript === 'function' && wvUrl && wvUrl !== 'about:blank';
                     if (wvReady) {
                         try {
                             const execPromise = wv.executeJavaScript(payload.script);
@@ -965,18 +1017,26 @@ export default function App() {
                         result = { success: false, error: 'Webview not ready (loading or uninitialized)' };
                     }
                 } else if (action === 'get-page-context') {
-                    const wvUrl2 = wv && typeof wv.getURL === 'function' ? wv.getURL() : '';
-                    const wvReady2 = wv && typeof wv.executeJavaScript === 'function' && wvUrl2 && wvUrl2 !== 'about:blank';
+                    const wvUrl2 = safeGetWebviewUrl(wv);
+                    const wvReady2 = wv && isWebviewValid(wv) && typeof wv.executeJavaScript === 'function' && wvUrl2 && wvUrl2 !== 'about:blank';
                     if (wvReady2) {
-                        result = await extractAdaptivePageContext(wv);
+                        try {
+                            result = await extractAdaptivePageContext(wv);
+                        } catch (e) {
+                            result = { success: false, error: e.message };
+                        }
                     } else {
                         result = { success: false, error: 'Webview not ready' };
                     }
                 } else if (action === 'site-act') {
-                    const wvUrl3 = wv && typeof wv.getURL === 'function' ? wv.getURL() : '';
-                    const wvReady3 = wv && typeof wv.executeJavaScript === 'function' && wvUrl3 && wvUrl3 !== 'about:blank';
+                    const wvUrl3 = safeGetWebviewUrl(wv);
+                    const wvReady3 = wv && isWebviewValid(wv) && typeof wv.executeJavaScript === 'function' && wvUrl3 && wvUrl3 !== 'about:blank';
                     if (wvReady3) {
-                        result = await executeAdaptiveAction(wv, payload.intent, payload.options);
+                        try {
+                            result = await executeAdaptiveAction(wv, payload.intent, payload.options);
+                        } catch (e) {
+                            result = { success: false, error: e.message };
+                        }
                     } else {
                         result = { success: false, error: 'Webview not ready' };
                     }
@@ -1081,26 +1141,30 @@ export default function App() {
         try {
             if (target === 'webview') {
                 const wv = document.getElementById(`wv-${activeTabIdRef.current}`);
-                if (wv && typeof wv.capturePage === 'function') {
-                    const img = await wv.capturePage();
-                    const size = img.getSize();
-                    const dataUrl = img.toDataURL();
-                    const curTab = activeTabRef.current || {};
-                    const title = typeof wv.getTitle === 'function' ? wv.getTitle() : (curTab.title || '');
-                    const url = typeof wv.getURL === 'function' ? wv.getURL() : (curTab.url || '');
-                    if (ipcRenderer && ipcRenderer.invoke) {
-                        const res = await ipcRenderer.invoke('save-vlm-snapshot', {
-                            dataUrl,
-                            width: size.width,
-                            height: size.height,
-                            title,
-                            url
-                        });
-                        if (res && res.success) {
-                            setLatestSnapshot(res);
-                            logTelemetry('act', `VLM webview screenshot captured: ${res.path}`);
-                            return res;
+                if (wv && isWebviewValid(wv) && typeof wv.capturePage === 'function') {
+                    try {
+                        const img = await wv.capturePage();
+                        const size = img.getSize();
+                        const dataUrl = img.toDataURL();
+                        const curTab = activeTabRef.current || {};
+                        const title = safeGetWebviewTitle(wv) || (curTab.title || '');
+                        const url = safeGetWebviewUrl(wv) || (curTab.url || '');
+                        if (ipcRenderer && ipcRenderer.invoke) {
+                            const res = await ipcRenderer.invoke('save-vlm-snapshot', {
+                                dataUrl,
+                                width: size.width,
+                                height: size.height,
+                                title,
+                                url
+                            });
+                            if (res && res.success) {
+                                setLatestSnapshot(res);
+                                logTelemetry('act', `VLM webview screenshot captured: ${res.path}`);
+                                return res;
+                            }
                         }
+                    } catch (captureErr) {
+                        logTelemetry('warn', `VLM webview capture error: ${captureErr.message}`);
                     }
                 }
             }
@@ -1171,7 +1235,7 @@ export default function App() {
     // Set-of-Marks Hashtag Clicking & Target Element Interaction (AI Harness Unified)
     const executeWebviewClick = async (targetText) => {
         const wv = document.getElementById(`wv-${activeTabIdRef.current}`) || document.querySelector('.native-webview');
-        if (!wv || typeof wv.executeJavaScript !== 'function') {
+        if (!wv || !isWebviewValid(wv) || typeof wv.executeJavaScript !== 'function') {
             logTelemetry('warn', 'No active webview available to execute click interaction.');
             return false;
         }
@@ -1187,7 +1251,7 @@ export default function App() {
     // Proportional Logical Scroll Scale & Shortcuts (s50, s0, s1000) (AI Harness Unified)
     const executeWebviewScroll = async (direction = 'down', amount = 20, isPercent = false) => {
         const wv = document.getElementById(`wv-${activeTabIdRef.current}`) || document.querySelector('.native-webview');
-        if (!wv || typeof wv.executeJavaScript !== 'function') return false;
+        if (!wv || !isWebviewValid(wv) || typeof wv.executeJavaScript !== 'function') return false;
         try {
             const scrollPromise = harnessExecuteScroll(wv, direction, amount, isPercent, logTelemetry);
             const timeoutPromise = new Promise(resolve => setTimeout(() => resolve(true), 4000));
@@ -1199,7 +1263,7 @@ export default function App() {
 
     const extractPageTextForAi = async () => {
         const wv = document.getElementById(`wv-${activeTabIdRef.current}`);
-        if (!wv || typeof wv.executeJavaScript !== 'function') return '';
+        if (!wv || !isWebviewValid(wv) || typeof wv.executeJavaScript !== 'function') return '';
         try {
             const text = await wv.executeJavaScript(`
                 (function() {
@@ -1215,7 +1279,7 @@ export default function App() {
     // Clean Distraction-Free Reader Mode Extractor
     const handleOpenReaderMode = async () => {
         const wv = document.getElementById(`wv-${activeTabIdRef.current}`);
-        if (!wv || typeof wv.executeJavaScript !== 'function') return;
+        if (!wv || !isWebviewValid(wv) || typeof wv.executeJavaScript !== 'function') return;
 
         try {
             const articleData = await wv.executeJavaScript(`
@@ -1386,7 +1450,7 @@ export default function App() {
         try {
             if (ipcRenderer && ipcRenderer.sendSync) {
                 const activeWv = document.getElementById(`wv-${activeTabId}`);
-                const currentUrl = activeWv && typeof activeWv.getURL === 'function' ? (activeWv.getURL() || '') : '';
+                const currentUrl = safeGetWebviewUrl(activeWv);
                 isBlocked = ipcRenderer.sendSync('check-url-block-sync', { url, initiatorUrl: currentUrl });
             }
         } catch (err) {
@@ -1418,7 +1482,7 @@ export default function App() {
     window.__antigravityOpenNewTab = openInNewTab;
 
     const safeLoadWebviewUrl = (wv, targetUrl) => {
-        if (!wv) return;
+        if (!wv || !isWebviewValid(wv)) return;
         try {
             if (wv.__domReady && typeof wv.loadURL === 'function') {
                 const p = wv.loadURL(targetUrl);
@@ -1436,25 +1500,15 @@ export default function App() {
         }
     };
 
-    const safeGetWebviewUrl = (wv) => {
-        if (!wv) return '';
-        try {
-            if (wv.__domReady && typeof wv.getURL === 'function') return wv.getURL() || '';
-        } catch (err) {}
-        return wv.getAttribute('src') || '';
-    };
-
-    const safeGetWebviewTitle = (wv) => {
-        if (!wv) return '';
-        try {
-            if (wv.__domReady && typeof wv.getTitle === 'function') return wv.getTitle() || '';
-        } catch (err) {}
-        return '';
-    };
-
     // Close a Tab
     const handleCloseTab = (tabId) => {
         const targetId = tabId !== undefined ? tabId : activeTabIdRef.current;
+        const closingWv = document.getElementById(`wv-${targetId}`);
+        if (closingWv) {
+            closingWv.__closing = true;
+            closingWv.__closed = true;
+            closingWv.__domReady = false;
+        }
         setTabs(prevTabs => {
             if (prevTabs.length <= 1) {
                 const firstId = prevTabs[0]?.id || 1;
@@ -1469,7 +1523,10 @@ export default function App() {
             if (String(activeTabIdRef.current) === String(targetId)) {
                 const nextActiveIndex = Math.max(0, Math.min(closeIndex, filtered.length - 1));
                 if (filtered[nextActiveIndex]) {
-                    setActiveTabId(filtered[nextActiveIndex].id);
+                    const nextId = filtered[nextActiveIndex].id;
+                    setActiveTabId(nextId);
+                    activeTabIdRef.current = nextId;
+                    activeTabRef.current = filtered[nextActiveIndex];
                 }
             }
             return filtered;
@@ -1584,13 +1641,13 @@ export default function App() {
             } else if ((e.ctrlKey && (e.key === 'r' || e.key === 'R')) || e.key === 'F5') {
                 e.preventDefault();
                 const wv = document.getElementById(`wv-${activeTabId}`);
-                if (wv && wv.__domReady && typeof wv.reload === 'function') {
+                if (wv && isWebviewValid(wv) && wv.__domReady && typeof wv.reload === 'function') {
                     try { wv.reload(); } catch (err) {}
                 }
             } else if (e.altKey && e.key === 'ArrowLeft') {
                 e.preventDefault();
                 const wv = document.getElementById(`wv-${activeTabId}`);
-                if (wv && wv.__domReady) {
+                if (wv && isWebviewValid(wv) && wv.__domReady) {
                     try {
                         if (typeof wv.canGoBack === 'function' && wv.canGoBack()) {
                             if (typeof wv.stop === 'function') try { wv.stop(); } catch (err) {}
@@ -1605,7 +1662,7 @@ export default function App() {
             } else if (e.altKey && e.key === 'ArrowRight') {
                 e.preventDefault();
                 const wv = document.getElementById(`wv-${activeTabId}`);
-                if (wv && wv.__domReady) {
+                if (wv && isWebviewValid(wv) && wv.__domReady) {
                     try {
                         if (typeof wv.canGoForward === 'function' && wv.canGoForward()) {
                             if (typeof wv.stop === 'function') try { wv.stop(); } catch (err) {}
@@ -1839,7 +1896,7 @@ export default function App() {
                 onNavigate={handleNavigate}
                 onBack={() => {
                     const wv = document.getElementById(`wv-${activeTabId}`);
-                    if (wv && wv.__domReady) {
+                    if (wv && isWebviewValid(wv) && wv.__domReady) {
                         try {
                             if (typeof wv.canGoBack === 'function' && wv.canGoBack()) {
                                 if (typeof wv.stop === 'function') {
@@ -1858,7 +1915,7 @@ export default function App() {
                 }}
                 onForward={() => {
                     const wv = document.getElementById(`wv-${activeTabId}`);
-                    if (wv && wv.__domReady) {
+                    if (wv && isWebviewValid(wv) && wv.__domReady) {
                         try {
                             if (typeof wv.canGoForward === 'function' && wv.canGoForward()) {
                                 if (typeof wv.stop === 'function') {
@@ -1871,7 +1928,7 @@ export default function App() {
                 }}
                 onReload={() => {
                     const wv = document.getElementById(`wv-${activeTabId}`);
-                    if (wv && wv.__domReady && typeof wv.reload === 'function') {
+                    if (wv && isWebviewValid(wv) && wv.__domReady && typeof wv.reload === 'function') {
                         try { wv.reload(); } catch (e) {}
                     }
                 }}
@@ -1962,7 +2019,11 @@ export default function App() {
                                             display: 'flex'
                                         }}
                                         ref={(el) => {
-                                            if (el) attachWebviewListeners(el, tab.id);
+                                            if (el) {
+                                                el.__closing = false;
+                                                el.__closed = false;
+                                                attachWebviewListeners(el, tab.id);
+                                            }
                                         }}
                                     />
                                 </div>

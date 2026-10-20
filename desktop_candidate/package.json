@@ -1,0 +1,13 @@
+{
+  "name": "antigravity-browser",
+  "version": "1.0.0",
+  "description": "Native AI-Native Browser (Chrome/Brave Alternative)",
+  "main": "main.js",
+  "scripts": {
+    "build": "npx esbuild src/index.jsx --bundle --outfile=dist/bundle.js --platform=node --external:electron --loader:.jsx=jsx",
+    "start": "npx esbuild src/index.jsx --bundle --outfile=dist/bundle.js --platform=node --external:electron --loader:.jsx=jsx && electron ."
+  },
+  "keywords": ["browser", "ai", "chromium"],
+  "author": "",
+  "license": "ISC"
+}

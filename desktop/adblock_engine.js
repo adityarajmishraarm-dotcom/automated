@@ -142,6 +142,7 @@ class BraveAdblockEngine {
             // JioHotstar / JioCinema / Hotstar Ad Infrastructure
             'hotstarads.com', 'ads.hotstar.com', 'ad.hotstar.com', 'jioads.akamaized.net',
             'jioads.com', 'ads.jio.com', 'adtech.advertising.com', 'adtech.de',
+            'bifrost-api.hotstar.com', 'hesads.akamaized.net', 'gam.hotstar.com',
             // Spotify Audio & Video Ad Delivery Networks
             'spclient.wg.spotify.com'
         ];
@@ -265,7 +266,6 @@ class BraveAdblockEngine {
             '.m4a',
             'spotifycdn.com',
             'audio-ak-spotify-com',
-            'hotstar-akamai',
             'ad_status.js'
         ];
 
@@ -384,9 +384,12 @@ class BraveAdblockEngine {
             return { block: false };
         }
 
-        // Whitelist checks
-        for (const exception of this.exceptionRules) {
-            if (lowerUrl.includes(exception)) return { block: false };
+        // Whitelist checks (bypassed for known Hotstar ad streaming/tracking endpoints)
+        const isHotstarAdUrl = /(?:jioads|hotstarads|hesads\.akamaized\.net|bifrost-api\.hotstar\.com|\/videos\/ads\/)/i.test(lowerUrl);
+        if (!isHotstarAdUrl) {
+            for (const exception of this.exceptionRules) {
+                if (lowerUrl.includes(exception)) return { block: false };
+            }
         }
 
         // 1. Native Brave adblock-rust Engine check (Sub-microsecond matching)
@@ -516,7 +519,7 @@ class BraveAdblockEngine {
                 if (res && Array.isArray(res.hide_selectors)) {
                     res.hide_selectors.forEach(s => selectors.add(s));
                 }
-            } catch (e) {}
+            } catch (e) { }
         }
         if (selectors.size === 0) return '';
         return `${Array.from(selectors).join(', ')} { display: none !important; opacity: 0 !important; pointer-events: none !important; height: 0 !important; width: 0 !important; }\n`;
@@ -574,6 +577,12 @@ class BraveAdblockEngine {
     getUniversalScriptlet() {
         return `
 (function() {
+    const _agHost = (window.location && window.location.hostname || '').toLowerCase();
+    const _isYtHost = _agHost === 'www.youtube.com' || _agHost === 'm.youtube.com' || _agHost.endsWith('.youtube.com');
+    if (_isYtHost && window.__brave_universal_preload_active && !window.__ag_alloff) {
+        window.__ag_engine_scriptlet_skipped_for_preload_count = (window.__ag_engine_scriptlet_skipped_for_preload_count || 0) + 1;
+        return;
+    }
     if (window.__brave_universal_adblock_active) return;
     window.__brave_universal_adblock_active = true;
 

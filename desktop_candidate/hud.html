@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BATTLENX AI Copilot & Core Engine Cockpit (External HUD)</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            overflow-y: auto;
+            background: #060911;
+            color: var(--text-primary);
+            font-family: var(--font-sans);
+        }
+        .cockpit-container {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            background: radial-gradient(circle at 50% 0%, rgba(0, 240, 255, 0.07) 0%, rgba(6, 9, 17, 0.98) 75%);
+        }
+        /* Cockpit Top Header */
+        .cockpit-header {
+            height: 60px;
+            background: rgba(11, 17, 32, 0.94);
+            border-bottom: 1px solid rgba(0, 240, 255, 0.18);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+        }
+        .cockpit-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .cockpit-logo-wrapper {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, rgba(0, 240, 255, 0.2), rgba(16, 185, 129, 0.2));
+            border: 1px solid rgba(0, 240, 255, 0.35);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 12px rgba(0, 240, 255, 0.25);
+        }
+        .cockpit-brand-text {
+            display: flex;
+            flex-direction: column;
+        }
+        .cockpit-title {
+            font-size: 13.5px;
+            font-weight: 700;
+            letter-spacing: -0.2px;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .cockpit-badge {
+            font-size: 9.5px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 2px 7px;
+            background: rgba(0, 240, 255, 0.12);
+            border: 1px solid rgba(0, 240, 255, 0.4);
+            border-radius: 12px;
+            color: var(--accent-cyan);
+        }
+        .cockpit-subtitle {
+            font-size: 10px;
+            font-family: var(--font-mono);
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .cockpit-pulse {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #10b981;
+            box-shadow: 0 0 8px #10b981;
+            animation: pulse-dot 2s infinite;
+        }
+
+        /* Target Tab Selector */
+        .cockpit-target-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(15, 23, 42, 0.85);
+            border: 1px solid rgba(0, 240, 255, 0.25);
+            border-radius: 8px;
+            padding: 4px 10px;
+        }
+        .target-icon {
+            color: var(--accent-cyan);
+            font-size: 13px;
+        }
+        .target-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+        .cockpit-target-select {
+            background: transparent;
+            border: none;
+            color: #ffffff;
+            font-family: var(--font-mono);
+            font-size: 11.5px;
+            font-weight: 600;
+            outline: none;
+            cursor: pointer;
+            max-width: 260px;
+        }
+        .cockpit-target-select option {
+            background: #0b1120;
+            color: #ffffff;
+            font-family: var(--font-mono);
+            font-size: 11px;
+        }
+
+        /* Header Actions */
+        .cockpit-header-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .btn-focus-browser {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            background: rgba(0, 240, 255, 0.1);
+            border: 1px solid rgba(0, 240, 255, 0.3);
+            border-radius: 6px;
+            color: var(--accent-cyan);
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+        .btn-focus-browser:hover {
+            background: rgba(0, 240, 255, 0.2);
+            box-shadow: 0 0 12px rgba(0, 240, 255, 0.3);
+            border-color: var(--accent-cyan);
+        }
+
+        /* Module Subnavigation */
+        .cockpit-tabs-bar {
+            background: rgba(14, 21, 38, 0.7);
+            border-bottom: 1px solid var(--border-subtle);
+            padding: 8px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 10px;
+        }
+        .cockpit-tab-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 7px 16px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-subtle);
+            border-radius: 7px;
+            color: var(--text-secondary);
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+        .cockpit-tab-btn:hover {
+            background: rgba(0, 240, 255, 0.06);
+            color: #ffffff;
+            border-color: rgba(0, 240, 255, 0.2);
+        }
+        .cockpit-tab-btn.active {
+            background: linear-gradient(135deg, rgba(0, 240, 255, 0.15), rgba(16, 185, 129, 0.08));
+            border-color: var(--accent-cyan);
+            color: #ffffff;
+            box-shadow: 0 0 12px rgba(0, 240, 255, 0.15);
+        }
+
+        /* Body & Layout */
+        .cockpit-main-content {
+            flex: 1;
+            padding: 18px 22px;
+            max-width: 1280px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        /* Filter Search Bar for Marks */
+        .mark-filter-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            background: rgba(15, 23, 42, 0.7);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            padding: 8px 12px;
+            margin-bottom: 12px;
+        }
+        .mark-filter-input-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+        }
+        .mark-filter-input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: #ffffff;
+            font-family: var(--font-sans);
+            font-size: 12px;
+            outline: none;
+        }
+        .mark-filter-input::placeholder {
+            color: #64748b;
+        }
+        .mark-filter-count {
+            font-size: 11px;
+            font-family: var(--font-mono);
+            color: var(--accent-cyan);
+            background: rgba(0, 240, 255, 0.08);
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            border-radius: 12px;
+            padding: 2px 8px;
+            white-space: nowrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="cockpit-container">
+        <!-- High-Tech Cockpit Sticky Header -->
+        <header class="cockpit-header">
+            <div class="cockpit-brand">
+                <div class="cockpit-logo-wrapper">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--accent-cyan);">
+                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                    </svg>
+                </div>
+                <div class="cockpit-brand-text">
+                    <div class="cockpit-title">
+                        <span>BATTLENX AI Copilot &amp; Core Engine HUD</span>
+                        <span class="cockpit-badge">Cockpit Tab</span>
+                    </div>
+                    <div class="cockpit-subtitle">
+                        <span class="cockpit-pulse"></span>
+                        <span id="cockpitEngineStatus">Live In-Process C++ IPC Linked</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Target Web Tab Dropdown Selector -->
+            <div class="cockpit-target-group" id="lblTargetTab" title="Select or view active target web page from main browser">
+                <span class="target-icon">🎯</span>
+                <span class="target-label">Target:</span>
+                <select id="selTargetTab" class="cockpit-target-select">
+                    <option value="1">Tab 1: Hacker News (https://news.ycombinator.com)</option>
+                    <option value="2">Tab 2: Express Checkout Demo</option>
+                    <option value="3">Tab 3: Wikipedia (https://en.wikipedia.org)</option>
+                </select>
+                <span id="targetTabTitle" style="display: none;">Target: Live Browser Active Tab</span>
+            </div>
+
+            <!-- Cockpit Actions -->
+            <div class="cockpit-header-actions">
+                <button class="btn-focus-browser" id="btnFocusBrowser" title="Bring main browser window to front">
+                    <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                        <polyline points="15 3 21 3 21 9"></polyline>
+                        <line x1="10" y1="14" x2="21" y2="3"></line>
+                    </svg>
+                    <span>Focus Browser ↗</span>
+                </button>
+
+                <label class="som-toggle-label" title="Render Set-of-Marks numerical bounding boxes over elements in live webview">
+                    <input type="checkbox" id="chkSoMExternal" checked>
+                    <span class="som-toggle-badge">
+                        <span class="som-badge-dot"></span>
+                        SoM Marks
+                    </span>
+                </label>
+
+                <!-- Hidden for backwards-compatibility -->
+                <button class="btn-dock-back" id="btnDockBack" style="display: none;">
+                    <span>Dock to Browser</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Segmented Cockpit Module Navigation -->
+        <nav class="cockpit-tabs-bar">
+            <button class="cockpit-tab-btn active tab-btn" data-view="viewAx" title="Accessibility Tree Sanitizer & Grounded Marks">
+                <span class="tab-icon">🌲</span>
+                <span class="tab-text">AX Tree &amp; Grounding</span>
+            </button>
+            <button class="cockpit-tab-btn tab-btn" data-view="viewGrep" title="In-Memory ±10 Lines Grep Engine">
+                <span class="tab-icon">🔍</span>
+                <span class="tab-text">In-Memory Grep</span>
+            </button>
+            <button class="cockpit-tab-btn tab-btn" data-view="viewAutofill" title="Chromium components/autofill Semantic Engine">
+                <span class="tab-icon">📝</span>
+                <span class="tab-text">Autofill Engine</span>
+            </button>
+            <button class="cockpit-tab-btn tab-btn" data-view="viewCaptcha" title="4-Layer CAPTCHA Defense Matrix & HITL">
+                <span class="tab-icon">🛡️</span>
+                <span class="tab-text">4-Layer Defense</span>
+            </button>
+            <button class="cockpit-tab-btn tab-btn" data-view="viewTelemetry" title="Closed Loop: Observe Verify Act Diff">
+                <span class="tab-icon">🔄</span>
+                <span class="tab-text">Live Telemetry</span>
+            </button>
+        </nav>
+
+        <div class="cockpit-main-content">
+            <!-- View 1: AX Tree & Grounding -->
+            <div class="sidebar-view active" id="viewAx">
+                <div class="view-header">
+                    <div class="view-header-title">
+                        <span class="view-meta">Sanitized AX Tree &amp; Set-of-Marks</span>
+                        <button class="btn-som-mode active" id="btnToggleSoMModeExternal" title="Toggle Summarized (Primary Actions) vs Dense (All Elements)">
+                            <span class="mode-icon">⚡</span>
+                            <span id="lblSoMModeExternal">Summarized</span>
+                        </button>
+                        <span class="badge-token-limit" id="lblTokenLimitExternal">&lt;800 tokens</span>
+                    </div>
+                    <div class="view-header-actions">
+                        <button class="btn-small" id="btnCopyAxExternal" title="Copy sanitized markdown to clipboard for LLM prompts">
+                            <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                            </svg>
+                            <span>Copy AX</span>
+                        </button>
+                        <button class="btn-small btn-glow" id="btnRescanAxExternal" title="Rescan live page elements in main browser">
+                            <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.2">
+                                <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/>
+                            </svg>
+                            <span>Scan DOM</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Live Mark Filter Bar -->
+                <div class="mark-filter-toolbar">
+                    <div class="mark-filter-input-group">
+                        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="color: #64748b;">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                        <input type="text" id="txtFilterMarksExternal" class="mark-filter-input" placeholder="⚡ Filter grounded actions (e.g. #1, login, comments, submit, button)..." />
+                    </div>
+                    <span class="mark-filter-count" id="lblFilteredCount">Showing All</span>
+                </div>
+
+                <div class="ax-tree-container">
+                    <div class="terminal-bar">
+                        <span class="term-dot red"></span>
+                        <span class="term-dot yellow"></span>
+                        <span class="term-dot green"></span>
+                        <span class="term-title">grounded-accessibility-markdown.md</span>
+                    </div>
+                    <div class="ax-tree-box" id="axTreeBoxExternal" style="max-height: 620px;">
+                        <div class="loading-spinner">Connecting to in-process Chromium core...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- View 2: Grep Engine -->
+            <div class="sidebar-view" id="viewGrep">
+                <div class="view-header">
+                    <div class="view-header-title">
+                        <span class="view-meta">In-Memory DOM Grep</span>
+                        <span class="badge-context">&plusmn;10 Lines</span>
+                    </div>
+                </div>
+                <div class="grep-search-box">
+                    <input type="text" id="txtGrepQueryExternal" class="grep-input" placeholder="Regex or text query (e.g. cvv, price, button)..." />
+                    <button class="btn-small btn-blue" id="btnExecuteGrepExternal">Search</button>
+                </div>
+                <div class="grep-stats-bar" id="grepStatsBarExternal" style="display: none;">
+                    <span id="lblGrepStatsExternal" class="grep-stats-text">0 matches</span>
+                </div>
+                <div class="grep-results-container">
+                    <div class="grep-output-area" id="grepOutputAreaExternal">
+                        <p class="hint-text">Grep scans the live target web tab DOM with ±10 lines context.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- View 3: Autofill Engine -->
+            <div class="sidebar-view" id="viewAutofill">
+                <div class="view-header">
+                    <div class="view-header-title">
+                        <span class="view-meta">components/autofill</span>
+                        <span class="badge-engine">Chromium Heuristics</span>
+                    </div>
+                </div>
+                <div class="autofill-panel">
+                    <p class="panel-desc">Semantic form field classification running directly in the browser process.</p>
+                    <div class="autofill-actions">
+                        <button class="btn-small btn-green btn-full" id="btnTriggerAutofillExternal">
+                            <span>Auto-Fill Checkout Demo Form</span>
+                        </button>
+                    </div>
+                    <div class="autofill-status-box" id="autofillStatusExternal">
+                        <div class="status-empty">Ready for autofill execution.</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- View 4: CAPTCHA Defense -->
+            <div class="sidebar-view" id="viewCaptcha">
+                <div class="view-header">
+                    <div class="view-header-title">
+                        <span class="view-meta">Anti-Bot Defense Matrix</span>
+                        <span class="badge-shield">4 Layers</span>
+                    </div>
+                </div>
+                <div class="defense-grid">
+                    <div class="defense-card">
+                        <div class="card-title">Layer 1: Fingerprint Emulation</div>
+                        <div class="card-status"><span class="tag tag-green">ACTIVE: Stealth Mode</span></div>
+                    </div>
+                    <div class="defense-card">
+                        <div class="card-title">Layer 2: Real-time Challenge Detection</div>
+                        <div class="card-status"><span class="tag tag-green" id="tagCaptchaExternal">Clean / No Challenge</span></div>
+                    </div>
+                    <div class="defense-card">
+                        <div class="card-title">Layer 4: Human-in-the-Loop (HITL)</div>
+                        <button class="btn-small btn-yellow btn-full" id="btnHitlTriggerExternal" style="margin-top: 6px;">
+                            <span>Simulate CAPTCHA Hit &amp; Takeover</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- View 5: Telemetry Stream -->
+            <div class="sidebar-view" id="viewTelemetry">
+                <div class="view-header">
+                    <div class="view-header-title">
+                        <span class="view-meta">Observe-Verify-Act Loop</span>
+                        <span class="badge-cycle">Live IPC Stream</span>
+                    </div>
+                    <button class="btn-small" id="btnClearTelemetryExternal">Clear</button>
+                </div>
+                <div class="telemetry-terminal-container">
+                    <div class="terminal-bar">
+                        <span class="term-dot red"></span>
+                        <span class="term-dot yellow"></span>
+                        <span class="term-dot green"></span>
+                        <span class="term-title">telemetry.log</span>
+                    </div>
+                    <div class="telemetry-box" id="telemetryBoxExternal" style="max-height: 540px;">
+                        <div class="log-line info">External HUD Cockpit connected. Linked to browser core.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="hud-renderer.js"></script>
+</body>
+</html>

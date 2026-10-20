@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { executeAiBrowserCommand, stripToolCallsFromText } from '../ai_harness_engine.js';
+import { getActiveProviderConfig } from '../services/aiProviderService.js';
 
 export default function AiHudSidebar({
     isOpen,
@@ -77,6 +78,19 @@ export default function AiHudSidebar({
     const [isWhisperTranscribing, setIsWhisperTranscribing] = useState(false);
     const [recordingTimer, setRecordingTimer] = useState(0);
     const [isGenerating, setIsGenerating] = useState(false);
+    const [activeAiConfig, setActiveAiConfig] = useState(() => getActiveProviderConfig());
+
+    useEffect(() => {
+        const handleProviderChanged = (e) => {
+            if (e?.detail?.config) {
+                setActiveAiConfig(e.detail.config);
+            } else {
+                setActiveAiConfig(getActiveProviderConfig());
+            }
+        };
+        window.addEventListener('antigravity-active-provider-changed', handleProviderChanged);
+        return () => window.removeEventListener('antigravity-active-provider-changed', handleProviderChanged);
+    }, []);
 
     const recognitionRef = useRef(null);
     const messagesEndRef = useRef(null);
@@ -92,14 +106,22 @@ export default function AiHudSidebar({
     const audioChunksRef = useRef([]);
     const abortControllerRef = useRef(null);
 
+    const handleMessagesWheel = (e) => {
+        if (e.deltaY < 0) {
+            // User actively scrolled UP
+            userScrolledUpRef.current = true;
+            setIsScrolledUp(true);
+        }
+    };
+
     const handleMessagesScroll = (e) => {
         const el = e.currentTarget;
         if (!el) return;
         const distanceFromBottom = el.scrollHeight - el.scrollTop - el.clientHeight;
-        if (distanceFromBottom <= 80) {
+        if (distanceFromBottom <= 25) {
             userScrolledUpRef.current = false;
             setIsScrolledUp(false);
-        } else {
+        } else if (distanceFromBottom > 45) {
             userScrolledUpRef.current = true;
             setIsScrolledUp(true);
         }
@@ -546,11 +568,19 @@ export default function AiHudSidebar({
                 tabs,
                 activeTabId: activeTab.id,
                 activeTab,
+                activeConfig: activeAiConfig,
                 onOpenTab,
                 onCloseTab,
                 onSelectTab,
                 onNavigate,
-                getActiveWebview: () => document.getElementById(`wv-${activeTab.id}`),
+                getActiveWebview: () => {
+                    const el = document.getElementById(`wv-${activeTab.id}`);
+                    if (!el || el.__closing || el.__closed) return null;
+                    try {
+                        if (typeof el.getWebContentsId === 'function' && !el.getWebContentsId()) return null;
+                        return el;
+                    } catch (e) { return null; }
+                },
                 onToggleBookmark,
                 onOpenReaderMode,
                 onOpenQrCode,
@@ -634,11 +664,30 @@ export default function AiHudSidebar({
                     </label>
                     <button
                         className="mac-pill-btn"
+                        title={`Active AI Model: ${activeAiConfig?.name || 'AI'} (${activeAiConfig?.model || 'default'}). Click to change.`}
+                        onClick={onOpenAiProviderModal}
+                        style={{
+                            color: '#00e5ff',
+                            borderColor: 'rgba(0, 229, 255, 0.4)',
+                            background: 'rgba(0, 229, 255, 0.1)',
+                            maxWidth: '140px',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            whiteSpace: 'nowrap',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '4px'
+                        }}
+                    >
+                        ⚡ {activeAiConfig?.name ? `${activeAiConfig.name}: ${activeAiConfig.model || ''}` : 'AI Model'}
+                    </button>
+                    <button
+                        className="mac-pill-btn"
                         title="AI Providers & API Keys (OpenAI, LM Studio, Ollama, OpenRouter, OpenCode, Anthropic)"
                         onClick={onOpenAiProviderModal}
-                        style={{ color: '#00e5ff', borderColor: 'rgba(0, 229, 255, 0.35)' }}
+                        style={{ color: '#94a3b8', borderColor: 'rgba(255, 255, 255, 0.15)' }}
                     >
-                        🔑 Keys
+                        ⚙️ Keys
                     </button>
                     <button
                         className="mac-pill-btn"
@@ -704,39 +753,13 @@ export default function AiHudSidebar({
                             </button>
                         </div>
 
-                        {/* Quick Interactive Multilingual NLP Action Chips */}
-                        <div className="mac-quick-chips">
-                            <button className="mac-chip" onClick={() => handleProcessNlpCommand('summarize')}>
-                                ⚡ Summarize Page
-                            </button>
-                            <button className="mac-chip" onClick={() => handleProcessNlpCommand('scroll down')}>
-                                📜 Scroll Down
-                            </button>
-                            <button className="mac-chip" onClick={() => handleProcessNlpCommand('click play')}>
-                                ▶️ Click Play
-                            </button>
-                            <button className="mac-chip" onClick={() => handleProcessNlpCommand('autofill')}>
-                                📝 Autofill
-                            </button>
-                            <button className="mac-chip" onClick={() => handleProcessNlpCommand('पेज का सारांश दो')}>
-                                🇮🇳 सारांश (HI)
-                            </button>
-                            <button className="mac-chip" onClick={() => handleProcessNlpCommand('नीचे स्क्रॉल करो')}>
-                                🇮🇳 नीचे स्क्रॉल (HI)
-                            </button>
-                            <button className="mac-chip" onClick={() => handleProcessNlpCommand('페이지 요약')}>
-                                🇰🇷 요약 (KO)
-                            </button>
-                            <button className="mac-chip" onClick={() => handleProcessNlpCommand('아래로 스크롤')}>
-                                🇰🇷 아래로 (KO)
-                            </button>
-                            <button className="mac-chip" onClick={() => handleProcessNlpCommand('scroll to top')}>
-                                ⬆ Top
-                            </button>
-                        </div>
-
                         {/* Chat Messages Stream */}
-                        <div className="mac-messages-stream" ref={messagesContainerRef} onScroll={handleMessagesScroll}>
+                        <div
+                            className="mac-messages-stream"
+                            ref={messagesContainerRef}
+                            onScroll={handleMessagesScroll}
+                            onWheel={handleMessagesWheel}
+                        >
                             {chatMessages.map(msg => (
                                 <div key={msg.id} className={`mac-msg-row ${msg.role}`}>
                                     <div className="mac-msg-bubble">
@@ -890,31 +913,6 @@ export default function AiHudSidebar({
                                 </button>
                             )}
                             <div ref={messagesEndRef} />
-                        </div>
-
-                        {/* Quick AI Harness Action Chips */}
-                        <div className="ai-chips-bar">
-                            <span
-                                className="ai-chip"
-                                onClick={async () => {
-                                    if (onCaptureSnapshot) {
-                                        const res = await onCaptureSnapshot('webview');
-                                        if (res && res.success) {
-                                            handleProcessNlpCommand(`Snapshot saved to disk: "${res.path}". Analyze what is visible in the active browser.`);
-                                        }
-                                    }
-                                }}
-                                title="Capture live browser snapshot to disk for Vision-Language Models"
-                                style={{ borderColor: 'rgba(0, 229, 255, 0.4)', color: '#00e5ff' }}
-                            >
-                                📸 VLM Snapshot
-                            </span>
-                            <span className="ai-chip" onClick={() => handleProcessNlpCommand('CLK SB')} title="Click Search Bar">🔍 CLK SB</span>
-                            <span className="ai-chip" onClick={() => handleProcessNlpCommand('s50')} title="Scroll 50%">📜 S50</span>
-                            <span className="ai-chip" onClick={() => handleProcessNlpCommand('open youtube')} title="Open YouTube">▶️ YouTube</span>
-                            <span className="ai-chip" onClick={() => handleProcessNlpCommand('numbering words')} title="Number words with yellow badges">🔢 Numbers</span>
-                            <span className="ai-chip" onClick={() => handleProcessNlpCommand('shortcuts')} title="Show all shortcuts">⌨️ Shortcuts</span>
-                            <span className="ai-chip" onClick={() => handleProcessNlpCommand('close active tab')} title="Close current tab">✕ Close</span>
                         </div>
 
                         {/* Active VLM Snapshot Banner */}

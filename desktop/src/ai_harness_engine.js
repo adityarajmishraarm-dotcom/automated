@@ -103,6 +103,28 @@ export async function executeWebviewScroll(webview, direction = 'down', amountIn
 }
 
 /**
+ * Await webview DOM settling and readiness (complete/interactive + non-empty DOM)
+ */
+export async function waitForWebviewReady(webview, timeoutMs = 3500) {
+    if (!webview || typeof webview.executeJavaScript !== 'function') return false;
+    const start = Date.now();
+    while (Date.now() - start < timeoutMs) {
+        try {
+            const isReady = await webview.executeJavaScript(`
+                (function() {
+                    const ready = document.readyState === 'complete' || document.readyState === 'interactive';
+                    const hasBody = !!(document.body && (document.body.children.length > 0 || (document.body.innerText || '').length > 10));
+                    return ready && hasBody;
+                })()
+            `);
+            if (isReady) return true;
+        } catch (_) {}
+        await new Promise(r => setTimeout(r, 200));
+    }
+    return false;
+}
+
+/**
  * Click element on active page with Set-of-Marks, ordinal rank, or keyword matching
  */
 export async function executeWebviewClick(webview, targetText, fallbackNavigate) {
@@ -124,11 +146,23 @@ export async function executeWebviewClick(webview, targetText, fallbackNavigate)
                 function isVisible(el) {
                     if (!el) return false;
                     const style = window.getComputedStyle(el);
-                    return style.display !== 'none' && 
-                           style.visibility !== 'hidden' && 
-                           style.opacity !== '0' &&
-                           el.offsetWidth > 0 && 
-                           el.offsetHeight > 0;
+                    if (style.display === 'none' || style.visibility === 'hidden') return false;
+                    const op = parseFloat(style.opacity);
+                    if (!isNaN(op) && op <= 0.05) return false;
+                    const r = el.getBoundingClientRect();
+                    const hasDims = (r.width > 0 && r.height > 0) || (el.offsetWidth > 0 && el.offsetHeight > 0);
+                    if (!hasDims) return false;
+
+                    // Verify ancestors are also visible
+                    let p = el.parentElement;
+                    while (p && p !== document.body && p !== document.documentElement) {
+                        const ps = window.getComputedStyle(p);
+                        if (ps.display === 'none' || ps.visibility === 'hidden') return false;
+                        const pOp = parseFloat(ps.opacity);
+                        if (!isNaN(pOp) && pOp <= 0.05) return false;
+                        p = p.parentElement;
+                    }
+                    return true;
                 }
 
                 function getElementMetadata(el) {
@@ -197,18 +231,18 @@ export async function executeWebviewClick(webview, targetText, fallbackNavigate)
 
                 const termLower = searchTerm.toLowerCase();
 
-                // Check for Set-of-Marks mark index (#7, hashtag 7, mark 7)
+                // Check for Set-of-Marks mark index (#7, [Mark #7], Mark 7, [7], #7)
                 let markIndex = null;
-                const markMatch = targetRaw.match(/^(?:#|hashtag\\s*|mark\\s*|badge\\s*|number\\s*|no\\.?\\s*)?(\\d+)$/i);
+                const markMatch = targetRaw.match(/(?:\[?\s*(?:mark|badge|hashtag|number|no\.?)?\s*#?\s*(\d+)\s*\]?|^#?(\d+)$)/i);
                 if (markMatch) {
-                    markIndex = parseInt(markMatch[1], 10);
+                    markIndex = parseInt(markMatch[1] || markMatch[2], 10);
                 }
 
                 const selectors = [
                     'button', 'a', 'input', 'textarea', 'select', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
                     '[role="button"]', '[role="link"]', '[role="searchbox"]', '[role="search"]', '[role="textbox"]',
                     '[role="combobox"]', '[role="option"]', '[role="menuitem"]', '[role="tab"]',
-                    'summary', '[tabindex]:not([tabindex="-1"])', '.btn', '.button', '[onclick]',
+                    'summary', 'details', '[tabindex]:not([tabindex="-1"])', '.btn', '.button', '[onclick]',
                     '*[class*="cursor-pointer" i]', '*[id*="btn" i]', '*[id*="verify" i]', '*[id*="download" i]'
                 ];
 
@@ -245,19 +279,29 @@ export async function executeWebviewClick(webview, targetText, fallbackNavigate)
                     } catch (e) {}
                 }
 
-                // Tier 0: Set-of-Marks Mark Index Match
+                // Tier 0: Set-of-Marks Mark Index Match (Guaranteed 1:1 DOM binding)
                 if (!matchedEl && markIndex !== null) {
-                    const somEl = document.querySelector('[data-som-id="' + markIndex + '"]') || document.querySelector('#som-' + markIndex);
-                    if (somEl && isVisible(somEl)) {
-                        matchedEl = somEl;
+                    const somEl = document.querySelector('[data-som-id="' + markIndex + '"]') || 
+                                  document.querySelector('#som-' + markIndex) ||
+                                  document.querySelector('[data-som-badge="' + markIndex + '"]');
+                    if (somEl) {
+                        const clickTarget = somEl.tagName.toLowerCase() === 'svg' ? (somEl.closest('button, a, [role="button"]') || somEl) : somEl;
+                        matchedEl = clickTarget;
                         matchType = 'SoM Mark #' + markIndex;
-                    } else if (markIndex >= 1 && markIndex <= visibleCandidates.length) {
+                    } else if (visibleCandidates.length >= markIndex && markIndex > 0) {
+                        // Resilient Fallback: If badges were not stamped or page mutated, use visual candidate rank
                         matchedEl = visibleCandidates[markIndex - 1];
-                        matchType = 'Mark #' + markIndex;
+                        matchType = 'Candidate Rank #' + markIndex;
+                    } else {
+                        return {
+                            success: false,
+                            error: 'Set-of-Marks badge #' + markIndex + ' not found on active page. Use read_page to refresh marks or click by text.',
+                            target: targetRaw
+                        };
                     }
                 }
 
-                // Tier 1: Search Bar Detection
+                // Tier 1a: Search Bar Detection
                 const isExplicitSearchIntent = targetLower === 'search bar' || 
                                                targetLower === 'search box' || 
                                                targetLower === 'search input' || 
@@ -286,6 +330,47 @@ export async function executeWebviewClick(webview, targetText, fallbackNavigate)
                     }
                 }
 
+                // Tier 1b: Universal Search Button Detection (100% W3C Standards Compliant)
+                const isExplicitSearchButtonIntent = /^(?:search\s*(?:button|btn|icon|submit|go)?|submit\s*search|go\s*search)$/i.test(targetLower.trim()) ||
+                                                     /search\s*(?:button|btn|icon)/i.test(targetLower);
+
+                if (!matchedEl && isExplicitSearchButtonIntent) {
+                    const searchButtonSelectors = [
+                        'button[type="submit"]',
+                        'input[type="submit"]',
+                        'button[aria-label*="search" i]',
+                        '[role="button"][aria-label*="search" i]',
+                        'button[title*="search" i]',
+                        '[role="button"][title*="search" i]',
+                        'button[id*="search" i]',
+                        '[role="button"][id*="search" i]',
+                        'button[name*="search" i]',
+                        '[role="search"] button',
+                        '[role="search"] [role="button"]',
+                        'form[role="search"] button',
+                        'form[action*="search" i] button',
+                        'button.search-btn, button.search-button, button.search-icon',
+                        'button:has(svg)',
+                        'svg[class*="search" i]',
+                        'svg:has(use[*|href*="search" i])',
+                        '[class*="search" i]:not(input):not(textarea)'
+                    ];
+
+                    for (const sel of searchButtonSelectors) {
+                        try {
+                            const els = Array.from(document.querySelectorAll(sel));
+                            for (const el of els) {
+                                if (el && isVisible(el)) {
+                                    matchedEl = el;
+                                    matchType = 'Universal Search Button (' + sel + ')';
+                                    break;
+                                }
+                            }
+                            if (matchedEl) break;
+                        } catch (_) {}
+                    }
+                }
+
                 // Tier 2: Dynamic Candidate Ranking & Ordinal Match
                 if (!matchedEl) {
                     const matchesList = [];
@@ -300,7 +385,7 @@ export async function executeWebviewClick(webview, targetText, fallbackNavigate)
                         const txtCombined = (m.txt + ' ' + m.aria + ' ' + m.title + ' ' + m.alt + ' ' + m.placeholder + ' ' + m.id).toLowerCase();
                         const valStr = m.val.toLowerCase();
                         const hrefStr = (el.getAttribute('href') || (el.closest('a') ? el.closest('a').getAttribute('href') : '') || '').toLowerCase();
-                        const isVideo = isLink && (hrefStr.includes('/watch') || hrefStr.includes('video') || tag === 'video' || (el.closest && (el.closest('ytd-rich-item-renderer') || el.closest('ytd-video-renderer'))));
+                        const isVideo = isLink && (hrefStr.includes('/watch') || hrefStr.includes('video') || tag === 'video' || (el.closest && el.closest('article, [role="article"], .card, .item, [data-video-id], [data-item-id]')));
 
                         let isMatch = false;
                         if (termLower) {
@@ -654,9 +739,13 @@ export async function captureDomSnapshot(webview) {
         `);
         return snap;
     } catch (e) {
+        let fallbackUrl = '';
+        let fallbackTitle = '';
+        try { if (webview && typeof webview.getURL === 'function') fallbackUrl = webview.getURL() || ''; } catch (_) {}
+        try { if (webview && typeof webview.getTitle === 'function') fallbackTitle = webview.getTitle() || ''; } catch (_) {}
         return {
-            url: (typeof webview.getURL === 'function' ? webview.getURL() : '') || '',
-            title: (typeof webview.getTitle === 'function' ? webview.getTitle() : '') || '',
+            url: fallbackUrl,
+            title: fallbackTitle,
             activeTag: null,
             activeId: null,
             inputs: [],
@@ -1158,6 +1247,326 @@ export async function typeAndSubmitInSearchBar(webview, textToType) {
 }
 
 /**
+ * Universal Set-of-Marks Overlay Engine.
+ * Injects visible, numbered badge pills directly into the active webview DOM over key interactive elements.
+ * Simultaneously stamps `data-som-id="N"` onto target elements for guaranteed 1:1 deterministic clicking.
+ */
+export async function renderSetOfMarksOverlay(webview, maxMarks = 120) {
+    if (!webview || typeof webview.executeJavaScript !== 'function') {
+        return [];
+    }
+
+    try {
+        const marks = await webview.executeJavaScript(`
+            (function() {
+                // 1. Clean prior overlay container and attributes
+                const existingContainer = document.getElementById('antigravity-som-container');
+                if (existingContainer) existingContainer.remove();
+                document.querySelectorAll('[data-som-id]').forEach(el => {
+                    const origOutline = el.getAttribute('data-som-orig-outline');
+                    if (origOutline !== null) el.style.outline = origOutline;
+                    el.removeAttribute('data-som-id');
+                    el.removeAttribute('data-som-orig-outline');
+                });
+
+                // 2. Select interactive candidates (100% W3C standard, site-agnostic)
+                const candidateSelectors = [
+                    'a[href]', 'button', 'input:not([type="hidden"])', 'textarea', 'select', 'summary', 'details',
+                    '[role="button"]', '[role="link"]', '[role="searchbox"]', '[role="tab"]', '[role="menuitem"]',
+                    '[role="checkbox"]', '[role="radio"]', '[role="switch"]', '[role="option"]', '[role="combobox"]',
+                    '[role="menuitemcheckbox"]', '[role="menuitemradio"]', '[role="treeitem"]',
+                    '[contenteditable="true"]', '[tabindex]:not([tabindex="-1"])', '[onclick]',
+                    'video', 'audio', '[role="slider"]',
+                    '.btn', '.button', '[class*="button" i]', '[class*="btn" i]'
+                ];
+
+                const standardElements = Array.from(document.querySelectorAll(candidateSelectors.join(',')));
+                const pointerElements = Array.from(document.querySelectorAll('div, span, li, p, i, em, strong, svg')).filter(el => {
+                    try {
+                        if (!el || el.id === 'antigravity-som-container' || el.closest('#antigravity-som-container')) return false;
+                        const s = window.getComputedStyle(el);
+                        return s.cursor === 'pointer' && el.children.length <= 2;
+                    } catch (_) { return false; }
+                });
+
+                const rawElements = Array.from(new Set([...standardElements, ...pointerElements]));
+
+                function isElVisible(el) {
+                    if (!el || el.id === 'antigravity-som-container' || (el.closest && el.closest('#antigravity-som-container'))) return false;
+                    const rect = el.getBoundingClientRect();
+                    if (rect.width < 6 || rect.height < 6) return false;
+                    // Do not artificially truncate items below viewport so the whole page is indexed
+                    if (rect.right < 0 || rect.bottom < -100) return false;
+
+                    let cur = el;
+                    while (cur && cur !== document.body && cur !== document.documentElement) {
+                        const s = window.getComputedStyle(cur);
+                        if (s.display === 'none' || s.visibility === 'hidden') return false;
+                        const op = parseFloat(s.opacity);
+                        if (!isNaN(op) && op <= 0.05) return false;
+                        if (s.pointerEvents === 'none' && cur !== el) return false;
+                        cur = cur.parentElement;
+                    }
+                    return true;
+                }
+
+                function getElementLabel(el) {
+                    const aria = (el.getAttribute('aria-label') || '').trim();
+                    if (aria) return aria;
+                    const inner = (el.innerText || el.textContent || '').replace(/\\s+/g, ' ').trim();
+                    if (inner && inner.length <= 60 && !inner.startsWith('<')) return inner;
+                    const val = (el.value || '').trim();
+                    if (val) return val;
+                    const placeholder = (el.getAttribute('placeholder') || '').trim();
+                    if (placeholder) return placeholder;
+                    const title = (el.getAttribute('title') || '').trim();
+                    if (title) return title;
+                    const imgAlt = el.querySelector && el.querySelector('img[alt]')?.alt?.trim();
+                    if (imgAlt) return imgAlt;
+                    const svgTitle = el.querySelector && el.querySelector('title')?.textContent?.trim();
+                    if (svgTitle) return svgTitle;
+
+                    // Universal SVG sprite symbol resolution (use href="#search", use href="#play", etc.)
+                    const useEl = el.querySelector ? el.querySelector('use') : (el.tagName.toLowerCase() === 'use' ? el : null);
+                    if (useEl) {
+                        const href = (useEl.getAttribute('href') || useEl.getAttribute('xlink:href') || '').toLowerCase();
+                        if (href.includes('search')) return '[Search Icon]';
+                        if (href.includes('play')) return '[Play Icon]';
+                        if (href.includes('pause')) return '[Pause Icon]';
+                        if (href.includes('menu')) return '[Menu Icon]';
+                        if (href.includes('close')) return '[Close Icon]';
+                        if (href.length > 1 && !href.includes('loader') && !href.includes('spinner') && !href.includes('placeholder')) {
+                            return '[' + href.replace(/^#/, '') + ' Icon]';
+                        }
+                    }
+
+                    // Semantic slug extraction from href/data-to (e.g. /watch-whats-wrong-with-secretary-kim...)
+                    const rawHref = el.getAttribute('data-to') || el.getAttribute('href') || el.href || '';
+                    if (rawHref && !rawHref.startsWith('javascript:')) {
+                        try {
+                            const pathParts = rawHref.split(/[?#]/)[0].split('/').filter(Boolean);
+                            const lastSlug = pathParts[pathParts.length - 1] || pathParts[pathParts.length - 2] || '';
+                            if (lastSlug && lastSlug.length > 4 && !/^[0-9a-f]{20,}$/i.test(lastSlug)) {
+                                const cleanSlug = lastSlug
+                                    .replace(/^(?:watch|online|video|show)-+/i, '')
+                                    .replace(/-+(?:online|watch|video|hindi|dubbed|series|free|episode|season.*)$/i, '')
+                                    .replace(/-/g, ' ')
+                                    .trim();
+                                if (cleanSlug.length > 2) {
+                                    const words = cleanSlug.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase());
+                                    return '[Card: ' + words.join(' ') + ']';
+                                }
+                            }
+                        } catch (_) {}
+                    }
+
+                    const tag = el.tagName.toLowerCase();
+                    const classStr = typeof el.className === 'string' ? el.className : (el.className?.baseVal || '');
+                    const idStr = el.id || '';
+                    const isSearch = /search/i.test(classStr + ' ' + idStr + ' ' + (el.getAttribute('name') || '') + ' ' + (el.closest?.('[role="search"]') ? 'search' : ''));
+                    const isSubmit = el.type === 'submit' || (typeof el.matches === 'function' && el.matches('button[type="submit"], input[type="submit"]'));
+
+                    if (isSearch) return '[Search Button]';
+                    if (isSubmit) return '[Submit]';
+                    if (tag === 'button' || el.getAttribute('role') === 'button') {
+                        const id = el.id ? '#' + el.id : '';
+                        const name = el.getAttribute('name') ? '[name="' + el.getAttribute('name') + '"]' : '';
+                        return '[Button' + (id || name || '') + ']';
+                    }
+                    if (tag === 'svg') return '[Icon: ' + (classStr.trim().split(/\\s+/)[0] || 'svg') + ']';
+                    if (tag === 'input') return '[Input: ' + (el.type || 'text') + ']';
+                    if (tag === 'video') return '[Video Player]';
+                    if (el.closest && (el.closest('.card, .portrait-container, [class*="card" i]') || el.querySelector('img'))) {
+                        return '[Show/Video Card]';
+                    }
+                    return '<' + tag + '>';
+                }
+
+                const visibleElements = rawElements.filter(isElVisible);
+
+                // Sort: Viewport items first, sorted top-to-bottom then left-to-right
+                const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+                visibleElements.sort((a, b) => {
+                    const rA = a.getBoundingClientRect();
+                    const rB = b.getBoundingClientRect();
+                    const inVpA = rA.top >= 0 && rA.top <= viewportHeight;
+                    const inVpB = rB.top >= 0 && rB.top <= viewportHeight;
+                    if (inVpA && !inVpB) return -1;
+                    if (!inVpA && inVpB) return 1;
+                    if (Math.abs(rA.top - rB.top) > 12) return rA.top - rB.top;
+                    return rA.left - rB.left;
+                });
+
+                // Deduplicate parent/child click targets
+                const deduped = [];
+                const seenNodes = new Set();
+                for (const el of visibleElements) {
+                    const clickTarget = el.tagName.toLowerCase() === 'a' ? el : (el.closest('a') || el.closest('button') || el);
+                    if (!seenNodes.has(clickTarget)) {
+                        seenNodes.add(clickTarget);
+                        deduped.push(clickTarget);
+                    }
+                }
+
+                const selected = deduped.slice(0, ${maxMarks});
+                if (selected.length === 0) return [];
+
+                // Create overlay container
+                const container = document.createElement('div');
+                container.id = 'antigravity-som-container';
+                container.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:2147483647;';
+
+                const scrollX = window.scrollX || window.pageXOffset || 0;
+                const scrollY = window.scrollY || window.pageYOffset || 0;
+
+                const actionableList = [];
+                selected.forEach((el, idx) => {
+                    const markNum = idx + 1;
+                    el.setAttribute('data-som-id', String(markNum));
+
+                    const rect = el.getBoundingClientRect();
+                    const top = Math.max(0, rect.top + scrollY - 9);
+                    const left = Math.max(0, rect.left + scrollX - 5);
+
+                    const pill = document.createElement('div');
+                    pill.className = 'antigravity-som-pill';
+                    pill.setAttribute('data-som-badge', String(markNum));
+                    pill.textContent = '#' + markNum;
+                    pill.style.cssText = [
+                        'position:absolute',
+                        'top:' + top + 'px',
+                        'left:' + left + 'px',
+                        'background:#FFE600',
+                        'color:#000000',
+                        'font-size:11px',
+                        'font-weight:900',
+                        'font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace',
+                        'padding:1px 5px',
+                        'border-radius:4px',
+                        'border:1.5px solid rgba(0,0,0,0.85)',
+                        'box-shadow:0 2px 6px rgba(0,0,0,0.6), 0 0 10px rgba(255,230,0,0.6)',
+                        'z-index:2147483647',
+                        'pointer-events:none',
+                        'line-height:14px',
+                        'white-space:nowrap'
+                    ].join(';');
+
+                    container.appendChild(pill);
+
+                    // Add subtle outline to marked element
+                    const orig = el.style.outline;
+                    el.setAttribute('data-som-orig-outline', orig || '');
+                    el.style.outline = '1.5px solid rgba(255, 230, 0, 0.75)';
+
+                    const labelText = getElementLabel(el);
+                    actionableList.push({
+                        mark: '#' + markNum,
+                        id: markNum,
+                        text: labelText.slice(0, 70),
+                        tag: el.tagName.toLowerCase(),
+                        href: el.href || el.getAttribute('href') || '',
+                        rect: { top: Math.round(rect.top), left: Math.round(rect.left), width: Math.round(rect.width), height: Math.round(rect.height) }
+                    });
+                });
+
+                document.documentElement.appendChild(container);
+                return actionableList;
+            })();
+        `);
+        return marks || [];
+    } catch (e) {
+        return [];
+    }
+}
+
+/**
+ * Universal Set-of-Marks Cleanup.
+ * Removes floating badge overlay and unbinds `data-som-id`.
+ */
+export async function cleanSetOfMarksOverlay(webview) {
+    if (!webview || typeof webview.executeJavaScript !== 'function') return;
+    try {
+        await webview.executeJavaScript(`
+            (function() {
+                const container = document.getElementById('antigravity-som-container');
+                if (container) container.remove();
+                document.querySelectorAll('[data-som-id]').forEach(el => {
+                    const orig = el.getAttribute('data-som-orig-outline');
+                    if (orig !== null) el.style.outline = orig;
+                    el.removeAttribute('data-som-id');
+                    el.removeAttribute('data-som-orig-outline');
+                });
+            })();
+        `);
+    } catch (_) {}
+}
+
+/**
+ * Universal HTML5 Media Playback State Inspector.
+ * Inspects any <video> or <audio> element on the active page.
+ * Works across YouTube, Vimeo, Spotify, SoundCloud, Twitch, Netflix, or any HTML5 web player.
+ */
+export async function executeWebviewVerifyMedia(webview) {
+    if (!webview || typeof webview.executeJavaScript !== 'function') {
+        return { hasMedia: false, isPlaying: false, message: 'Webview is unavailable' };
+    }
+
+    try {
+        const res = await webview.executeJavaScript(`
+            (function() {
+                const mediaEls = Array.from(document.querySelectorAll('video, audio'));
+                if (mediaEls.length === 0) {
+                    return {
+                        hasMedia: false,
+                        isPlaying: false,
+                        message: 'No HTML5 <video> or <audio> elements found on active page.'
+                    };
+                }
+
+                // Look for actively playing media
+                const playingEl = mediaEls.find(m => !m.paused && m.currentTime > 0 && !m.ended && m.readyState >= 2);
+                if (playingEl) {
+                    let mediaTitle = document.title || '';
+                    const titleEl = document.querySelector('h1.ytd-watch-metadata, h1.title, .track-name, .media-title, [class*="title"]');
+                    if (titleEl && titleEl.innerText) {
+                        mediaTitle = titleEl.innerText.trim();
+                    }
+
+                    return {
+                        hasMedia: true,
+                        isPlaying: true,
+                        tag: playingEl.tagName.toLowerCase(),
+                        title: mediaTitle,
+                        currentTime: Math.round(playingEl.currentTime * 10) / 10,
+                        duration: Math.round((playingEl.duration || 0) * 10) / 10,
+                        paused: playingEl.paused,
+                        muted: playingEl.muted,
+                        volume: Math.round(playingEl.volume * 100),
+                        src: playingEl.currentSrc || playingEl.src || ''
+                    };
+                }
+
+                // Media elements exist but are not playing
+                const first = mediaEls[0];
+                return {
+                    hasMedia: true,
+                    isPlaying: false,
+                    tag: first.tagName.toLowerCase(),
+                    currentTime: Math.round(first.currentTime * 10) / 10,
+                    duration: Math.round((first.duration || 0) * 10) / 10,
+                    paused: first.paused,
+                    readyState: first.readyState,
+                    message: first.paused ? 'Media element found, but playback is currently paused.' : 'Media element is buffering or awaiting playback.'
+                };
+            })();
+        `);
+        return res || { hasMedia: false, isPlaying: false, message: 'No media state returned' };
+    } catch (e) {
+        return { hasMedia: false, isPlaying: false, message: e.message };
+    }
+}
+
+/**
  * Helper to extract tab index from prompt ("2nd tab", "tab 3", "third tab")
  */
 export function extractTabIndexFromPrompt(raw) {
@@ -1345,7 +1754,8 @@ export async function executeToolCallAndVerify(toolCall, context = {}) {
     if (name === 'navigate') {
         const url = args.url ? resolveTargetUrl(args.url) : '';
         if (url && onNavigate) {
-            const prevUrl = (wv && typeof wv.getURL === 'function') ? wv.getURL() : '';
+            let prevUrl = '';
+            try { if (wv && typeof wv.getURL === 'function') prevUrl = wv.getURL() || ''; } catch (_) {}
             onNavigate(url);
 
             // Physically await and verify webview URL change
@@ -1353,13 +1763,15 @@ export async function executeToolCallAndVerify(toolCall, context = {}) {
             let currentTitle = '';
             for (let i = 0; i < 10; i++) {
                 await new Promise(r => setTimeout(r, 250));
-                if (wv && typeof wv.getURL === 'function') {
-                    currentUrl = wv.getURL() || '';
-                    currentTitle = (typeof wv.getTitle === 'function' ? wv.getTitle() : '') || '';
-                    if (currentUrl && currentUrl !== 'about:blank' && (currentUrl !== prevUrl || i >= 4)) {
-                        break;
+                try {
+                    if (wv && typeof wv.getURL === 'function') {
+                        currentUrl = wv.getURL() || '';
+                        currentTitle = (typeof wv.getTitle === 'function' ? wv.getTitle() : '') || '';
+                        if (currentUrl && currentUrl !== 'about:blank' && (currentUrl !== prevUrl || i >= 4)) {
+                            break;
+                        }
                     }
-                }
+                } catch (_) {}
             }
 
             const targetDomain = (function() {
@@ -1600,6 +2012,27 @@ export async function executeToolCallAndVerify(toolCall, context = {}) {
         };
     }
 
+    if (name === 'verify_media_playback' || name === 'verify_media') {
+        const mediaState = await executeWebviewVerifyMedia(wv);
+        if (mediaState.isPlaying) {
+            return {
+                success: true,
+                action: 'verify_media_playback',
+                mediaState,
+                message: `Active ${mediaState.tag} playback verified: "${mediaState.title || 'media'}" at ${mediaState.currentTime}s / ${mediaState.duration}s (Vol: ${mediaState.volume}%, Muted: ${mediaState.muted}).`,
+                verification: `✅ [Verified State: Media is actively playing at ${mediaState.currentTime}s / ${mediaState.duration}s]`
+            };
+        } else {
+            return {
+                success: false,
+                action: 'verify_media_playback',
+                mediaState,
+                message: mediaState.message || 'No active media playback detected on this page.',
+                verification: `⚠️ [Verification Notice: ${mediaState.message || 'No media actively playing'}]`
+            };
+        }
+    }
+
     if (name === 'search_page') {
         const query = args.query || args.text || '';
         if (query) {
@@ -1616,7 +2049,8 @@ export async function executeToolCallAndVerify(toolCall, context = {}) {
             }
             if (isOk) {
                 await new Promise(r => setTimeout(r, 1200));
-                const curUrl = (wv && typeof wv.getURL === 'function') ? wv.getURL() : '';
+                let curUrl = '';
+                try { if (wv && typeof wv.getURL === 'function') curUrl = wv.getURL() || ''; } catch (_) {}
                 return {
                     success: true,
                     action: 'search_page',
@@ -1647,7 +2081,8 @@ export async function executeToolCallAndVerify(toolCall, context = {}) {
 
         // Await page settling if loading
         for (let i = 0; i < 15; i++) {
-            const isLoading = (typeof wv.isLoading === 'function') ? wv.isLoading() : false;
+            let isLoading = false;
+            try { isLoading = (typeof wv.isLoading === 'function') ? wv.isLoading() : false; } catch (_) {}
             if (!isLoading) {
                 try {
                     const ready = await wv.executeJavaScript(`document.readyState === 'complete' || (document.body && document.body.children.length > 0)`);
@@ -1705,11 +2140,19 @@ export async function executeToolCallAndVerify(toolCall, context = {}) {
                 })()
             `);
 
+            // Also refresh Set-of-Marks overlay so every clickable element is indexed and visible to user & AI
+            let somMarks = [];
+            try {
+                somMarks = await renderSetOfMarksOverlay(wv, 120);
+                pageData.actionableMarks = somMarks;
+            } catch (_) {}
+
             const dlList = (pageData.downloads || []).map(d => `- "${d.text}" ${d.href ? `-> ${d.href}` : ''}`).join('\n');
             const linkList = (pageData.links || []).slice(0, 25).map(l => `- "${l.text}" -> ${l.href}`).join('\n');
             const searchList = (pageData.searchInputs || []).join(', ') || 'none';
+            const somList = (somMarks || []).slice(0, 25).map(m => `${m.mark}: "${m.text}" (<${m.tag}>)`).join(' | ');
 
-            const summary = `📄 **Page Title:** "${pageData.title}"\n🔗 **URL:** ${pageData.url}\n🔍 **Search Inputs:** ${searchList}\n📌 **Headings (${pageData.headings?.length || 0}):** ${(pageData.headings || []).slice(0, 10).join(' | ') || 'none'}\n\n📥 **Detected Download/Stream Triggers (${pageData.downloads?.length || 0}):**\n${dlList || 'None detected'}\n\n🌐 **Top Interactive Links (${pageData.links?.length || 0}):**\n${linkList || 'None detected'}\n\n📝 **Page Content Excerpt:**\n${(pageData.bodyText || '').substring(0, 1200)}...`;
+            const summary = `📄 **Page Title:** "${pageData.title}"\n🔗 **URL:** ${pageData.url}\n🔍 **Search Inputs:** ${searchList}\n📌 **Headings (${pageData.headings?.length || 0}):** ${(pageData.headings || []).slice(0, 10).join(' | ') || 'none'}\n🏷️ **Marked Interactive Elements (${somMarks?.length || 0}):**\n${somList || 'None detected'}\n\n📥 **Detected Download/Stream Triggers (${pageData.downloads?.length || 0}):**\n${dlList || 'None detected'}\n\n🌐 **Top Interactive Links (${pageData.links?.length || 0}):**\n${linkList || 'None detected'}\n\n📝 **Page Content Excerpt:**\n${(pageData.bodyText || '').substring(0, 1200)}...`;
 
             const isBlank = (!pageData.title || pageData.title === 'about:blank') && (!pageData.links || pageData.links.length === 0);
             if (isBlank) {
@@ -1727,7 +2170,7 @@ export async function executeToolCallAndVerify(toolCall, context = {}) {
                 action: 'read_page',
                 page: pageData,
                 message: summary,
-                verification: `✅ [Verified Action: Read live page state: "${pageData.title}" (${pageData.links?.length || 0} links, ${pageData.downloads?.length || 0} downloads, ${pageData.headings?.length || 0} headings)]`
+                verification: `✅ [Verified Action: Read live page state: "${pageData.title}" (${somMarks?.length || 0} marks stamped, ${pageData.links?.length || 0} links, ${pageData.downloads?.length || 0} downloads)]`
             };
         } catch (e) {
             return {
@@ -1747,28 +2190,102 @@ export async function executeToolCallAndVerify(toolCall, context = {}) {
         if (!wv || typeof wv.executeJavaScript !== 'function') {
             return { success: false, action: 'grep_page', verification: '⚠️ [Verification Failed: No active webview]' };
         }
-        if (typeof wv.isLoading === 'function' && wv.isLoading()) {
-            await new Promise(r => setTimeout(r, 1000));
-        }
+        try {
+            if (typeof wv.isLoading === 'function' && wv.isLoading()) {
+                await new Promise(r => setTimeout(r, 1000));
+            }
+        } catch (_) {}
         try {
             const grepRes = await wv.executeJavaScript(`
                 (function() {
-                    const q = ${JSON.stringify(query)}.toLowerCase();
-                    const allNodes = Array.from(document.querySelectorAll('a, button, [role="button"], [role="link"], h1, h2, h3, h4, h5, h6, p, span, li, tr, td, div, article, section, input, textarea'));
+                    const q = ${JSON.stringify(query)}.toLowerCase().trim();
+                    const isSearchQuery = /search|find|query|magnif/i.test(q);
+
+                    // Preserve existing Set-of-Marks and find highest existing mark index
+                    let maxMark = 0;
+                    document.querySelectorAll('[data-som-id]').forEach(el => {
+                        const id = parseInt(el.getAttribute('data-som-id'), 10);
+                        if (!isNaN(id) && id > maxMark) maxMark = id;
+                    });
+
+                    let somContainer = document.getElementById('antigravity-som-container');
+                    if (!somContainer) {
+                        somContainer = document.createElement('div');
+                        somContainer.id = 'antigravity-som-container';
+                        somContainer.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:2147483647;';
+                        document.documentElement.appendChild(somContainer);
+                    }
+
+                    const scrollX = window.scrollX || window.pageXOffset || 0;
+                    const scrollY = window.scrollY || window.pageYOffset || 0;
+
+                    // Universal DOM search covering text, inputs, buttons, links, details/summary, SVGs, and ARIA interactives
+                    const allNodes = Array.from(document.querySelectorAll(
+                        'a, button, input, textarea, select, summary, details, [role="button"], [role="link"], [role="searchbox"], ' +
+                        '[role="tab"], [role="menuitem"], [role="checkbox"], [role="radio"], [role="option"], [role="combobox"], ' +
+                        '[contenteditable="true"], [tabindex]:not([tabindex="-1"]), [onclick], svg, ' +
+                        'h1, h2, h3, h4, h5, h6, p, span, li, tr, td, div, article, section, label, form'
+                    ));
+
                     const matches = [];
                     const seenTexts = new Set();
 
                     for (const el of allNodes) {
+                        if (!el || el.id === 'antigravity-som-container' || (el.closest && el.closest('#antigravity-som-container'))) continue;
+                        const tag = el.tagName.toLowerCase();
                         const aria = (el.getAttribute('aria-label') || '').trim();
                         const titleAttr = (el.getAttribute('title') || '').trim();
                         const val = (el.value || '').trim();
+                        const placeholder = (el.getAttribute('placeholder') || '').trim();
                         const txt = (el.innerText || el.textContent || '').trim().replace(/\\s+/g, ' ');
                         const href = el.href || el.getAttribute('href') || '';
-                        const combined = (aria + ' ' + titleAttr + ' ' + val + ' ' + txt + ' ' + href).toLowerCase();
+                        const idAttr = el.id || '';
+                        const nameAttr = el.getAttribute('name') || '';
+                        const classAttr = typeof el.className === 'string' ? el.className : (el.className?.baseVal || '');
 
-                        if (combined.includes(q)) {
+                        const combined = (aria + ' ' + titleAttr + ' ' + val + ' ' + placeholder + ' ' + txt + ' ' + href + ' ' + idAttr + ' ' + nameAttr + ' ' + classAttr).toLowerCase();
+
+                        // Detect SVG use sprite href (#search, #play, etc.)
+                        const useEl = el.querySelector ? el.querySelector('use') : (tag === 'use' ? el : null);
+                        const useHref = (useEl ? (useEl.getAttribute('href') || useEl.getAttribute('xlink:href') || '') : '').toLowerCase();
+
+                        // Detect search buttons, SVGs, or inputs when searching for search
+                        const isSearchButton = isSearchQuery && (
+                            tag === 'button' || el.getAttribute('role') === 'button' || el.type === 'submit' || tag === 'svg' || useHref.includes('search') ||
+                            /search/i.test(classAttr + ' ' + idAttr)
+                        ) && (
+                            el.type === 'submit' || combined.includes('search') || useHref.includes('search') ||
+                            !!(el.closest && el.closest('[role="search"]')) || !!(el.closest && el.closest('form[action*="search" i]'))
+                        );
+
+                        if (combined.includes(q) || isSearchButton || useHref.includes(q)) {
+                            // Auto-expand hidden <details> if item is inside one
+                            let wasRevealed = false;
+                            const parentDetails = el.closest ? el.closest('details') : null;
+                            if (parentDetails && !parentDetails.open) {
+                                parentDetails.open = true;
+                                wasRevealed = true;
+                            }
+                            if (tag === 'details' && !el.open) {
+                                el.open = true;
+                                wasRevealed = true;
+                            }
+
                             // Extract concise display text
-                            let displayText = aria || titleAttr || val || txt;
+                            let displayText = aria || titleAttr || val || placeholder || txt;
+                            if (useHref) {
+                                if (useHref.includes('search')) displayText = '[Search Icon]';
+                                else if (useHref.includes('play')) displayText = '[Play Icon]';
+                                else if (useHref.includes('close')) displayText = '[Close Icon]';
+                                else if (useHref.includes('menu')) displayText = '[Menu Icon]';
+                                else displayText = '[' + useHref.replace(/^#/, '') + ' Icon]';
+                            }
+                            if (!displayText && isSearchButton) displayText = '[Search Button]';
+                            if (!displayText && (tag === 'button' || el.getAttribute('role') === 'button')) displayText = '[Button' + (idAttr ? '#' + idAttr : '') + ']';
+                            if (!displayText && tag === 'input') displayText = '[Input: ' + (el.type || 'text') + ']';
+                            if (!displayText && tag === 'svg') displayText = '[Icon: ' + (classAttr.trim().split(/\\s+/)[0] || 'svg') + ']';
+                            if (!displayText) displayText = '<' + tag + '>';
+
                             if (displayText.length > 200) {
                                 const idx = displayText.toLowerCase().indexOf(q);
                                 const start = Math.max(0, idx - 40);
@@ -1777,19 +2294,54 @@ export async function executeToolCallAndVerify(toolCall, context = {}) {
                             }
                             displayText = displayText.replace(/\\s+/g, ' ').trim();
 
-                            if (displayText && !seenTexts.has(displayText)) {
-                                seenTexts.add(displayText);
-                                const link = el.tagName.toLowerCase() === 'a' ? el : el.closest('a');
-                                const isClickable = !!(link || el.tagName.toLowerCase() === 'button' || el.getAttribute('role') === 'button' || el.getAttribute('role') === 'link' || el.onclick || el.classList.contains('btn'));
+                            if (displayText && !seenTexts.has(displayText + tag)) {
+                                seenTexts.add(displayText + tag);
+
+                                const link = tag === 'a' ? el : (el.closest ? el.closest('a') : null);
+                                const button = (tag === 'button' || el.getAttribute('role') === 'button') ? el : (el.closest ? el.closest('button, [role="button"]') : null);
+                                const clickTarget = link || button || ((tag === 'input' || tag === 'textarea' || tag === 'summary' || tag === 'details') ? el : el);
+
+                                const isClickable = !!(link || button || tag === 'button' || tag === 'input' || tag === 'summary' || tag === 'details' || el.getAttribute('role') === 'button' || el.getAttribute('role') === 'link' || el.onclick || (typeof el.className === 'string' && el.className.includes('btn')));
+
+                                let markLabel = null;
+                                if (isClickable && clickTarget) {
+                                    // If target already has a mark, reuse it!
+                                    const existingMark = clickTarget.getAttribute('data-som-id');
+                                    if (existingMark) {
+                                        markLabel = '#' + existingMark;
+                                    } else {
+                                        // Assign next sequential mark index
+                                        maxMark++;
+                                        clickTarget.setAttribute('data-som-id', String(maxMark));
+                                        const r = clickTarget.getBoundingClientRect();
+                                        if (r.width > 0 && r.height > 0) {
+                                            const pill = document.createElement('div');
+                                            pill.className = 'antigravity-som-pill';
+                                            pill.setAttribute('data-som-badge', String(maxMark));
+                                            pill.textContent = '#' + maxMark;
+                                            pill.style.cssText = 'position:absolute;top:' + Math.max(0, r.top + scrollY - 9) + 'px;left:' + Math.max(0, r.left + scrollX - 5) + 'px;background:#FFE600;color:#000000;font-size:11px;font-weight:900;font-family:ui-monospace,monospace;padding:1px 5px;border-radius:4px;border:1.5px solid rgba(0,0,0,0.85);box-shadow:0 2px 6px rgba(0,0,0,0.6),0 0 10px rgba(255,230,0,0.6);z-index:2147483647;pointer-events:none;line-height:14px;white-space:nowrap;';
+                                            somContainer.appendChild(pill);
+
+                                            const orig = clickTarget.style.outline;
+                                            clickTarget.setAttribute('data-som-orig-outline', orig || '');
+                                            clickTarget.style.outline = '1.5px solid rgba(255, 230, 0, 0.75)';
+                                        }
+                                        markLabel = '#' + maxMark;
+                                    }
+                                }
+
                                 matches.push({
-                                    tag: el.tagName.toLowerCase(),
+                                    tag: tag,
                                     text: displayText,
                                     href: link ? (link.href || '') : (href || null),
-                                    isClickable
+                                    isClickable,
+                                    mark: markLabel,
+                                    isRevealed: wasRevealed
                                 });
                             }
                         }
                     }
+
                     return {
                         title: document.title || '',
                         url: window.location.href || '',
@@ -1800,13 +2352,20 @@ export async function executeToolCallAndVerify(toolCall, context = {}) {
 
             const foundMatches = grepRes?.matches || [];
             if (foundMatches.length > 0) {
-                const matchSummary = foundMatches.map((m, i) => `[${i+1}] <${m.tag}> "${m.text}" ${m.href ? `(Link: ${m.href})` : ''} ${m.isClickable ? '[Clickable]' : ''}`).join('\n');
+                const matchSummary = foundMatches.map((m, i) => {
+                    const markBadge = m.mark ? `[Mark ${m.mark}]` : '';
+                    const clickTag = m.isClickable ? '(Clickable)' : '';
+                    const revTag = m.isRevealed ? '(Revealed from hidden details)' : '';
+                    const linkTag = m.href ? `(Link: ${m.href})` : '';
+                    return `[${i+1}] <${m.tag}> ${markBadge} "${m.text}" ${linkTag} ${clickTag} ${revTag}`.replace(/\\s+/g, ' ').trim();
+                }).join('\n');
+
                 return {
                     success: true,
                     action: 'grep_page',
                     count: foundMatches.length,
                     matches: foundMatches,
-                    message: `🔍 Found ${foundMatches.length} occurrences matching "${query}" on "${grepRes.title}":\n${matchSummary}`,
+                    message: `🔍 Found ${foundMatches.length} occurrences matching "${query}" on "${grepRes.title}":\n${matchSummary}\n\n👉 Tip: Click any marked element above using execute_click({ target: "[Mark #N]" }) or target: "#N"`,
                     verification: `✅ [Verified: Found ${foundMatches.length} matching elements for "${query}" on active page]`
                 };
             } else {
@@ -2076,21 +2635,27 @@ OPERATING PRINCIPLES:
    - For atomic tasks (navigating, typing, clicking a button, pressing Space to play video), execute directly.
    - When a task requires focused sub-routines (e.g., filling a multi-field form, managing a background tab, or polling downloads), you autonomously decide to call delegate_subtask(subagent_id, role, goal, tab_id). (Max 3 concurrent sub-agents permitted to protect RAM).
 3. KEYBOARD & MEDIA PRIMITIVES: Use press_key("Space") to toggle video play/pause on any player. Use press_key("Enter") to submit forms. Use press_key("Escape") to dismiss popups or modal overlays.
-4. FORM FILLING: Use type_text(text, target, submit, clear) to target specific placeholders, labels, or badges (#N). Keep submit: false for intermediate form fields.
+4. SEARCH & FORMS: Use search_page(query) to instantly search on YouTube, Google, or the active page. Use type_text(text, target, submit, clear) to target specific inputs or marks (#N).
+5. NOTIFICATIONS: When a goal is accomplished or download completed, call finish_task(message, success) and optionally remind_user(message).
 
 AVAILABLE TOOLS:
 - navigate: { "url": string }
 - open_tab: { "url"?: string, "title"?: string }
 - close_tab: { "index"?: number, "id"?: string }
 - switch_tab: { "index"?: number, "id"?: string }
+- search_page: { "query": string }
 - read_page: {} (AXTree, Set-of-Marks badges #N, and detected placeholders)
-- grep_page: { "query": string }
+- grep_page: { "query": string, "selector"?: string }
 - click_element: { "target": string } (Click badge #N, text, or selector)
 - type_text: { "text": string, "target"?: string, "submit"?: boolean, "clear"?: boolean }
 - press_key: { "key": string } ("Space", "Enter", "Tab", "Escape", "ArrowDown", "k")
 - hover_element: { "target": string }
 - scroll_page: { "direction": "down"|"up"|"top"|"bottom", "amount"?: number }
+- download_item: { "url"?: string, "target"?: string }
+- verify_download: {}
+- remind_user: { "message": string }
 - delegate_subtask: { "subagent_id": string, "role": string, "goal": string, "tab_id"?: number }
+- verify_media_playback: {} (Inspect if video/audio is actively playing on any site)
 - finish_task: { "message": string, "success": boolean }
 
 Output format:
@@ -2105,15 +2670,15 @@ Output format:
 
     let lastActionSignature = '';
     let sameActionCount = 0;
+    let lastToolObservationDetails = '';
+    let liveTabs = tabs;
+    let liveActiveTabId = activeTabId;
+    let liveActiveTab = activeTab;
 
     for (let turn = 1; turn <= maxTurns && !completed; turn++) {
         if (signal?.aborted) break;
 
         // 1. DYNAMICALLY REFRESH LIVE TABS AND ACTIVE TAB STATE
-        let liveTabs = tabs;
-        let liveActiveTabId = activeTabId;
-        let liveActiveTab = activeTab;
-
         try {
             const tabsRes = await fetch('http://127.0.0.1:4892/api/tabs').then(r => r.json()).catch(() => null);
             if (tabsRes && Array.isArray(tabsRes.tabs) && tabsRes.tabs.length > 0) {
@@ -2137,36 +2702,62 @@ Output format:
         } catch (e) { }
 
         const openTabsCount = liveTabs.length;
-        const curTabUrl = (wv && typeof wv.getURL === 'function' && wv.getURL() !== 'about:blank') 
-            ? wv.getURL() 
-            : (liveActiveTab?.url || pageObs?.page?.url || '');
-        const curTabTitle = (wv && typeof wv.getTitle === 'function' && wv.getTitle())
-            ? wv.getTitle()
-            : (liveActiveTab?.title || pageObs?.page?.title || '');
+        let curTabUrl = liveActiveTab?.url || pageObs?.page?.url || '';
+        let curTabTitle = liveActiveTab?.title || pageObs?.page?.title || '';
+        try {
+            if (wv && typeof wv.getURL === 'function') {
+                const u = wv.getURL();
+                if (u && u !== 'about:blank') curTabUrl = u;
+            }
+        } catch (_) {}
+        try {
+            if (wv && typeof wv.getTitle === 'function') {
+                const t = wv.getTitle();
+                if (t) curTabTitle = t;
+            }
+        } catch (_) {}
 
         const activeSubList = globalSubAgentManager.getActiveList();
         const subAgentSummary = activeSubList.length > 0 
             ? activeSubList.map(s => `[${s.subagent_id} (${s.role}): ${s.status}]`).join(', ') 
             : 'none (0/3 active)';
 
-        let observationText = `[Turn ${turn} - Current Browser State]
+        // 2. CONSTRUCT DYNAMIC TURN PROMPT (WITH ALTERNATING HISTORY GUARANTEE)
+        let currentTurnPrompt = '';
+        if (turn === 1) {
+            currentTurnPrompt = `User Goal: "${raw}"
+[Turn 1 - Current Browser State]
 - Open Tabs: ${openTabsCount}
 - Active Tab: "${curTabTitle}" (${curTabUrl})
 - Sub-Agents: ${subAgentSummary}
 - Page Phase: ${pageObs?.phase || 'GENERAL_PAGE'}
-- Active Countdown: ${pageObs?.activeCountdown?.secondsRemaining ? pageObs.activeCountdown.secondsRemaining + 's remaining' : 'none'}
-- Search Inputs Detected: ${(pageObs?.searchInputs || []).map(i => i.placeholder || i.name || i.id).join(', ') || 'none'}
-- Download Triggers Detected: ${(pageObs?.downloadTriggers || []).map(d => d.text).slice(0, 5).join(' | ') || 'none'}
-- Downloads State: ${dlObs?.hasCompletedDownloads ? `Completed (${dlObs.completed[0]?.filename})` : dlObs?.hasActiveDownloads ? `Active (${dlObs.active[0]?.percent}%)` : 'No active downloads'}`;
+${pageObs?.searchInputs && pageObs.searchInputs.length > 0 ? `- Search Inputs Detected: ${pageObs.searchInputs.map(i => i.placeholder || i.name || i.id).join(', ')}` : ''}
+${pageObs?.actionableElements && pageObs.actionableElements.length > 0 ? `- Actionable Marks [Set-of-Marks]: ${pageObs.actionableElements.slice(0, 35).map(a => `${a.mark}: "${a.text}" (<${a.tag}>)`).join(' | ')}` : ''}
+${pageObs?.downloadTriggers && pageObs.downloadTriggers.length > 0 ? `- Download Triggers Detected: ${pageObs.downloadTriggers.slice(0, 5).map(d => d.text).join(' | ')}` : ''}
+${dlObs?.hasActiveDownloads || dlObs?.hasCompletedDownloads ? `- Downloads State: ${dlObs.hasCompletedDownloads ? `Completed (${dlObs.completed[0]?.filename})` : `Active (${dlObs.active[0]?.percent}%)`}` : ''}
+- Quick Actions: Click any mark directly via execute_click({ target: "#N" }) or target: "[Mark #N]". To find hidden buttons or details, use grep_page({ query: "..." }).
 
-        if (turn === 1) {
-            observationText = `User Goal: "${raw}"\n${observationText}\nWhat is your plan and first action?`;
+What is your plan and first dynamic action?`;
         } else {
-            observationText = `${observationText}\nWhat is your next action to achieve the goal: "${raw}"?`;
+            currentTurnPrompt = `[Turn ${turn} - Live Browser Observation & Action Feedback]
+${lastToolObservationDetails}
+
+Current Browser State:
+- Open Tabs: ${openTabsCount}
+- Active Tab: "${curTabTitle}" (${curTabUrl})
+- Sub-Agents: ${subAgentSummary}
+- Page Phase: ${pageObs?.phase || 'GENERAL_PAGE'}
+${pageObs?.searchInputs && pageObs.searchInputs.length > 0 ? `- Search Inputs Detected: ${pageObs.searchInputs.map(i => i.placeholder || i.name || i.id).join(', ')}` : ''}
+${pageObs?.page?.headings && pageObs.page.headings.length > 0 ? `- Headings/Titles on Page: ${pageObs.page.headings.slice(0, 8).join(' | ')}` : ''}
+${pageObs?.actionableElements && pageObs.actionableElements.length > 0 ? `- Actionable Marks [Set-of-Marks]: ${pageObs.actionableElements.slice(0, 35).map(a => `${a.mark}: "${a.text}" (<${a.tag}>)`).join(' | ')}` : ''}
+${dlObs?.hasActiveDownloads || dlObs?.hasCompletedDownloads ? `- Downloads State: ${dlObs.hasCompletedDownloads ? `Completed (${dlObs.completed[0]?.filename})` : `Active (${dlObs.active[0]?.percent}%)`}` : ''}
+- Quick Actions: Click any mark directly via execute_click({ target: "#N" }) or target: "[Mark #N]". To find hidden buttons or details, use grep_page({ query: "..." }).
+
+Based on this live observation, what is your single next dynamic action toward the user goal: "${raw}"?`;
         }
 
         let aiRes = await sendChatMessage({
-            prompt: observationText,
+            prompt: currentTurnPrompt,
             history: agentHistory,
             systemPrompt,
             tools: BROWSER_TOOLS,
@@ -2179,9 +2770,9 @@ Output format:
             signal
         });
 
-        // Diagnostic recovery if model request drops (instead of silent break)
+        // Diagnostic recovery if model request drops
         if (!aiRes || !aiRes.success || aiRes.aborted) {
-            logTelemetry('warn', `Turn ${turn}: Model call failed or timed out. Initiating diagnostic recovery...`);
+            logTelemetry('warn', `Turn ${turn}: Model call failed or dropped. Initiating diagnostic recovery...`);
             const retryRes = await sendChatMessage({
                 prompt: `[Diagnostic Retry] Previous response dropped. Active tab is "${curTabTitle}" (${curTabUrl}). Goal: "${raw}". State your next dynamic action:`,
                 history: agentHistory.slice(-4),
@@ -2198,7 +2789,6 @@ Output format:
 
         const replyContent = aiRes.reply || '';
         const reasoningContent = aiRes.reasoning || '';
-        agentHistory.push({ role: 'assistant', content: replyContent });
 
         // Parse tool calls / steps
         let stepsToExecute = [];
@@ -2221,17 +2811,66 @@ Output format:
             } else if (/navigat(?:ing|e) to (https?:\/\/[^\s<>"')]+)/i.test(replyContent)) {
                 const urlM = replyContent.match(/https?:\/\/[^\s<>"')]+/i);
                 if (urlM) stepsToExecute.push({ name: 'navigate', args: { url: urlM[0] } });
+            } else if (/search(?:ing)? for ["']?([^"'\n\r]+)["']? (?:on|in) (?:youtube|google|page)/i.test(replyContent)) {
+                const qM = replyContent.match(/search(?:ing)? for ["']?([^"'\n\r]+)["']? (?:on|in) (?:youtube|google|page)/i);
+                if (qM) stepsToExecute.push({ name: 'search_page', args: { query: qM[1] } });
+            } else if (/click(?:ing)? (?:on )?(?:the )?(?:badge|mark|button|link|element) ["']?([^"'\n\r]+)["']?/i.test(replyContent)) {
+                const cM = replyContent.match(/click(?:ing)? (?:on )?(?:the )?(?:badge|mark|button|link|element) ["']?([^"'\n\r]+)["']?/i);
+                if (cM) stepsToExecute.push({ name: 'click_element', args: { target: cM[1] } });
+            } else if (/\b(?:task|goal) (?:is )?(?:complete|finished|achieved)\b/i.test(replyContent)) {
+                stepsToExecute.push({ name: 'finish_task', args: { message: replyContent } });
             }
         }
 
         if (stepsToExecute.length === 0) {
-            completed = true;
+            const isFinished = turn > 1 && (
+                /\b(?:complete|completed|done|finished|all set|enjoy|succeeded)\b/i.test(replyContent) ||
+                replyContent.includes('✅') ||
+                replyContent.includes('🏁')
+            );
+            if (isFinished || turn >= maxTurns) {
+                // Goal Verification Gate: Ensure physical media playback if goal was to play music/video
+                const isMediaGoal = /\b(?:play|listen|song|music|track|video|watch|stream)\b/i.test(raw);
+                if (isMediaGoal && turn < maxTurns && isFinished) {
+                    const mediaCheck = await executeWebviewVerifyMedia(wv);
+                    if (!mediaCheck || !mediaCheck.isPlaying) {
+                        logTelemetry('warn', `Goal Gate: Premature completion rejected. Media is not actively playing yet.`);
+                        executionLogs.push({
+                            turn,
+                            reasoning: reasoningContent,
+                            reply: replyContent,
+                            executions: []
+                        });
+                        agentHistory.push({ role: 'user', content: currentTurnPrompt });
+                        agentHistory.push({ role: 'assistant', content: replyContent });
+                        lastToolObservationDetails = `⚠️ [Goal Gate Verification Failed] Your user goal is to play music/video ("${raw}"), but no HTML5 audio or video is actively playing on this page (${mediaCheck?.message || 'paused or not started'}). Active page: "${curTabTitle}" (${curTabUrl}).
+You must click on the target song/video result (e.g. click_element with mark "#1", "#2" or video title) and ensure playback begins before completing the task.`;
+                        continue;
+                    }
+                }
+
+                completed = true;
+                executionLogs.push({
+                    turn,
+                    reasoning: reasoningContent,
+                    reply: replyContent
+                });
+                break;
+            }
+
+            // Model explained its thinking without emitting a tool block: provide dynamic continuation nudge
+            logTelemetry('info', `Turn ${turn}: Model replied with natural language without tool call. Providing continuation nudge...`);
             executionLogs.push({
                 turn,
                 reasoning: reasoningContent,
-                reply: replyContent
+                reply: replyContent,
+                executions: []
             });
-            break;
+            agentHistory.push({ role: 'user', content: currentTurnPrompt });
+            agentHistory.push({ role: 'assistant', content: replyContent });
+            lastToolObservationDetails = `[Action Required] You explained your intent: "${replyContent.trim().slice(0, 160)}".
+You MUST emit an actionable tool call in \`\`\`tool_call format to interact with the browser (e.g. search_page, type_text, click_element, press_key, or finish_task).`;
+            continue;
         }
 
         // Single Dynamic Action Enforcement: execute the single planned step for this turn
@@ -2269,19 +2908,37 @@ Output format:
 
         // 2. Execute Action
         let execRes = await executeToolCallAndVerify({ name: toolName, args: toolArgs }, turnContext);
-        await new Promise(r => setTimeout(r, 600));
 
-        // 3. Capture Post-Action DOM Snapshot & Compute Physical Delta
-        const postSnap = await captureDomSnapshot(wv);
+        // 3. Dynamic Webview Readiness & Settling Gates
+        if (toolName === 'open_tab' && execRes.tabId) {
+            liveActiveTabId = execRes.tabId;
+            if (typeof onSelectTab === 'function') {
+                try { onSelectTab(execRes.tabId); } catch (_) {}
+            }
+            await new Promise(r => setTimeout(r, 600));
+            const newWv = document.getElementById(`wv-${liveActiveTabId}`);
+            if (newWv) {
+                await waitForWebviewReady(newWv, 4000);
+            }
+            await new Promise(r => setTimeout(r, 600));
+        } else if (toolName === 'navigate' || toolName === 'search_page') {
+            await waitForWebviewReady(wv, 3000);
+            await new Promise(r => setTimeout(r, 800));
+        } else {
+            await new Promise(r => setTimeout(r, 600));
+        }
+
+        // 4. Capture Post-Action DOM Snapshot & Compute Physical Delta
+        const postWv = document.getElementById(`wv-${liveActiveTabId}`) || wv;
+        const postSnap = await captureDomSnapshot(postWv);
         const domDelta = computeDomDelta(preSnap, postSnap);
         execRes.domDelta = domDelta;
 
-        // 4. Zero-Delta Detection & Dynamic Self-Healing
+        // 5. Zero-Delta Detection & Dynamic Self-Healing
         if (!execRes.success || (domDelta.isZeroDelta && ['click_element', 'type_text', 'press_key'].includes(toolName))) {
             logTelemetry('warn', `Zero delta or action failure detected for tool "${toolName}". Initiating self-healing...`);
 
             if (toolName === 'click_element' && domDelta.isZeroDelta) {
-                // If click produced zero delta, dismiss potential modal overlay and retry
                 await executeWebviewKeyPress(wv, 'Escape');
                 await new Promise(r => setTimeout(r, 300));
                 const retryClick = await executeWebviewClick(wv, toolArgs.target, onNavigate);
@@ -2309,29 +2966,35 @@ Output format:
             });
         }
 
-        if (toolName === 'open_tab' && execRes.tabId) {
-            liveActiveTabId = execRes.tabId;
-        }
-        if (toolName === 'open_tab' || toolName === 'navigate' || toolName === 'search_page') {
-            await new Promise(r => setTimeout(r, 1200));
-        }
-
         if (toolName === 'remind_user' && context.onRemindUser) {
             context.onRemindUser(toolArgs.message || 'Task completed!');
         }
         if (toolName === 'finish_task') {
-            completed = true;
+            const isMediaGoal = /\b(?:play|listen|song|music|track|video|watch|stream)\b/i.test(raw);
+            if (isMediaGoal && turn < maxTurns) {
+                const mediaCheck = await executeWebviewVerifyMedia(wv);
+                if (!mediaCheck || !mediaCheck.isPlaying) {
+                    logTelemetry('warn', `Goal Gate: finish_task tool call rejected because media is not playing.`);
+                    completed = false;
+                    execRes.success = false;
+                    execRes.verification = `⚠️ [Goal Gate Failed: Music/video is not playing on active page]`;
+                    lastToolObservationDetails = `⚠️ [Goal Gate Verification Failed] You called finish_task, but the user's goal was to play music/video ("${raw}"), and no audio/video is currently playing on "${curTabTitle}" (${mediaCheck?.message || 'paused or not started'}).
+You must click on the target song/video item (e.g. click_element with mark "#1", "#2" or video title) to start playback before finishing.`;
+                } else {
+                    completed = true;
+                }
+            } else {
+                completed = true;
+            }
         }
 
         // Loop detection: Prevent executing identical action with no state progression
+        let loopWarning = '';
         const actionSignature = `${toolName}:${JSON.stringify(toolArgs)}`;
         if (actionSignature && actionSignature === lastActionSignature) {
             sameActionCount++;
             if (sameActionCount >= 2) {
-                agentHistory.push({
-                    role: 'user',
-                    content: `[Loop Warning] You already executed "${actionSignature}" in previous turn. The active browser is at: "${curTabTitle}" (${curTabUrl}). Physical Delta: ${domDelta.summary}. Do NOT repeat this tool call. Please read page with read_page or grep_page, select an alternate target, or call finish_task.`
-                });
+                loopWarning = `\n[Loop Warning] You already executed "${actionSignature}" in previous turn. Select an alternate target, use read_page or grep_page, or call finish_task.`;
             }
         } else {
             sameActionCount = 0;
@@ -2365,15 +3028,16 @@ Output format:
                 }
             }
             if (e.action === 'grep_page' && Array.isArray(e.matches) && e.matches.length > 0) {
-                detail += `\nMatches:\n${e.matches.slice(0, 15).map((m, i) => `[#${i+1}] <${m.tag}> "${m.text}" ${m.href ? `-> ${m.href}` : ''}`).join('\n')}`;
+                detail += `\nMatches:\n${e.matches.slice(0, 20).map((m, i) => `${m.mark ? `[Mark ${m.mark}]` : `[#${i+1}]`} <${m.tag}> "${m.text}" ${m.isClickable ? '(Clickable)' : ''} ${m.isRevealed ? '(Revealed)' : ''} ${m.href ? `-> ${m.href}` : ''}`.replace(/\s+/g, ' ').trim()).join('\n')}`;
             }
             return detail.trim();
         }).join('\n\n');
 
-        agentHistory.push({
-            role: 'user',
-            content: `Observation after Turn ${turn} Dynamic Tool Execution:\n${toolObservationDetails}\n\nBased on these live page findings, what is your single next dynamic action toward the user goal: "${raw}"?`
-        });
+        lastToolObservationDetails = toolObservationDetails + loopWarning;
+
+        // Commit alternating turn to history (User Turn Prompt -> Assistant Reply)
+        agentHistory.push({ role: 'user', content: currentTurnPrompt });
+        agentHistory.push({ role: 'assistant', content: replyContent });
 
         const hasReminder = turnExecutions.some(e => e.action === 'remind_user');
         if (hasReminder || completed) {
@@ -2382,7 +3046,7 @@ Output format:
         }
 
         // Pause briefly for DOM / navigation settling before next turn
-        await new Promise(r => setTimeout(r, 1200));
+        await new Promise(r => setTimeout(r, 600));
     }
 
     // Format single concise conclusion only (concise tool cards above display all live execution details)
@@ -2739,7 +3403,7 @@ export async function executeAiBrowserCommand(promptText, context = {}) {
     }
 
     // 5.5 DIRECT NAVIGATION COMMANDS ("navigate to <url>", "go to <url>")
-    if (lower.startsWith('navigate to ') || (lower.startsWith('go to ') && !lower.includes('tab'))) {
+    if ((lower.startsWith('navigate to ') || (lower.startsWith('go to ') && !lower.includes('tab'))) && isSingleStep) {
         const dest = cleanPrompt.replace(/^(navigate to|go to)\s+/i, '').trim();
         if (dest && onNavigate) {
             const finalUrl = resolveTargetUrl(dest);
@@ -2749,9 +3413,9 @@ export async function executeAiBrowserCommand(promptText, context = {}) {
     }
 
     // 5.8 OPEN WEBSITE IN CURRENT TAB ("open youtube in the current tab", "open google here", "navigate to github in this tab")
-    if (isCurrentTabIntent && (lower.startsWith('open ') || lower.startsWith('navigate ') || lower.startsWith('go to '))) {
+    if (isCurrentTabIntent && isSingleStep && (lower.startsWith('open ') || lower.startsWith('navigate ') || lower.startsWith('go to '))) {
         const dest = cleanPrompt
-            .replace(/^(?:open|navigate\s+to|navigate|go\s+to)\s+/i, '')
+            .replace(/^(?:open|navigate\s+to|navigate|go\s+to)\s+/i)
             .replace(/\b(?:in\s+(?:the\s+)?(?:current|this|active)\s+tab|here)\b/gi, '')
             .trim();
         if (dest && onNavigate) {
@@ -2762,7 +3426,7 @@ export async function executeAiBrowserCommand(promptText, context = {}) {
     }
 
     // 6. OPEN WEBSITE / NEW TAB
-    if (lower.startsWith('open ') && !matches('history', 'split', 'sidebar', 'reading', 'reader', 'qr', 'palette')) {
+    if (lower.startsWith('open ') && isSingleStep && !matches('history', 'split', 'sidebar', 'reading', 'reader', 'qr', 'palette')) {
         const target = cleanPrompt.replace(/^open\s+/i, '').replace(/\s+in\s+(?:a\s+)?new\s+tab$/i, '').trim();
 
         if (/^(?:new\s+tab|a\s+new\s+tab|blank\s+tab|tab)$/i.test(target)) {
@@ -2898,28 +3562,34 @@ export async function executeAiBrowserCommand(promptText, context = {}) {
     // 10. BACK / FORWARD / RELOAD NAVIGATION COMMANDS
     if (/^(?:go\s+back|back|navigate\s+back|previous\s+page)$/i.test(cleanPrompt)) {
         const wv = getActiveWebview ? getActiveWebview() : null;
-        if (wv && typeof wv.canGoBack === 'function' && wv.canGoBack()) {
-            wv.goBack();
-            return '⬅️ Navigated back to previous page.<br><br>✅ <strong>[Verified Action: Browser Back]</strong>';
-        }
+        try {
+            if (wv && typeof wv.canGoBack === 'function' && wv.canGoBack()) {
+                wv.goBack();
+                return '⬅️ Navigated back to previous page.<br><br>✅ <strong>[Verified Action: Browser Back]</strong>';
+            }
+        } catch (e) {}
         return '⚠️ Cannot go back — no previous page in tab history.';
     }
 
     if (/^(?:go\s+forward|forward|navigate\s+forward|next\s+page)$/i.test(cleanPrompt)) {
         const wv = getActiveWebview ? getActiveWebview() : null;
-        if (wv && typeof wv.canGoForward === 'function' && wv.canGoForward()) {
-            wv.goForward();
-            return '➡️ Navigated forward to next page.<br><br>✅ <strong>[Verified Action: Browser Forward]</strong>';
-        }
+        try {
+            if (wv && typeof wv.canGoForward === 'function' && wv.canGoForward()) {
+                wv.goForward();
+                return '➡️ Navigated forward to next page.<br><br>✅ <strong>[Verified Action: Browser Forward]</strong>';
+            }
+        } catch (e) {}
         return '⚠️ Cannot go forward — no forward page in tab history.';
     }
 
     if (/^(?:reload|reload\s+page|refresh|refresh\s+page|reload\s+tab)$/i.test(cleanPrompt)) {
         const wv = getActiveWebview ? getActiveWebview() : null;
-        if (wv && typeof wv.reload === 'function') {
-            wv.reload();
-            return '🔄 Reloaded active page.<br><br>✅ <strong>[Verified Action: Page Reloaded]</strong>';
-        }
+        try {
+            if (wv && typeof wv.reload === 'function') {
+                wv.reload();
+                return '🔄 Reloaded active page.<br><br>✅ <strong>[Verified Action: Page Reloaded]</strong>';
+            }
+        } catch (e) {}
         return '🔄 Reloaded active tab.';
     }
 
@@ -3050,7 +3720,7 @@ export async function executeAiBrowserCommand(promptText, context = {}) {
     }
 
     // Fallback: General AI Navigation ("navigate to <target>", "go to <target>")
-    if (matches('navigate to', 'go to') && raw.length > 6) {
+    if (matches('navigate to', 'go to') && raw.length > 6 && isSingleStep) {
         const navTarget = raw.replace(/^.*?\b(?:navigate to|go to)\s+/i, '').trim();
         if (navTarget) {
             const targetUrl = KNOWN_SITES[navTarget.toLowerCase()] || resolveTargetUrl(navTarget);
@@ -3061,222 +3731,58 @@ export async function executeAiBrowserCommand(promptText, context = {}) {
         }
     }
 
-    // Detect conversational / writing / Q&A prompts (e.g., "give me an essay on cow...", "explain...", "write...", "what is...")
+    // Detect pure conversational / writing / Q&A prompts (e.g., "give me an essay on cow...", "explain...", "write...", "what is...")
     const isConversationalOrWritingPrompt = (
         /\b(?:essay|write|explain|tell\s+me|give\s+me\s+(?:an?|some|the)|what\s+is|how\s+is|who\s+is|why\s+is|describe|poem|story|paragraph|article|translate|define|meaning\s+of)\b/i.test(raw) ||
         /\?$/.test(raw.trim())
-    ) && !/\b(?:open\s+tab|close\s+tab|switch\s+to\s+tab|download\s+episode|click\s+#?\d+)\b/i.test(raw);
+    ) && !/\b(?:open\s+tab|close\s+tab|switch\s+to\s+tab|download\s+episode|click\s+#?\d+|play|search|youtube|google|browser|tab|site|page|video)\b/i.test(raw);
 
-    // Autonomous Goal & Multi-Step Reasoning Router (runs only on explicit multi-step browser automation tasks):
-    const hasBrowserActionVerb = /\b(?:open|navigate|go\s+to|click|scroll|type|download|switch|close|verify|remind)\b/i.test(cleanPrompt);
-    const isAutonomousGoal = !isConversationalOrWritingPrompt && hasBrowserActionVerb && (
-        /\b(?:and\s+(?:then\s+)?(?:open|navigate|go\s+to|click|scroll|type|download|search|play|verify|close|switch)|then\s+(?:open|navigate|click|scroll|type|download|search|play))\b/i.test(cleanPrompt) ||
-        /\b(?:download|episode|remind|verify|mirror|gateway)\b/i.test(cleanPrompt)
-    );
-
-    if (isAutonomousGoal) {
+    // If pure conversational / writing / Q&A: dispatch to single-turn LLM chat without browser tools
+    if (isConversationalOrWritingPrompt) {
         try {
-            return await executeAutonomousAgentLoop(raw, context);
-        } catch (e) {
-            console.warn('[Autonomous Agent Loop Fallback]', e);
-        }
-    }
+            const { getActiveProviderConfig, streamChatMessage, sendChatMessage } = await import('./services/aiProviderService.js');
+            const activeConfig = context.activeConfig || getActiveProviderConfig();
+            const hasKeyOrLocal = activeConfig && (activeConfig.apiKey || activeConfig.id === 'lmstudio' || activeConfig.id === 'ollama' || activeConfig.id === 'ornith');
 
-    // Fallback: If configured with an active AI Provider, dispatch prompt to LLM / VLM
-    try {
-        const { getActiveProviderConfig, streamChatMessage, sendChatMessage, BROWSER_TOOLS } = await import('./services/aiProviderService.js');
-        const activeConfig = getActiveProviderConfig();
-        const hasKeyOrLocal = activeConfig && (activeConfig.apiKey || activeConfig.id === 'lmstudio' || activeConfig.id === 'ollama');
-
-        if (hasKeyOrLocal) {
-            const activeUrl = activeTab?.url || '';
-            const activeTitle = activeTab?.title || '';
-            const systemPrompt = `You are Antigravity Browser AI Copilot. You assist the user with web browsing, writing, essays, and questions.
+            if (hasKeyOrLocal) {
+                const activeUrl = activeTab?.url || '';
+                const activeTitle = activeTab?.title || '';
+                const systemPrompt = `You are Antigravity Browser AI Copilot. You assist the user with web browsing, writing, essays, and questions.
 Active Tab: "${activeTitle}" (${activeUrl})
 Total Open Tabs: ${tabs.length}.
 Always reply in the same language as the user's current message (default to English unless the user writes in Hindi or Korean). Keep answers clear, well-structured, and helpful.`;
 
-            const chatFn = streamChatMessage || sendChatMessage;
-            const aiRes = await chatFn({
-                prompt: raw,
-                systemPrompt,
-                tools: isConversationalOrWritingPrompt ? [] : BROWSER_TOOLS,
-                onChunk: (chunk) => {
-                    if (context.onStreamChunk) context.onStreamChunk(chunk);
-                },
-                onReasoningChunk: (rChunk) => {
-                    if (context.onStreamReasoning) context.onStreamReasoning(rChunk);
-                },
-                signal: context.signal
-            });
+                const chatFn = streamChatMessage || sendChatMessage;
+                const aiRes = await chatFn({
+                    prompt: raw,
+                    systemPrompt,
+                    config: activeConfig,
+                    tools: [], // No tools for pure conversational Q&A
+                    onChunk: (chunk) => {
+                        if (context.onStreamChunk) context.onStreamChunk(chunk);
+                    },
+                    onReasoningChunk: (rChunk) => {
+                        if (context.onStreamReasoning) context.onStreamReasoning(rChunk);
+                    },
+                    signal: context.signal
+                });
 
-            if (aiRes && aiRes.success && !aiRes.aborted) {
-                const toolExecutions = [];
-
-                // 1. Check native API tool calls
-                if (Array.isArray(aiRes.toolCalls) && aiRes.toolCalls.length > 0) {
-                    for (const tc of aiRes.toolCalls) {
-                        if (context.signal?.aborted) break;
-                        const toolCallId = 'tool_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6);
-                        const startTime = Date.now();
-                        if (context.onToolEvent) {
-                            context.onToolEvent({
-                                id: toolCallId,
-                                tool: tc.name,
-                                args: tc.args || {},
-                                status: 'running'
-                            });
-                        }
-                        const execRes = await executeToolCallAndVerify(tc, context);
-                        const durationMs = Date.now() - startTime;
-                        toolExecutions.push(execRes);
-                        if (context.onToolEvent) {
-                            context.onToolEvent({
-                                id: toolCallId,
-                                tool: tc.name,
-                                args: tc.args || {},
-                                status: execRes.success ? 'completed' : 'failed',
-                                result: execRes.message,
-                                observation: execRes.verification,
-                                durationMs
-                            });
-                        }
-                    }
+                if (aiRes && aiRes.success && !aiRes.aborted) {
+                    const replyText = (aiRes.reply || '').trim();
+                    return `🤖 <strong>[${aiRes.provider}: ${aiRes.model}]</strong><br>${replyText.replace(/\n/g, '<br>')}`;
                 }
-
-                // 2. Parse markdown tool_call or json blocks
-                const replyText = aiRes.reply || '';
-                const blockRegex = /```(?:tool_call|json)?\s*(\{[\s\S]*?\})\s*```/gi;
-                let blockMatch;
-                while ((blockMatch = blockRegex.exec(replyText)) !== null) {
-                    try {
-                        const parsed = JSON.parse(blockMatch[1]);
-                        const toolName = parsed.tool || parsed.name || parsed.action;
-                        if (toolName) {
-                            const toolCallId = 'tool_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6);
-                            const startTime = Date.now();
-                            const toolArgs = parsed.args || parsed.parameters || parsed;
-                            if (context.onToolEvent) {
-                                context.onToolEvent({
-                                    id: toolCallId,
-                                    tool: toolName,
-                                    args: toolArgs,
-                                    status: 'running'
-                                });
-                            }
-                            const execRes = await executeToolCallAndVerify({
-                                name: toolName,
-                                args: toolArgs
-                            }, context);
-                            const durationMs = Date.now() - startTime;
-                            toolExecutions.push(execRes);
-                            if (context.onToolEvent) {
-                                context.onToolEvent({
-                                    id: toolCallId,
-                                    tool: toolName,
-                                    args: toolArgs,
-                                    status: execRes.success ? 'completed' : 'failed',
-                                    result: execRes.message,
-                                    observation: execRes.verification,
-                                    durationMs
-                                });
-                            }
-                        }
-                    } catch (e) { }
-                }
-
-                // 3. Fallback: Parse inline JSON
-                if (toolExecutions.length === 0) {
-                    const inlineMatch = replyText.match(/\{[\s\r\n]*"(?:tool|action|function)"[\s\r\n]*:[\s\r\n]*"[a-zA-Z0-9_-]+"[\s\S]*?\}/);
-                    if (inlineMatch) {
-                        try {
-                            const parsed = JSON.parse(inlineMatch[0]);
-                            const toolName = parsed.tool || parsed.action || parsed.function;
-                            if (toolName) {
-                                const toolCallId = 'tool_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6);
-                                const startTime = Date.now();
-                                const toolArgs = parsed.args || parsed.parameters || parsed;
-                                if (context.onToolEvent) {
-                                    context.onToolEvent({
-                                        id: toolCallId,
-                                        tool: toolName,
-                                        args: toolArgs,
-                                        status: 'running'
-                                    });
-                                }
-                                const execRes = await executeToolCallAndVerify({
-                                    name: toolName,
-                                    args: toolArgs
-                                }, context);
-                                const durationMs = Date.now() - startTime;
-                                toolExecutions.push(execRes);
-                                if (context.onToolEvent) {
-                                    context.onToolEvent({
-                                        id: toolCallId,
-                                        tool: toolName,
-                                        args: toolArgs,
-                                        status: execRes.success ? 'completed' : 'failed',
-                                        result: execRes.message,
-                                        observation: execRes.verification,
-                                        durationMs
-                                    });
-                                }
-                            }
-                        } catch (e) { }
-                    }
-                }
-
-                // 4. Intent Recovery / Anti-Hallucination Fallback:
-                // If model claimed in text that it opened a tab, navigated, or closed a tab without outputting tool syntax
-                if (toolExecutions.length === 0) {
-                    if (/opening (?:a )?new tab|here is your new tab|opened (?:a )?new tab|open a new tab/i.test(replyText)) {
-                        const urlMatch = replyText.match(/https?:\/\/[^\s<>"')]+/i);
-                        const execRes = await executeToolCallAndVerify({
-                            name: 'open_tab',
-                            args: { url: urlMatch ? urlMatch[0] : '' }
-                        }, context);
-                        toolExecutions.push(execRes);
-                    } else if (/navigating to|going to|opened (?:website|page) (?:at )?(https?:\/\/[^\s<>"')]+)/i.test(replyText)) {
-                        const urlMatch = replyText.match(/https?:\/\/[^\s<>"')]+/i);
-                        if (urlMatch) {
-                            const execRes = await executeToolCallAndVerify({
-                                name: 'navigate',
-                                args: { url: urlMatch[0] }
-                            }, context);
-                            toolExecutions.push(execRes);
-                        }
-                    } else if (/closed (?:the )?(?:current )?tab|closing tab/i.test(replyText)) {
-                        const execRes = await executeToolCallAndVerify({
-                            name: 'close_tab',
-                            args: {}
-                        }, context);
-                        toolExecutions.push(execRes);
-                    }
-                }
-
-                // Clean display reply
-                let cleanReply = replyText
-                    .replace(/```(?:tool_call|json)?\s*\{[\s\S]*?\}\s*```/gi, '')
-                    .trim();
-
-                let verificationNotes = toolExecutions.map(e => e.verification).filter(Boolean);
-                if (verificationNotes.length === 0 && toolExecutions.length > 0) {
-                    verificationNotes = toolExecutions.map(e => `✅ [Verified: ${e.message || e.action}]`);
-                }
-
-                let responseHtml = `🤖 <strong>[${aiRes.provider}: ${aiRes.model}]</strong><br>`;
-                if (cleanReply) {
-                    responseHtml += `${cleanReply.replace(/\n/g, '<br>')}`;
-                }
-                if (verificationNotes.length > 0) {
-                    responseHtml += `<br><br>${verificationNotes.map(v => `<strong>${v}</strong>`).join('<br>')}`;
-                }
-
-                return responseHtml;
             }
+        } catch (e) {
+            console.warn('[AI Harness conversational error]', e.message);
         }
+    }
+
+    // ALL other commands (goals, multi-step actions, browser operations, searches, playback, etc.)
+    // are dispatched to the Autonomous Agent Loop!
+    try {
+        return await executeAutonomousAgentLoop(raw, context);
     } catch (e) {
-        console.warn('[AI Harness fallback error]', e.message);
+        console.warn('[Autonomous Agent Loop Failure]', e);
     }
 
     return `💡 Understood instruction: "<em>${raw}</em>". Say <code>shortcuts</code> or <code>what can i do using this ai</code> for the full list of supported browser commands!`;
@@ -3311,8 +3817,24 @@ export async function extractAdaptivePageContext(webview) {
 
                 function isVisible(el) {
                     if (!el) return false;
-                    const s = window.getComputedStyle(el);
-                    return s.display !== 'none' && s.visibility !== 'hidden' && s.opacity !== '0' && (el.offsetWidth > 0 || el.offsetHeight > 0);
+                    const style = window.getComputedStyle(el);
+                    if (style.display === 'none' || style.visibility === 'hidden') return false;
+                    const op = parseFloat(style.opacity);
+                    if (!isNaN(op) && op <= 0.05) return false;
+                    const r = el.getBoundingClientRect();
+                    const hasDims = (r.width > 0 && r.height > 0) || (el.offsetWidth > 0 && el.offsetHeight > 0);
+                    if (!hasDims) return false;
+
+                    let cur = el;
+                    while (cur && cur !== doc.body && cur !== doc.documentElement) {
+                        const s = window.getComputedStyle(cur);
+                        if (s.display === 'none' || s.visibility === 'hidden') return false;
+                        const cop = parseFloat(s.opacity);
+                        if (!isNaN(cop) && cop <= 0.05) return false;
+                        if (s.pointerEvents === 'none' && cur !== el) return false;
+                        cur = cur.parentElement;
+                    }
+                    return true;
                 }
 
                 // 1. Detect active countdown timers
@@ -3390,22 +3912,173 @@ export async function extractAdaptivePageContext(webview) {
                     }
                 }
 
-                // 5. Gather top Set-of-Marks actionable elements (max 20)
+                // 5. Render live Set-of-Marks overlay and stamp data-som-id directly on DOM elements
+                const existingSom = doc.getElementById('antigravity-som-container');
+                if (existingSom) existingSom.remove();
+                doc.querySelectorAll('[data-som-id]').forEach(el => {
+                    const orig = el.getAttribute('data-som-orig-outline');
+                    if (orig !== null) el.style.outline = orig;
+                    el.removeAttribute('data-som-id');
+                    el.removeAttribute('data-som-orig-outline');
+                });
+
+                const candidateSelectors = [
+                    'a[href]', 'button', 'input:not([type="hidden"])', 'textarea', 'select', 'summary', 'details',
+                    '[role="button"]', '[role="link"]', '[role="searchbox"]', '[role="tab"]', '[role="menuitem"]',
+                    '[role="checkbox"]', '[role="radio"]', '[role="switch"]', '[role="option"]', '[role="combobox"]',
+                    '[role="menuitemcheckbox"]', '[role="menuitemradio"]', '[role="treeitem"]',
+                    '[contenteditable="true"]', '[tabindex]:not([tabindex="-1"])', '[onclick]',
+                    'video', 'audio', '[role="slider"]',
+                    '.btn', '.button', '[class*="button" i]', '[class*="btn" i]'
+                ];
+
+                const standardElements = Array.from(doc.querySelectorAll(candidateSelectors.join(',')));
+                const pointerElements = Array.from(doc.querySelectorAll('div, span, li, p, i, em, strong, svg')).filter(el => {
+                    try {
+                        if (!el || el.id === 'antigravity-som-container' || (el.closest && el.closest('#antigravity-som-container'))) return false;
+                        const s = window.getComputedStyle(el);
+                        return s.cursor === 'pointer' && el.children.length <= 2;
+                    } catch (_) { return false; }
+                });
+
+                const rawElements = Array.from(new Set([...standardElements, ...pointerElements])).filter(isVisible);
+
+                function getElementLabel(el) {
+                    const aria = (el.getAttribute('aria-label') || '').trim();
+                    if (aria) return aria;
+                    const inner = (el.innerText || el.textContent || '').replace(/\\s+/g, ' ').trim();
+                    if (inner && inner.length <= 60 && !inner.startsWith('<')) return inner;
+                    const val = (el.value || '').trim();
+                    if (val) return val;
+                    const placeholder = (el.getAttribute('placeholder') || '').trim();
+                    if (placeholder) return placeholder;
+                    const title = (el.getAttribute('title') || '').trim();
+                    if (title) return title;
+                    const imgAlt = el.querySelector && el.querySelector('img[alt]')?.alt?.trim();
+                    if (imgAlt) return imgAlt;
+                    const svgTitle = el.querySelector && el.querySelector('title')?.textContent?.trim();
+                    if (svgTitle) return svgTitle;
+
+                    // Universal SVG sprite symbol resolution (use href="#search", use href="#play", etc.)
+                    const useEl = el.querySelector ? el.querySelector('use') : (el.tagName.toLowerCase() === 'use' ? el : null);
+                    if (useEl) {
+                        const href = (useEl.getAttribute('href') || useEl.getAttribute('xlink:href') || '').toLowerCase();
+                        if (href.includes('search')) return '[Search Icon]';
+                        if (href.includes('play')) return '[Play Icon]';
+                        if (href.includes('pause')) return '[Pause Icon]';
+                        if (href.includes('menu')) return '[Menu Icon]';
+                        if (href.includes('close')) return '[Close Icon]';
+                        if (href.length > 1 && !href.includes('loader') && !href.includes('spinner') && !href.includes('placeholder')) {
+                            return '[' + href.replace(/^#/, '') + ' Icon]';
+                        }
+                    }
+
+                    // Semantic slug extraction from href/data-to (e.g. /watch-whats-wrong-with-secretary-kim...)
+                    const rawHref = el.getAttribute('data-to') || el.getAttribute('href') || el.href || '';
+                    if (rawHref && !rawHref.startsWith('javascript:')) {
+                        try {
+                            const pathParts = rawHref.split(/[?#]/)[0].split('/').filter(Boolean);
+                            const lastSlug = pathParts[pathParts.length - 1] || pathParts[pathParts.length - 2] || '';
+                            if (lastSlug && lastSlug.length > 4 && !/^[0-9a-f]{20,}$/i.test(lastSlug)) {
+                                const cleanSlug = lastSlug
+                                    .replace(/^(?:watch|online|video|show)-+/i, '')
+                                    .replace(/-+(?:online|watch|video|hindi|dubbed|series|free|episode|season.*)$/i, '')
+                                    .replace(/-/g, ' ')
+                                    .trim();
+                                if (cleanSlug.length > 2) {
+                                    const words = cleanSlug.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase());
+                                    return '[Card: ' + words.join(' ') + ']';
+                                }
+                            }
+                        } catch (_) {}
+                    }
+
+                    const tag = el.tagName.toLowerCase();
+                    const classStr = typeof el.className === 'string' ? el.className : (el.className?.baseVal || '');
+                    const idStr = el.id || '';
+                    const isSearch = /search/i.test(classStr + ' ' + idStr + ' ' + (el.getAttribute('name') || '') + ' ' + (el.closest?.('[role="search"]') ? 'search' : ''));
+                    const isSubmit = el.type === 'submit' || (typeof el.matches === 'function' && el.matches('button[type="submit"], input[type="submit"]'));
+
+                    if (isSearch) return '[Search Button]';
+                    if (isSubmit) return '[Submit]';
+                    if (tag === 'button' || el.getAttribute('role') === 'button') {
+                        const id = el.id ? '#' + el.id : '';
+                        const name = el.getAttribute('name') ? '[name="' + el.getAttribute('name') + '"]' : '';
+                        return '[Button' + (id || name || '') + ']';
+                    }
+                    if (tag === 'svg') return '[Icon: ' + (classStr.trim().split(/\\s+/)[0] || 'svg') + ']';
+                    if (tag === 'input') return '[Input: ' + (el.type || 'text') + ']';
+                    if (tag === 'video') return '[Video Player]';
+                    if (el.closest && (el.closest('.card, .portrait-container, [class*="card" i]') || el.querySelector('img'))) {
+                        return '[Show/Video Card]';
+                    }
+                    return '<' + tag + '>';
+                }
+
+                // Sort: Viewport items first, top-to-bottom then left-to-right
+                const vh = window.innerHeight || doc.documentElement.clientHeight;
+                rawElements.sort((a, b) => {
+                    const rA = a.getBoundingClientRect();
+                    const rB = b.getBoundingClientRect();
+                    const inVpA = rA.top >= 0 && rA.top <= vh;
+                    const inVpB = rB.top >= 0 && rB.top <= vh;
+                    if (inVpA && !inVpB) return -1;
+                    if (!inVpA && inVpB) return 1;
+                    if (Math.abs(rA.top - rB.top) > 12) return rA.top - rB.top;
+                    return rA.left - rB.left;
+                });
+
+                // Deduplicate parent/child click targets
+                const deduped = [];
+                const seenClickNodes = new Set();
+                for (const el of rawElements) {
+                    const target = el.tagName.toLowerCase() === 'a' ? el : (el.closest ? (el.closest('a') || el.closest('button') || el) : el);
+                    if (!seenClickNodes.has(target)) {
+                        seenClickNodes.add(target);
+                        deduped.push(target);
+                    }
+                }
+
+                const somContainer = doc.createElement('div');
+                somContainer.id = 'antigravity-som-container';
+                somContainer.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:2147483647;';
+
+                const scrollX = window.scrollX || window.pageXOffset || 0;
+                const scrollY = window.scrollY || window.pageYOffset || 0;
+
                 const actionableElements = [];
                 let markId = 1;
-                for (const el of allLinks.slice(0, 50)) {
-                    const text = (el.innerText || el.value || el.title || '').trim();
-                    if (!text || text.length > 80) continue;
+                for (const el of deduped) {
+                    const text = getElementLabel(el);
                     const r = el.getBoundingClientRect();
+                    if (r.width < 6 || r.height < 6) continue;
+
+                    el.setAttribute('data-som-id', String(markId));
+
+                    const pill = doc.createElement('div');
+                    pill.className = 'antigravity-som-pill';
+                    pill.setAttribute('data-som-badge', String(markId));
+                    pill.textContent = '#' + markId;
+                    pill.style.cssText = 'position:absolute;top:' + Math.max(0, r.top + scrollY - 9) + 'px;left:' + Math.max(0, r.left + scrollX - 5) + 'px;background:#FFE600;color:#000000;font-size:11px;font-weight:900;font-family:ui-monospace,monospace;padding:1px 5px;border-radius:4px;border:1.5px solid rgba(0,0,0,0.85);box-shadow:0 2px 6px rgba(0,0,0,0.6),0 0 10px rgba(255,230,0,0.6);z-index:2147483647;pointer-events:none;line-height:14px;white-space:nowrap;';
+                    somContainer.appendChild(pill);
+
+                    const orig = el.style.outline;
+                    el.setAttribute('data-som-orig-outline', orig || '');
+                    el.style.outline = '1.5px solid rgba(255, 230, 0, 0.75)';
+
                     actionableElements.push({
                         mark: '#' + markId++,
-                        text: text.substring(0, 60),
+                        text: text.substring(0, 70),
                         tag: el.tagName.toLowerCase(),
                         id: el.id || '',
-                        href: el.href || '',
+                        href: el.href || el.getAttribute('href') || '',
                         rect: { top: Math.round(r.top), left: Math.round(r.left), width: Math.round(r.width), height: Math.round(r.height) }
                     });
-                    if (actionableElements.length >= 20) break;
+                    if (actionableElements.length >= 120) break;
+                }
+
+                if (actionableElements.length > 0) {
+                    doc.documentElement.appendChild(somContainer);
                 }
 
                 // 6. Infer workflow phase

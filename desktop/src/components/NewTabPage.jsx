@@ -1000,7 +1000,7 @@ export default function NewTabPage({
                 <div
                     key="time"
                     id="item-time"
-                    className={`ntp-draggable-section section-time ${draggedSection === 'time' ? 'dragging-section' : ''} ${dragOverSection === 'time' ? 'drag-over-section' : ''} ${timePos ? 'ntp-canvas-free-item' : ''} ${selectedId === 'time' ? 'canva-selected' : ''}`}
+                    className={`ntp-draggable-section section-time ${draggedSection === 'time' ? 'dragging-section' : ''} ${dragOverSection === 'time' ? 'drag-over-section' : ''} ${timePos ? 'ntp-canvas-free-item' : ''} ${isEditMode && selectedId === 'time' ? 'canva-selected' : ''}`}
                     style={timeStyle}
                     draggable={isEditMode}
                     onDragStart={(e) => handleSectionDragStart(e, 'time')}
@@ -1090,7 +1090,7 @@ export default function NewTabPage({
                 <div
                     key="badge"
                     id="item-badge"
-                    className={`ntp-draggable-section section-badge ${draggedSection === 'badge' ? 'dragging-section' : ''} ${dragOverSection === 'badge' ? 'drag-over-section' : ''} ${badgePos ? 'ntp-canvas-free-item' : ''} ${selectedId === 'badge' ? 'canva-selected' : ''}`}
+                    className={`ntp-draggable-section section-badge ${draggedSection === 'badge' ? 'dragging-section' : ''} ${dragOverSection === 'badge' ? 'drag-over-section' : ''} ${badgePos ? 'ntp-canvas-free-item' : ''} ${isEditMode && selectedId === 'badge' ? 'canva-selected' : ''}`}
                     style={badgeStyle}
                     draggable={isEditMode}
                     onDragStart={(e) => handleSectionDragStart(e, 'badge')}
@@ -1129,7 +1129,7 @@ export default function NewTabPage({
                 <div
                     key="search"
                     id="item-search"
-                    className={`ntp-draggable-section section-search ${draggedSection === 'search' ? 'dragging-section' : ''} ${dragOverSection === 'search' ? 'drag-over-section' : ''} ${searchPos ? 'ntp-canvas-free-item' : ''} ${selectedId === 'search' ? 'canva-selected' : ''}`}
+                    className={`ntp-draggable-section section-search ${draggedSection === 'search' ? 'dragging-section' : ''} ${dragOverSection === 'search' ? 'drag-over-section' : ''} ${searchPos ? 'ntp-canvas-free-item' : ''} ${isEditMode && selectedId === 'search' ? 'canva-selected' : ''}`}
                     style={searchStyle}
                     draggable={isEditMode}
                     onDragStart={(e) => handleSectionDragStart(e, 'search')}
@@ -1233,7 +1233,7 @@ export default function NewTabPage({
                                     <div
                                         key={sc.id || `sc-${originalIndex}`}
                                         id={`item-${sc.id}`}
-                                        className={`shortcut-card ${isBeingDragged ? 'dragging' : ''} ${isOver ? 'drag-over' : ''} ${isEditMode ? 'editable' : 'locked'} ${selectedId === sc.id ? 'canva-selected' : ''}`}
+                                        className={`shortcut-card ${isBeingDragged ? 'dragging' : ''} ${isOver ? 'drag-over' : ''} ${isEditMode ? 'editable' : 'locked'} ${isEditMode && selectedId === sc.id ? 'canva-selected' : ''}`}
                                         draggable={isEditMode}
                                         onDragStart={(e) => handleDragStart(e, originalIndex)}
                                         onDragOver={(e) => handleDragOver(e, originalIndex)}
@@ -1341,7 +1341,7 @@ export default function NewTabPage({
                 <div
                     key="features"
                     id="item-features"
-                    className={`ntp-draggable-section section-features ${draggedSection === 'features' ? 'dragging-section' : ''} ${dragOverSection === 'features' ? 'drag-over-section' : ''} ${featPos ? 'ntp-canvas-free-item' : ''} ${selectedId === 'features' ? 'canva-selected' : ''}`}
+                    className={`ntp-draggable-section section-features ${draggedSection === 'features' ? 'dragging-section' : ''} ${dragOverSection === 'features' ? 'drag-over-section' : ''} ${featPos ? 'ntp-canvas-free-item' : ''} ${isEditMode && selectedId === 'features' ? 'canva-selected' : ''}`}
                     style={featStyle}
                     draggable={isEditMode}
                     onDragStart={(e) => handleSectionDragStart(e, 'features')}
@@ -1604,7 +1604,7 @@ export default function NewTabPage({
                     <div
                         key={`free-${sc.id}`}
                         id={`item-${sc.id}`}
-                        className={`shortcut-card ntp-canvas-free-card ${isEditMode ? 'editable' : 'locked'} ${selectedId === sc.id ? 'canva-selected' : ''}`}
+                        className={`shortcut-card ntp-canvas-free-card ${isEditMode ? 'editable' : 'locked'} ${isEditMode && selectedId === sc.id ? 'canva-selected' : ''}`}
                         style={{
                             position: 'absolute',
                             left: `${pos.x}px`,

@@ -276,13 +276,13 @@ function createWindow() {
             if (typeof targetSession.registerPreloadScript === 'function') {
                 try {
                     targetSession.registerPreloadScript({ type: 'frame', filePath: guestPreloadPath });
-                } catch(e) {
+                } catch (e) {
                     console.warn('[Session] Failed to register preload script:', e.message);
                 }
             } else if (typeof targetSession.setPreloads === 'function') {
                 try {
                     targetSession.setPreloads([guestPreloadPath]);
-                } catch(e) {
+                } catch (e) {
                     console.warn('[Session] Failed to set session preloads:', e.message);
                 }
             }
@@ -332,7 +332,7 @@ function createWindow() {
         });
 
         // Universal Network Interception: Brave adblock-rust filter matches
-                // 1s silent black mp4 (uBlock 'noopmp4') - served in place of YouTube ad media so the player
+        // 1s silent black mp4 (uBlock 'noopmp4') - served in place of YouTube ad media so the player
         // sees a successful, instantly-ending ad stream and falls through to content with zero stall.
         const YT_AD_NOOP_VIDEO = 'data:video/mp4;base64,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';
 
@@ -354,7 +354,12 @@ function createWindow() {
                 return callback({ redirectURL: YT_AD_NOOP_VIDEO });
             }
 
-            // 4. All other ad/tracker network requests (XHR, fetch, frames, etc.): clean cancel
+            // 4. XHR, fetch and other requests: clean 200 OK empty response so YouTube does not receive net::ERR_BLOCKED_BY_CLIENT
+            if (rType === 'xhr' || rType === 'fetch' || rType === 'other') {
+                return callback({ redirectURL: 'data:text/plain;base64,' });
+            }
+
+            // 5. All other ad/tracker network requests (fetch, frames, etc.): clean cancel
             return callback({ cancel: true });
         }
 
@@ -380,10 +385,13 @@ function createWindow() {
                 return callback({ cancel: false });
             }
 
-            // Whitelist media streaming, video chunks, and player integrity endpoints unconditionally
-            for (const exception of braveAdblock.exceptionRules) {
-                if (lowerUrl.includes(exception)) {
-                    return callback({ cancel: false });
+            // Whitelist media streaming, video chunks, and player integrity endpoints unconditionally (bypassed for Hotstar ad URLs)
+            const isHotstarAdUrl = /(?:jioads|hotstarads|hesads\.akamaized\.net|bifrost-api\.hotstar\.com|\/videos\/ads\/)/i.test(lowerUrl);
+            if (!isHotstarAdUrl) {
+                for (const exception of braveAdblock.exceptionRules) {
+                    if (lowerUrl.includes(exception)) {
+                        return callback({ cancel: false });
+                    }
                 }
             }
 
@@ -517,7 +525,7 @@ function createWindow() {
                 if (cookieDebounce) return;
                 cookieDebounce = setTimeout(() => {
                     cookieDebounce = null;
-                    targetSession.cookies.flushStore().catch(() => {});
+                    targetSession.cookies.flushStore().catch(() => { });
                 }, 1500);
             });
         }
@@ -596,24 +604,35 @@ function createWindow() {
 
 // Universal Brave Shields injection for all guest webviews across any website
 app.on('web-contents-created', (event, contents) => {
+    if (!contents || contents.isDestroyed()) return;
     if (contents.getType() === 'webview') {
         let lastInjectedUrl = '';
         const injectUniversalShields = (force = false) => {
-            const url = contents.getURL() || '';
+            if (!contents || contents.isDestroyed()) return;
+            let url = '';
+            try {
+                url = contents.getURL() || '';
+            } catch (e) {
+                return;
+            }
             if (!url || url === 'about:blank') return;
             if (!force && lastInjectedUrl === url) return;
             lastInjectedUrl = url;
             const cosmeticCss = braveAdblock.getCosmeticCSS(url);
-            if (cosmeticCss) {
-                contents.insertCSS(cosmeticCss, { cssOrigin: 'user' }).catch(() => {});
+            if (cosmeticCss && !contents.isDestroyed()) {
+                contents.insertCSS(cosmeticCss, { cssOrigin: 'user' }).catch(() => { });
             }
             const scriptlet = braveAdblock.getUniversalScriptlet();
-            contents.executeJavaScript(scriptlet).catch(() => {});
+            if (!contents.isDestroyed()) {
+                contents.executeJavaScript(scriptlet).catch(() => { });
+            }
         };
 
         // Engine-level Popup/Popunder Blocking & Native In-App Tab Routing
         contents.setWindowOpenHandler((details) => {
-            const currentUrl = contents.getURL() || '';
+            if (!contents || contents.isDestroyed()) return { action: 'deny' };
+            let currentUrl = '';
+            try { currentUrl = contents.getURL() || ''; } catch (e) { }
             const decision = braveAdblock.shouldBlock(details.url, currentUrl, 'popup');
             if (decision.block || braveAdblock.isSuspiciousPopup(details.url, currentUrl)) {
                 braveAdblock.recordBlocked(details.url, {
@@ -640,7 +659,9 @@ app.on('web-contents-created', (event, contents) => {
 
         // Cancel Shady Redirects and Malicious Programmatic Navigations
         contents.on('will-navigate', (event, navUrl) => {
-            const currentUrl = contents.getURL() || '';
+            if (!contents || contents.isDestroyed()) return;
+            let currentUrl = '';
+            try { currentUrl = contents.getURL() || ''; } catch (e) { }
             const decision = braveAdblock.shouldBlock(navUrl, currentUrl, 'main_frame');
             if (decision.block || braveAdblock.isSuspiciousPopup(navUrl, currentUrl)) {
                 event.preventDefault();
@@ -655,7 +676,9 @@ app.on('web-contents-created', (event, contents) => {
         });
 
         contents.on('will-redirect', (event, navUrl) => {
-            const currentUrl = contents.getURL() || '';
+            if (!contents || contents.isDestroyed()) return;
+            let currentUrl = '';
+            try { currentUrl = contents.getURL() || ''; } catch (e) { }
             const decision = braveAdblock.shouldBlock(navUrl, currentUrl, 'main_frame');
             if (decision.block || braveAdblock.isSuspiciousPopup(navUrl, currentUrl)) {
                 event.preventDefault();
@@ -669,9 +692,23 @@ app.on('web-contents-created', (event, contents) => {
             }
         });
 
-        contents.on('dom-ready', () => injectUniversalShields(true));
-        contents.on('did-navigate', () => { lastInjectedUrl = ''; injectUniversalShields(false); });
-        contents.on('did-navigate-in-page', () => { lastInjectedUrl = ''; injectUniversalShields(true); });
+        contents.on('dom-ready', () => {
+            if (!contents || contents.isDestroyed()) return;
+            injectUniversalShields(true);
+        });
+        contents.on('did-navigate', () => {
+            if (!contents || contents.isDestroyed()) return;
+            lastInjectedUrl = '';
+            injectUniversalShields(false);
+        });
+        contents.on('did-navigate-in-page', () => {
+            if (!contents || contents.isDestroyed()) return;
+            lastInjectedUrl = '';
+            injectUniversalShields(true);
+        });
+        contents.on('destroyed', () => {
+            lastInjectedUrl = '';
+        });
     }
 });
 
@@ -701,7 +738,7 @@ function sendAiControlRequest(action, payload = {}, timeoutMs = 25000) {
             if (mainWindow.isMinimized()) mainWindow.restore();
             mainWindow.show();
             mainWindow.focus();
-        } catch (e) {}
+        } catch (e) { }
 
         const id = ++aiRequestIdCounter;
         const timer = setTimeout(() => {
@@ -721,7 +758,7 @@ function sendAiControlRequest(action, payload = {}, timeoutMs = 25000) {
 }
 
 const snapshotsDir = path.join(__dirname, '..', 'snapshots');
-try { if (!fs.existsSync(snapshotsDir)) fs.mkdirSync(snapshotsDir, { recursive: true }); } catch (e) {}
+try { if (!fs.existsSync(snapshotsDir)) fs.mkdirSync(snapshotsDir, { recursive: true }); } catch (e) { }
 let latestSnapshotMeta = null;
 
 async function captureVlmSnapshot({ target = 'webview', customName, includeBase64 = false } = {}) {
@@ -900,7 +937,7 @@ function startAiControlServer(port = 4892) {
                     mainWindow.focus();
                     mainWindow.moveTop();
                     setTimeout(() => {
-                        try { if (mainWindow && !mainWindow.isDestroyed()) mainWindow.setAlwaysOnTop(false); } catch (e) {}
+                        try { if (mainWindow && !mainWindow.isDestroyed()) mainWindow.setAlwaysOnTop(false); } catch (e) { }
                     }, 2000);
                 }
                 return sendJson(200, { success: true });
@@ -1106,7 +1143,7 @@ function startAiControlServer(port = 4892) {
                 const result = await whisperEngine.transcribeAudio(audioData || audio, { language, sampleRate });
                 if (result && result.success && result.text && executeCommand) {
                     const cmdResult = await sendAiControlRequest('command', { prompt: result.text }, 90000);
-                    await sendAiControlRequest('copilot-chat', { query: result.text }).catch(() => {});
+                    await sendAiControlRequest('copilot-chat', { query: result.text }).catch(() => { });
                     return sendJson(200, { ...result, commandExecuted: true, commandResult: cmdResult });
                 }
                 return sendJson(result && result.success ? 200 : 400, result);
@@ -1238,12 +1275,12 @@ app.on('before-quit', async () => {
         await session.defaultSession.cookies.flushStore();
         const pSess = session.fromPartition('persist:antigravity');
         if (pSess) await pSess.cookies.flushStore();
-    } catch (e) {}
+    } catch (e) { }
 });
 
 app.on('will-quit', () => {
     if (aiControlServer) {
-        try { aiControlServer.close(); } catch (e) {}
+        try { aiControlServer.close(); } catch (e) { }
     }
 });
 
@@ -1397,7 +1434,7 @@ ipcMain.handle('capture-page-snapshot', async (event, customName) => {
     try {
         const image = await mainWindow.webContents.capturePage();
         const outDir = process.env.SNAPSHOT_DIR || snapshotsDir;
-        try { if (!fs.existsSync(outDir)) fs.mkdirSync(outDir, { recursive: true }); } catch (e) {}
+        try { if (!fs.existsSync(outDir)) fs.mkdirSync(outDir, { recursive: true }); } catch (e) { }
         const filename = customName || 'desktop_browser_rendered.png';
         const fullPath = path.join(outDir, filename);
         fs.writeFileSync(fullPath, image.toPNG());

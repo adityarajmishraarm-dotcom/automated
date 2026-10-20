@@ -6014,24 +6014,40 @@ body.has-wallpaper .ai-hud-sidebar {
     color: #ffffff !important;
 }
 
-/* Free Canvas Placement Styling */
+/* Free Canvas Placement Styling - seamless native integration without borders or stagged glowing edges */
 .ntp-canvas-free-item {
     position: absolute !important;
     width: auto !important;
     display: inline-block !important;
     margin: 0 !important;
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.6), 0 0 15px rgba(0, 229, 255, 0.25);
-    border-color: rgba(0, 229, 255, 0.4) !important;
+    box-shadow: none !important;
+    border: none !important;
+    outline: none !important;
+    background: transparent !important;
 }
 
 .ntp-draggable-section.section-search.ntp-canvas-free-item {
     width: var(--search-width, 780px) !important;
     max-width: 95vw !important;
+    box-shadow: none !important;
+    border: none !important;
+    background: transparent !important;
 }
 
 .ntp-draggable-section.section-time.ntp-canvas-free-item {
     width: max-content !important;
     max-width: 90vw !important;
+    box-shadow: none !important;
+    border: none !important;
+    outline: none !important;
+    background: transparent !important;
+}
+
+.ntp-draggable-section.section-time .time-box {
+    box-shadow: none !important;
+    border: none !important;
+    outline: none !important;
+    background: transparent !important;
 }
 
 .ntp-canvas-free-card {
@@ -6041,8 +6057,6 @@ body.has-wallpaper .ai-hud-sidebar {
     min-width: 120px;
     min-height: 70px;
     box-sizing: border-box;
-    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.6), 0 0 12px rgba(0, 229, 255, 0.3);
-    border: 1.5px solid rgba(0, 229, 255, 0.35);
 }
 
 .ntp-draggable-section.ntp-canvas-free-item {

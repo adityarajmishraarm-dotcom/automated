@@ -38,7 +38,7 @@ export const DEFAULT_PROVIDERS = {
         id: 'lmstudio',
         name: 'LM Studio',
         type: 'openai_compatible',
-        baseUrl: 'http://localhost:1234/v1',
+        baseUrl: 'http://127.0.0.1:1234/v1',
         apiKey: '',
         model: 'ornith-1.0-9b',
         presetModels: ['ornith-1.0-9b', 'local-model', 'qwen2.5-coder-7b-instruct', 'qwen2.5-vl-7b-instruct', 'llama-3.2-3b-instruct']
@@ -47,7 +47,7 @@ export const DEFAULT_PROVIDERS = {
         id: 'ollama',
         name: 'Ollama',
         type: 'openai_compatible',
-        baseUrl: 'http://localhost:11434/v1',
+        baseUrl: 'http://127.0.0.1:11434/v1',
         apiKey: '',
         model: 'gpt-oss:20b',
         presetModels: ['gpt-oss:20b', 'qwen3.5:35b', 'llama3.2-vision', 'qwen2.5-coder:7b', 'llava:latest', 'llama3.2:latest']
@@ -107,6 +107,9 @@ export function getAiProvidersConfig() {
         const merged = { ...DEFAULT_PROVIDERS };
         for (const [key, val] of Object.entries(parsed)) {
             if (!val || typeof val !== 'object') continue;
+            let normBaseUrl = val.baseUrl || '';
+            if (normBaseUrl.includes('localhost:1234')) normBaseUrl = normBaseUrl.replace('localhost:1234', '127.0.0.1:1234');
+            if (normBaseUrl.includes('localhost:11434')) normBaseUrl = normBaseUrl.replace('localhost:11434', '127.0.0.1:11434');
             if (merged[key]) {
                 const defaultPresets = Array.isArray(DEFAULT_PROVIDERS[key]?.presetModels) ? DEFAULT_PROVIDERS[key].presetModels : [];
                 const savedPresets = Array.isArray(val.presetModels) ? val.presetModels : [];
@@ -114,6 +117,7 @@ export function getAiProvidersConfig() {
                 merged[key] = {
                     ...merged[key],
                     ...val,
+                    baseUrl: normBaseUrl || merged[key].baseUrl,
                     presetModels: combinedPresets
                 };
             } else {
@@ -121,7 +125,7 @@ export function getAiProvidersConfig() {
                     id: key,
                     name: val.name || key,
                     type: val.type || 'openai_compatible',
-                    baseUrl: val.baseUrl || 'http://localhost:11434/v1',
+                    baseUrl: normBaseUrl || 'http://127.0.0.1:11434/v1',
                     apiKey: val.apiKey || '',
                     model: val.model || 'default',
                     presetModels: Array.isArray(val.presetModels) ? val.presetModels : (val.model ? [val.model] : []),
@@ -143,7 +147,9 @@ export function getAiProvidersConfig() {
  */
 export async function fetchAvailableModels(config) {
     if (!config || !config.baseUrl) return { success: false, models: [], error: 'Missing Base URL' };
-    const cleanBaseUrl = (config.baseUrl || '').replace(/\/+$/, '');
+    let cleanBaseUrl = (config.baseUrl || '').replace(/\/+$/, '');
+    if (cleanBaseUrl.includes('localhost:1234')) cleanBaseUrl = cleanBaseUrl.replace('localhost:1234', '127.0.0.1:1234');
+    if (cleanBaseUrl.includes('localhost:11434')) cleanBaseUrl = cleanBaseUrl.replace('localhost:11434', '127.0.0.1:11434');
     const headers = { 'Content-Type': 'application/json' };
     if (config.apiKey) {
         headers['Authorization'] = `Bearer ${config.apiKey}`;
@@ -193,13 +199,13 @@ export function saveAiProvidersConfig(config) {
 }
 
 /**
- * Get the active provider ID (defaults to 'openai')
+ * Get the active provider ID (strictly user's selection, fallback to lmstudio)
  */
 export function getActiveProviderId() {
     try {
-        return localStorage.getItem(ACTIVE_PROVIDER_KEY) || 'ornith';
+        return localStorage.getItem(ACTIVE_PROVIDER_KEY) || 'lmstudio';
     } catch (e) {
-        return 'ornith';
+        return 'lmstudio';
     }
 }
 
@@ -216,21 +222,19 @@ export function setActiveProviderId(id) {
 }
 
 /**
- * Get active provider full configuration
+ * Get active provider full configuration (User selection is given absolute priority)
  */
 export function getActiveProviderConfig() {
     const configs = getAiProvidersConfig();
     const activeId = getActiveProviderId();
-    const current = configs[activeId];
-    if (current && (current.apiKey || current.id === 'ornith' || current.id === 'lmstudio' || current.id === 'ollama' || current.isCustom)) {
-        return current;
-    }
-    // Prefer locally running Devil.co Ornith-1.0-9B AI OS:
-    if (configs.ornith) {
-        return configs.ornith;
+    if (activeId && configs[activeId]) {
+        return configs[activeId];
     }
     if (configs.lmstudio) {
         return configs.lmstudio;
+    }
+    if (configs.ornith) {
+        return configs.ornith;
     }
     if (configs.ollama) {
         return configs.ollama;
@@ -573,6 +577,17 @@ export const BROWSER_TOOLS = [
     {
         type: 'function',
         function: {
+            name: 'verify_media_playback',
+            description: 'Inspect HTML5 media elements (<video>, <audio>) on the active page to verify if media, music, or video is actively playing, paused, or buffering',
+            parameters: {
+                type: 'object',
+                properties: {}
+            }
+        }
+    },
+    {
+        type: 'function',
+        function: {
             name: 'finish_task',
             description: 'Mark the multi-step browser task or goal as completed with a summary',
             parameters: {
@@ -630,9 +645,17 @@ async function fetchOpenAICompatibleWithFailover(config, requestBody, headers, s
     if (isReasoningModel && !requestBody.reasoning_effort) {
         requestBody.reasoning_effort = 'low';
     }
-    const cleanBaseUrl = (config.baseUrl || '').replace(/\/+$/, '');
-    let primaryResponse = null;
-    let primaryError = null;
+
+    // Normalize localhost to 127.0.0.1 to avoid Windows IPv6 ::1 connection drops
+    let cleanBaseUrl = (config.baseUrl || '').replace(/\/+$/, '');
+    if (cleanBaseUrl.includes('localhost:')) {
+        cleanBaseUrl = cleanBaseUrl.replace('localhost:', '127.0.0.1:');
+    }
+
+    // Ensure requestBody uses the exact user-selected model
+    if (!requestBody.model || requestBody.model === 'default') {
+        requestBody.model = config.model;
+    }
 
     try {
         const res = await fetch(`${cleanBaseUrl}/chat/completions`, {
@@ -641,18 +664,23 @@ async function fetchOpenAICompatibleWithFailover(config, requestBody, headers, s
             body: JSON.stringify(requestBody),
             ...(signal ? { signal } : {})
         });
+
         if (res.ok) {
             return { res, activeConfig: config };
         }
-        primaryResponse = res;
 
-        // If the configured model was not found (404/400) on this endpoint, query /models and retry with an installed model
+        // If the configured model was not found (404/400) on this specific endpoint,
+        // query /models on THIS SAME user-selected endpoint to find the matching model ID
         if (res.status === 404 || res.status === 400) {
-            const avail = await fetchAvailableModels(config);
+            const avail = await fetchAvailableModels({ ...config, baseUrl: cleanBaseUrl });
             if (avail.success && avail.models.length > 0 && !avail.models.includes(requestBody.model)) {
-                const validModel = avail.models[0];
-                const retryBody = { ...requestBody, model: validModel };
-                if (/gpt-oss|qwen3|deepseek-r1|qwq/i.test(validModel)) {
+                const match = avail.models.find(m =>
+                    m.toLowerCase().includes((config.model || '').toLowerCase()) ||
+                    (config.model || '').toLowerCase().includes(m.toLowerCase())
+                ) || avail.models[0];
+
+                const retryBody = { ...requestBody, model: match };
+                if (/gpt-oss|qwen3|deepseek-r1|qwq/i.test(match)) {
                     retryBody.reasoning_effort = 'low';
                 }
                 const retryRes = await fetch(`${cleanBaseUrl}/chat/completions`, {
@@ -664,61 +692,19 @@ async function fetchOpenAICompatibleWithFailover(config, requestBody, headers, s
                 if (retryRes.ok) {
                     const updatedAll = getAiProvidersConfig();
                     if (updatedAll[config.id]) {
-                        updatedAll[config.id].model = validModel;
+                        updatedAll[config.id].model = match;
                         saveAiProvidersConfig(updatedAll);
                     }
-                    return { res: retryRes, activeConfig: { ...config, model: validModel } };
+                    return { res: retryRes, activeConfig: { ...config, model: match } };
                 }
             }
         }
+
+        return { res, activeConfig: config };
     } catch (err) {
         if (err.name === 'AbortError' || signal?.aborted) throw err;
-        primaryError = err;
+        throw new Error(`Failed to connect to ${config.name} at ${cleanBaseUrl}: ${err.message}. Please verify the local server is running with model "${config.model}".`);
     }
-
-    // Automatic failover across local AI providers (Ollama 11434, LM Studio 1234, Ornith 4893)
-    const allConfigs = getAiProvidersConfig();
-    const fallbackOrder = ['ollama', 'lmstudio', 'ornith'].filter(id => id !== config.id && allConfigs[id]);
-    for (const fbId of fallbackOrder) {
-        const fbConfig = allConfigs[fbId];
-        const fbBaseUrl = (fbConfig.baseUrl || '').replace(/\/+$/, '');
-        try {
-            let targetModel = fbConfig.model;
-            const avail = await fetchAvailableModels(fbConfig);
-            if (avail.success && avail.models.length > 0) {
-                if (!avail.models.includes(targetModel)) {
-                    targetModel = avail.models[0];
-                }
-            }
-
-            const fbBody = { ...requestBody, model: targetModel || 'default' };
-            if (/gpt-oss|qwen3|deepseek-r1|qwq/i.test(fbBody.model)) {
-                fbBody.reasoning_effort = 'low';
-            }
-            delete fbBody.tools;
-
-            const fbHeaders = { 'Content-Type': 'application/json' };
-            if (fbConfig.apiKey) fbHeaders['Authorization'] = `Bearer ${fbConfig.apiKey}`;
-
-            const fbRes = await fetch(`${fbBaseUrl}/chat/completions`, {
-                method: 'POST',
-                headers: fbHeaders,
-                body: JSON.stringify(fbBody),
-                ...(signal ? { signal } : {})
-            });
-            if (fbRes.ok) {
-                setActiveProviderId(fbId);
-                return { res: fbRes, activeConfig: { ...fbConfig, model: fbBody.model } };
-            }
-        } catch (fbErr) {
-            if (fbErr.name === 'AbortError' || signal?.aborted) throw fbErr;
-        }
-    }
-
-    if (primaryResponse) {
-        return { res: primaryResponse, activeConfig: config };
-    }
-    throw primaryError || new Error('Failed to connect to AI provider');
 }
 
 /**
@@ -732,9 +718,10 @@ export async function sendChatMessage({
     imageBase64 = null,
     systemPrompt = null,
     history = [],
-    tools = BROWSER_TOOLS
+    tools = BROWSER_TOOLS,
+    config: customConfig = null
 }) {
-    const config = getActiveProviderConfig();
+    const config = customConfig || getActiveProviderConfig();
     const cleanBaseUrl = (config.baseUrl || '').replace(/\/+$/, '');
 
     // Format local file path explanation if provided
@@ -954,9 +941,10 @@ export async function streamChatMessage({
     tools = BROWSER_TOOLS,
     onChunk = () => {},
     onReasoningChunk = () => {},
-    signal = null
+    signal = null,
+    config: customConfig = null
 }) {
-    const config = getActiveProviderConfig();
+    const config = customConfig || getActiveProviderConfig();
     const cleanBaseUrl = (config.baseUrl || '').replace(/\/+$/, '');
 
     let augmentedPrompt = prompt || '';
