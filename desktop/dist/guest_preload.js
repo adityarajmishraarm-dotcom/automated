@@ -138,6 +138,7 @@
                     }
                 }
             }, true);
+
         } catch (e) { }
 
         // 2. Defuse YouTube Anti-Adblock & DAI Experiment Flags (uBlock Origin & Brave Shields Standard)
@@ -267,14 +268,6 @@
         // 4. Ad Payload Neutralizer (uBlock Origin / Brave standard: RENAME ad keys, never delete)
         // Renaming keeps the InnerTube response structurally intact so the player never builds an
         // ad state. Kill-switch for A/B testing: localStorage.ag_nostrip='1' skips the rename.
-        function renameAdKey(obj, key) {
-            if (obj && typeof obj === 'object' && Object.prototype.hasOwnProperty.call(obj, key)) {
-                try {
-                    obj.no_ads = obj[key];
-                    delete obj[key];
-                } catch (e) { }
-            }
-        }
         targetWindow.__ag_ad_vids = targetWindow.__ag_ad_vids || {};
         function recordAdSignalForPayload(data) {
             if (!data || typeof data !== 'object') return;
@@ -282,20 +275,63 @@
                 const hasAds = (Array.isArray(data.adPlacements) && data.adPlacements.length > 0) ||
                     (Array.isArray(data.playerAds) && data.playerAds.length > 0) ||
                     (Array.isArray(data.adSlots) && data.adSlots.length > 0) ||
-                    Boolean(data.adBreakHeartbeatParams);
+                    (Array.isArray(data.adBreaks) && data.adBreaks.length > 0) ||
+                    Boolean(data.adBreakHeartbeatParams) ||
+                    Boolean(data.adBreakHeartbeatRenderer) ||
+                    Boolean(data.adPlacementConfig) ||
+                    Boolean(data.playerConfig && (data.playerConfig.adPlacementConfig || data.playerConfig.daiConfig));
                 if (hasAds) {
-                    targetWindow.__ag_last_ad_req_time = Date.now();
+                    const isPlayerPayload = Boolean(data.videoDetails || data.streamingData || data.playabilityStatus || data.playerResponse);
+                    const urlVid = isPlayerPayload
+                        ? (((targetWindow.location || {}).href || '').match(/[?&]v=([A-Za-z0-9_-]{11})/)?.[1] || null)
+                        : null;
                     const vId = (data.videoDetails && data.videoDetails.videoId) ||
-                        (data.playerResponse && data.playerResponse.videoDetails && data.playerResponse.videoDetails.videoId) || null;
-                    if (vId) targetWindow.__ag_ad_vids[vId] = Date.now();
+                        (data.playerResponse && data.playerResponse.videoDetails && data.playerResponse.videoDetails.videoId) ||
+                        urlVid;
+                    if (vId) {
+                        targetWindow.__ag_last_ad_req_time = Date.now();
+                        targetWindow.__ag_ad_vids[vId] = Date.now();
+                    }
                 }
                 if (data.playerResponse && typeof data.playerResponse === 'object') {
                     recordAdSignalForPayload(data.playerResponse);
                 }
             } catch (e) {}
         }
+        function stripAdKeysInPlace(data) {
+            if (!data || typeof data !== 'object') return data;
+            recordAdSignalForPayload(data);
+            try {
+                delete data.adPlacements;
+                delete data.playerAds;
+                delete data.adSlots;
+                delete data.adSlot;
+                delete data.ads;
+                delete data.adBreaks;
+                delete data.adBreakHeartbeatParams;
+                delete data.adBreakHeartbeatRenderer;
+                delete data.adLayoutLoggingData;
+                delete data.adPlacementConfig;
+                if (data.playerConfig && typeof data.playerConfig === 'object') {
+                    delete data.playerConfig.adPlacementConfig;
+                    delete data.playerConfig.daiConfig;
+                }
+                if (data.playerResponse && typeof data.playerResponse === 'object') {
+                    stripAdKeysInPlace(data.playerResponse);
+                }
+                if (data.videoDetails && typeof data.videoDetails === 'object') {
+                    delete data.videoDetails.adPlacements;
+                    delete data.videoDetails.ad;
+                }
+            } catch (e) {}
+            return data;
+        }
+        targetWindow.__ag_net_player_req_count = 0;
         function cleanAdPayload(data) {
             recordAdSignalForPayload(data);
+            if ((targetWindow.__ag_net_player_req_count || 0) > 0) {
+                return stripAdKeysInPlace(data);
+            }
             return data;
         }
 
@@ -365,12 +401,8 @@
         // "locker" script tries to lock globals, but our preload runs before every page script.
         const INJ_FIND = '"contentPlaybackContext":{';
         const INJ_REPL = '"contentPlaybackContext":{"isInlinePlaybackNoAd":true,';
-        const needsInject = (s) => typeof s === 'string' && s.indexOf(INJ_FIND) !== -1 && s.indexOf('"isInlinePlaybackNoAd":true') === -1;
-        const patchOutbound = (s) => {
-            let out = s;
-            if (needsInject(out)) out = out.replace(INJ_FIND, INJ_REPL);
-            return out;
-        };
+        const needsInject = (s) => false;
+        const patchOutbound = (s) => s;
         // 2026: YouTube retired the params/yAEB trick (uBO disabled it upstream). The
         // current anti-penalty mechanism is to advertise the server-extended client
         // markers ("channel", "lactmilli", "instream", "yahi") in the ytcfg userAgent and
@@ -437,7 +469,7 @@
                                         targetWindow.__ag_last_ad_req_time = Date.now();
                                     }
                                     if (/youtube\.com|\/youtubei\/v1\//.test(responseUrl) || res.videoDetails || res.playerConfig || res.adPlacements) {
-                                        cleanAdPayload(res);
+                                        stripAdKeysInPlace(res);
                                     }
                                 }
                                 return res;
@@ -463,7 +495,7 @@
                                                 (Array.isArray(parsed.adSlots) && parsed.adSlots.length > 0)) {
                                                 targetWindow.__ag_last_ad_req_time = Date.now();
                                             }
-                                            cleanAdPayload(parsed);
+                                            stripAdKeysInPlace(parsed);
                                             return nativeJSONStringify.call(targetWindow.JSON, parsed);
                                         } catch (e) { }
                                     }
@@ -636,10 +668,36 @@
                     const ct = (resp.headers.get('content-type') || '');
                     if (ct.indexOf('application/json') === -1) return resp;
                     const text = await readBodyText(new Uint8Array(await resp.clone().arrayBuffer()));
-                    if (text && (text.includes('"adPlacements":[{"') || text.includes('"playerAds":[{"') || text.includes('"adSlots":[{"'))) {
-                        targetWindow.__ag_last_ad_req_time = Date.now();
+                    if (!text) return resp;
+                    const hasAdText = text.includes('"adPlacements"') ||
+                        text.includes('"playerAds"') ||
+                        text.includes('"adSlots"') ||
+                        text.includes('"adBreakHeartbeatParams"') ||
+                        text.includes('"adPlacementConfig"') ||
+                        text.includes('"daiConfig"');
+                    targetWindow.__ag_clean_player_calls = (targetWindow.__ag_clean_player_calls || 0) + 1;
+                    targetWindow.__ag_clean_player_url = purl;
+                    targetWindow.__ag_clean_player_text_len = text ? text.length : 0;
+                    targetWindow.__ag_clean_player_has_ad = hasAdText;
+                    if (hasAdText && !isPenaltyPlayerText(text)) {
+                        try {
+                            const parsed = nativeJSONParse.call(targetWindow.JSON, text);
+                            stripAdKeysInPlace(parsed);
+                            const cleanedText = nativeJSONStringify.call(targetWindow.JSON, parsed);
+                            const cleanHeaders = new targetWindow.Headers(resp.headers);
+                            cleanHeaders.delete('content-encoding');
+                            cleanHeaders.delete('content-length');
+                            targetWindow.__ag_clean_player_stripped = (targetWindow.__ag_clean_player_stripped || 0) + 1;
+                            return new targetWindow.Response(cleanedText, {
+                                status: resp.status,
+                                statusText: resp.statusText,
+                                headers: cleanHeaders
+                            });
+                        } catch (e) {
+                            targetWindow.__ag_clean_player_err = String(e);
+                        }
                     }
-                    if (!text || !isPenaltyPlayerText(text)) return resp;
+                    if (!isPenaltyPlayerText(text)) return resp;
                     const penInfo = { t: Date.now(), u: (purl || '').slice(0, 220), snippet: text.slice(0, 500), retries: 0, cleaned: false };
                     try { targetWindow.__ag_pen_last = penInfo; } catch (e) { }
                     targetWindow.__ag_penalized_resp = (targetWindow.__ag_penalized_resp || 0) + 1;
@@ -675,21 +733,31 @@
                     if (u) {
                         const uStr = String(u);
                         if (uStr.includes('videoplayback') || uStr.includes('googlevideo.com')) {
-                            targetWindow.__ag_last_media_req_time = Date.now();
-                            const isAdStream = uStr.includes('itag=18') || uStr.includes('itag=22');
+                            const isAdStream = uStr.includes('itag=18') || uStr.includes('itag=22') || uStr.includes('ctier=L') || (!uStr.includes('&ump=1') && !uStr.includes('&sabr=1') && !uStr.includes('&range='));
+                            if (isAdStream) {
+                                targetWindow.__ag_last_ad_req_time = Date.now();
+                            } else {
+                                targetWindow.__ag_last_media_req_time = Date.now();
+                            }
                             return _fetch.apply(this, args).then(resp => {
                                 try {
                                     if (resp && resp.status === 403 && isAdStream) {
                                         targetWindow.__ag_last_ad_403_time = Date.now();
                                         targetWindow.__ag_last_ad_req_time = Date.now();
                                         targetWindow.__ag_ad_403_count = (targetWindow.__ag_ad_403_count || 0) + 1;
+                                        targetWindow.__ag_last_403_url = uStr;
+                                        targetWindow.__ag_403_urls = targetWindow.__ag_403_urls || [];
+                                        targetWindow.__ag_403_urls.push({ t: Date.now(), u: uStr });
                                     }
                                 } catch (e) { }
                                 return resp;
                             });
+                        } else if (uStr.includes('googleads') || uStr.includes('doubleclick') || uStr.includes('/pagead/') || uStr.includes('/api/stats/ads')) {
+                            targetWindow.__ag_last_ad_req_time = Date.now();
                         }
                     }
                     if (isPlayerUrl(u)) {
+                        targetWindow.__ag_net_player_req_count = (targetWindow.__ag_net_player_req_count || 0) + 1;
                         targetWindow.__ag_seen = (targetWindow.__ag_seen || 0) + 1;
                         targetWindow.__ag_last_url = u;
                         const buildRetry = () => (input instanceof targetWindow.Request) ? input : null;
@@ -737,6 +805,9 @@
                                         targetWindow.__ag_last_ad_403_time = Date.now();
                                         targetWindow.__ag_last_ad_req_time = Date.now();
                                         targetWindow.__ag_ad_403_count = (targetWindow.__ag_ad_403_count || 0) + 1;
+                                        targetWindow.__ag_last_403_url = urlStr;
+                                        targetWindow.__ag_403_urls = targetWindow.__ag_403_urls || [];
+                                        targetWindow.__ag_403_urls.push({ t: Date.now(), u: urlStr });
                                     }
                                 }, { passive: true });
                                 this.addEventListener('progress', (e) => {
@@ -748,7 +819,12 @@
                             } catch (e) { }
                         }
                     } catch (e) { }
-                    try { this.__ag_purl = isPlayerUrl(url) ? url : null; } catch (e) { }
+                    try {
+                        if (isPlayerUrl(url)) {
+                            targetWindow.__ag_net_player_req_count = (targetWindow.__ag_net_player_req_count || 0) + 1;
+                        }
+                        this.__ag_purl = isPlayerUrl(url) ? url : null;
+                    } catch (e) { }
                     return _open.call(this, method, url, ...rest);
                 };
                 const wrappedSend = function (body) {
@@ -798,7 +874,7 @@
                             if (this.__ag_purl && typeof txt === 'string') {
                                 try {
                                     const parsed = nativeJSONParse.call(targetWindow.JSON, txt);
-                                    cleanAdPayload(parsed);
+                                    stripAdKeysInPlace(parsed);
                                     const s = JSON.stringify(parsed);
                                     if (isPenaltyPlayerText(s)) {
                                         targetWindow.__ag_xhr_pen = (targetWindow.__ag_xhr_pen || 0) + 1;
@@ -822,7 +898,7 @@
                         const val = origResponseGet.call(this);
                         try {
                             if (this.__ag_purl && this.responseType === 'json' && val && typeof val === 'object') {
-                                cleanAdPayload(val);
+                                stripAdKeysInPlace(val);
                             }
                         } catch (e) { }
                         return val;
@@ -870,7 +946,7 @@
             } catch (e) { }
         } catch (e) { }
 
-        // 5. In-Memory Player Initial Data Interceptors (Wipes ad placements at source while preserving streams)
+        // 5. In-Memory Player Initial Data Interceptors (Preserves SSR player structures at 0ms; records ad signals)
         if (enableJsonResponsePruning) {
             let _ytInitialPlayerResponse = targetWindow.ytInitialPlayerResponse;
             if (_ytInitialPlayerResponse && typeof _ytInitialPlayerResponse === 'object') {
@@ -881,12 +957,12 @@
                     get() { return _ytInitialPlayerResponse; },
                     set(val) {
                         try {
-                            recordAdSignalForPayload(val);
+                            if (val && typeof val === 'object') {
+                                recordAdSignalForPayload(val);
+                            }
                             if (val && val.playabilityStatus && val.playabilityStatus.status === 'UNPLAYABLE') {
                                 const flat = JSON.stringify(val);
                                 if (isPenaltyPlayerText(flat)) {
-                                    // Server-embedded penalty: flag it so the watchdog re-drives a
-                                    // fresh (clean) request; the DOM eraser hides the card meanwhile.
                                     targetWindow.__ag_ssr_penalty = (targetWindow.__ag_ssr_penalty || 0) + 1;
                                     try { targetWindow.__ag_ssr_last = { t: Date.now(), snippet: flat.slice(0, 400) }; } catch (e) { }
                                     try { enableUAFeatures(); } catch (e) { }
@@ -899,38 +975,6 @@
                     configurable: true,
                     enumerable: true
                 });
-            } catch (e) { }
-
-            // [ag_cap] Raw InnerTube response capture for diagnosing YouTube ad delivery.
-            // Enable per-session with localStorage.ag_cap='1'. Reads RAW text (bypasses our own
-            // Response.prototype.json renamer) so we can see ad keys BEFORE stripping.
-            try {
-                if (targetWindow.localStorage.getItem('ag_cap') === '1') {
-                    const _f = targetWindow.fetch;
-                    const _cap = targetWindow.__ag_fetchcap = [];
-                    targetWindow.fetch = function (...args) {
-                        const u = (typeof args[0] === 'string') ? args[0] : (args[0] && args[0].url);
-                        return _f.apply(this, args).then(res => {
-                            try {
-                                if (u && /youtubei\/v1\/(player|next|get_watch)/.test(u)) {
-                                    res.clone().text().then(t => {
-                                        try {
-                                            const j = JSON.parse(t);
-                                            _cap.push({
-                                                u: (u.split('/v1/')[1] || '').split('?')[0], at: Date.now(),
-                                                raw: Object.keys(j).filter(k => /ad|Ad/.test(k)),
-                                                ap: Array.isArray(j.adPlacements) ? j.adPlacements.length : null,
-                                                pa: Array.isArray(j.playerAds) ? j.playerAds.length : null,
-                                                pr: j.playerResponse ? Object.keys(j.playerResponse).filter(k => /ad|Ad/.test(k)) : null
-                                            });
-                                        } catch (e) { }
-                                    }).catch(() => { });
-                                }
-                            } catch (e) { }
-                            return res;
-                        });
-                    };
-                }
             } catch (e) { }
 
             let _ytInitialData = targetWindow.ytInitialData;
@@ -950,12 +994,28 @@
             function sanitizePlayerConfigArgs(args) {
                 if (!args || typeof args !== 'object') return;
                 try {
-                    if (args.ad_preroll || args.ad_tag) {
+                    if (args.ad_preroll || args.ad_tag || args.ad_flags || args.ad_device) {
                         targetWindow.__ag_last_ad_req_time = Date.now();
+                        const uVid = (((targetWindow.location || {}).href || '').match(/[?&]v=([A-Za-z0-9_-]{11})/) || [])[1] || null;
+                        if (uVid) targetWindow.__ag_ad_vids[uVid] = Date.now();
                     }
-                    if (typeof args.raw_player_response === 'string' && (args.raw_player_response.includes('"adPlacements":[{"') || args.raw_player_response.includes('"adSlots":[{"') || args.raw_player_response.includes('"playerAds":[{"'))) {
-                        targetWindow.__ag_last_ad_req_time = Date.now();
+                    if (args.raw_player_response) {
+                        const parsed = typeof args.raw_player_response === 'string'
+                            ? nativeJSONParse.call(targetWindow.JSON, args.raw_player_response)
+                            : args.raw_player_response;
+                        recordAdSignalForPayload(parsed);
                     }
+                    if (args.player_response) {
+                        const parsedPr = typeof args.player_response === 'string'
+                            ? nativeJSONParse.call(targetWindow.JSON, args.player_response)
+                            : args.player_response;
+                        recordAdSignalForPayload(parsedPr);
+                    }
+                    delete args.ad_device;
+                    delete args.ad_flags;
+                    delete args.ad_logging_flag;
+                    delete args.ad_preroll;
+                    delete args.ad_tag;
                 } catch (e) { }
             }
             function hookYtPlayerConfig(obj) {
@@ -982,7 +1042,7 @@
                     Object.defineProperty(obj, 'bootstrapPlayerResponse', {
                         get() { return _bResp; },
                         set(val) {
-                            recordAdSignalForPayload(val);
+                            if (val && typeof val === 'object') recordAdSignalForPayload(val);
                             _bResp = val;
                         },
                         configurable: true,
@@ -1007,14 +1067,134 @@
             } catch (e) { }
         }
 
+        // 5.5. Neutralize YouTube internal 'ad' module registration & 'ad-created' state
+        class DummyAdModule {
+            constructor(player) {
+                this.player = player;
+                this.created = false;
+            }
+            create() { this.created = false; }
+            load() { }
+            unload() { }
+            destroy() { this.created = false; }
+            X() { }
+            ZI() { return false; }
+            getAdState() { return -1; }
+            getOptions() { return []; }
+            wK() { return null; }
+        }
+
+        let _yt_player = targetWindow._yt_player;
+        function hookPlayerModuleRegistry(ytPlayerObj) {
+            if (!ytPlayerObj || typeof ytPlayerObj !== 'object') return ytPlayerObj;
+            if (ytPlayerObj.__jg_ad_intercepted) return ytPlayerObj;
+            ytPlayerObj.__jg_ad_intercepted = true;
+
+            const wrapRegistrationFn = (origFn) => {
+                if (typeof origFn !== 'function' || origFn.__ag_wrapped) return origFn;
+                const wrapped = function (name, factory) {
+                    if (name === 'ad') {
+                        return origFn.call(this, name, DummyAdModule);
+                    }
+                    return origFn.call(this, name, factory);
+                };
+                wrapped.__ag_wrapped = true;
+                return wrapped;
+            };
+
+            for (const key of Object.keys(ytPlayerObj)) {
+                if (typeof ytPlayerObj[key] === 'function') {
+                    const src = ytPlayerObj[key].toString();
+                    if (key === 'jG' || key === 'ea' || (ytPlayerObj[key].length === 2 && src.includes('='))) {
+                        ytPlayerObj[key] = wrapRegistrationFn(ytPlayerObj[key]);
+                        try { ytPlayerObj[key]('ad', DummyAdModule); } catch (e) { }
+                    }
+                }
+            }
+
+            for (const prop of ['jG', 'ea']) {
+                let current = ytPlayerObj[prop];
+                Object.defineProperty(ytPlayerObj, prop, {
+                    get() { return current; },
+                    set(fn) {
+                        current = wrapRegistrationFn(fn);
+                        try { current('ad', DummyAdModule); } catch (e) { }
+                    },
+                    configurable: true,
+                    enumerable: true
+                });
+                if (typeof current === 'function') {
+                    current = wrapRegistrationFn(current);
+                    try { current('ad', DummyAdModule); } catch (e) { }
+                }
+            }
+            return ytPlayerObj;
+        }
+
+        try {
+            Object.defineProperty(targetWindow, '_yt_player', {
+                get() { return _yt_player; },
+                set(val) {
+                    _yt_player = hookPlayerModuleRegistry(val);
+                },
+                configurable: true,
+                enumerable: true
+            });
+            if (_yt_player) _yt_player = hookPlayerModuleRegistry(_yt_player);
+        } catch (e) { }
+
+        // Prevent YouTube player from ever entering 'ad-created', 'ad-showing', or 'ad-interrupting' class states
+        try {
+            const nativeDomTokenAdd = targetWindow.DOMTokenList.prototype.add;
+            targetWindow.DOMTokenList.prototype.add = function (...tokens) {
+                const filtered = tokens.filter(t => t !== 'ad-created' && t !== 'ad-showing' && t !== 'ad-interrupting');
+                if (filtered.length > 0) return nativeDomTokenAdd.apply(this, filtered);
+            };
+        } catch (e) { }
 
         // 6. Hook Player Instance Methods on #movie_player (Custom DOM Player Methods — 100% Safe from bot probes)
+        let lastUserPauseGesture = 0;
+        if (targetWindow.document) {
+            const markUserPause = (e) => {
+                try {
+                    const target = e.target;
+                    if (target && target.closest && target.closest('.ytp-next-button, .ytp-prev-button')) return;
+                    if (target && target.closest && target.closest('#movie_player, .html5-video-player')) {
+                        lastUserPauseGesture = Date.now();
+                    }
+                } catch (_) { }
+            };
+            targetWindow.document.addEventListener('pointerdown', markUserPause, true);
+            targetWindow.document.addEventListener('mousedown', markUserPause, true);
+            targetWindow.document.addEventListener('keydown', (e) => {
+                try {
+                    if (e.code === 'Space' || e.key === 'k' || e.key === 'K' || e.key === 'MediaPlayPause') {
+                        lastUserPauseGesture = Date.now();
+                    }
+                } catch (_) { }
+            }, true);
+        }
+
+        try {
+            const nativeMediaPause = targetWindow.HTMLMediaElement.prototype.pause;
+            targetWindow.HTMLMediaElement.prototype.pause = function (...args) {
+                const isRecentUser = (Date.now() - lastUserPauseGesture) < 1500;
+                const cur = (typeof this.currentTime === 'number' && !isNaN(this.currentTime)) ? this.currentTime : 0;
+                if (!isRecentUser && cur > 0.05 && cur < 4.0 && !this.paused && !this.ended) {
+                    return; // Block programmatic auto-pauses during initial playback
+                }
+                return nativeMediaPause.apply(this, args);
+            };
+        } catch (e) { }
+
         let isSpaNavigating = false;
         let spaNavStartTime = 0;
         let navConfirmed = false;
         const markNavStart = (isClick) => {
             isSpaNavigating = true;
             spaNavStartTime = Date.now();
+            targetWindow.__ag_net_player_req_count = (targetWindow.__ag_net_player_req_count || 0) + 1;
+            targetWindow.__ag_strip_active = false;
             targetWindow.__ag_last_ad_403_time = 0;
             targetWindow.__ag_ad_403_count = 0;
             targetWindow.__ag_last_ad_req_time = 0;
@@ -1149,13 +1329,26 @@
                     const urlVid = urlMatch ? urlMatch[1] : null;
                     const pData = typeof this.getVideoData === 'function' ? this.getVideoData() : null;
                     const playerVid = (pData && pData.video_id) || null;
-                    const isVidSynced = !!(urlVid && playerVid && urlVid === playerVid);
-                    const isVidMismatch = !!(urlVid && playerVid && urlVid !== playerVid);
-                    const isNavActive = isSpaNavigating && !isVidSynced && (Date.now() - spaNavStartTime < 3000);
-                    if (isNavActive || isVidMismatch) {
+                    const prevVid = targetWindow.__ag_prev_watched_vid || null;
+                    const isStalePrevVid = !!(urlVid && playerVid && playerVid !== urlVid && playerVid === prevVid);
+                    const isNavActive = isSpaNavigating && isStalePrevVid && (Date.now() - spaNavStartTime < 3000);
+                    if (isNavActive || isStalePrevVid) {
                         return;
                     }
                     return origPlayVideo.apply(this, args);
+                };
+            }
+
+            if (typeof player.pauseVideo === 'function') {
+                const origPauseVideo = player.pauseVideo;
+                player.pauseVideo = function (...args) {
+                    const isRecentUser = (Date.now() - lastUserPauseGesture) < 1500;
+                    const vTag = targetWindow.document && targetWindow.document.querySelector('video');
+                    const cur = vTag ? vTag.currentTime : 0;
+                    if (!isRecentUser && cur > 0.05 && cur < 4.0 && vTag && !vTag.paused && !vTag.ended) {
+                        return;
+                    }
+                    return origPauseVideo.apply(this, args);
                 };
             }
         }
@@ -1220,8 +1413,6 @@
                     hookPlayerObject(ytPlayer);
                     if (ytPlayer.classList.contains('ad-created')) {
                         ytPlayer.classList.remove('ad-created');
-                        try { ytPlayer.cancelPlayback?.(); } catch (e) { }
-                        try { ytPlayer.skipAd?.(); } catch (e) { }
                     }
                 }
 
@@ -1307,17 +1498,6 @@
                 });
                 const backdrop = targetWindow.document.querySelector('tp-yt-iron-overlay-backdrop, .modal-backdrop');
                 if (backdrop) backdrop.remove();
-
-                // Kickstart video if stuck at 0:00 (due to unstarted state or anti-adblock stall)
-                if (!isAdActive && video) {
-                    const isNavActive = isSpaNavigating && (Date.now() - spaNavStartTime < 2000);
-                    const isPiPActive = !!(targetWindow.document && targetWindow.document.pictureInPictureElement);
-                    if (!isNavActive && !isPiPActive && !video.__ag_user_paused) {
-                        if (video.paused && video.currentTime === 0 && !targetWindow.document.hidden && video.readyState >= 2) {
-                            video.play().catch(() => { });
-                        }
-                    }
-                }
 
                 // Check playlist auto-next transition
                 checkPlaylistAutoNext(video, ytPlayer, isAdActive);
@@ -1502,6 +1682,7 @@
                     }
                 } catch (e) { try { targetWindow.__ag_eraserErr = String(e); } catch (_) { } }
                 let lastTry = 0, tries = 0, activeVid = null, vidStart = 0, lastReload = 0, recorded = false;
+                let hasCompletedFirstPlayInTab = false, vidInitialCur = 0;
                 let maxBufferedEnd = 0, maxReadyState = 0, lastProgress = 0, lastAppendSeen = 0;
                 const enableFeatures = enableUAFeatures;
                 const playerResp = () => {
@@ -1557,7 +1738,7 @@
                         const raw = video ? video.currentTime : 0;
                         const cur = (typeof raw === 'number' && !isNaN(raw)) ? raw : 0;
                         const state = (typeof ytPlayer.getPlayerState === 'function') ? ytPlayer.getPlayerState() : 2;
-                        const isPlaying = !!video && !video.paused && cur > 0.4 && state === 1;
+                        const isPlaying = !!video && !video.paused && (cur - vidInitialCur) > 0.5 && state === 1;
                         const now = Date.now();
 
                         // Never stop watching: playlists/autoplay change videoId without a
@@ -1569,15 +1750,23 @@
                             try { vid = (prNow && prNow.videoDetails && prNow.videoDetails.videoId) || null; } catch (e) { }
                         }
                         if (vid && vid !== activeVid) {
+                            if (activeVid) targetWindow.__ag_prev_watched_vid = activeVid;
+                            targetWindow.__ag_strip_active = false;
                             targetWindow.__ag_last_ad_403_time = 0;
                             targetWindow.__ag_ad_403_count = 0;
-                            targetWindow.__ag_last_ad_req_time = 0;
+                            if (activeVid !== null) {
+                                targetWindow.__ag_last_ad_req_time = 0;
+                            }
                             if (video) video.__ag_user_paused = false;
                             activeVid = vid; tries = 0; lastTry = 0; vidStart = now; maxBufferedEnd = 0; maxReadyState = 0; lastProgress = now;
+                            vidInitialCur = cur;
                             lastAppendSeen = targetWindow.__ag_last_media_append_time || 0;
                             if (isPlaying && !recorded) { try { targetWindow.__ag_first_play = Date.now() - start; } catch (e) { } recorded = true; }
                         }
                         if (isPlaying) {
+                            hasCompletedFirstPlayInTab = true;
+                            targetWindow.__ag_strip_active = false;
+                            if (vid) targetWindow.__ag_prev_watched_vid = vid;
                             if (targetWindow.__ag_needs_replay) { try { targetWindow.__ag_needs_replay = false; } catch (e) { } }
                             return;
                         }
@@ -1615,6 +1804,8 @@
                         const stallDuration = lastProgress ? (now - lastProgress) : since;
                         const curUrlVidForPlay = ((targetWindow.location || {}).href || '').match(/[?&]v=([A-Za-z0-9_-]{11})/)?.[1] || null;
                         const playerVidForPlay = (typeof ytPlayer.getVideoData === 'function' && ytPlayer.getVideoData() && ytPlayer.getVideoData().video_id) || null;
+                        const prevWatchedVid = targetWindow.__ag_prev_watched_vid || null;
+                        const isStalePrevVid = !!(curUrlVidForPlay && playerVidForPlay && playerVidForPlay !== curUrlVidForPlay && playerVidForPlay === prevWatchedVid);
                         const isVidSynced = !!(curUrlVidForPlay && playerVidForPlay && curUrlVidForPlay === playerVidForPlay);
                         if (isSpaNavigating && (isVidSynced || (!navConfirmed && (Date.now() - spaNavStartTime > 400)))) {
                             isSpaNavigating = false;
@@ -1622,15 +1813,7 @@
                         }
                         const isNavActive = isSpaNavigating && (Date.now() - spaNavStartTime < 3000);
 
-                        const isPiPActive = !!(targetWindow.document && targetWindow.document.pictureInPictureElement);
-                        if (cur === 0 && video && !isNavActive && isVidSynced && !isPiPActive && !video.__ag_user_paused) {
-                            if ((curBufferedEnd > 0.05 || since > 600) && (video.paused || state === -1 || state === 5) && state !== 3) {
-                                try {
-                                    if (typeof ytPlayer.playVideo === 'function') ytPlayer.playVideo();
-                                    if (video.paused && video.readyState >= 2) video.play().catch(() => {});
-                                } catch (e) {}
-                            }
-                        }
+
                         const curAppendTime = targetWindow.__ag_last_media_append_time || 0;
                         if (curAppendTime > lastAppendSeen) {
                             lastAppendSeen = curAppendTime;
@@ -1692,8 +1875,32 @@
                                 });
                             } catch (e) { }
                             if (tokenize) enableFeatures();
+                            targetWindow.__ag_strip_active = true;
+                            targetWindow.__ag_net_player_req_count = (targetWindow.__ag_net_player_req_count || 0) + 1;
                             try {
-                                ytPlayer.loadVideoById(vid, 0, 'hd720');
+                                if (targetWindow.ytInitialPlayerResponse) stripAdKeysInPlace(targetWindow.ytInitialPlayerResponse);
+                                const curPr = playerResp();
+                                if (curPr) stripAdKeysInPlace(curPr);
+                            } catch (e) { }
+                            try {
+                                let startSec = 0;
+                                const pr = playerResp();
+                                const isLive = !!((ytPlayer.getVideoData && ytPlayer.getVideoData()?.isLive) || pr?.videoDetails?.isLiveContent);
+                                if (!isLive) {
+                                    const href = (targetWindow.location && targetWindow.location.href) || '';
+                                    const tMatch = href.match(/[?&]t=(\d+)s?/);
+                                    if (tMatch) {
+                                        startSec = parseInt(tMatch[1], 10) || 0;
+                                    } else if (vidInitialCur > 1) {
+                                        startSec = Math.floor(vidInitialCur);
+                                    }
+                                }
+                                const quality = (typeof ytPlayer.getPlaybackQuality === 'function' && ytPlayer.getPlaybackQuality()) || 'default';
+                                if (isLive) {
+                                    ytPlayer.loadVideoById(vid);
+                                } else {
+                                    ytPlayer.loadVideoById(vid, startSec, quality);
+                                }
                                 if (typeof ytPlayer.playVideo === 'function') ytPlayer.playVideo();
                                 const vTag = targetWindow.document && targetWindow.document.querySelector('video');
                                 if (vTag && vTag.paused) vTag.play().catch(() => {});
@@ -1745,23 +1952,40 @@
                                 penalized
                             };
                         } catch (e) { }
+                        const isWatchdogAdActive = ytPlayer ? (
+                            ytPlayer.classList.contains('ad-showing') ||
+                            ytPlayer.classList.contains('ad-interrupting') ||
+                            (typeof ytPlayer.getAdState === 'function' && ytPlayer.getAdState() > 0)
+                        ) : false;
+                        const isAdInPlayer = isWatchdogAdActive;
+                        const isPlayerMounted = !!(playerVidForPlay && playerVidForPlay === vid);
+                        const vstate = (typeof ytPlayer.getPlayerState === 'function') ? ytPlayer.getPlayerState() : -1;
+
+                        if (isPlayerMounted && (vstate === -1 || vstate === 5) && video && video.paused && !video.__ag_user_paused && since > 250 && since < 3000) {
+                            try {
+                                if (typeof ytPlayer.playVideo === 'function') ytPlayer.playVideo();
+                                if (video.paused && video.readyState >= 2) video.play().catch(() => { });
+                            } catch (e) { }
+                        }
+
                         const prForAd = playerResp();
                         if (prForAd) recordAdSignalForPayload(prForAd);
                         const vidAdTime = (vid && targetWindow.__ag_ad_vids && targetWindow.__ag_ad_vids[vid]) || 0;
-                        const hadAdSignal = (vidAdTime > 0) ||
+                        const hadAdSignal = isAdInPlayer || (vidAdTime > 0) ||
                             ((targetWindow.__ag_last_ad_403_time || 0) >= (vidStart - 500)) ||
                             ((targetWindow.__ag_last_ad_req_time || 0) >= (vidStart - 500));
 
+                        const hasNotAdvanced = Math.abs(cur - vidInitialCur) < 0.3;
+                        const isColdStartAd = false;
+
                         let requiredSince = 6000;
                         let requiredStall = 5500;
-                        if (cur === 0 && curBufferedEnd <= 0.05) {
-                            if (hadAdSignal) {
-                                requiredSince = 350;
-                                requiredStall = 250;
-                            } else {
-                                requiredSince = 2500;
-                                requiredStall = 2200;
-                            }
+                        if (isColdStartAd || isAdInPlayer) {
+                            requiredSince = 100;
+                            requiredStall = 50;
+                        } else if (hasNotAdvanced && curBufferedEnd <= 0.05) {
+                            requiredSince = 2500;
+                            requiredStall = 2200;
                         } else if (curBufferedEnd > 0.05) {
                             requiredSince = 6000;
                             requiredStall = 5500;
@@ -1775,29 +1999,24 @@
                             targetWindow.__ag_watchdog_diag.requiredSince = requiredSince;
                             targetWindow.__ag_watchdog_diag.requiredStall = requiredStall;
                             targetWindow.__ag_watchdog_diag.hadAdSignal = hadAdSignal;
+                            targetWindow.__ag_watchdog_diag.isColdStartAd = isColdStartAd;
                             targetWindow.__ag_watchdog_diag.ad403Count = targetWindow.__ag_ad_403_count || 0;
                             targetWindow.__ag_watchdog_diag.lastAdReqTime = targetWindow.__ag_last_ad_req_time || 0;
                             targetWindow.__ag_watchdog_diag.lastAd403Time = targetWindow.__ag_last_ad_403_time || 0;
+                            targetWindow.__ag_watchdog_diag.isPlayerMounted = isPlayerMounted;
                         } catch (e) { }
 
                         const curUrlVid = ((targetWindow.location || {}).href || '').match(/[?&]v=([A-Za-z0-9_-]{11})/)?.[1] || null;
                         const isPlaylist = /[?&]list=/.test(((targetWindow.location || {}).href || ''));
-                        const playlistBuffering = isPlaylist && (curBufferedEnd > 0.05);
-
-                        // Also poll playlist auto-next in watchdog interval
-                        const isWatchdogAdActive = ytPlayer ? (
-                            ytPlayer.classList.contains('ad-showing') ||
-                            ytPlayer.classList.contains('ad-interrupting') ||
-                            (typeof ytPlayer.getAdState === 'function' && ytPlayer.getAdState() > 0)
-                        ) : false;
                         if (isPlaylist && !isWatchdogAdActive) {
                             checkPlaylistAutoNext(video, ytPlayer, false);
                         }
 
-                        const canNudgeNow = isVidSynced || (since > 2200);
-                        if (!penalized && !isNavActive && vid && (vid === curUrlVid) && canNudgeNow && tries < 1 && cur === 0 && curBufferedEnd <= 0.05 && allowRecovery && !playlistBuffering) {
-                            const vstate = (typeof ytPlayer.getPlayerState === 'function') ? ytPlayer.getPlayerState() : -1;
-                            if (vstate !== 1 && vstate !== 0) {
+                        const canNudgeNow = isPlayerMounted && (!isStalePrevVid || (since > 1500));
+                        const hasActiveMainMedia = (curBufferedEnd > 0.1) && !isAdInPlayer;
+                        const needsNudge = (isColdStartAd || isAdInPlayer || (hasNotAdvanced && curBufferedEnd <= 0.05)) && !hasActiveMainMedia;
+                        if (!penalized && !isNavActive && vid && (vid === curUrlVid) && canNudgeNow && tries < 1 && needsNudge && allowRecovery) {
+                            if (isColdStartAd || isAdInPlayer || (vstate !== 1 && vstate !== 0)) {
                                 reloadNudge(false);
                                 return;
                             }
@@ -1815,9 +2034,10 @@
                     if (isSpaNavigating) return;
                     if (targetWindow.document && targetWindow.document.pictureInPictureElement) return;
                     const v = e.target;
+                    if (!v || v.tagName !== 'VIDEO') return;
+                    if (v.__ag_user_paused || !v.paused) return;
                     const p = targetWindow.document && targetWindow.document.querySelector('#movie_player, .html5-video-player');
-                    if (!v || v.tagName !== 'VIDEO' || !p || !p.contains(v)) return;
-                    if (v.__ag_user_paused) return;
+                    if (!p || !p.contains(v)) return;
                     if (v.currentTime === 0 || v.currentTime < 0.1) {
                         const uVid = (((targetWindow.location || {}).href || '').match(/[?&]v=([A-Za-z0-9_-]{11})/) || [])[1] || null;
                         const pVid = (typeof p.getVideoData === 'function' && p.getVideoData() && p.getVideoData().video_id) || null;
@@ -1838,7 +2058,8 @@
                         const v = e.target;
                         if (v && v.tagName === 'VIDEO') {
                             const isPiP = !!(targetWindow.document && targetWindow.document.pictureInPictureElement);
-                            if (isPiP || (v.currentTime > 0.3 && !v.ended && !isSpaNavigating)) {
+                            const isRecentUserGesture = (Date.now() - lastUserPauseGesture) < 1200;
+                            if (isPiP || (isRecentUserGesture && !v.ended && !isSpaNavigating)) {
                                 v.__ag_user_paused = true;
                             }
                         }

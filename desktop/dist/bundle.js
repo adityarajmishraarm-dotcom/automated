@@ -2049,7 +2049,7 @@ var require_scheduler = __commonJS({
 var require_react_dom_production = __commonJS({
   "node_modules/react-dom/cjs/react-dom.production.js"(exports2) {
     "use strict";
-    var React18 = require_react();
+    var React21 = require_react();
     function formatProdErrorMessage(code) {
       var url = "https://react.dev/errors/" + code;
       if (1 < arguments.length) {
@@ -2091,7 +2091,7 @@ var require_react_dom_production = __commonJS({
         implementation
       };
     }
-    var ReactSharedInternals = React18.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
+    var ReactSharedInternals = React21.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
     function getCrossOriginStringAs(as, input) {
       if ("font" === as) return "";
       if ("string" === typeof input)
@@ -2256,7 +2256,7 @@ var require_react_dom_development = __commonJS({
         return dispatcher;
       }
       "undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(Error());
-      var React18 = require_react(), Internals = {
+      var React21 = require_react(), Internals = {
         d: {
           f: noop,
           r: function() {
@@ -2274,7 +2274,7 @@ var require_react_dom_development = __commonJS({
         },
         p: 0,
         findDOMNode: null
-      }, REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), REACT_RECOVERABLE_TYPE = /* @__PURE__ */ Symbol.for("react.recoverable"), REACT_OPTIMISTIC_KEY = /* @__PURE__ */ Symbol.for("react.optimistic_key"), ReactSharedInternals = React18.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
+      }, REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), REACT_RECOVERABLE_TYPE = /* @__PURE__ */ Symbol.for("react.recoverable"), REACT_OPTIMISTIC_KEY = /* @__PURE__ */ Symbol.for("react.optimistic_key"), ReactSharedInternals = React21.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
       "function" === typeof Map && null != Map.prototype && "function" === typeof Map.prototype.forEach && "function" === typeof Set && null != Set.prototype && "function" === typeof Set.prototype.clear && "function" === typeof Set.prototype.forEach || console.error(
         "React depends on Map and Set built-in types. Make sure that you load a polyfill in older browsers. https://reactjs.org/link/react-polyfills"
       );
@@ -2488,7 +2488,7 @@ var require_react_dom_client_production = __commonJS({
   "node_modules/react-dom/cjs/react-dom-client.production.js"(exports2) {
     "use strict";
     var Scheduler = require_scheduler();
-    var React18 = require_react();
+    var React21 = require_react();
     var ReactDOM = require_react_dom();
     function formatProdErrorMessage(code) {
       var url = "https://react.dev/errors/" + code;
@@ -2779,7 +2779,7 @@ var require_react_dom_client_production = __commonJS({
       return null;
     }
     var isArrayImpl = Array.isArray;
-    var ReactSharedInternals = React18.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
+    var ReactSharedInternals = React21.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
     var ReactDOMSharedInternals = ReactDOM.__DOM_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
     var sharedNotPendingObject = {
       pending: false,
@@ -15928,7 +15928,7 @@ var require_react_dom_client_production = __commonJS({
         0 === i && attemptExplicitHydrationTarget(target);
       }
     };
-    var isomorphicReactPackageVersion$jscomp$inline_2043 = React18.version;
+    var isomorphicReactPackageVersion$jscomp$inline_2043 = React21.version;
     if ("19.3.0" !== isomorphicReactPackageVersion$jscomp$inline_2043)
       throw Error(
         formatProdErrorMessage(
@@ -17517,7 +17517,7 @@ var require_react_dom_client_development = __commonJS({
         node.defaultValue !== "" + value && (node.defaultValue = "" + value);
       }
       function validateOptionProps(element, props) {
-        null == props.value && ("object" === typeof props.children && null !== props.children ? React18.Children.forEach(props.children, function(child) {
+        null == props.value && ("object" === typeof props.children && null !== props.children ? React21.Children.forEach(props.children, function(child) {
           null == child || "string" === typeof child || "number" === typeof child || "bigint" === typeof child || didWarnInvalidChild || (didWarnInvalidChild = true, console.error(
             "Cannot infer the option value of complex children. Pass a `value` prop or use a plain string as children to <option>."
           ));
@@ -34665,11 +34665,11 @@ var require_react_dom_client_development = __commonJS({
         ));
       }
       "undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(Error());
-      var Scheduler = require_scheduler(), React18 = require_react(), ReactDOM = require_react_dom(), searchTarget = null, searchBoundary = null, assign = Object.assign, REACT_LEGACY_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.element"), REACT_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = /* @__PURE__ */ Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = /* @__PURE__ */ Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = /* @__PURE__ */ Symbol.for("react.profiler"), REACT_CONSUMER_TYPE = /* @__PURE__ */ Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = /* @__PURE__ */ Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = /* @__PURE__ */ Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = /* @__PURE__ */ Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = /* @__PURE__ */ Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = /* @__PURE__ */ Symbol.for("react.memo"), REACT_LAZY_TYPE = /* @__PURE__ */ Symbol.for("react.lazy");
+      var Scheduler = require_scheduler(), React21 = require_react(), ReactDOM = require_react_dom(), searchTarget = null, searchBoundary = null, assign = Object.assign, REACT_LEGACY_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.element"), REACT_ELEMENT_TYPE = /* @__PURE__ */ Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = /* @__PURE__ */ Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = /* @__PURE__ */ Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = /* @__PURE__ */ Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = /* @__PURE__ */ Symbol.for("react.profiler"), REACT_CONSUMER_TYPE = /* @__PURE__ */ Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = /* @__PURE__ */ Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = /* @__PURE__ */ Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = /* @__PURE__ */ Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = /* @__PURE__ */ Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = /* @__PURE__ */ Symbol.for("react.memo"), REACT_LAZY_TYPE = /* @__PURE__ */ Symbol.for("react.lazy");
       /* @__PURE__ */ Symbol.for("react.scope");
       var REACT_ACTIVITY_TYPE = /* @__PURE__ */ Symbol.for("react.activity"), REACT_LEGACY_HIDDEN_TYPE = /* @__PURE__ */ Symbol.for("react.legacy_hidden");
       /* @__PURE__ */ Symbol.for("react.tracing_marker");
-      var REACT_MEMO_CACHE_SENTINEL = /* @__PURE__ */ Symbol.for("react.memo_cache_sentinel"), REACT_VIEW_TRANSITION_TYPE = /* @__PURE__ */ Symbol.for("react.view_transition"), REACT_RECOVERABLE_TYPE = /* @__PURE__ */ Symbol.for("react.recoverable"), MAYBE_ITERATOR_SYMBOL = Symbol.iterator, REACT_CLIENT_REFERENCE = /* @__PURE__ */ Symbol.for("react.client.reference"), isArrayImpl = Array.isArray, ReactSharedInternals = React18.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, ReactDOMSharedInternals = ReactDOM.__DOM_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, NotPending = Object.freeze({
+      var REACT_MEMO_CACHE_SENTINEL = /* @__PURE__ */ Symbol.for("react.memo_cache_sentinel"), REACT_VIEW_TRANSITION_TYPE = /* @__PURE__ */ Symbol.for("react.view_transition"), REACT_RECOVERABLE_TYPE = /* @__PURE__ */ Symbol.for("react.recoverable"), MAYBE_ITERATOR_SYMBOL = Symbol.iterator, REACT_CLIENT_REFERENCE = /* @__PURE__ */ Symbol.for("react.client.reference"), isArrayImpl = Array.isArray, ReactSharedInternals = React21.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, ReactDOMSharedInternals = ReactDOM.__DOM_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE, NotPending = Object.freeze({
         pending: false,
         data: null,
         method: null,
@@ -37861,7 +37861,7 @@ var require_react_dom_client_development = __commonJS({
         }
       };
       (function() {
-        var isomorphicReactPackageVersion = React18.version;
+        var isomorphicReactPackageVersion = React21.version;
         if ("19.3.0" !== isomorphicReactPackageVersion)
           throw Error(
             'Incompatible React versions: The "react" and "react-dom" packages must have the exact same version. Instead got:\n  - react:      ' + (isomorphicReactPackageVersion + "\n  - react-dom:  19.3.0\nLearn more: https://react.dev/warnings/version-mismatch")
@@ -38011,6 +38011,711 @@ var require_client = __commonJS({
     } else {
       module2.exports = require_react_dom_client_development();
     }
+  }
+});
+
+// desktop/src/services/elementCustomizerService.js
+var require_elementCustomizerService = __commonJS({
+  "desktop/src/services/elementCustomizerService.js"(exports2, module2) {
+    var STORAGE_PREFIX = "antigravity_custom_element_";
+    var DEFAULT_ELEMENT_TEMPLATES = {
+      element_ntp_clock: {
+        id: "element_ntp_clock",
+        title: "New Tab Clock & Time",
+        category: "New Tab Page",
+        description: "Centered dynamic clock and personal greeting display on home page.",
+        html: `<!-- ///// time code ///// -->
+<div class="ntp-custom-clock-container">
+  <div class="custom-clock-text" data-action="toggle-format">10:08 PM</div>
+  <div class="custom-greeting-text">Welcome home! Where would you like to go today?</div>
+</div>`,
+        css: `/* ///// time code styles ///// */
+.ntp-custom-clock-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 12px;
+  user-select: none;
+}
+.custom-clock-text {
+  font-size: 56px;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: -1.5px;
+  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+.custom-clock-text:hover {
+  transform: scale(1.02);
+}
+.custom-greeting-text {
+  font-size: 15px;
+  color: rgba(255, 255, 255, 0.75);
+  font-weight: 400;
+  margin-top: 8px;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}`
+      },
+      element_ntp_search_bar: {
+        id: "element_ntp_search_bar",
+        title: "New Tab Search Bar",
+        category: "New Tab Page",
+        description: "Centered Google/Brave search input box on the home page.",
+        html: `<!-- ///// search code ///// -->
+<div class="ntp-custom-search-box">
+  <div class="engine-pill" data-action="toggle-engine">
+    <span class="engine-icon">\u{1F50D}</span>
+    <span class="engine-name">Google</span>
+    <span class="engine-arrow">\u21C4</span>
+  </div>
+  <input 
+    type="text" 
+    class="search-input" 
+    placeholder="Search Google or type a web address..." 
+    data-action="navigate" 
+    autofocus 
+  />
+  <button class="search-submit-btn" data-action="submit">Search</button>
+</div>`,
+        css: `/* ///// search code styles ///// */
+.ntp-custom-search-box {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  max-width: 680px;
+  background: rgba(18, 24, 38, 0.75);
+  border: 1.5px solid rgba(255, 255, 255, 0.12);
+  border-radius: 28px;
+  padding: 6px 14px;
+  backdrop-filter: blur(20px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  gap: 10px;
+}
+.ntp-custom-search-box:focus-within {
+  border-color: #00e5ff;
+  box-shadow: 0 10px 35px rgba(0, 229, 255, 0.25);
+}
+.engine-pill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(0, 229, 255, 0.12);
+  border: 1px solid rgba(0, 229, 255, 0.3);
+  border-radius: 16px;
+  padding: 4px 10px;
+  color: #00e5ff;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.search-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #f8fafc;
+  font-size: 14px;
+  font-family: inherit;
+}
+.search-submit-btn {
+  background: #00e5ff;
+  color: #070b14;
+  border: none;
+  border-radius: 18px;
+  padding: 6px 14px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+.search-submit-btn:hover {
+  transform: scale(1.04);
+}`
+      },
+      element_omnibox: {
+        id: "element_omnibox",
+        title: "Top Navigation Omnibox",
+        category: "Toolbar",
+        description: "Primary browser address bar and engine indicator pill.",
+        html: `<!-- ///// omnibox code ///// -->
+<div class="custom-omnibox-wrapper">
+  <span class="omnibox-lock-icon" data-action="ssl-badge">\u{1F512}</span>
+  <input 
+    type="text" 
+    class="omnibox-input-field" 
+    placeholder="Search or enter web address" 
+    data-action="navigate" 
+    spellcheck="false" 
+  />
+  <span class="omnibox-engine-badge">Engine</span>
+  <button class="omnibox-star-btn" data-action="toggle-bookmark" title="Bookmark this page">\u2605</button>
+</div>`,
+        css: `/* ///// omnibox code styles ///// */
+.custom-omnibox-wrapper {
+  display: flex;
+  align-items: center;
+  background: rgba(11, 15, 25, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 4px 12px;
+  gap: 8px;
+  width: 100%;
+}
+.custom-omnibox-wrapper:focus-within {
+  border-color: #00e5ff;
+}
+.omnibox-lock-icon {
+  font-size: 13px;
+  opacity: 0.7;
+}
+.omnibox-input-field {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #e2e8f0;
+  font-size: 13px;
+  font-family: inherit;
+}
+.omnibox-engine-badge {
+  font-size: 10px;
+  font-weight: 700;
+  color: #00e5ff;
+  background: rgba(0, 229, 255, 0.1);
+  padding: 2px 6px;
+  border-radius: 10px;
+}
+.omnibox-star-btn {
+  background: transparent;
+  border: none;
+  color: #fbbf24;
+  cursor: pointer;
+  font-size: 14px;
+}`
+      },
+      element_nav_buttons: {
+        id: "element_nav_buttons",
+        title: "Navigation Control Buttons",
+        category: "Toolbar",
+        description: "Back, Forward, Reload, and Home browser action triggers.",
+        html: `<!-- ///// nav buttons code ///// -->
+<div class="custom-nav-cluster">
+  <button class="nav-btn" data-action="back" title="Go back (Alt+Left)">\u2039</button>
+  <button class="nav-btn" data-action="forward" title="Go forward (Alt+Right)">\u203A</button>
+  <button class="nav-btn" data-action="reload" title="Reload page (Ctrl+R)">\u21BB</button>
+  <button class="nav-btn" data-action="home" title="Go to Home">\u{1F3E0}</button>
+</div>`,
+        css: `/* ///// nav buttons code styles ///// */
+.custom-nav-cluster {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.nav-btn {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  color: #f1f5f9;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.nav-btn:hover {
+  background: rgba(0, 229, 255, 0.15);
+  border-color: rgba(0, 229, 255, 0.4);
+  color: #00e5ff;
+}`
+      },
+      element_tab_pill: {
+        id: "element_tab_pill",
+        title: "Tab Strip Tab Pill",
+        category: "Tab Strip",
+        description: "Individual active or background tab chip in the top strip.",
+        html: `<!-- ///// tab code ///// -->
+<div class="custom-tab-chip">
+  <span class="tab-chip-icon">\u{1F310}</span>
+  <span class="tab-chip-title">Web Page Title</span>
+  <button class="tab-chip-close" data-action="close-tab" title="Close Tab">\xD7</button>
+</div>`,
+        css: `/* ///// tab code styles ///// */
+.custom-tab-chip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  color: #94a3b8;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.custom-tab-chip.active {
+  background: rgba(0, 229, 255, 0.12);
+  border-color: rgba(0, 229, 255, 0.35);
+  color: #f8fafc;
+}
+.tab-chip-title {
+  max-width: 160px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.tab-chip-close {
+  background: transparent;
+  border: none;
+  color: inherit;
+  font-size: 14px;
+  cursor: pointer;
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.tab-chip-close:hover {
+  background: rgba(239, 68, 68, 0.25);
+  color: #ef4444;
+}`
+      },
+      element_bookmark_pill: {
+        id: "element_bookmark_pill",
+        title: "Bookmarks Bar Bookmark Pill",
+        category: "Bookmarks",
+        description: "Draggable quick-link bookmark button in the bookmarks strip.",
+        html: `<!-- ///// bookmark code ///// -->
+<div class="custom-bookmark-capsule">
+  <span class="bookmark-icon">\u{1F516}</span>
+  <span class="bookmark-label">Bookmark Name</span>
+</div>`,
+        css: `/* ///// bookmark code styles ///// */
+.custom-bookmark-capsule {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  color: #cbd5e1;
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.custom-bookmark-capsule:hover {
+  background: rgba(0, 229, 255, 0.12);
+  border-color: rgba(0, 229, 255, 0.35);
+  color: #00e5ff;
+}`
+      },
+      element_ai_prompt_bar: {
+        id: "element_ai_prompt_bar",
+        title: "New Tab AI Prompt Bar",
+        category: "New Tab Page",
+        description: "Autonomous AI browser command input hero on the home page.",
+        html: `<!-- ///// ai prompt code ///// -->
+<div class="custom-ai-prompt-container">
+  <span class="ai-sparkle">\u2726</span>
+  <input 
+    type="text" 
+    class="ai-input" 
+    placeholder="Ask Antigravity Copilot or automate a task..." 
+    data-action="ai-execute" 
+  />
+  <button class="ai-run-btn" data-action="submit">Ask AI</button>
+</div>`,
+        css: `/* ///// ai prompt code styles ///// */
+.custom-ai-prompt-container {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  max-width: 640px;
+  background: linear-gradient(135deg, rgba(20, 15, 38, 0.8), rgba(11, 24, 45, 0.8));
+  border: 1.5px solid rgba(168, 85, 247, 0.35);
+  border-radius: 20px;
+  padding: 8px 16px;
+  backdrop-filter: blur(20px);
+  gap: 10px;
+  box-shadow: 0 8px 24px rgba(168, 85, 247, 0.15);
+}
+.custom-ai-prompt-container:focus-within {
+  border-color: #00e5ff;
+  box-shadow: 0 8px 30px rgba(0, 229, 255, 0.25);
+}
+.ai-sparkle {
+  color: #a855f7;
+  font-size: 16px;
+}
+.ai-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #f1f5f9;
+  font-size: 14px;
+}
+.ai-run-btn {
+  background: linear-gradient(135deg, #a855f7, #00e5ff);
+  color: #070b14;
+  font-weight: 700;
+  font-size: 11px;
+  border: none;
+  border-radius: 12px;
+  padding: 6px 12px;
+  cursor: pointer;
+}`
+      },
+      element_speed_dial: {
+        id: "element_speed_dial",
+        title: "New Tab Speed Dial Tile",
+        category: "New Tab Page",
+        description: "Quick-access website shortcut tile on the home screen.",
+        html: `<!-- ///// shortcuts code ///// -->
+<div class="custom-speed-dial-card">
+  <div class="dial-icon-container">\u{1F310}</div>
+  <div class="dial-title">Site Name</div>
+</div>`,
+        css: `/* ///// shortcuts code styles ///// */
+.custom-speed-dial-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 90px;
+  height: 90px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  gap: 6px;
+}
+.custom-speed-dial-card:hover {
+  transform: translateY(-4px);
+  background: rgba(0, 229, 255, 0.1);
+  border-color: #00e5ff;
+}
+.dial-icon-container {
+  font-size: 24px;
+}
+.dial-title {
+  font-size: 11px;
+  color: #cbd5e1;
+  font-weight: 500;
+  max-width: 80px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}`
+      },
+      element_engine_toggle: {
+        id: "element_engine_toggle",
+        title: "Search Engine Switcher (Google / Brave)",
+        category: "Toolbar",
+        description: "Toggle button cluster to switch default search engine between Google and Brave.",
+        html: `<!-- ///// engine toggle code ///// -->
+<div class="custom-engine-toggle-group">
+  <button class="custom-engine-pill active" data-action="set-google">\u{1F50D} Google</button>
+  <button class="custom-engine-pill" data-action="set-brave">\u{1F981} Brave</button>
+</div>`,
+        css: `/* ///// engine toggle code styles ///// */
+.custom-engine-toggle-group {
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 2px;
+  gap: 2px;
+}
+.custom-engine-pill {
+  background: transparent;
+  border: none;
+  border-radius: 14px;
+  color: #94a3b8;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 10px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.custom-engine-pill.active {
+  background: rgba(0, 229, 255, 0.2);
+  color: #00e5ff;
+}
+.custom-engine-pill:hover {
+  color: #f1f5f9;
+}`
+      },
+      element_go_btn: {
+        id: "element_go_btn",
+        title: "Toolbar Go Action Button",
+        category: "Toolbar",
+        description: "Navigate and execute URL bar query action trigger button.",
+        html: `<!-- ///// go button code ///// -->
+<button class="custom-go-btn" data-action="submit">Go \u2794</button>`,
+        css: `/* ///// go button code styles ///// */
+.custom-go-btn {
+  background: linear-gradient(135deg, #00e5ff, #0284c7);
+  color: #040d1a;
+  border: none;
+  border-radius: 8px;
+  padding: 5px 12px;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.custom-go-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 12px rgba(0, 229, 255, 0.4);
+}`
+      },
+      element_toolbar_tools: {
+        id: "element_toolbar_tools",
+        title: "Toolbar Tools & Actions Cluster",
+        category: "Toolbar",
+        description: "Action buttons for Wallpaper, Typography, Downloads, and History.",
+        html: `<!-- ///// toolbar tools code ///// -->
+<div class="custom-tools-cluster">
+  <button class="custom-tool-btn" data-action="open-wallpaper" title="Wallpaper Studio">\u{1F3A8} Wallpaper</button>
+  <button class="custom-tool-btn" data-action="open-typography" title="Typography Studio">\u{1F524} Typography</button>
+  <button class="custom-tool-btn" data-action="open-downloads" title="Downloads">\u{1F4E5} Downloads</button>
+  <button class="custom-tool-btn" data-action="open-history" title="History">\u{1F552} History</button>
+</div>`,
+        css: `/* ///// toolbar tools code styles ///// */
+.custom-tools-cluster {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.custom-tool-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  color: #cbd5e1;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.custom-tool-btn:hover {
+  background: rgba(0, 229, 255, 0.15);
+  border-color: rgba(0, 229, 255, 0.4);
+  color: #00e5ff;
+}`
+      }
+    };
+    function getPrebuiltTemplate2(elementId) {
+      return DEFAULT_ELEMENT_TEMPLATES[elementId] || null;
+    }
+    function listRegisteredElements2() {
+      return Object.values(DEFAULT_ELEMENT_TEMPLATES).map((item) => ({
+        id: item.id,
+        title: item.title,
+        category: item.category,
+        description: item.description
+      }));
+    }
+    function scopeCssRules(elementId, rawCss) {
+      if (!rawCss || typeof rawCss !== "string") return "";
+      const scopeId = `#custom-element-${elementId}`;
+      return rawCss.split("}").map((block) => {
+        const trimmed = block.trim();
+        if (!trimmed) return "";
+        const parts = trimmed.split("{");
+        if (parts.length !== 2) return trimmed + "}";
+        const selectors = parts[0].split(",").map((sel) => {
+          const s = sel.trim();
+          if (!s) return "";
+          if (s.startsWith("@")) return s;
+          return `${scopeId} ${s}, ${scopeId}${s}`;
+        }).filter(Boolean).join(", ");
+        return `${selectors} { ${parts[1]} }`;
+      }).filter(Boolean).join("\n");
+    }
+    function compileElementCode2(elementId, htmlString, cssString) {
+      try {
+        if (typeof htmlString !== "string") {
+          return { success: false, error: "HTML markup must be a valid string." };
+        }
+        const hasUnbalancedTags = (htmlString.match(/<[a-z0-9-]+/gi) || []).length !== (htmlString.match(/<\/[a-z0-9-]+>/gi) || []).length + (htmlString.match(/<(img|input|br|hr|meta|link)[^>]*>/gi) || []).length;
+        const scopedCss = scopeCssRules(elementId, cssString || "");
+        return {
+          success: true,
+          elementId,
+          html: htmlString.trim(),
+          css: cssString || "",
+          scopedCss,
+          hasUnbalancedTags
+        };
+      } catch (err) {
+        return {
+          success: false,
+          error: err.message || "Compilation failed due to unknown syntax error."
+        };
+      }
+    }
+    function getCustomElement3(elementId) {
+      const factory = getPrebuiltTemplate2(elementId);
+      if (!factory) return null;
+      try {
+        const stored = localStorage.getItem(`${STORAGE_PREFIX}${elementId}`);
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          if (parsed && typeof parsed.html === "string") {
+            return {
+              id: elementId,
+              title: factory.title,
+              category: factory.category,
+              isCustom: true,
+              html: parsed.html,
+              css: parsed.css || "",
+              scopedCss: scopeCssRules(elementId, parsed.css || "")
+            };
+          }
+        }
+      } catch (e) {
+        console.warn(`[ElementCustomizer] Failed reading stored element ${elementId}:`, e);
+      }
+      return {
+        id: elementId,
+        title: factory.title,
+        category: factory.category,
+        isCustom: false,
+        html: factory.html,
+        css: factory.css,
+        scopedCss: scopeCssRules(elementId, factory.css)
+      };
+    }
+    function saveCustomElement2(elementId, { html, css }) {
+      const compiled = compileElementCode2(elementId, html, css);
+      if (!compiled.success) {
+        return { success: false, error: compiled.error };
+      }
+      try {
+        localStorage.setItem(`${STORAGE_PREFIX}${elementId}`, JSON.stringify({
+          html: compiled.html,
+          css: compiled.css,
+          updatedAt: Date.now()
+        }));
+        if (typeof window !== "undefined" && window.dispatchEvent) {
+          window.dispatchEvent(new CustomEvent("antigravity-element-updated", {
+            detail: { elementId, isCustom: true }
+          }));
+        }
+        return { success: true, compiled };
+      } catch (e) {
+        return { success: false, error: e.message || "Failed to save to localStorage" };
+      }
+    }
+    function revertElement2(elementId) {
+      try {
+        localStorage.removeItem(`${STORAGE_PREFIX}${elementId}`);
+        if (typeof window !== "undefined" && window.dispatchEvent) {
+          window.dispatchEvent(new CustomEvent("antigravity-element-updated", {
+            detail: { elementId, isCustom: false }
+          }));
+        }
+        return { success: true };
+      } catch (e) {
+        return { success: false, error: e.message };
+      }
+    }
+    function resetAllElements() {
+      try {
+        const keysToRemove = [];
+        for (let i = 0; i < localStorage.length; i++) {
+          const key = localStorage.key(i);
+          if (key && key.startsWith(STORAGE_PREFIX)) {
+            keysToRemove.push(key);
+          }
+        }
+        keysToRemove.forEach((k) => localStorage.removeItem(k));
+        if (typeof window !== "undefined" && window.dispatchEvent) {
+          window.dispatchEvent(new CustomEvent("antigravity-all-elements-reset"));
+        }
+        return { success: true, count: keysToRemove.length };
+      } catch (e) {
+        return { success: false, error: e.message };
+      }
+    }
+    function exportComponentPackage2(elementId) {
+      const el = getCustomElement3(elementId);
+      if (!el) return "";
+      return `<!DOCTYPE html>
+<!-- Antigravity Browser Component Package -->
+<!-- Element ID: ${el.id} -->
+<!-- Title: ${el.title} -->
+<component id="${el.id}">
+  <style>
+${el.css}
+  </style>
+  <template>
+${el.html}
+  </template>
+</component>`;
+    }
+    function parseUploadedComponentPackage2(rawContent) {
+      if (!rawContent || typeof rawContent !== "string") {
+        return { success: false, error: "Empty or invalid file content" };
+      }
+      try {
+        if (rawContent.trim().startsWith("{")) {
+          const json = JSON.parse(rawContent);
+          if (json.html) {
+            return {
+              success: true,
+              elementId: json.elementId || null,
+              html: json.html,
+              css: json.css || ""
+            };
+          }
+        }
+        const styleMatch = rawContent.match(/<style[^>]*>([\s\S]*?)<\/style>/i);
+        const templateMatch = rawContent.match(/<template[^>]*>([\s\S]*?)<\/template>/i);
+        const idMatch = rawContent.match(/id=["'](element_[a-z0-9_]+)["']/i);
+        const css = styleMatch ? styleMatch[1].trim() : "";
+        let html = templateMatch ? templateMatch[1].trim() : "";
+        if (!html) {
+          html = rawContent.replace(/<style[^>]*>[\s\S]*?<\/style>/gi, "").trim();
+        }
+        return {
+          success: true,
+          elementId: idMatch ? idMatch[1] : null,
+          html,
+          css
+        };
+      } catch (e) {
+        return { success: false, error: "Could not parse uploaded package: " + e.message };
+      }
+    }
+    module2.exports = {
+      DEFAULT_ELEMENT_TEMPLATES,
+      getPrebuiltTemplate: getPrebuiltTemplate2,
+      listRegisteredElements: listRegisteredElements2,
+      compileElementCode: compileElementCode2,
+      getCustomElement: getCustomElement3,
+      saveCustomElement: saveCustomElement2,
+      revertElement: revertElement2,
+      resetAllElements,
+      exportComponentPackage: exportComponentPackage2,
+      parseUploadedComponentPackage: parseUploadedComponentPackage2,
+      scopeCssRules
+    };
   }
 });
 
@@ -39159,14 +39864,215 @@ var init_aiProviderService = __esm({
 });
 
 // desktop/src/index.jsx
-var import_react17 = __toESM(require_react());
+var import_react20 = __toESM(require_react());
 var import_client = __toESM(require_client());
 
 // desktop/src/App.jsx
-var import_react15 = __toESM(require_react());
+var import_react18 = __toESM(require_react());
 
 // desktop/src/components/TabStrip.jsx
+var import_react3 = __toESM(require_react());
+
+// desktop/src/components/CustomizableElementWrapper.jsx
+var import_react2 = __toESM(require_react());
+var import_elementCustomizerService = __toESM(require_elementCustomizerService());
+
+// desktop/src/components/ErrorBoundary.jsx
 var import_react = __toESM(require_react());
+var ErrorBoundary = class extends import_react.default.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false, error: null, errorInfo: null };
+  }
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error };
+  }
+  componentDidCatch(error, errorInfo) {
+    console.error("[Antigravity ErrorBoundary Caught]:", error, errorInfo);
+    this.setState({ errorInfo });
+  }
+  handleRecover = () => {
+    try {
+      this.setState({ hasError: false, error: null, errorInfo: null });
+    } catch (e) {
+      window.location.reload();
+    }
+  };
+  render() {
+    if (this.state.hasError) {
+      if (this.props.fallback) {
+        return this.props.fallback;
+      }
+      return /* @__PURE__ */ import_react.default.createElement("div", { className: "antigravity-error-boundary-fallback", style: {
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        minHeight: "200px",
+        padding: "24px",
+        background: "rgba(15, 23, 42, 0.95)",
+        border: "1.5px solid rgba(239, 68, 68, 0.4)",
+        borderRadius: "12px",
+        margin: "16px",
+        color: "#f8fafc",
+        fontFamily: "system-ui, -apple-system, sans-serif"
+      } }, /* @__PURE__ */ import_react.default.createElement("div", { style: { fontSize: "28px", marginBottom: "8px" } }, "\u26A0\uFE0F"), /* @__PURE__ */ import_react.default.createElement("h3", { style: { margin: "0 0 8px 0", fontSize: "16px", color: "#f87171" } }, this.props.title || "Component Recovered from Runtime Error"), /* @__PURE__ */ import_react.default.createElement("p", { style: { margin: "0 0 16px 0", fontSize: "12px", color: "#94a3b8", maxWidth: "480px", textAlign: "center" } }, this.state.error ? this.state.error.message : "An unexpected exception occurred during element rendering."), /* @__PURE__ */ import_react.default.createElement("div", { style: { display: "flex", gap: "8px" } }, /* @__PURE__ */ import_react.default.createElement(
+        "button",
+        {
+          type: "button",
+          onClick: this.handleRecover,
+          style: {
+            background: "#00e5ff",
+            color: "#070b14",
+            border: "none",
+            borderRadius: "8px",
+            padding: "6px 14px",
+            fontSize: "12px",
+            fontWeight: "700",
+            cursor: "pointer"
+          }
+        },
+        "\u21BA Recover UI"
+      ), /* @__PURE__ */ import_react.default.createElement(
+        "button",
+        {
+          type: "button",
+          onClick: () => window.location.reload(),
+          style: {
+            background: "rgba(255, 255, 255, 0.1)",
+            color: "#e2e8f0",
+            border: "1px solid rgba(255, 255, 255, 0.15)",
+            borderRadius: "8px",
+            padding: "6px 14px",
+            fontSize: "12px",
+            cursor: "pointer"
+          }
+        },
+        "Reload Window"
+      )));
+    }
+    return this.props.children;
+  }
+};
+
+// desktop/src/components/CustomizableElementWrapper.jsx
+function CustomizableElementWrapper({
+  elementId,
+  isEditMode = false,
+  onOpenElementEditor,
+  onAction,
+  children,
+  className = "",
+  style = {}
+}) {
+  const [customData, setCustomData] = (0, import_react2.useState)(() => (0, import_elementCustomizerService.getCustomElement)(elementId));
+  const containerRef = (0, import_react2.useRef)(null);
+  (0, import_react2.useEffect)(() => {
+    const handleUpdate = (e) => {
+      if (!e.detail || e.detail.elementId === elementId) {
+        setCustomData((0, import_elementCustomizerService.getCustomElement)(elementId));
+      }
+    };
+    const handleReset = () => {
+      setCustomData((0, import_elementCustomizerService.getCustomElement)(elementId));
+    };
+    if (typeof window !== "undefined") {
+      window.addEventListener("antigravity-element-updated", handleUpdate);
+      window.addEventListener("antigravity-all-elements-reset", handleReset);
+    }
+    return () => {
+      if (typeof window !== "undefined") {
+        window.removeEventListener("antigravity-element-updated", handleUpdate);
+        window.removeEventListener("antigravity-all-elements-reset", handleReset);
+      }
+    };
+  }, [elementId]);
+  const isCustomActive = Boolean(customData && customData.isCustom);
+  (0, import_react2.useEffect)(() => {
+    if (typeof document === "undefined") return;
+    const headStyleId = `antigravity-scoped-css-${elementId}`;
+    let tag = document.getElementById(headStyleId);
+    if (isCustomActive && customData && customData.scopedCss) {
+      if (!tag) {
+        tag = document.createElement("style");
+        tag.id = headStyleId;
+        document.head.appendChild(tag);
+      }
+      tag.textContent = customData.scopedCss;
+    } else {
+      if (tag && tag.parentNode) {
+        tag.parentNode.removeChild(tag);
+      }
+    }
+    return () => {
+      const cleanupTag = document.getElementById(headStyleId);
+      if (cleanupTag && cleanupTag.parentNode) {
+        cleanupTag.parentNode.removeChild(cleanupTag);
+      }
+    };
+  }, [elementId, isCustomActive, customData?.scopedCss]);
+  (0, import_react2.useEffect)(() => {
+    if (!customData || !customData.isCustom || !containerRef.current) return;
+    const container2 = containerRef.current;
+    const handleClick = (e) => {
+      const actionEl = e.target.closest("[data-action]");
+      if (actionEl && onAction) {
+        const action = actionEl.getAttribute("data-action");
+        const input = container2.querySelector("input");
+        const val = input ? input.value : "";
+        onAction(action, { val, event: e });
+      }
+    };
+    const handleKeyDown = (e) => {
+      if (e.key === "Enter") {
+        const input = e.target.closest("input");
+        if (input && onAction) {
+          onAction("navigate", { val: input.value, event: e });
+        }
+      }
+    };
+    container2.addEventListener("click", handleClick);
+    container2.addEventListener("keydown", handleKeyDown);
+    return () => {
+      container2.removeEventListener("click", handleClick);
+      container2.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [customData, onAction]);
+  return /* @__PURE__ */ import_react2.default.createElement(ErrorBoundary, { fallback: children }, /* @__PURE__ */ import_react2.default.createElement(
+    "div",
+    {
+      id: `custom-element-${elementId}`,
+      ref: containerRef,
+      className: `customizable-element-wrapper wrapper-${elementId} ${isEditMode ? "edit-mode-active" : ""} ${className}`,
+      style,
+      title: isEditMode ? `Click to edit ${customData?.title || elementId} code in Code Studio` : void 0,
+      onClick: (e) => {
+        if (isEditMode && onOpenElementEditor) {
+          e.stopPropagation();
+          e.preventDefault();
+          onOpenElementEditor(elementId);
+        }
+      },
+      onDoubleClick: (e) => {
+        if (isEditMode && onOpenElementEditor) {
+          e.stopPropagation();
+          e.preventDefault();
+          onOpenElementEditor(elementId);
+        }
+      }
+    },
+    isCustomActive ? /* @__PURE__ */ import_react2.default.createElement(
+      "div",
+      {
+        key: `custom-mount-${elementId}`,
+        className: "custom-rendered-element",
+        dangerouslySetInnerHTML: { __html: customData?.html || "" }
+      }
+    ) : /* @__PURE__ */ import_react2.default.createElement("div", { key: `native-mount-${elementId}`, className: "native-rendered-content", style: { width: "100%" } }, children)
+  ));
+}
+
+// desktop/src/components/TabStrip.jsx
 var electron = typeof window !== "undefined" && window.require ? window.require("electron") : typeof require !== "undefined" ? require("electron") : null;
 var ipcRenderer = electron ? electron.ipcRenderer : null;
 function TabStripComponent({
@@ -39183,8 +40089,14 @@ function TabStripComponent({
   onDetachToggleHud,
   onDockHud,
   onOpenShields,
-  onOpenTabSearch
+  onOpenTabSearch,
+  isEditMode = false,
+  onToggleEditMode,
+  onOpenElementEditor,
+  onReorderTabs
 }) {
+  const [draggedTabId, setDraggedTabId] = (0, import_react3.useState)(null);
+  const [dropTargetTabId, setDropTargetTabId] = (0, import_react3.useState)(null);
   const getTabFavicon = (tab) => {
     if (tab.isDownloads || tab.url === "antigravity://downloads") return "\u{1F4E5}";
     if (tab.isNewTab || !tab.url || tab.url.includes("newtab.html") || tab.url === "antigravity://newtab") {
@@ -39199,7 +40111,7 @@ function TabStripComponent({
     if (u.startsWith("https://") || u.startsWith("http://")) return "\u{1F310}";
     return null;
   };
-  return /* @__PURE__ */ import_react.default.createElement(
+  return /* @__PURE__ */ import_react3.default.createElement(
     "header",
     {
       className: "tab-strip-bar",
@@ -39209,7 +40121,7 @@ function TabStripComponent({
         }
       }
     },
-    /* @__PURE__ */ import_react.default.createElement("div", { className: "mac-window-controls", title: "Window Controls" }, /* @__PURE__ */ import_react.default.createElement(
+    /* @__PURE__ */ import_react3.default.createElement("div", { className: "mac-window-controls", title: "Window Controls" }, /* @__PURE__ */ import_react3.default.createElement(
       "button",
       {
         className: "mac-btn mac-close",
@@ -39219,7 +40131,7 @@ function TabStripComponent({
           if (ipcRenderer) ipcRenderer.send("window-close");
         }
       }
-    ), /* @__PURE__ */ import_react.default.createElement(
+    ), /* @__PURE__ */ import_react3.default.createElement(
       "button",
       {
         className: "mac-btn mac-minimize",
@@ -39229,7 +40141,7 @@ function TabStripComponent({
           if (ipcRenderer) ipcRenderer.send("window-minimize");
         }
       }
-    ), /* @__PURE__ */ import_react.default.createElement(
+    ), /* @__PURE__ */ import_react3.default.createElement(
       "button",
       {
         className: "mac-btn mac-maximize",
@@ -39240,36 +40152,84 @@ function TabStripComponent({
         }
       }
     )),
-    /* @__PURE__ */ import_react.default.createElement("div", { className: "brand-badge" }, /* @__PURE__ */ import_react.default.createElement("span", { className: "brand-title" }, "Antigravity")),
-    /* @__PURE__ */ import_react.default.createElement("div", { className: "tabs-track", id: "tabsTrack" }, tabs.map((tab) => {
+    /* @__PURE__ */ import_react3.default.createElement("div", { className: "brand-badge" }, /* @__PURE__ */ import_react3.default.createElement("span", { className: "brand-title" }, "Antigravity")),
+    /* @__PURE__ */ import_react3.default.createElement("div", { className: "tabs-track", id: "tabsTrack" }, tabs.map((tab) => {
       const isActive = tab.id === activeTabId;
-      return /* @__PURE__ */ import_react.default.createElement(
+      const isDropTarget = dropTargetTabId === tab.id;
+      return /* @__PURE__ */ import_react3.default.createElement(
         "div",
         {
           key: tab.id,
-          className: `native-tab ${isActive ? "active" : ""}`,
-          title: tab.title ? `${tab.title}
-${tab.url}` : tab.url || "New Tab",
-          onClick: () => onSelectTab(tab.id)
-        },
-        getTabFavicon(tab) ? /* @__PURE__ */ import_react.default.createElement("span", { className: "tab-favicon" }, getTabFavicon(tab)) : null,
-        /* @__PURE__ */ import_react.default.createElement("span", { className: "tab-label" }, tab.title || "New Tab"),
-        /* @__PURE__ */ import_react.default.createElement(
-          "button",
-          {
-            className: "tab-close-btn",
-            title: "Close Tab (Ctrl+W)",
-            "aria-label": "Close Tab",
-            onClick: (e) => {
-              e.stopPropagation();
-              onCloseTab(tab.id);
+          className: `native-tab-dnd-container ${isDropTarget ? "tab-drop-indicator" : ""}`,
+          draggable: true,
+          onDragStart: (e) => {
+            e.dataTransfer.setData("application/x-antigravity-tab", tab.id);
+            e.dataTransfer.setData("text/plain", tab.url || "");
+            e.dataTransfer.effectAllowed = "move";
+            setDraggedTabId(tab.id);
+          },
+          onDragOver: (e) => {
+            e.preventDefault();
+            if (draggedTabId && draggedTabId !== tab.id) {
+              setDropTargetTabId(tab.id);
             }
           },
-          /* @__PURE__ */ import_react.default.createElement("svg", { width: "7", height: "7", viewBox: "0 0 10 10", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round" }, /* @__PURE__ */ import_react.default.createElement("line", { x1: "1", y1: "1", x2: "9", y2: "9" }), /* @__PURE__ */ import_react.default.createElement("line", { x1: "9", y1: "1", x2: "1", y2: "9" }))
+          onDragLeave: () => {
+            if (dropTargetTabId === tab.id) setDropTargetTabId(null);
+          },
+          onDrop: (e) => {
+            e.preventDefault();
+            const sourceId = e.dataTransfer.getData("application/x-antigravity-tab") || draggedTabId;
+            if (sourceId && sourceId !== tab.id && onReorderTabs) {
+              onReorderTabs(sourceId, tab.id);
+            }
+            setDraggedTabId(null);
+            setDropTargetTabId(null);
+          },
+          onDragEnd: () => {
+            setDraggedTabId(null);
+            setDropTargetTabId(null);
+          }
+        },
+        /* @__PURE__ */ import_react3.default.createElement(
+          CustomizableElementWrapper,
+          {
+            elementId: "element_tab_pill",
+            isEditMode: isEditMode && isActive,
+            onOpenElementEditor,
+            onAction: (action) => {
+              if (action === "close-tab") onCloseTab(tab.id);
+              else onSelectTab(tab.id);
+            }
+          },
+          /* @__PURE__ */ import_react3.default.createElement(
+            "div",
+            {
+              className: `native-tab ${isActive ? "active" : ""}`,
+              title: tab.title ? `${tab.title}
+${tab.url}` : tab.url || "New Tab",
+              onClick: () => onSelectTab(tab.id)
+            },
+            getTabFavicon(tab) ? /* @__PURE__ */ import_react3.default.createElement("span", { className: "tab-favicon" }, getTabFavicon(tab)) : null,
+            /* @__PURE__ */ import_react3.default.createElement("span", { className: "tab-label" }, tab.title || "New Tab"),
+            /* @__PURE__ */ import_react3.default.createElement(
+              "button",
+              {
+                className: "tab-close-btn",
+                title: "Close Tab (Ctrl+W)",
+                "aria-label": "Close Tab",
+                onClick: (e) => {
+                  e.stopPropagation();
+                  onCloseTab(tab.id);
+                }
+              },
+              /* @__PURE__ */ import_react3.default.createElement("svg", { width: "7", height: "7", viewBox: "0 0 10 10", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round" }, /* @__PURE__ */ import_react3.default.createElement("line", { x1: "1", y1: "1", x2: "9", y2: "9" }), /* @__PURE__ */ import_react3.default.createElement("line", { x1: "9", y1: "1", x2: "1", y2: "9" }))
+            )
+          )
         )
       );
     })),
-    /* @__PURE__ */ import_react.default.createElement(
+    /* @__PURE__ */ import_react3.default.createElement(
       "button",
       {
         className: "btn-mac-icon",
@@ -39279,7 +40239,7 @@ ${tab.url}` : tab.url || "New Tab",
       },
       "+"
     ),
-    /* @__PURE__ */ import_react.default.createElement(
+    /* @__PURE__ */ import_react3.default.createElement(
       "button",
       {
         className: "btn-mac-icon",
@@ -39289,7 +40249,32 @@ ${tab.url}` : tab.url || "New Tab",
       },
       "\u{1F50D}"
     ),
-    /* @__PURE__ */ import_react.default.createElement("div", { className: "window-controls-placeholder" }, /* @__PURE__ */ import_react.default.createElement(
+    /* @__PURE__ */ import_react3.default.createElement("div", { className: "window-controls-placeholder" }, /* @__PURE__ */ import_react3.default.createElement(
+      "button",
+      {
+        className: `btn-toolbar-tool ${isEditMode ? "active-edit-mode" : ""}`,
+        id: "btnGlobalEditMode",
+        title: isEditMode ? "Exit Edit Mode (Lock Layout)" : "Enter Edit Mode (Click any highlighted section to edit its code, drag to reorder)",
+        onClick: onToggleEditMode,
+        style: {
+          display: "flex",
+          alignItems: "center",
+          gap: "6px",
+          padding: "5px 12px",
+          borderRadius: "8px",
+          border: isEditMode ? "1px solid #00e5ff" : "1px solid rgba(255, 255, 255, 0.15)",
+          background: isEditMode ? "linear-gradient(135deg, rgba(0, 229, 255, 0.28), rgba(2, 132, 199, 0.28))" : "rgba(255, 255, 255, 0.06)",
+          color: isEditMode ? "#00e5ff" : "#cbd5e1",
+          fontSize: "11px",
+          fontWeight: "700",
+          cursor: "pointer",
+          boxShadow: isEditMode ? "0 0 14px rgba(0, 229, 255, 0.45)" : "none",
+          transition: "all 0.18s ease"
+        }
+      },
+      /* @__PURE__ */ import_react3.default.createElement("span", null, isEditMode ? "\u{1F512}" : "\u{1F6E0}\uFE0F"),
+      /* @__PURE__ */ import_react3.default.createElement("span", null, isEditMode ? "Edit Mode (ON)" : "Edit Mode")
+    ), /* @__PURE__ */ import_react3.default.createElement(
       "div",
       {
         className: "mac-shield-pill",
@@ -39297,20 +40282,20 @@ ${tab.url}` : tab.url || "New Tab",
         title: "Brave adblock-rust Shield (Click to view blocked trackers)",
         onClick: onOpenShields
       },
-      /* @__PURE__ */ import_react.default.createElement("span", null, "\u{1F6E1}\uFE0F"),
-      /* @__PURE__ */ import_react.default.createElement("span", { id: "shieldCount" }, adblockCount),
-      /* @__PURE__ */ import_react.default.createElement("span", { style: { fontSize: "10px", opacity: 0.7 } }, "Blocked")
-    ), /* @__PURE__ */ import_react.default.createElement("div", { className: "mac-ai-capsule" }, /* @__PURE__ */ import_react.default.createElement(
+      /* @__PURE__ */ import_react3.default.createElement("span", null, "\u{1F6E1}\uFE0F"),
+      /* @__PURE__ */ import_react3.default.createElement("span", { id: "shieldCount" }, adblockCount),
+      /* @__PURE__ */ import_react3.default.createElement("span", { style: { fontSize: "10px", opacity: 0.7 } }, "Blocked")
+    ), /* @__PURE__ */ import_react3.default.createElement("div", { className: "mac-ai-capsule" }, /* @__PURE__ */ import_react3.default.createElement(
       "button",
       {
         className: `mac-ai-btn ${isExternalHudVisible ? "active-external" : ""} ${isHudOpen && !isHudDetached ? "active-docked" : ""}`,
         title: isHudDetached ? isExternalHudVisible ? "Retract and hide external AI window" : "Open standalone AI Cockpit window" : isHudOpen ? "Close AI Layer sidebar" : "Open AI Layer sidebar",
         onClick: isHudDetached ? onDetachToggleHud : onToggleHud
       },
-      /* @__PURE__ */ import_react.default.createElement("span", { className: "mac-ai-icon" }, "\u2726"),
-      /* @__PURE__ */ import_react.default.createElement("span", null, isHudDetached ? isExternalHudVisible ? "AI Cockpit \u2921" : "AI Cockpit \u2197" : `AI Layer ${isHudOpen ? "\u25BE" : "\u25B8"}`),
-      isExternalHudVisible && /* @__PURE__ */ import_react.default.createElement("span", { className: "dot-live", style: { width: 5, height: 5, marginLeft: 2 } })
-    ), isHudDetached ? /* @__PURE__ */ import_react.default.createElement(
+      /* @__PURE__ */ import_react3.default.createElement("span", { className: "mac-ai-icon" }, "\u2726"),
+      /* @__PURE__ */ import_react3.default.createElement("span", null, isHudDetached ? isExternalHudVisible ? "AI Cockpit \u2921" : "AI Cockpit \u2197" : `AI Layer ${isHudOpen ? "\u25BE" : "\u25B8"}`),
+      isExternalHudVisible && /* @__PURE__ */ import_react3.default.createElement("span", { className: "dot-live", style: { width: 5, height: 5, marginLeft: 2 } })
+    ), isHudDetached ? /* @__PURE__ */ import_react3.default.createElement(
       "button",
       {
         className: "mac-ai-sub-btn",
@@ -39318,7 +40303,7 @@ ${tab.url}` : tab.url || "New Tab",
         onClick: onDockHud
       },
       "\u{1F4E5} Dock"
-    ) : /* @__PURE__ */ import_react.default.createElement(
+    ) : /* @__PURE__ */ import_react3.default.createElement(
       "button",
       {
         className: "mac-ai-sub-btn",
@@ -39329,10 +40314,10 @@ ${tab.url}` : tab.url || "New Tab",
     )))
   );
 }
-var TabStrip_default = (0, import_react.memo)(TabStripComponent);
+var TabStrip_default = (0, import_react3.memo)(TabStripComponent);
 
 // desktop/src/components/NavigationToolbar.jsx
-var import_react2 = __toESM(require_react());
+var import_react4 = __toESM(require_react());
 function NavigationToolbar({
   currentUrl,
   activeEngine,
@@ -39352,10 +40337,16 @@ function NavigationToolbar({
   onOpenDownloads,
   onOpenHistory,
   onOpenTypography,
-  onOpenAiProviderModal
+  onOpenAiProviderModal,
+  isEditMode = false,
+  onOpenElementEditor,
+  toolbarOrder = ["nav-controls", "engine-toggle", "omnibox", "go-btn", "tools-actions", "status-pill"],
+  onReorderToolbar
 }) {
-  const inputRef = (0, import_react2.useRef)(null);
-  (0, import_react2.useEffect)(() => {
+  const inputRef = (0, import_react4.useRef)(null);
+  const [draggedModuleId, setDraggedModuleId] = (0, import_react4.useState)(null);
+  const [dropTargetModuleId, setDropTargetModuleId] = (0, import_react4.useState)(null);
+  (0, import_react4.useEffect)(() => {
     if (inputRef.current) {
       if (isNewTab || !currentUrl || currentUrl.includes("newtab.html")) {
         inputRef.current.value = "";
@@ -39394,126 +40385,540 @@ function NavigationToolbar({
     return "\u{1F4C4}";
   };
   const placeholderText = activeEngine === "brave" ? "Search Brave Private Search or type a URL..." : "Search Google or type a URL...";
-  return /* @__PURE__ */ import_react2.default.createElement("nav", { className: "navigation-toolbar" }, /* @__PURE__ */ import_react2.default.createElement("div", { className: "nav-controls" }, /* @__PURE__ */ import_react2.default.createElement("button", { className: "btn-nav", id: "btnBack", title: "Back (Alt+Left)", onClick: onBack }, "\u2039"), /* @__PURE__ */ import_react2.default.createElement("button", { className: "btn-nav", id: "btnForward", title: "Forward (Alt+Right)", onClick: onForward }, "\u203A"), /* @__PURE__ */ import_react2.default.createElement("button", { className: "btn-nav", id: "btnReload", title: "Reload (Ctrl+R)", onClick: onReload }, "\u21BB"), /* @__PURE__ */ import_react2.default.createElement("button", { className: "btn-nav", id: "btnHome", title: "Home (Alt+Home)", onClick: onHome }, "\u{1F3E0}")), /* @__PURE__ */ import_react2.default.createElement("div", { className: "engine-toggle-group", id: "engineToggleGroup" }, /* @__PURE__ */ import_react2.default.createElement(
-    "button",
-    {
-      className: `btn-engine-pill ${activeEngine === "google" ? "active" : ""}`,
-      id: "btnTopGoogle",
-      title: "Search with Google",
-      onClick: () => onSetEngine("google")
-    },
-    "\u{1F50D} Google"
-  ), /* @__PURE__ */ import_react2.default.createElement(
-    "button",
-    {
-      className: `btn-engine-pill ${activeEngine === "brave" ? "active" : ""}`,
-      id: "btnTopBrave",
-      title: "Search with Brave",
-      onClick: () => onSetEngine("brave")
-    },
-    "\u{1F981} Brave"
-  )), /* @__PURE__ */ import_react2.default.createElement("div", { className: "omnibox-box" }, /* @__PURE__ */ import_react2.default.createElement("span", { className: "lock-icon", id: "lockIcon" }, getLockIcon()), /* @__PURE__ */ import_react2.default.createElement(
-    "input",
-    {
-      ref: inputRef,
-      type: "text",
-      id: "urlInput",
-      className: "url-input",
-      placeholder: placeholderText,
-      spellCheck: "false",
-      onKeyDown: handleKeyDown,
-      onFocus: handleFocus,
-      onClick: handleClick
+  const renderModule = (moduleId) => {
+    switch (moduleId) {
+      case "nav-controls":
+        return (
+          /* ========================================================================= */
+          /* ///// nav buttons code /////                                              */
+          /* ========================================================================= */
+          /* @__PURE__ */ import_react4.default.createElement(
+            CustomizableElementWrapper,
+            {
+              key: "mod-nav-controls",
+              elementId: "element_nav_buttons",
+              isEditMode,
+              onOpenElementEditor,
+              onAction: (action) => {
+                if (action === "back") onBack();
+                else if (action === "forward") onForward();
+                else if (action === "reload") onReload();
+                else if (action === "home") onHome();
+              }
+            },
+            /* @__PURE__ */ import_react4.default.createElement("div", { className: "nav-controls" }, /* @__PURE__ */ import_react4.default.createElement("button", { className: "btn-nav", id: "btnBack", title: "Back (Alt+Left)", onClick: onBack }, "\u2039"), /* @__PURE__ */ import_react4.default.createElement("button", { className: "btn-nav", id: "btnForward", title: "Forward (Alt+Right)", onClick: onForward }, "\u203A"), /* @__PURE__ */ import_react4.default.createElement("button", { className: "btn-nav", id: "btnReload", title: "Reload (Ctrl+R)", onClick: onReload }, "\u21BB"), /* @__PURE__ */ import_react4.default.createElement("button", { className: "btn-nav", id: "btnHome", title: "Home (Alt+Home)", onClick: onHome }, "\u{1F3E0}"))
+          )
+        );
+      case "engine-toggle":
+        return (
+          /* ========================================================================= */
+          /* ///// engine toggle code /////                                            */
+          /* ========================================================================= */
+          /* @__PURE__ */ import_react4.default.createElement(
+            CustomizableElementWrapper,
+            {
+              key: "mod-engine-toggle",
+              elementId: "element_engine_toggle",
+              isEditMode,
+              onOpenElementEditor,
+              onAction: (action) => {
+                if (action === "set-google") onSetEngine("google");
+                else if (action === "set-brave") onSetEngine("brave");
+              }
+            },
+            /* @__PURE__ */ import_react4.default.createElement("div", { className: "engine-toggle-group", id: "engineToggleGroup" }, /* @__PURE__ */ import_react4.default.createElement(
+              "button",
+              {
+                className: `btn-engine-pill ${activeEngine === "google" ? "active" : ""}`,
+                id: "btnTopGoogle",
+                title: "Search with Google",
+                onClick: () => onSetEngine("google")
+              },
+              "\u{1F50D} Google"
+            ), /* @__PURE__ */ import_react4.default.createElement(
+              "button",
+              {
+                className: `btn-engine-pill ${activeEngine === "brave" ? "active" : ""}`,
+                id: "btnTopBrave",
+                title: "Search with Brave",
+                onClick: () => onSetEngine("brave")
+              },
+              "\u{1F981} Brave"
+            ))
+          )
+        );
+      case "omnibox":
+        return (
+          /* ========================================================================= */
+          /* ///// omnibox code /////                                                  */
+          /* ========================================================================= */
+          /* @__PURE__ */ import_react4.default.createElement(
+            CustomizableElementWrapper,
+            {
+              key: "mod-omnibox",
+              elementId: "element_omnibox",
+              isEditMode,
+              onOpenElementEditor,
+              style: { flex: 1, display: "flex", minWidth: "220px" },
+              onAction: (action, payload) => {
+                if (action === "navigate" && payload?.val) onNavigate(payload.val);
+                else if (action === "toggle-bookmark") onToggleBookmark();
+              }
+            },
+            /* @__PURE__ */ import_react4.default.createElement("div", { className: "omnibox-box" }, /* @__PURE__ */ import_react4.default.createElement("span", { className: "lock-icon", id: "lockIcon" }, getLockIcon()), /* @__PURE__ */ import_react4.default.createElement(
+              "input",
+              {
+                ref: inputRef,
+                type: "text",
+                id: "urlInput",
+                className: "url-input",
+                placeholder: placeholderText,
+                spellCheck: "false",
+                onKeyDown: handleKeyDown,
+                onFocus: handleFocus,
+                onClick: handleClick
+              }
+            ), /* @__PURE__ */ import_react4.default.createElement("span", { className: "engine-tag", id: "engineIndicatorTag" }, activeEngine === "brave" ? "Brave" : "Google"), /* @__PURE__ */ import_react4.default.createElement(
+              "button",
+              {
+                className: `btn-toolbar-tool ${isBookmarked ? "active-starred" : ""}`,
+                style: { border: "none", background: "transparent", fontSize: "14px", cursor: "pointer", padding: "0 4px" },
+                title: isBookmarked ? "Remove Bookmark (Ctrl+D)" : "Bookmark Page (Ctrl+D)",
+                onClick: onToggleBookmark
+              },
+              isBookmarked ? "\u2605" : "\u2606"
+            ))
+          )
+        );
+      case "go-btn":
+        return (
+          /* ========================================================================= */
+          /* ///// go button code /////                                                */
+          /* ========================================================================= */
+          /* @__PURE__ */ import_react4.default.createElement(
+            CustomizableElementWrapper,
+            {
+              key: "mod-go-btn",
+              elementId: "element_go_btn",
+              isEditMode,
+              onOpenElementEditor,
+              onAction: (action) => {
+                if (action === "submit") handleGoClick();
+              }
+            },
+            /* @__PURE__ */ import_react4.default.createElement("button", { className: "btn-go", id: "btnGo", onClick: handleGoClick }, "Go")
+          )
+        );
+      case "tools-actions":
+        return (
+          /* ========================================================================= */
+          /* ///// toolbar tools code /////                                            */
+          /* ========================================================================= */
+          /* @__PURE__ */ import_react4.default.createElement(
+            CustomizableElementWrapper,
+            {
+              key: "mod-tools-actions",
+              elementId: "element_toolbar_tools",
+              isEditMode,
+              onOpenElementEditor,
+              onAction: (action) => {
+                if (action === "open-wallpaper") onOpenWallpaperStudio();
+                else if (action === "open-typography") onOpenTypography();
+                else if (action === "open-downloads") onOpenDownloads();
+                else if (action === "open-history") onOpenHistory();
+                else if (action === "open-ai-provider") onOpenAiProviderModal();
+              }
+            },
+            /* @__PURE__ */ import_react4.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: 4 } }, !isNewTab && /* @__PURE__ */ import_react4.default.createElement(import_react4.default.Fragment, null, /* @__PURE__ */ import_react4.default.createElement(
+              "button",
+              {
+                className: "btn-toolbar-tool",
+                title: "Clean Distraction-Free Reader Mode",
+                onClick: onOpenReaderMode
+              },
+              "\u{1F4D6} Reader"
+            ), /* @__PURE__ */ import_react4.default.createElement(
+              "button",
+              {
+                className: "btn-toolbar-tool",
+                title: "Scan QR Code to open on mobile",
+                onClick: onOpenQrCode
+              },
+              "\u{1F4F1} QR"
+            )), /* @__PURE__ */ import_react4.default.createElement(
+              "button",
+              {
+                className: "btn-toolbar-tool",
+                title: "Custom Background Wallpaper Studio",
+                onClick: onOpenWallpaperStudio
+              },
+              "\u{1F3A8} Wallpaper"
+            ), /* @__PURE__ */ import_react4.default.createElement(
+              "button",
+              {
+                className: "btn-toolbar-tool",
+                id: "btnToolbarTypography",
+                title: "Modern Typography & Font Canvas Studio (Ctrl+Alt+1..8)",
+                onClick: onOpenTypography
+              },
+              "\u{1F524} Typography"
+            ), /* @__PURE__ */ import_react4.default.createElement(
+              "button",
+              {
+                className: "btn-toolbar-tool",
+                id: "btnToolbarDownloads",
+                title: "Open Downloads Manager (Ctrl+J)",
+                onClick: onOpenDownloads,
+                style: { position: "relative" }
+              },
+              "\u{1F4E5} Downloads",
+              activeDownloadsCount > 0 && /* @__PURE__ */ import_react4.default.createElement("span", { style: {
+                position: "absolute",
+                top: -4,
+                right: -4,
+                background: "#00e5ff",
+                color: "#070b14",
+                borderRadius: "10px",
+                fontSize: "10px",
+                fontWeight: "800",
+                padding: "1px 5px",
+                lineHeight: "12px",
+                boxShadow: "0 0 6px #00e5ff"
+              } }, activeDownloadsCount)
+            ), /* @__PURE__ */ import_react4.default.createElement(
+              "button",
+              {
+                className: "btn-toolbar-tool",
+                id: "btnToolbarHistory",
+                title: "Open Browsing History (Ctrl+H)",
+                onClick: onOpenHistory
+              },
+              "\u{1F552} History"
+            ), /* @__PURE__ */ import_react4.default.createElement(
+              "button",
+              {
+                className: "btn-toolbar-tool",
+                id: "btnToolbarAiProviders",
+                title: "AI Keys & Providers (OpenAI, LM Studio, Ollama, OpenRouter, OpenCode, Anthropic)",
+                onClick: onOpenAiProviderModal,
+                style: { color: "#00e5ff", borderColor: "rgba(0, 229, 255, 0.35)", background: "rgba(0, 229, 255, 0.08)" }
+              },
+              "\u{1F511} AI Keys"
+            ))
+          )
+        );
+      case "status-pill":
+        return /* @__PURE__ */ import_react4.default.createElement("div", { key: "mod-status-pill", className: "status-pill" }, /* @__PURE__ */ import_react4.default.createElement("span", { className: "dot-live" }), /* @__PURE__ */ import_react4.default.createElement("span", null, "In-Process C++"));
+      default:
+        return null;
     }
-  ), /* @__PURE__ */ import_react2.default.createElement("span", { className: "engine-tag", id: "engineIndicatorTag" }, activeEngine === "brave" ? "Brave" : "Google"), /* @__PURE__ */ import_react2.default.createElement(
-    "button",
-    {
-      className: `btn-toolbar-tool ${isBookmarked ? "active-starred" : ""}`,
-      style: { border: "none", background: "transparent", fontSize: "14px", cursor: "pointer", padding: "0 4px" },
-      title: isBookmarked ? "Remove Bookmark (Ctrl+D)" : "Bookmark Page (Ctrl+D)",
-      onClick: onToggleBookmark
-    },
-    isBookmarked ? "\u2605" : "\u2606"
-  )), /* @__PURE__ */ import_react2.default.createElement("button", { className: "btn-go", id: "btnGo", onClick: handleGoClick }, "Go"), !isNewTab && /* @__PURE__ */ import_react2.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: 4 } }, /* @__PURE__ */ import_react2.default.createElement(
-    "button",
-    {
-      className: "btn-toolbar-tool",
-      title: "Clean Distraction-Free Reader Mode",
-      onClick: onOpenReaderMode
-    },
-    "\u{1F4D6} Reader"
-  ), /* @__PURE__ */ import_react2.default.createElement(
-    "button",
-    {
-      className: "btn-toolbar-tool",
-      title: "Scan QR Code to open on mobile",
-      onClick: onOpenQrCode
-    },
-    "\u{1F4F1} QR"
-  )), /* @__PURE__ */ import_react2.default.createElement(
-    "button",
-    {
-      className: "btn-toolbar-tool",
-      title: "Custom Background Wallpaper Studio",
-      onClick: onOpenWallpaperStudio
-    },
-    "\u{1F3A8} Wallpaper"
-  ), /* @__PURE__ */ import_react2.default.createElement(
-    "button",
-    {
-      className: "btn-toolbar-tool",
-      id: "btnToolbarTypography",
-      title: "Modern Typography & Font Canvas Studio (Ctrl+Alt+1..8)",
-      onClick: onOpenTypography
-    },
-    "\u{1F524} Typography"
-  ), /* @__PURE__ */ import_react2.default.createElement(
-    "button",
-    {
-      className: "btn-toolbar-tool",
-      id: "btnToolbarDownloads",
-      title: "Open Downloads Manager (Ctrl+J)",
-      onClick: onOpenDownloads,
-      style: { position: "relative" }
-    },
-    "\u{1F4E5} Downloads",
-    activeDownloadsCount > 0 && /* @__PURE__ */ import_react2.default.createElement("span", { style: {
-      position: "absolute",
-      top: -4,
-      right: -4,
-      background: "#00e5ff",
-      color: "#070b14",
-      borderRadius: "10px",
-      fontSize: "10px",
-      fontWeight: "800",
-      padding: "1px 5px",
-      lineHeight: "12px",
-      boxShadow: "0 0 6px #00e5ff"
-    } }, activeDownloadsCount)
-  ), /* @__PURE__ */ import_react2.default.createElement(
-    "button",
-    {
-      className: "btn-toolbar-tool",
-      id: "btnToolbarHistory",
-      title: "Open Browsing History (Ctrl+H)",
-      onClick: onOpenHistory
-    },
-    "\u{1F552} History"
-  ), /* @__PURE__ */ import_react2.default.createElement(
-    "button",
-    {
-      className: "btn-toolbar-tool",
-      id: "btnToolbarAiProviders",
-      title: "AI Keys & Providers (OpenAI, LM Studio, Ollama, OpenRouter, OpenCode, Anthropic)",
-      onClick: onOpenAiProviderModal,
-      style: { color: "#00e5ff", borderColor: "rgba(0, 229, 255, 0.35)", background: "rgba(0, 229, 255, 0.08)" }
-    },
-    "\u{1F511} AI Keys"
-  ), /* @__PURE__ */ import_react2.default.createElement("div", { className: "status-pill" }, /* @__PURE__ */ import_react2.default.createElement("span", { className: "dot-live" }), /* @__PURE__ */ import_react2.default.createElement("span", null, "In-Process C++")));
+  };
+  const activeOrder = Array.isArray(toolbarOrder) && toolbarOrder.length > 0 ? toolbarOrder : ["nav-controls", "engine-toggle", "omnibox", "go-btn", "tools-actions", "status-pill"];
+  return /* @__PURE__ */ import_react4.default.createElement("nav", { className: "navigation-toolbar" }, activeOrder.map((modId) => {
+    const isDragging = draggedModuleId === modId;
+    const isDropTarget = dropTargetModuleId === modId;
+    return /* @__PURE__ */ import_react4.default.createElement(
+      "div",
+      {
+        key: modId,
+        className: `modular-toolbar-unit ${isEditMode ? "dnd-enabled" : ""} ${isDropTarget ? "toolbar-drop-indicator" : ""}`,
+        style: {
+          display: "flex",
+          alignItems: "center",
+          opacity: isDragging ? 0.4 : 1,
+          flex: modId === "omnibox" ? 1 : "none"
+        },
+        draggable: isEditMode,
+        onDragStart: (e) => {
+          if (!isEditMode) return;
+          e.dataTransfer.setData("application/x-antigravity-toolbar", modId);
+          e.dataTransfer.effectAllowed = "move";
+          setDraggedModuleId(modId);
+        },
+        onDragOver: (e) => {
+          if (!isEditMode) return;
+          e.preventDefault();
+          if (draggedModuleId && draggedModuleId !== modId) {
+            setDropTargetModuleId(modId);
+          }
+        },
+        onDragLeave: () => {
+          if (dropTargetModuleId === modId) setDropTargetModuleId(null);
+        },
+        onDrop: (e) => {
+          if (!isEditMode) return;
+          e.preventDefault();
+          const sourceMod = e.dataTransfer.getData("application/x-antigravity-toolbar") || draggedModuleId;
+          if (sourceMod && sourceMod !== modId && onReorderToolbar) {
+            onReorderToolbar(sourceMod, modId);
+          }
+          setDraggedModuleId(null);
+          setDropTargetModuleId(null);
+        },
+        onDragEnd: () => {
+          setDraggedModuleId(null);
+          setDropTargetModuleId(null);
+        }
+      },
+      isEditMode && /* @__PURE__ */ import_react4.default.createElement(
+        "span",
+        {
+          className: "toolbar-dnd-handle",
+          title: "Drag to reorder toolbar module",
+          style: {
+            cursor: "grab",
+            color: "#00e5ff",
+            marginRight: "2px",
+            fontSize: "11px",
+            userSelect: "none",
+            opacity: 0.8
+          }
+        },
+        "\u283F"
+      ),
+      renderModule(modId)
+    );
+  }));
 }
 
 // desktop/src/components/NewTabPage.jsx
-var import_react3 = __toESM(require_react());
+var import_react6 = __toESM(require_react());
+
+// desktop/src/components/ElementEditModal.jsx
+var import_react5 = __toESM(require_react());
+var import_elementCustomizerService2 = __toESM(require_elementCustomizerService());
+function ElementEditModal({
+  isOpen = true,
+  elementId,
+  onClose,
+  onUpdated
+}) {
+  const [currentElementId, setCurrentElementId] = (0, import_react5.useState)(elementId || "element_ntp_search_bar");
+  const [allElements, setAllElements] = (0, import_react5.useState)([]);
+  const [activeTab, setActiveTab] = (0, import_react5.useState)("html");
+  const [htmlCode, setHtmlCode] = (0, import_react5.useState)("");
+  const [cssCode, setCssCode] = (0, import_react5.useState)("");
+  const [elementInfo, setElementInfo] = (0, import_react5.useState)(null);
+  const [isCustom, setIsCustom] = (0, import_react5.useState)(false);
+  const [compileStatus, setCompileStatus] = (0, import_react5.useState)({ status: "idle", message: "Ready to compile" });
+  const [toastMessage, setToastMessage] = (0, import_react5.useState)("");
+  const fileInputRef = (0, import_react5.useRef)(null);
+  (0, import_react5.useEffect)(() => {
+    if (elementId) {
+      setCurrentElementId(elementId);
+    }
+  }, [elementId]);
+  (0, import_react5.useEffect)(() => {
+    try {
+      setAllElements((0, import_elementCustomizerService2.listRegisteredElements)());
+    } catch (e) {
+    }
+  }, []);
+  (0, import_react5.useEffect)(() => {
+    if (isOpen && currentElementId) {
+      const data = (0, import_elementCustomizerService2.getCustomElement)(currentElementId);
+      if (data) {
+        setElementInfo(data);
+        setHtmlCode(data.html || "");
+        setCssCode(data.css || "");
+        setIsCustom(Boolean(data.isCustom));
+        setCompileStatus({ status: "idle", message: data.isCustom ? "Active user override loaded" : "Factory prebuilt template loaded" });
+      }
+    }
+  }, [isOpen, currentElementId]);
+  (0, import_react5.useEffect)(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape" && isOpen) {
+        onClose();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isOpen, onClose]);
+  const showToast = (msg) => {
+    setToastMessage(msg);
+    setTimeout(() => setToastMessage(""), 3e3);
+  };
+  if (!isOpen || !currentElementId) return null;
+  const handleCompileAndApply = () => {
+    const compileRes = (0, import_elementCustomizerService2.compileElementCode)(currentElementId, htmlCode, cssCode);
+    if (!compileRes.success) {
+      setCompileStatus({ status: "error", message: compileRes.error });
+      return;
+    }
+    const saveRes = (0, import_elementCustomizerService2.saveCustomElement)(currentElementId, { html: htmlCode, css: cssCode });
+    if (saveRes.success) {
+      setIsCustom(true);
+      setCompileStatus({ status: "success", message: "Element compiled and hot-swapped successfully!" });
+      showToast("\u2705 Applied! Element hot-swapped.");
+      if (onUpdated) onUpdated(currentElementId);
+    } else {
+      setCompileStatus({ status: "error", message: saveRes.error });
+    }
+  };
+  const handleRevertToDefault = () => {
+    const prebuilt = (0, import_elementCustomizerService2.getPrebuiltTemplate)(currentElementId);
+    if (!prebuilt) return;
+    const revRes = (0, import_elementCustomizerService2.revertElement)(currentElementId);
+    if (revRes.success) {
+      setHtmlCode(prebuilt.html);
+      setCssCode(prebuilt.css);
+      setIsCustom(false);
+      setCompileStatus({ status: "success", message: "Reverted to factory default prebuilt code." });
+      showToast("\u21BA Restored to factory default design!");
+      if (onUpdated) onUpdated(currentElementId);
+    }
+  };
+  const handleFileUpload = (e) => {
+    const file = e.target.files && e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const content = event.target.result;
+      const parsed = (0, import_elementCustomizerService2.parseUploadedComponentPackage)(content);
+      if (parsed.success) {
+        if (parsed.html) setHtmlCode(parsed.html);
+        if (parsed.css) setCssCode(parsed.css);
+        setCompileStatus({ status: "idle", message: `Imported "${file.name}" cleanly. Ready to compile.` });
+        showToast(`\u{1F4C1} Loaded "${file.name}"! Click Compile to apply.`);
+      } else {
+        setCompileStatus({ status: "error", message: parsed.error });
+      }
+    };
+    reader.readAsText(file);
+    e.target.value = "";
+  };
+  const handleExportPackage = () => {
+    const pkg = (0, import_elementCustomizerService2.exportComponentPackage)(currentElementId);
+    if (!pkg) return;
+    try {
+      const blob = new Blob([pkg], { type: "text/html" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${currentElementId}.component.html`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showToast("\u{1F4BE} Exported component package to downloads!");
+    } catch (e) {
+      navigator.clipboard.writeText(pkg).then(() => {
+        showToast("\u{1F4CB} Component code copied to clipboard!");
+      });
+    }
+  };
+  const previewScopedCss = (0, import_elementCustomizerService2.compileElementCode)(currentElementId, htmlCode, cssCode).scopedCss || "";
+  return /* @__PURE__ */ import_react5.default.createElement("div", { className: "element-edit-modal-backdrop", onClick: onClose }, /* @__PURE__ */ import_react5.default.createElement(
+    "div",
+    {
+      className: "element-edit-modal-container",
+      onClick: (e) => e.stopPropagation()
+    },
+    /* @__PURE__ */ import_react5.default.createElement("div", { className: "element-edit-header" }, /* @__PURE__ */ import_react5.default.createElement("div", { className: "element-title-cluster" }, /* @__PURE__ */ import_react5.default.createElement("span", { className: "element-header-icon" }, "\u{1F6E0}\uFE0F"), /* @__PURE__ */ import_react5.default.createElement("div", null, /* @__PURE__ */ import_react5.default.createElement("div", { className: "element-main-title" }, elementInfo ? elementInfo.title : "Element Code Studio"), /* @__PURE__ */ import_react5.default.createElement("div", { className: "element-meta-id" }, /* @__PURE__ */ import_react5.default.createElement(
+      "select",
+      {
+        className: "element-switcher-select",
+        value: currentElementId,
+        onChange: (e) => setCurrentElementId(e.target.value),
+        title: "Switch element to edit"
+      },
+      allElements.map((el) => /* @__PURE__ */ import_react5.default.createElement("option", { key: el.id, value: el.id }, el.id === "element_ntp_clock" ? "\u23F1\uFE0F ///// time code (Clock & Greeting)" : el.id === "element_ntp_search_bar" ? "\u{1F50D} ///// search code (Search Bar)" : el.id === "element_speed_dial" ? "\u26A1 ///// shortcuts code (Speed Dial)" : el.id === "element_tab_pill" ? "\u{1F4D1} ///// tab code (Tab Strip Pill)" : el.id === "element_nav_buttons" ? "\u2039\u203A ///// nav buttons code (Back/Forward/Reload)" : el.id === "element_engine_toggle" ? "\u{1F981} ///// engine toggle code (Engine Switcher)" : el.id === "element_omnibox" ? "\u{1F512} ///// omnibox code (URL Address Bar)" : el.id === "element_go_btn" ? "\u{1F680} ///// go button code (Go Button)" : el.id === "element_toolbar_tools" ? "\u{1F3A8} ///// toolbar tools code (Toolbar Tools)" : el.id === "element_bookmark_pill" ? "\u{1F516} ///// bookmark code (Bookmark Bar Pill)" : el.id === "element_ai_prompt_bar" ? "\u2726 ///// ai prompt code (AI Prompt Bar)" : `${el.title} (${el.category})`))
+    ), "\xA0\u2022\xA0", /* @__PURE__ */ import_react5.default.createElement("span", { className: `status-pill-badge ${isCustom ? "custom-active" : "prebuilt-default"}` }, isCustom ? "\u2605 User Override Active" : "\u{1F512} Factory Default")))), /* @__PURE__ */ import_react5.default.createElement("div", { className: "header-actions" }, /* @__PURE__ */ import_react5.default.createElement(
+      "button",
+      {
+        className: "btn-toolbar-tool",
+        title: "Upload custom component file (.html, .component.html, .json)",
+        onClick: () => fileInputRef.current && fileInputRef.current.click()
+      },
+      "\u{1F4C1} Upload Code"
+    ), /* @__PURE__ */ import_react5.default.createElement(
+      "input",
+      {
+        type: "file",
+        ref: fileInputRef,
+        style: { display: "none" },
+        accept: ".html,.htm,.css,.json,.jsx",
+        onChange: handleFileUpload
+      }
+    ), /* @__PURE__ */ import_react5.default.createElement(
+      "button",
+      {
+        className: "btn-toolbar-tool",
+        title: "Export this component package to file",
+        onClick: handleExportPackage
+      },
+      "\u{1F4BE} Export"
+    ), /* @__PURE__ */ import_react5.default.createElement("button", { className: "btn-close-modal", onClick: onClose, title: "Close Editor (ESC)" }, "\u2715"))),
+    /* @__PURE__ */ import_react5.default.createElement("div", { className: "element-edit-tabs" }, /* @__PURE__ */ import_react5.default.createElement(
+      "button",
+      {
+        className: `edit-tab-btn ${activeTab === "html" ? "active" : ""}`,
+        onClick: () => setActiveTab("html")
+      },
+      "\u{1F4C4} HTML5 Markup"
+    ), /* @__PURE__ */ import_react5.default.createElement(
+      "button",
+      {
+        className: `edit-tab-btn ${activeTab === "css" ? "active" : ""}`,
+        onClick: () => setActiveTab("css")
+      },
+      "\u{1F3A8} Scoped CSS"
+    ), /* @__PURE__ */ import_react5.default.createElement(
+      "button",
+      {
+        className: `edit-tab-btn ${activeTab === "preview" ? "active" : ""}`,
+        onClick: () => setActiveTab("preview")
+      },
+      "\u{1F441}\uFE0F Live Preview"
+    ), toastMessage && /* @__PURE__ */ import_react5.default.createElement("div", { className: "element-edit-toast" }, toastMessage)),
+    /* @__PURE__ */ import_react5.default.createElement("div", { className: "element-edit-body" }, activeTab === "html" && /* @__PURE__ */ import_react5.default.createElement("div", { className: "code-editor-pane" }, /* @__PURE__ */ import_react5.default.createElement("div", { className: "editor-banner-hint" }, "Isolated HTML5 template for this element. Supports standard semantic tags and ", /* @__PURE__ */ import_react5.default.createElement("code", null, 'data-action="navigate|submit|back"'), "."), /* @__PURE__ */ import_react5.default.createElement(
+      "textarea",
+      {
+        className: "big-box-textarea",
+        spellCheck: "false",
+        value: htmlCode,
+        onChange: (e) => setHtmlCode(e.target.value),
+        placeholder: "Enter custom HTML5 markup here..."
+      }
+    )), activeTab === "css" && /* @__PURE__ */ import_react5.default.createElement("div", { className: "code-editor-pane" }, /* @__PURE__ */ import_react5.default.createElement("div", { className: "editor-banner-hint" }, "Scoped CSS rules automatically prefixed to ", /* @__PURE__ */ import_react5.default.createElement("code", null, "#custom-element-", currentElementId), " so styles never bleed into other components."), /* @__PURE__ */ import_react5.default.createElement(
+      "textarea",
+      {
+        className: "big-box-textarea",
+        spellCheck: "false",
+        value: cssCode,
+        onChange: (e) => setCssCode(e.target.value),
+        placeholder: "Enter custom CSS styles here..."
+      }
+    )), activeTab === "preview" && /* @__PURE__ */ import_react5.default.createElement("div", { className: "preview-canvas-pane" }, /* @__PURE__ */ import_react5.default.createElement("style", null, previewScopedCss), /* @__PURE__ */ import_react5.default.createElement("div", { className: "preview-label" }, "Live Element Render Sandbox:"), /* @__PURE__ */ import_react5.default.createElement(
+      "div",
+      {
+        id: `custom-element-${currentElementId}`,
+        className: "preview-sandbox-mount",
+        dangerouslySetInnerHTML: { __html: htmlCode }
+      }
+    ))),
+    /* @__PURE__ */ import_react5.default.createElement("div", { className: `compiler-status-bar status-${compileStatus.status}` }, /* @__PURE__ */ import_react5.default.createElement("span", { className: "compiler-status-icon" }, compileStatus.status === "success" ? "\u2705" : compileStatus.status === "error" ? "\u274C" : "\u2139\uFE0F"), /* @__PURE__ */ import_react5.default.createElement("span", { className: "compiler-status-text" }, compileStatus.message)),
+    /* @__PURE__ */ import_react5.default.createElement("div", { className: "element-edit-footer" }, /* @__PURE__ */ import_react5.default.createElement(
+      "button",
+      {
+        className: "btn-danger-revert",
+        title: "Discard customizations and restore original factory prebuilt code",
+        onClick: handleRevertToDefault
+      },
+      "\u21BA Revert to Default"
+    ), /* @__PURE__ */ import_react5.default.createElement("div", { style: { marginLeft: "auto", display: "flex", gap: 10 } }, /* @__PURE__ */ import_react5.default.createElement("button", { className: "btn-secondary-cancel", onClick: onClose }, "Cancel"), /* @__PURE__ */ import_react5.default.createElement(
+      "button",
+      {
+        className: "btn-primary-compile",
+        onClick: handleCompileAndApply
+      },
+      "\u26A1 Compile & Apply"
+    )))
+  ));
+}
+
+// desktop/src/components/NewTabPage.jsx
 var DEFAULT_LAYOUT = {
   cardScale: 1,
   gridCols: 4,
@@ -39546,11 +40951,13 @@ function NewTabPage({
   onNavigate,
   bookmarks = []
 }) {
-  const [timeStr, setTimeStr] = (0, import_react3.useState)("");
-  const [defaultGreeting, setDefaultGreeting] = (0, import_react3.useState)("Good day");
-  const [query, setQuery] = (0, import_react3.useState)("");
-  const wrapperRef = (0, import_react3.useRef)(null);
-  const [layout, setLayout] = (0, import_react3.useState)(() => {
+  const [timeStr, setTimeStr] = (0, import_react6.useState)("");
+  const [defaultGreeting, setDefaultGreeting] = (0, import_react6.useState)("Good day");
+  const [query, setQuery] = (0, import_react6.useState)("");
+  const [activeEditingElement, setActiveEditingElement] = (0, import_react6.useState)(null);
+  const [elementUpdateTick, setElementUpdateTick] = (0, import_react6.useState)(0);
+  const wrapperRef = (0, import_react6.useRef)(null);
+  const [layout, setLayout] = (0, import_react6.useState)(() => {
     try {
       const saved = localStorage.getItem("antigravity_ntp_layout");
       if (saved) {
@@ -39568,9 +40975,9 @@ function NewTabPage({
     }
     return DEFAULT_LAYOUT;
   });
-  const layoutRef = (0, import_react3.useRef)(layout);
+  const layoutRef = (0, import_react6.useRef)(layout);
   layoutRef.current = layout;
-  const [shortcuts, setShortcuts] = (0, import_react3.useState)(() => {
+  const [shortcuts, setShortcuts] = (0, import_react6.useState)(() => {
     try {
       const saved = localStorage.getItem("antigravity_home_shortcuts");
       if (saved) {
@@ -39581,12 +40988,12 @@ function NewTabPage({
     }
     return DEFAULT_SHORTCUTS;
   });
-  const [draggedIndex, setDraggedIndex] = (0, import_react3.useState)(null);
-  const [dragOverIndex, setDragOverIndex] = (0, import_react3.useState)(null);
-  const [draggedSection, setDraggedSection] = (0, import_react3.useState)(null);
-  const [dragOverSection, setDragOverSection] = (0, import_react3.useState)(null);
-  const [selectedId, setSelectedId] = (0, import_react3.useState)(null);
-  const [isEditMode, setIsEditMode] = (0, import_react3.useState)(() => {
+  const [draggedIndex, setDraggedIndex] = (0, import_react6.useState)(null);
+  const [dragOverIndex, setDragOverIndex] = (0, import_react6.useState)(null);
+  const [draggedSection, setDraggedSection] = (0, import_react6.useState)(null);
+  const [dragOverSection, setDragOverSection] = (0, import_react6.useState)(null);
+  const [selectedId, setSelectedId] = (0, import_react6.useState)(null);
+  const [isEditMode, setIsEditMode] = (0, import_react6.useState)(() => {
     try {
       return localStorage.getItem("antigravity_ntp_edit_mode") === "true";
     } catch (e) {
@@ -39611,14 +41018,14 @@ function NewTabPage({
       return next;
     });
   };
-  const [isCustomizeOpen, setIsCustomizeOpen] = (0, import_react3.useState)(false);
-  const [isSiteModalOpen, setIsSiteModalOpen] = (0, import_react3.useState)(false);
-  const [editingSite, setEditingSite] = (0, import_react3.useState)(null);
-  const [siteForm, setSiteForm] = (0, import_react3.useState)({ name: "", url: "", desc: "", icon: "\u{1F310}", color: "#00e5ff" });
-  const [isEditingGreetingInline, setIsEditingGreetingInline] = (0, import_react3.useState)(false);
-  const [inlineGreetingText, setInlineGreetingText] = (0, import_react3.useState)("");
-  const [toastMessage, setToastMessage] = (0, import_react3.useState)("");
-  const toastTimeoutRef = (0, import_react3.useRef)(null);
+  const [isCustomizeOpen, setIsCustomizeOpen] = (0, import_react6.useState)(false);
+  const [isSiteModalOpen, setIsSiteModalOpen] = (0, import_react6.useState)(false);
+  const [editingSite, setEditingSite] = (0, import_react6.useState)(null);
+  const [siteForm, setSiteForm] = (0, import_react6.useState)({ name: "", url: "", desc: "", icon: "\u{1F310}", color: "#00e5ff" });
+  const [isEditingGreetingInline, setIsEditingGreetingInline] = (0, import_react6.useState)(false);
+  const [inlineGreetingText, setInlineGreetingText] = (0, import_react6.useState)("");
+  const [toastMessage, setToastMessage] = (0, import_react6.useState)("");
+  const toastTimeoutRef = (0, import_react6.useRef)(null);
   const showToast = (msg) => {
     setToastMessage(msg);
     if (toastTimeoutRef.current) clearTimeout(toastTimeoutRef.current);
@@ -39638,7 +41045,7 @@ function NewTabPage({
     } catch (e) {
     }
   };
-  (0, import_react3.useEffect)(() => {
+  (0, import_react6.useEffect)(() => {
     const updateTime = () => {
       const now = /* @__PURE__ */ new Date();
       let hours = now.getHours();
@@ -40111,20 +41518,34 @@ function NewTabPage({
   };
   const renderCanvaBoundingBox = (targetId, type, itemProps = {}) => {
     if (!isEditMode || selectedId !== targetId) return null;
-    return /* @__PURE__ */ import_react3.default.createElement(
+    return /* @__PURE__ */ import_react6.default.createElement(
       "div",
       {
         className: "canva-bounding-box",
         onClick: (e) => e.stopPropagation()
       },
-      /* @__PURE__ */ import_react3.default.createElement(
+      /* @__PURE__ */ import_react6.default.createElement(
         "div",
         {
           className: "canva-floating-bar",
           onMouseDown: (e) => startPointerDrag(e, targetId, type)
         },
-        /* @__PURE__ */ import_react3.default.createElement("span", { className: "canva-bar-pill drag-handle", title: "Drag to move" }, "\u22EE\u22EE Move"),
-        type === "shortcut" && itemProps.shortcut && /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, /* @__PURE__ */ import_react3.default.createElement(
+        /* @__PURE__ */ import_react6.default.createElement("span", { className: "canva-bar-pill drag-handle", title: "Drag to move" }, "\u22EE\u22EE Move"),
+        /* @__PURE__ */ import_react6.default.createElement(
+          "button",
+          {
+            type: "button",
+            className: "canva-bar-btn code-edit-btn",
+            title: `Inspect and hot-swap ${targetId} code in The Big Box`,
+            onClick: (e) => {
+              e.stopPropagation();
+              const codeId = targetId === "time" ? "element_ntp_clock" : targetId === "search" ? "element_ntp_search_bar" : "element_speed_dial";
+              setActiveEditingElement(codeId);
+            }
+          },
+          "\u26A1 Edit Code"
+        ),
+        type === "shortcut" && itemProps.shortcut && /* @__PURE__ */ import_react6.default.createElement(import_react6.default.Fragment, null, /* @__PURE__ */ import_react6.default.createElement(
           "button",
           {
             type: "button",
@@ -40136,7 +41557,7 @@ function NewTabPage({
             }
           },
           "\u270F\uFE0F Edit"
-        ), /* @__PURE__ */ import_react3.default.createElement(
+        ), /* @__PURE__ */ import_react6.default.createElement(
           "button",
           {
             type: "button",
@@ -40149,7 +41570,7 @@ function NewTabPage({
           },
           "\u2715"
         )),
-        type === "time" && /* @__PURE__ */ import_react3.default.createElement(
+        type === "time" && /* @__PURE__ */ import_react6.default.createElement(
           "button",
           {
             type: "button",
@@ -40163,7 +41584,7 @@ function NewTabPage({
           "\u{1F550} ",
           layout.timeFormat === "12h" ? "24h" : "12h"
         ),
-        layout.positions && layout.positions[targetId] && /* @__PURE__ */ import_react3.default.createElement(
+        layout.positions && layout.positions[targetId] && /* @__PURE__ */ import_react6.default.createElement(
           "button",
           {
             type: "button",
@@ -40177,7 +41598,7 @@ function NewTabPage({
           "\u229E Center"
         )
       ),
-      /* @__PURE__ */ import_react3.default.createElement(
+      /* @__PURE__ */ import_react6.default.createElement(
         "div",
         {
           className: "canva-handle corner nw",
@@ -40185,7 +41606,7 @@ function NewTabPage({
           title: "Resize"
         }
       ),
-      /* @__PURE__ */ import_react3.default.createElement(
+      /* @__PURE__ */ import_react6.default.createElement(
         "div",
         {
           className: "canva-handle corner ne",
@@ -40193,7 +41614,7 @@ function NewTabPage({
           title: "Resize"
         }
       ),
-      /* @__PURE__ */ import_react3.default.createElement(
+      /* @__PURE__ */ import_react6.default.createElement(
         "div",
         {
           className: "canva-handle corner se",
@@ -40201,7 +41622,7 @@ function NewTabPage({
           title: "Resize"
         }
       ),
-      /* @__PURE__ */ import_react3.default.createElement(
+      /* @__PURE__ */ import_react6.default.createElement(
         "div",
         {
           className: "canva-handle corner sw",
@@ -40209,7 +41630,7 @@ function NewTabPage({
           title: "Resize"
         }
       ),
-      /* @__PURE__ */ import_react3.default.createElement(
+      /* @__PURE__ */ import_react6.default.createElement(
         "div",
         {
           className: "canva-handle edge n",
@@ -40217,7 +41638,7 @@ function NewTabPage({
           title: "Resize height"
         }
       ),
-      /* @__PURE__ */ import_react3.default.createElement(
+      /* @__PURE__ */ import_react6.default.createElement(
         "div",
         {
           className: "canva-handle edge s",
@@ -40225,7 +41646,7 @@ function NewTabPage({
           title: "Resize height"
         }
       ),
-      /* @__PURE__ */ import_react3.default.createElement(
+      /* @__PURE__ */ import_react6.default.createElement(
         "div",
         {
           className: "canva-handle edge e",
@@ -40233,7 +41654,7 @@ function NewTabPage({
           title: "Resize width"
         }
       ),
-      /* @__PURE__ */ import_react3.default.createElement(
+      /* @__PURE__ */ import_react6.default.createElement(
         "div",
         {
           className: "canva-handle edge w",
@@ -40383,7 +41804,7 @@ function NewTabPage({
         width: "max-content",
         maxWidth: "90vw"
       } : { width: "fit-content", margin: "0 auto" };
-      return /* @__PURE__ */ import_react3.default.createElement(
+      return /* @__PURE__ */ import_react6.default.createElement(
         "div",
         {
           key: "time",
@@ -40404,70 +41825,83 @@ function NewTabPage({
           }
         },
         renderCanvaBoundingBox("time", "time"),
-        /* @__PURE__ */ import_react3.default.createElement(
-          "div",
+        /* @__PURE__ */ import_react6.default.createElement(
+          CustomizableElementWrapper,
           {
-            className: "time-box",
-            onMouseDown: (e) => {
-              if (isEditMode && !isEditingGreetingInline) {
-                startPointerDrag(e, "time", "section");
+            elementId: "element_ntp_clock",
+            isEditMode,
+            onOpenElementEditor: (id) => setActiveEditingElement(id),
+            onAction: (action) => {
+              if (action === "toggle-format") {
+                saveLayout({ ...layout, timeFormat: layout.timeFormat === "12h" ? "24h" : "12h" });
               }
             }
           },
-          /* @__PURE__ */ import_react3.default.createElement(
+          /* @__PURE__ */ import_react6.default.createElement(
             "div",
             {
-              className: `clock-display ${isEditMode ? "editable" : "locked"}`,
-              id: "clockDisplay",
-              style: { fontSize: `${layout.clockSize}px`, cursor: isEditMode ? "pointer" : "default" },
-              title: isEditMode ? "Click to toggle 12h / 24h format" : void 0,
-              onClick: isEditMode ? () => saveLayout({ ...layout, timeFormat: layout.timeFormat === "12h" ? "24h" : "12h" }) : void 0
+              className: "time-box",
+              onMouseDown: (e) => {
+                if (isEditMode && !isEditingGreetingInline) {
+                  startPointerDrag(e, "time", "section");
+                }
+              }
             },
-            timeStr || "12:00 PM"
-          ),
-          layout.showGreeting && /* @__PURE__ */ import_react3.default.createElement("div", { className: "greeting-wrapper" }, isEditMode && isEditingGreetingInline ? /* @__PURE__ */ import_react3.default.createElement("div", { className: "inline-greeting-editor" }, /* @__PURE__ */ import_react3.default.createElement(
-            "input",
-            {
-              type: "text",
-              className: "inline-greeting-input",
-              value: inlineGreetingText,
-              autoFocus: true,
-              placeholder: "Enter greeting...",
-              onChange: (e) => setInlineGreetingText(e.target.value),
-              onKeyDown: (e) => {
-                if (e.key === "Enter") {
+            /* @__PURE__ */ import_react6.default.createElement(
+              "div",
+              {
+                className: `clock-display ${isEditMode ? "editable" : "locked"}`,
+                id: "clockDisplay",
+                style: { fontSize: `${layout.clockSize}px`, cursor: isEditMode ? "pointer" : "default" },
+                title: isEditMode ? "Click to toggle 12h / 24h format" : void 0,
+                onClick: isEditMode ? () => saveLayout({ ...layout, timeFormat: layout.timeFormat === "12h" ? "24h" : "12h" }) : void 0
+              },
+              timeStr || "12:00 PM"
+            ),
+            layout.showGreeting && /* @__PURE__ */ import_react6.default.createElement("div", { className: "greeting-wrapper" }, isEditMode && isEditingGreetingInline ? /* @__PURE__ */ import_react6.default.createElement("div", { className: "inline-greeting-editor" }, /* @__PURE__ */ import_react6.default.createElement(
+              "input",
+              {
+                type: "text",
+                className: "inline-greeting-input",
+                value: inlineGreetingText,
+                autoFocus: true,
+                placeholder: "Enter greeting...",
+                onChange: (e) => setInlineGreetingText(e.target.value),
+                onKeyDown: (e) => {
+                  if (e.key === "Enter") {
+                    saveLayout({ ...layout, customGreeting: inlineGreetingText.trim() });
+                    setIsEditingGreetingInline(false);
+                  } else if (e.key === "Escape") {
+                    setIsEditingGreetingInline(false);
+                  }
+                },
+                onBlur: () => {
                   saveLayout({ ...layout, customGreeting: inlineGreetingText.trim() });
                   setIsEditingGreetingInline(false);
-                } else if (e.key === "Escape") {
-                  setIsEditingGreetingInline(false);
                 }
-              },
-              onBlur: () => {
-                saveLayout({ ...layout, customGreeting: inlineGreetingText.trim() });
-                setIsEditingGreetingInline(false);
               }
-            }
-          )) : /* @__PURE__ */ import_react3.default.createElement(
-            "div",
-            {
-              className: `greeting-display ${isEditMode ? "clickable" : "locked"}`,
-              id: "greetingDisplay",
-              title: isEditMode ? "Click to edit greeting text" : void 0,
-              onClick: isEditMode ? () => {
-                setInlineGreetingText(layout.customGreeting || defaultGreeting);
-                setIsEditingGreetingInline(true);
-              } : void 0
-            },
-            /* @__PURE__ */ import_react3.default.createElement("span", null, currentGreeting, "! Where would you like to go today?"),
-            isEditMode && /* @__PURE__ */ import_react3.default.createElement("span", { className: "greeting-edit-icon" }, "\u270F\uFE0F")
-          ))
+            )) : /* @__PURE__ */ import_react6.default.createElement(
+              "div",
+              {
+                className: `greeting-display ${isEditMode ? "clickable" : "locked"}`,
+                id: "greetingDisplay",
+                title: isEditMode ? "Click to edit greeting text" : void 0,
+                onClick: isEditMode ? () => {
+                  setInlineGreetingText(layout.customGreeting || defaultGreeting);
+                  setIsEditingGreetingInline(true);
+                } : void 0
+              },
+              /* @__PURE__ */ import_react6.default.createElement("span", null, currentGreeting, "! Where would you like to go today?"),
+              isEditMode && /* @__PURE__ */ import_react6.default.createElement("span", { className: "greeting-edit-icon" }, "\u270F\uFE0F")
+            ))
+          )
         )
       );
     }
     if (sectionId === "badge" && layout.showBadge) {
       const badgePos = layout.positions && layout.positions["badge"];
       const badgeStyle = badgePos ? { position: "absolute", left: `${badgePos.x}px`, top: `${badgePos.y}px`, zIndex: selectedId === "badge" ? 120 : 90, width: "max-content" } : {};
-      return /* @__PURE__ */ import_react3.default.createElement(
+      return /* @__PURE__ */ import_react6.default.createElement(
         "div",
         {
           key: "badge",
@@ -40488,7 +41922,7 @@ function NewTabPage({
           }
         },
         renderCanvaBoundingBox("badge", "badge"),
-        /* @__PURE__ */ import_react3.default.createElement(
+        /* @__PURE__ */ import_react6.default.createElement(
           "div",
           {
             className: "brand-badge",
@@ -40496,14 +41930,14 @@ function NewTabPage({
               if (isEditMode) startPointerDrag(e, "badge", "section");
             }
           },
-          /* @__PURE__ */ import_react3.default.createElement("span", null, "ANTIGRAVITY NATIVE BROWSER")
+          /* @__PURE__ */ import_react6.default.createElement("span", null, "ANTIGRAVITY NATIVE BROWSER")
         )
       );
     }
     if (sectionId === "search" && layout.showSearchBar) {
       const searchPos = layout.positions && layout.positions["search"];
       const searchStyle = searchPos ? { position: "absolute", left: `${searchPos.x}px`, top: `${searchPos.y}px`, zIndex: selectedId === "search" ? 120 : 92, width: `${layout.searchWidth}px`, maxWidth: "95vw" } : { width: "100%", maxWidth: `${layout.searchWidth}px`, margin: "0 auto" };
-      return /* @__PURE__ */ import_react3.default.createElement(
+      return /* @__PURE__ */ import_react6.default.createElement(
         "div",
         {
           key: "search",
@@ -40524,45 +41958,64 @@ function NewTabPage({
           }
         },
         renderCanvaBoundingBox("search", "search"),
-        /* @__PURE__ */ import_react3.default.createElement(
-          "form",
+        /* @__PURE__ */ import_react6.default.createElement(
+          CustomizableElementWrapper,
           {
-            className: "search-wrapper",
-            onSubmit: handleSearchSubmit,
-            onMouseDown: (e) => {
-              if (isEditMode && e.target.tagName !== "INPUT" && e.target.tagName !== "BUTTON") {
-                startPointerDrag(e, "search", "section");
+            elementId: "element_ntp_search_bar",
+            isEditMode,
+            onOpenElementEditor: (id) => setActiveEditingElement(id),
+            onAction: (action, payload) => {
+              if (action === "navigate" || action === "submit") {
+                const targetQuery = payload?.val || query;
+                if (targetQuery && onNavigate) {
+                  const url = activeEngine === "brave" ? `https://search.brave.com/search?q=${encodeURIComponent(targetQuery)}` : `https://www.google.com/search?q=${encodeURIComponent(targetQuery)}`;
+                  onNavigate(url);
+                }
+              } else if (action === "toggle-engine") {
+                onSetEngine(activeEngine === "google" ? "brave" : "google");
               }
             }
           },
-          /* @__PURE__ */ import_react3.default.createElement(
-            "button",
+          /* @__PURE__ */ import_react6.default.createElement(
+            "form",
             {
-              type: "button",
-              className: "engine-toggle-pill",
-              id: "btnToggleEngine",
-              onClick: () => onSetEngine(activeEngine === "google" ? "brave" : "google"),
-              title: `Searching with ${activeEngine === "brave" ? "Brave" : "Google"}. Click to switch engine.`
+              className: "search-wrapper",
+              onSubmit: handleSearchSubmit,
+              onMouseDown: (e) => {
+                if (isEditMode && e.target.tagName !== "INPUT" && e.target.tagName !== "BUTTON") {
+                  startPointerDrag(e, "search", "section");
+                }
+              }
             },
-            /* @__PURE__ */ import_react3.default.createElement("span", { className: "engine-toggle-icon" }, activeEngine === "brave" ? "\u{1F981}" : "\u{1F50D}"),
-            /* @__PURE__ */ import_react3.default.createElement("span", { className: "engine-toggle-name" }, activeEngine === "brave" ? "Brave" : "Google"),
-            /* @__PURE__ */ import_react3.default.createElement("span", { className: "engine-toggle-arrow" }, "\u21C4")
-          ),
-          /* @__PURE__ */ import_react3.default.createElement(
-            "input",
-            {
-              type: "text",
-              id: "ntpSearchInput",
-              className: "search-box with-engine-pill",
-              placeholder,
-              value: query,
-              onChange: (e) => setQuery(e.target.value),
-              autoComplete: "off",
-              spellCheck: "false",
-              autoFocus: true
-            }
-          ),
-          /* @__PURE__ */ import_react3.default.createElement("button", { type: "submit", className: "btn-submit-search", id: "btnSubmitSearch" }, "Search")
+            /* @__PURE__ */ import_react6.default.createElement(
+              "button",
+              {
+                type: "button",
+                className: "engine-toggle-pill",
+                id: "btnToggleEngine",
+                onClick: () => onSetEngine(activeEngine === "google" ? "brave" : "google"),
+                title: `Searching with ${activeEngine === "brave" ? "Brave" : "Google"}. Click to switch engine.`
+              },
+              /* @__PURE__ */ import_react6.default.createElement("span", { className: "engine-toggle-icon" }, activeEngine === "brave" ? "\u{1F981}" : "\u{1F50D}"),
+              /* @__PURE__ */ import_react6.default.createElement("span", { className: "engine-toggle-name" }, activeEngine === "brave" ? "Brave" : "Google"),
+              /* @__PURE__ */ import_react6.default.createElement("span", { className: "engine-toggle-arrow" }, "\u21C4")
+            ),
+            /* @__PURE__ */ import_react6.default.createElement(
+              "input",
+              {
+                type: "text",
+                id: "ntpSearchInput",
+                className: "search-box with-engine-pill",
+                placeholder,
+                value: query,
+                onChange: (e) => setQuery(e.target.value),
+                autoComplete: "off",
+                spellCheck: "false",
+                autoFocus: true
+              }
+            ),
+            /* @__PURE__ */ import_react6.default.createElement("button", { type: "submit", className: "btn-submit-search", id: "btnSubmitSearch" }, "Search")
+          )
         )
       );
     }
@@ -40570,7 +42023,7 @@ function NewTabPage({
       const secPos = layout.positions && layout.positions["shortcuts"];
       const shortcutsStyle = secPos ? { position: "absolute", left: `${secPos.x}px`, top: `${secPos.y}px`, zIndex: 85 } : {};
       const gridShortcuts = shortcuts.filter((sc) => !(layout.positions && layout.positions[sc.id]));
-      return /* @__PURE__ */ import_react3.default.createElement(
+      return /* @__PURE__ */ import_react6.default.createElement(
         "div",
         {
           key: "shortcuts",
@@ -40584,125 +42037,138 @@ function NewTabPage({
           onDrop: (e) => handleSectionDrop(e, "shortcuts"),
           onDragEnd: handleDragEnd
         },
-        /* @__PURE__ */ import_react3.default.createElement(
-          "div",
+        /* @__PURE__ */ import_react6.default.createElement(
+          CustomizableElementWrapper,
           {
-            className: "shortcuts-grid-wrapper",
-            onDragOver: (e) => {
-              if (isEditMode) {
-                e.preventDefault();
-                e.dataTransfer.dropEffect = "copy";
+            elementId: "element_speed_dial",
+            isEditMode,
+            onOpenElementEditor: (id) => setActiveEditingElement(id),
+            onAction: (action, payload) => {
+              if (action === "navigate" && payload?.val && onNavigate) {
+                onNavigate(payload.val);
               }
-            },
-            onDrop: handleGridDrop
+            }
           },
-          /* @__PURE__ */ import_react3.default.createElement(
+          /* @__PURE__ */ import_react6.default.createElement(
             "div",
             {
-              className: "shortcuts-grid",
-              style: {
-                gridTemplateColumns: `repeat(${layout.gridCols}, 1fr)`,
-                transform: `scale(${layout.cardScale})`,
-                transformOrigin: "top center"
-              }
+              className: "shortcuts-grid-wrapper",
+              onDragOver: (e) => {
+                if (isEditMode) {
+                  e.preventDefault();
+                  e.dataTransfer.dropEffect = "copy";
+                }
+              },
+              onDrop: handleGridDrop
             },
-            gridShortcuts.map((sc) => {
-              const originalIndex = shortcuts.indexOf(sc);
-              const isBeingDragged = isEditMode && draggedIndex === originalIndex;
-              const isOver = isEditMode && dragOverIndex === originalIndex;
-              return /* @__PURE__ */ import_react3.default.createElement(
-                "div",
-                {
-                  key: sc.id || `sc-${originalIndex}`,
-                  id: `item-${sc.id}`,
-                  className: `shortcut-card ${isBeingDragged ? "dragging" : ""} ${isOver ? "drag-over" : ""} ${isEditMode ? "editable" : "locked"} ${isEditMode && selectedId === sc.id ? "canva-selected" : ""}`,
-                  draggable: isEditMode,
-                  onDragStart: (e) => handleDragStart(e, originalIndex),
-                  onDragOver: (e) => handleDragOver(e, originalIndex),
-                  onDragLeave: handleDragLeave,
-                  onDrop: (e) => handleDrop(e, originalIndex),
-                  onDragEnd: handleDragEnd,
-                  onMouseDown: (e) => {
-                    if (isEditMode) {
-                      startPointerDrag(e, sc.id, "shortcut");
-                    }
-                  },
-                  onClick: (e) => {
-                    if (isEditMode) {
-                      e.stopPropagation();
-                      setSelectedId(sc.id);
-                    } else {
-                      if (sc.url) onNavigate(sc.url);
-                      else if (sc.demo === "checkout") onNavigate("demo_checkout.html");
-                    }
-                  },
-                  title: isEditMode ? `${sc.name} (${sc.url || "Demo"})
-Drag anywhere freely to place, click to resize with Canva handles` : `${sc.name} (${sc.url || "Demo"})
-Click to open`
-                },
-                renderCanvaBoundingBox(sc.id, "shortcut", { shortcut: sc }),
-                isEditMode && /* @__PURE__ */ import_react3.default.createElement("div", { className: "shortcut-card-actions" }, /* @__PURE__ */ import_react3.default.createElement(
-                  "span",
-                  {
-                    className: "shortcut-card-btn drag-btn",
-                    title: "Click and drag to place anywhere on the home page",
-                    onMouseDown: (e) => startPointerDrag(e, sc.id, "shortcut")
-                  },
-                  "\u22EE\u22EE"
-                ), /* @__PURE__ */ import_react3.default.createElement(
-                  "button",
-                  {
-                    type: "button",
-                    className: "shortcut-card-btn move-btn",
-                    title: "Move left",
-                    disabled: originalIndex === 0,
-                    onClick: (e) => moveShortcut(e, originalIndex, -1)
-                  },
-                  "\u25C0"
-                ), /* @__PURE__ */ import_react3.default.createElement(
-                  "button",
-                  {
-                    type: "button",
-                    className: "shortcut-card-btn move-btn",
-                    title: "Move right",
-                    disabled: originalIndex === shortcuts.length - 1,
-                    onClick: (e) => moveShortcut(e, originalIndex, 1)
-                  },
-                  "\u25B6"
-                ), /* @__PURE__ */ import_react3.default.createElement(
-                  "button",
-                  {
-                    type: "button",
-                    className: "shortcut-card-btn edit",
-                    title: "Edit site details",
-                    onClick: (e) => handleOpenEditSite(e, sc)
-                  },
-                  "\u270F\uFE0F"
-                ), /* @__PURE__ */ import_react3.default.createElement(
-                  "button",
-                  {
-                    type: "button",
-                    className: "shortcut-card-btn delete",
-                    title: "Remove shortcut",
-                    onClick: (e) => handleDeleteSite(e, sc.id)
-                  },
-                  "\u2715"
-                )),
-                /* @__PURE__ */ import_react3.default.createElement("div", { className: "shortcut-icon", style: { color: sc.color } }, sc.icon),
-                /* @__PURE__ */ import_react3.default.createElement("span", { className: "shortcut-title" }, sc.name),
-                /* @__PURE__ */ import_react3.default.createElement("span", { className: "shortcut-desc" }, sc.desc)
-              );
-            }),
-            isEditMode && /* @__PURE__ */ import_react3.default.createElement(
+            /* @__PURE__ */ import_react6.default.createElement(
               "div",
               {
-                className: "shortcut-card shortcut-add-card",
-                title: "Add a new custom site or link",
-                onClick: handleOpenAddSite
+                className: "shortcuts-grid",
+                style: {
+                  gridTemplateColumns: `repeat(${layout.gridCols}, 1fr)`,
+                  transform: `scale(${layout.cardScale})`,
+                  transformOrigin: "top center"
+                }
               },
-              /* @__PURE__ */ import_react3.default.createElement("div", { className: "shortcut-icon add-icon" }, "\u2795"),
-              /* @__PURE__ */ import_react3.default.createElement("span", { className: "shortcut-title" }, "Add Site"),
-              /* @__PURE__ */ import_react3.default.createElement("span", { className: "shortcut-desc" }, "Custom Shortcut")
+              gridShortcuts.map((sc) => {
+                const originalIndex = shortcuts.indexOf(sc);
+                const isBeingDragged = isEditMode && draggedIndex === originalIndex;
+                const isOver = isEditMode && dragOverIndex === originalIndex;
+                return /* @__PURE__ */ import_react6.default.createElement(
+                  "div",
+                  {
+                    key: sc.id || `sc-${originalIndex}`,
+                    id: `item-${sc.id}`,
+                    className: `shortcut-card ${isBeingDragged ? "dragging" : ""} ${isOver ? "drag-over" : ""} ${isEditMode ? "editable" : "locked"} ${isEditMode && selectedId === sc.id ? "canva-selected" : ""}`,
+                    draggable: isEditMode,
+                    onDragStart: (e) => handleDragStart(e, originalIndex),
+                    onDragOver: (e) => handleDragOver(e, originalIndex),
+                    onDragLeave: handleDragLeave,
+                    onDrop: (e) => handleDrop(e, originalIndex),
+                    onDragEnd: handleDragEnd,
+                    onMouseDown: (e) => {
+                      if (isEditMode) {
+                        startPointerDrag(e, sc.id, "shortcut");
+                      }
+                    },
+                    onClick: (e) => {
+                      if (isEditMode) {
+                        e.stopPropagation();
+                        setSelectedId(sc.id);
+                      } else {
+                        if (sc.url) onNavigate(sc.url);
+                        else if (sc.demo === "checkout") onNavigate("demo_checkout.html");
+                      }
+                    },
+                    title: isEditMode ? `${sc.name} (${sc.url || "Demo"})
+Drag anywhere freely to place, click to resize with Canva handles` : `${sc.name} (${sc.url || "Demo"})
+Click to open`
+                  },
+                  renderCanvaBoundingBox(sc.id, "shortcut", { shortcut: sc }),
+                  isEditMode && /* @__PURE__ */ import_react6.default.createElement("div", { className: "shortcut-card-actions" }, /* @__PURE__ */ import_react6.default.createElement(
+                    "span",
+                    {
+                      className: "shortcut-card-btn drag-btn",
+                      title: "Click and drag to place anywhere on the home page",
+                      onMouseDown: (e) => startPointerDrag(e, sc.id, "shortcut")
+                    },
+                    "\u22EE\u22EE"
+                  ), /* @__PURE__ */ import_react6.default.createElement(
+                    "button",
+                    {
+                      type: "button",
+                      className: "shortcut-card-btn move-btn",
+                      title: "Move left",
+                      disabled: originalIndex === 0,
+                      onClick: (e) => moveShortcut(e, originalIndex, -1)
+                    },
+                    "\u25C0"
+                  ), /* @__PURE__ */ import_react6.default.createElement(
+                    "button",
+                    {
+                      type: "button",
+                      className: "shortcut-card-btn move-btn",
+                      title: "Move right",
+                      disabled: originalIndex === shortcuts.length - 1,
+                      onClick: (e) => moveShortcut(e, originalIndex, 1)
+                    },
+                    "\u25B6"
+                  ), /* @__PURE__ */ import_react6.default.createElement(
+                    "button",
+                    {
+                      type: "button",
+                      className: "shortcut-card-btn edit",
+                      title: "Edit site details",
+                      onClick: (e) => handleOpenEditSite(e, sc)
+                    },
+                    "\u270F\uFE0F"
+                  ), /* @__PURE__ */ import_react6.default.createElement(
+                    "button",
+                    {
+                      type: "button",
+                      className: "shortcut-card-btn delete",
+                      title: "Remove shortcut",
+                      onClick: (e) => handleDeleteSite(e, sc.id)
+                    },
+                    "\u2715"
+                  )),
+                  /* @__PURE__ */ import_react6.default.createElement("div", { className: "shortcut-icon", style: { color: sc.color } }, sc.icon),
+                  /* @__PURE__ */ import_react6.default.createElement("span", { className: "shortcut-title" }, sc.name),
+                  /* @__PURE__ */ import_react6.default.createElement("span", { className: "shortcut-desc" }, sc.desc)
+                );
+              }),
+              isEditMode && /* @__PURE__ */ import_react6.default.createElement(
+                "div",
+                {
+                  className: "shortcut-card shortcut-add-card",
+                  title: "Add a new custom site or link",
+                  onClick: handleOpenAddSite
+                },
+                /* @__PURE__ */ import_react6.default.createElement("div", { className: "shortcut-icon add-icon" }, "\u2795"),
+                /* @__PURE__ */ import_react6.default.createElement("span", { className: "shortcut-title" }, "Add Site"),
+                /* @__PURE__ */ import_react6.default.createElement("span", { className: "shortcut-desc" }, "Custom Shortcut")
+              )
             )
           )
         )
@@ -40711,7 +42177,7 @@ Click to open`
     if (sectionId === "features" && layout.showFeaturePills) {
       const featPos = layout.positions && layout.positions["features"];
       const featStyle = featPos ? { position: "absolute", left: `${featPos.x}px`, top: `${featPos.y}px`, zIndex: selectedId === "features" ? 120 : 80, width: "max-content" } : {};
-      return /* @__PURE__ */ import_react3.default.createElement(
+      return /* @__PURE__ */ import_react6.default.createElement(
         "div",
         {
           key: "features",
@@ -40732,7 +42198,7 @@ Click to open`
           }
         },
         renderCanvaBoundingBox("features", "features"),
-        /* @__PURE__ */ import_react3.default.createElement(
+        /* @__PURE__ */ import_react6.default.createElement(
           "div",
           {
             className: "feature-pills",
@@ -40740,16 +42206,16 @@ Click to open`
               if (isEditMode) startPointerDrag(e, "features", "section");
             }
           },
-          /* @__PURE__ */ import_react3.default.createElement("span", { className: "pill active" }, "\u{1F6E1}\uFE0F Native Adblock Active"),
-          /* @__PURE__ */ import_react3.default.createElement("span", { className: "pill active" }, "\u26A1 In-Process Chromium"),
-          /* @__PURE__ */ import_react3.default.createElement("span", { className: "pill active" }, "\u{1F512} Zero CDP Port Leaks"),
-          /* @__PURE__ */ import_react3.default.createElement("span", { className: "pill active" }, "\u{1F916} React Native Desktop App")
+          /* @__PURE__ */ import_react6.default.createElement("span", { className: "pill active" }, "\u{1F6E1}\uFE0F Native Adblock Active"),
+          /* @__PURE__ */ import_react6.default.createElement("span", { className: "pill active" }, "\u26A1 In-Process Chromium"),
+          /* @__PURE__ */ import_react6.default.createElement("span", { className: "pill active" }, "\u{1F512} Zero CDP Port Leaks"),
+          /* @__PURE__ */ import_react6.default.createElement("span", { className: "pill active" }, "\u{1F916} React Native Desktop App")
         )
       );
     }
     return null;
   };
-  return /* @__PURE__ */ import_react3.default.createElement(
+  return /* @__PURE__ */ import_react6.default.createElement(
     "div",
     {
       ref: wrapperRef,
@@ -40760,7 +42226,7 @@ Click to open`
         if (isEditMode && e.target === wrapperRef.current) setSelectedId(null);
       }
     },
-    /* @__PURE__ */ import_react3.default.createElement("div", { className: "ntp-floating-top-bar" }, /* @__PURE__ */ import_react3.default.createElement(
+    /* @__PURE__ */ import_react6.default.createElement("div", { className: "ntp-floating-top-bar" }, /* @__PURE__ */ import_react6.default.createElement(
       "button",
       {
         id: "btnToggleEditMode",
@@ -40768,11 +42234,11 @@ Click to open`
         title: isEditMode ? "Exit Edit Mode (Lock Home Page layout)" : "Enter Edit Mode (Unlock editing, rearranging & resizing)",
         onClick: toggleEditMode
       },
-      /* @__PURE__ */ import_react3.default.createElement("span", { className: "edit-toggle-icon" }, isEditMode ? "\u270F\uFE0F" : "\u{1F512}"),
-      /* @__PURE__ */ import_react3.default.createElement("span", { className: "edit-toggle-label" }, "Edit Mode:"),
-      /* @__PURE__ */ import_react3.default.createElement("span", { className: `edit-toggle-badge ${isEditMode ? "badge-on" : "badge-off"}` }, isEditMode ? "ON" : "OFF"),
-      /* @__PURE__ */ import_react3.default.createElement("span", { className: `edit-toggle-switch ${isEditMode ? "sw-on" : "sw-off"}` }, /* @__PURE__ */ import_react3.default.createElement("span", { className: "edit-toggle-knob" }))
-    ), isEditMode && /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, /* @__PURE__ */ import_react3.default.createElement(
+      /* @__PURE__ */ import_react6.default.createElement("span", { className: "edit-toggle-icon" }, isEditMode ? "\u270F\uFE0F" : "\u{1F512}"),
+      /* @__PURE__ */ import_react6.default.createElement("span", { className: "edit-toggle-label" }, "Edit Mode:"),
+      /* @__PURE__ */ import_react6.default.createElement("span", { className: `edit-toggle-badge ${isEditMode ? "badge-on" : "badge-off"}` }, isEditMode ? "ON" : "OFF"),
+      /* @__PURE__ */ import_react6.default.createElement("span", { className: `edit-toggle-switch ${isEditMode ? "sw-on" : "sw-off"}` }, /* @__PURE__ */ import_react6.default.createElement("span", { className: "edit-toggle-knob" }))
+    ), isEditMode && /* @__PURE__ */ import_react6.default.createElement(import_react6.default.Fragment, null, /* @__PURE__ */ import_react6.default.createElement(
       "button",
       {
         type: "button",
@@ -40781,7 +42247,7 @@ Click to open`
         onClick: handleResetPositions
       },
       "\u229E Snap to Center"
-    ), /* @__PURE__ */ import_react3.default.createElement(
+    ), /* @__PURE__ */ import_react6.default.createElement(
       "button",
       {
         type: "button",
@@ -40790,7 +42256,7 @@ Click to open`
         onClick: handleLoadAllBookmarks
       },
       "\u2B50 Load Bookmarks"
-    ), /* @__PURE__ */ import_react3.default.createElement(
+    ), /* @__PURE__ */ import_react6.default.createElement(
       "button",
       {
         type: "button",
@@ -40799,8 +42265,17 @@ Click to open`
         onClick: () => setIsCustomizeOpen((prev) => !prev)
       },
       "\u2699\uFE0F Customize Home"
+    ), /* @__PURE__ */ import_react6.default.createElement(
+      "button",
+      {
+        type: "button",
+        className: "ntp-tool-pill-btn btn-code-studio",
+        title: "Open Universal Element Code Studio (The Big Box)",
+        onClick: () => setActiveEditingElement("element_ntp_search_bar")
+      },
+      "\u26A1 Code Studio"
     ))),
-    isCustomizeOpen && /* @__PURE__ */ import_react3.default.createElement("div", { className: "ntp-customize-drawer" }, /* @__PURE__ */ import_react3.default.createElement("div", { className: "ntp-customize-drawer-header" }, /* @__PURE__ */ import_react3.default.createElement("h3", null, "\u{1F3A8} Home Page Customizer"), /* @__PURE__ */ import_react3.default.createElement("button", { className: "ntp-drawer-close-btn", onClick: () => setIsCustomizeOpen(false) }, "\u2715")), /* @__PURE__ */ import_react3.default.createElement("div", { className: "ntp-customize-drawer-content" }, /* @__PURE__ */ import_react3.default.createElement("div", { className: "ntp-custom-section" }, /* @__PURE__ */ import_react3.default.createElement("h4", null, "\u{1F4CF} Element Sizing & Resizing"), /* @__PURE__ */ import_react3.default.createElement("div", { className: "ntp-control-row" }, /* @__PURE__ */ import_react3.default.createElement("label", null, "Shortcuts Card Scale: ", /* @__PURE__ */ import_react3.default.createElement("b", null, Math.round(layout.cardScale * 100), "%")), /* @__PURE__ */ import_react3.default.createElement(
+    isCustomizeOpen && /* @__PURE__ */ import_react6.default.createElement("div", { className: "ntp-customize-drawer" }, /* @__PURE__ */ import_react6.default.createElement("div", { className: "ntp-customize-drawer-header" }, /* @__PURE__ */ import_react6.default.createElement("h3", null, "\u{1F3A8} Home Page Customizer"), /* @__PURE__ */ import_react6.default.createElement("button", { className: "ntp-drawer-close-btn", onClick: () => setIsCustomizeOpen(false) }, "\u2715")), /* @__PURE__ */ import_react6.default.createElement("div", { className: "ntp-customize-drawer-content" }, /* @__PURE__ */ import_react6.default.createElement("div", { className: "ntp-custom-section" }, /* @__PURE__ */ import_react6.default.createElement("h4", null, "\u{1F4CF} Element Sizing & Resizing"), /* @__PURE__ */ import_react6.default.createElement("div", { className: "ntp-control-row" }, /* @__PURE__ */ import_react6.default.createElement("label", null, "Shortcuts Card Scale: ", /* @__PURE__ */ import_react6.default.createElement("b", null, Math.round(layout.cardScale * 100), "%")), /* @__PURE__ */ import_react6.default.createElement(
       "input",
       {
         type: "range",
@@ -40810,7 +42285,7 @@ Click to open`
         value: layout.cardScale,
         onChange: (e) => saveLayout({ ...layout, cardScale: parseFloat(e.target.value) })
       }
-    )), /* @__PURE__ */ import_react3.default.createElement("div", { className: "ntp-control-row" }, /* @__PURE__ */ import_react3.default.createElement("label", null, "Grid Columns: ", /* @__PURE__ */ import_react3.default.createElement("b", null, layout.gridCols, " Cols")), /* @__PURE__ */ import_react3.default.createElement("div", { className: "ntp-button-group" }, [2, 3, 4, 5, 6].map((cols) => /* @__PURE__ */ import_react3.default.createElement(
+    )), /* @__PURE__ */ import_react6.default.createElement("div", { className: "ntp-control-row" }, /* @__PURE__ */ import_react6.default.createElement("label", null, "Grid Columns: ", /* @__PURE__ */ import_react6.default.createElement("b", null, layout.gridCols, " Cols")), /* @__PURE__ */ import_react6.default.createElement("div", { className: "ntp-button-group" }, [2, 3, 4, 5, 6].map((cols) => /* @__PURE__ */ import_react6.default.createElement(
       "button",
       {
         key: cols,
@@ -40818,7 +42293,7 @@ Click to open`
         onClick: () => saveLayout({ ...layout, gridCols: cols })
       },
       cols
-    )))), /* @__PURE__ */ import_react3.default.createElement("div", { className: "ntp-control-row" }, /* @__PURE__ */ import_react3.default.createElement("label", null, "Clock Display Size: ", /* @__PURE__ */ import_react3.default.createElement("b", null, layout.clockSize, "px")), /* @__PURE__ */ import_react3.default.createElement(
+    )))), /* @__PURE__ */ import_react6.default.createElement("div", { className: "ntp-control-row" }, /* @__PURE__ */ import_react6.default.createElement("label", null, "Clock Display Size: ", /* @__PURE__ */ import_react6.default.createElement("b", null, layout.clockSize, "px")), /* @__PURE__ */ import_react6.default.createElement(
       "input",
       {
         type: "range",
@@ -40828,7 +42303,7 @@ Click to open`
         value: layout.clockSize,
         onChange: (e) => saveLayout({ ...layout, clockSize: parseInt(e.target.value, 10) })
       }
-    )), /* @__PURE__ */ import_react3.default.createElement("div", { className: "ntp-control-row" }, /* @__PURE__ */ import_react3.default.createElement("label", null, "Search Bar Width: ", /* @__PURE__ */ import_react3.default.createElement("b", null, layout.searchWidth, "px")), /* @__PURE__ */ import_react3.default.createElement(
+    )), /* @__PURE__ */ import_react6.default.createElement("div", { className: "ntp-control-row" }, /* @__PURE__ */ import_react6.default.createElement("label", null, "Search Bar Width: ", /* @__PURE__ */ import_react6.default.createElement("b", null, layout.searchWidth, "px")), /* @__PURE__ */ import_react6.default.createElement(
       "input",
       {
         type: "range",
@@ -40838,63 +42313,63 @@ Click to open`
         value: layout.searchWidth,
         onChange: (e) => saveLayout({ ...layout, searchWidth: parseInt(e.target.value, 10) })
       }
-    )), /* @__PURE__ */ import_react3.default.createElement("div", { className: "ntp-control-row" }, /* @__PURE__ */ import_react3.default.createElement("label", null, "Clock Time Format:"), /* @__PURE__ */ import_react3.default.createElement("div", { className: "ntp-button-group" }, /* @__PURE__ */ import_react3.default.createElement(
+    )), /* @__PURE__ */ import_react6.default.createElement("div", { className: "ntp-control-row" }, /* @__PURE__ */ import_react6.default.createElement("label", null, "Clock Time Format:"), /* @__PURE__ */ import_react6.default.createElement("div", { className: "ntp-button-group" }, /* @__PURE__ */ import_react6.default.createElement(
       "button",
       {
         className: `ntp-seg-btn ${layout.timeFormat === "12h" ? "active" : ""}`,
         onClick: () => saveLayout({ ...layout, timeFormat: "12h" })
       },
       "12-Hour (AM/PM)"
-    ), /* @__PURE__ */ import_react3.default.createElement(
+    ), /* @__PURE__ */ import_react6.default.createElement(
       "button",
       {
         className: `ntp-seg-btn ${layout.timeFormat === "24h" ? "active" : ""}`,
         onClick: () => saveLayout({ ...layout, timeFormat: "24h" })
       },
       "24-Hour"
-    )))), /* @__PURE__ */ import_react3.default.createElement("div", { className: "ntp-custom-section" }, /* @__PURE__ */ import_react3.default.createElement("h4", null, "\u{1F441}\uFE0F Show / Hide Elements"), /* @__PURE__ */ import_react3.default.createElement("div", { className: "ntp-toggles-grid" }, /* @__PURE__ */ import_react3.default.createElement("label", { className: "ntp-toggle-label" }, /* @__PURE__ */ import_react3.default.createElement(
+    )))), /* @__PURE__ */ import_react6.default.createElement("div", { className: "ntp-custom-section" }, /* @__PURE__ */ import_react6.default.createElement("h4", null, "\u{1F441}\uFE0F Show / Hide Elements"), /* @__PURE__ */ import_react6.default.createElement("div", { className: "ntp-toggles-grid" }, /* @__PURE__ */ import_react6.default.createElement("label", { className: "ntp-toggle-label" }, /* @__PURE__ */ import_react6.default.createElement(
       "input",
       {
         type: "checkbox",
         checked: layout.showClock,
         onChange: (e) => saveLayout({ ...layout, showClock: e.target.checked })
       }
-    ), /* @__PURE__ */ import_react3.default.createElement("span", null, "Clock & Greeting")), /* @__PURE__ */ import_react3.default.createElement("label", { className: "ntp-toggle-label" }, /* @__PURE__ */ import_react3.default.createElement(
+    ), /* @__PURE__ */ import_react6.default.createElement("span", null, "Clock & Greeting")), /* @__PURE__ */ import_react6.default.createElement("label", { className: "ntp-toggle-label" }, /* @__PURE__ */ import_react6.default.createElement(
       "input",
       {
         type: "checkbox",
         checked: layout.showBadge,
         onChange: (e) => saveLayout({ ...layout, showBadge: e.target.checked })
       }
-    ), /* @__PURE__ */ import_react3.default.createElement("span", null, "Brand Badge")), /* @__PURE__ */ import_react3.default.createElement("label", { className: "ntp-toggle-label" }, /* @__PURE__ */ import_react3.default.createElement(
+    ), /* @__PURE__ */ import_react6.default.createElement("span", null, "Brand Badge")), /* @__PURE__ */ import_react6.default.createElement("label", { className: "ntp-toggle-label" }, /* @__PURE__ */ import_react6.default.createElement(
       "input",
       {
         type: "checkbox",
         checked: layout.showEngineSelector,
         onChange: (e) => saveLayout({ ...layout, showEngineSelector: e.target.checked })
       }
-    ), /* @__PURE__ */ import_react3.default.createElement("span", null, "Search Engine Switcher")), /* @__PURE__ */ import_react3.default.createElement("label", { className: "ntp-toggle-label" }, /* @__PURE__ */ import_react3.default.createElement(
+    ), /* @__PURE__ */ import_react6.default.createElement("span", null, "Search Engine Switcher")), /* @__PURE__ */ import_react6.default.createElement("label", { className: "ntp-toggle-label" }, /* @__PURE__ */ import_react6.default.createElement(
       "input",
       {
         type: "checkbox",
         checked: layout.showSearchBar,
         onChange: (e) => saveLayout({ ...layout, showSearchBar: e.target.checked })
       }
-    ), /* @__PURE__ */ import_react3.default.createElement("span", null, "Main Search Bar")), /* @__PURE__ */ import_react3.default.createElement("label", { className: "ntp-toggle-label" }, /* @__PURE__ */ import_react3.default.createElement(
+    ), /* @__PURE__ */ import_react6.default.createElement("span", null, "Main Search Bar")), /* @__PURE__ */ import_react6.default.createElement("label", { className: "ntp-toggle-label" }, /* @__PURE__ */ import_react6.default.createElement(
       "input",
       {
         type: "checkbox",
         checked: layout.showShortcuts,
         onChange: (e) => saveLayout({ ...layout, showShortcuts: e.target.checked })
       }
-    ), /* @__PURE__ */ import_react3.default.createElement("span", null, "Speed Dial Shortcuts")), /* @__PURE__ */ import_react3.default.createElement("label", { className: "ntp-toggle-label" }, /* @__PURE__ */ import_react3.default.createElement(
+    ), /* @__PURE__ */ import_react6.default.createElement("span", null, "Speed Dial Shortcuts")), /* @__PURE__ */ import_react6.default.createElement("label", { className: "ntp-toggle-label" }, /* @__PURE__ */ import_react6.default.createElement(
       "input",
       {
         type: "checkbox",
         checked: layout.showFeaturePills,
         onChange: (e) => saveLayout({ ...layout, showFeaturePills: e.target.checked })
       }
-    ), /* @__PURE__ */ import_react3.default.createElement("span", null, "Bottom Feature Badges")))), /* @__PURE__ */ import_react3.default.createElement("div", { className: "ntp-custom-section" }, /* @__PURE__ */ import_react3.default.createElement("h4", null, "\u270F\uFE0F Custom Greeting Message"), /* @__PURE__ */ import_react3.default.createElement(
+    ), /* @__PURE__ */ import_react6.default.createElement("span", null, "Bottom Feature Badges")))), /* @__PURE__ */ import_react6.default.createElement("div", { className: "ntp-custom-section" }, /* @__PURE__ */ import_react6.default.createElement("h4", null, "\u270F\uFE0F Custom Greeting Message"), /* @__PURE__ */ import_react6.default.createElement(
       "input",
       {
         type: "text",
@@ -40903,10 +42378,10 @@ Click to open`
         value: layout.customGreeting,
         onChange: (e) => saveLayout({ ...layout, customGreeting: e.target.value })
       }
-    )), /* @__PURE__ */ import_react3.default.createElement("div", { className: "ntp-custom-actions" }, /* @__PURE__ */ import_react3.default.createElement("button", { className: "ntp-action-btn secondary", onClick: handleResetDefaults }, "\u21BA Reset to Default"), /* @__PURE__ */ import_react3.default.createElement("button", { className: "ntp-action-btn primary", onClick: () => setIsCustomizeOpen(false) }, "Done")))),
+    )), /* @__PURE__ */ import_react6.default.createElement("div", { className: "ntp-custom-actions" }, /* @__PURE__ */ import_react6.default.createElement("button", { className: "ntp-action-btn secondary", onClick: handleResetDefaults }, "\u21BA Reset to Default"), /* @__PURE__ */ import_react6.default.createElement("button", { className: "ntp-action-btn primary", onClick: () => setIsCustomizeOpen(false) }, "Done")))),
     shortcuts.filter((sc) => layout.positions && layout.positions[sc.id]).map((sc) => {
       const pos = layout.positions[sc.id];
-      return /* @__PURE__ */ import_react3.default.createElement(
+      return /* @__PURE__ */ import_react6.default.createElement(
         "div",
         {
           key: `free-${sc.id}`,
@@ -40942,7 +42417,7 @@ Drag anywhere freely, click to resize with Canva handles, or click \u229E to ret
 Click to open`
         },
         renderCanvaBoundingBox(sc.id, "shortcut", { shortcut: sc }),
-        isEditMode && /* @__PURE__ */ import_react3.default.createElement("div", { className: "shortcut-card-actions" }, /* @__PURE__ */ import_react3.default.createElement(
+        isEditMode && /* @__PURE__ */ import_react6.default.createElement("div", { className: "shortcut-card-actions" }, /* @__PURE__ */ import_react6.default.createElement(
           "span",
           {
             className: "shortcut-card-btn drag-btn",
@@ -40950,7 +42425,7 @@ Click to open`
             onMouseDown: (e) => startPointerDrag(e, sc.id, "shortcut")
           },
           "\u22EE\u22EE"
-        ), /* @__PURE__ */ import_react3.default.createElement(
+        ), /* @__PURE__ */ import_react6.default.createElement(
           "button",
           {
             type: "button",
@@ -40962,7 +42437,7 @@ Click to open`
             }
           },
           "\u229E"
-        ), /* @__PURE__ */ import_react3.default.createElement(
+        ), /* @__PURE__ */ import_react6.default.createElement(
           "button",
           {
             type: "button",
@@ -40971,7 +42446,7 @@ Click to open`
             onClick: (e) => handleOpenEditSite(e, sc)
           },
           "\u270F\uFE0F"
-        ), /* @__PURE__ */ import_react3.default.createElement(
+        ), /* @__PURE__ */ import_react6.default.createElement(
           "button",
           {
             type: "button",
@@ -40981,12 +42456,12 @@ Click to open`
           },
           "\u2715"
         )),
-        /* @__PURE__ */ import_react3.default.createElement("div", { className: "shortcut-icon", style: { color: sc.color } }, sc.icon),
-        /* @__PURE__ */ import_react3.default.createElement("span", { className: "shortcut-title" }, sc.name),
-        /* @__PURE__ */ import_react3.default.createElement("span", { className: "shortcut-desc" }, sc.desc)
+        /* @__PURE__ */ import_react6.default.createElement("div", { className: "shortcut-icon", style: { color: sc.color } }, sc.icon),
+        /* @__PURE__ */ import_react6.default.createElement("span", { className: "shortcut-title" }, sc.name),
+        /* @__PURE__ */ import_react6.default.createElement("span", { className: "shortcut-desc" }, sc.desc)
       );
     }),
-    /* @__PURE__ */ import_react3.default.createElement(
+    /* @__PURE__ */ import_react6.default.createElement(
       "div",
       {
         className: "ntp-container",
@@ -41001,7 +42476,7 @@ Click to open`
       },
       (layout.sectionOrder || ["time", "badge", "search", "shortcuts", "features"]).map(renderSection)
     ),
-    isSiteModalOpen && /* @__PURE__ */ import_react3.default.createElement("div", { className: "ui-modal-backdrop", onClick: () => setIsSiteModalOpen(false) }, /* @__PURE__ */ import_react3.default.createElement("div", { className: "modal-container site-edit-modal", onClick: (e) => e.stopPropagation() }, /* @__PURE__ */ import_react3.default.createElement("div", { className: "modal-header" }, /* @__PURE__ */ import_react3.default.createElement("h2", null, editingSite ? "\u270F\uFE0F Edit Site Shortcut" : "\u2795 Add Site to Home"), /* @__PURE__ */ import_react3.default.createElement("button", { className: "modal-close-btn", onClick: () => setIsSiteModalOpen(false) }, "\u2715")), /* @__PURE__ */ import_react3.default.createElement("form", { className: "site-form", onSubmit: handleSaveSiteModal }, /* @__PURE__ */ import_react3.default.createElement("div", { className: "form-group" }, /* @__PURE__ */ import_react3.default.createElement("label", null, "Site Name *"), /* @__PURE__ */ import_react3.default.createElement(
+    isSiteModalOpen && /* @__PURE__ */ import_react6.default.createElement("div", { className: "ui-modal-backdrop", onClick: () => setIsSiteModalOpen(false) }, /* @__PURE__ */ import_react6.default.createElement("div", { className: "modal-container site-edit-modal", onClick: (e) => e.stopPropagation() }, /* @__PURE__ */ import_react6.default.createElement("div", { className: "modal-header" }, /* @__PURE__ */ import_react6.default.createElement("h2", null, editingSite ? "\u270F\uFE0F Edit Site Shortcut" : "\u2795 Add Site to Home"), /* @__PURE__ */ import_react6.default.createElement("button", { className: "modal-close-btn", onClick: () => setIsSiteModalOpen(false) }, "\u2715")), /* @__PURE__ */ import_react6.default.createElement("form", { className: "site-form", onSubmit: handleSaveSiteModal }, /* @__PURE__ */ import_react6.default.createElement("div", { className: "form-group" }, /* @__PURE__ */ import_react6.default.createElement("label", null, "Site Name *"), /* @__PURE__ */ import_react6.default.createElement(
       "input",
       {
         type: "text",
@@ -41012,7 +42487,7 @@ Click to open`
         autoFocus: true,
         onChange: (e) => setSiteForm({ ...siteForm, name: e.target.value })
       }
-    )), /* @__PURE__ */ import_react3.default.createElement("div", { className: "form-group" }, /* @__PURE__ */ import_react3.default.createElement("label", null, "Web Address (URL) *"), /* @__PURE__ */ import_react3.default.createElement(
+    )), /* @__PURE__ */ import_react6.default.createElement("div", { className: "form-group" }, /* @__PURE__ */ import_react6.default.createElement("label", null, "Web Address (URL) *"), /* @__PURE__ */ import_react6.default.createElement(
       "input",
       {
         type: "text",
@@ -41022,7 +42497,7 @@ Click to open`
         required: true,
         onChange: (e) => setSiteForm({ ...siteForm, url: e.target.value })
       }
-    )), /* @__PURE__ */ import_react3.default.createElement("div", { className: "form-group" }, /* @__PURE__ */ import_react3.default.createElement("label", null, "Description (Subtitle)"), /* @__PURE__ */ import_react3.default.createElement(
+    )), /* @__PURE__ */ import_react6.default.createElement("div", { className: "form-group" }, /* @__PURE__ */ import_react6.default.createElement("label", null, "Description (Subtitle)"), /* @__PURE__ */ import_react6.default.createElement(
       "input",
       {
         type: "text",
@@ -41031,7 +42506,7 @@ Click to open`
         value: siteForm.desc,
         onChange: (e) => setSiteForm({ ...siteForm, desc: e.target.value })
       }
-    )), /* @__PURE__ */ import_react3.default.createElement("div", { className: "form-row-two" }, /* @__PURE__ */ import_react3.default.createElement("div", { className: "form-group" }, /* @__PURE__ */ import_react3.default.createElement("label", null, "Icon / Emoji"), /* @__PURE__ */ import_react3.default.createElement(
+    )), /* @__PURE__ */ import_react6.default.createElement("div", { className: "form-row-two" }, /* @__PURE__ */ import_react6.default.createElement("div", { className: "form-group" }, /* @__PURE__ */ import_react6.default.createElement("label", null, "Icon / Emoji"), /* @__PURE__ */ import_react6.default.createElement(
       "input",
       {
         type: "text",
@@ -41041,7 +42516,7 @@ Click to open`
         placeholder: "\u{1F310}",
         onChange: (e) => setSiteForm({ ...siteForm, icon: e.target.value })
       }
-    )), /* @__PURE__ */ import_react3.default.createElement("div", { className: "form-group" }, /* @__PURE__ */ import_react3.default.createElement("label", null, "Accent Color"), /* @__PURE__ */ import_react3.default.createElement(
+    )), /* @__PURE__ */ import_react6.default.createElement("div", { className: "form-group" }, /* @__PURE__ */ import_react6.default.createElement("label", null, "Accent Color"), /* @__PURE__ */ import_react6.default.createElement(
       "input",
       {
         type: "color",
@@ -41049,7 +42524,7 @@ Click to open`
         value: siteForm.color,
         onChange: (e) => setSiteForm({ ...siteForm, color: e.target.value })
       }
-    ))), /* @__PURE__ */ import_react3.default.createElement("div", { className: "site-form-actions" }, editingSite && /* @__PURE__ */ import_react3.default.createElement(
+    ))), /* @__PURE__ */ import_react6.default.createElement("div", { className: "site-form-actions" }, editingSite && /* @__PURE__ */ import_react6.default.createElement(
       "button",
       {
         type: "button",
@@ -41057,7 +42532,7 @@ Click to open`
         onClick: (e) => handleDeleteSite(e, editingSite.id)
       },
       "\u{1F5D1}\uFE0F Delete"
-    ), /* @__PURE__ */ import_react3.default.createElement("div", { style: { marginLeft: "auto", display: "flex", gap: 10 } }, /* @__PURE__ */ import_react3.default.createElement(
+    ), /* @__PURE__ */ import_react6.default.createElement("div", { style: { marginLeft: "auto", display: "flex", gap: 10 } }, /* @__PURE__ */ import_react6.default.createElement(
       "button",
       {
         type: "button",
@@ -41065,13 +42540,25 @@ Click to open`
         onClick: () => setIsSiteModalOpen(false)
       },
       "Cancel"
-    ), /* @__PURE__ */ import_react3.default.createElement("button", { type: "submit", className: "btn-site-save" }, editingSite ? "Save Changes" : "Add Shortcut")))))),
-    toastMessage && /* @__PURE__ */ import_react3.default.createElement("div", { className: "ntp-toast" }, /* @__PURE__ */ import_react3.default.createElement("span", null, "\u2728 ", toastMessage))
+    ), /* @__PURE__ */ import_react6.default.createElement("button", { type: "submit", className: "btn-site-save" }, editingSite ? "Save Changes" : "Add Shortcut")))))),
+    /* @__PURE__ */ import_react6.default.createElement(
+      ElementEditModal,
+      {
+        isOpen: !!activeEditingElement,
+        elementId: activeEditingElement,
+        onClose: () => setActiveEditingElement(null),
+        onUpdated: (id) => {
+          setElementUpdateTick((t) => t + 1);
+          showToast(`\u26A1 Element code compiled and hot-swapped!`);
+        }
+      }
+    ),
+    toastMessage && /* @__PURE__ */ import_react6.default.createElement("div", { className: "ntp-toast" }, /* @__PURE__ */ import_react6.default.createElement("span", null, "\u2728 ", toastMessage))
   );
 }
 
 // desktop/src/components/AiHudSidebar.jsx
-var import_react4 = __toESM(require_react());
+var import_react7 = __toESM(require_react());
 
 // desktop/src/ai_harness_engine.js
 function resolveTargetUrl(target) {
@@ -44964,12 +46451,12 @@ function AiHudSidebar({
   onRemindUser,
   latestSnapshot
 }) {
-  const [activeModuleTab, setActiveModuleTab] = (0, import_react4.useState)("chat");
-  const [activeToolTab, setActiveToolTab] = (0, import_react4.useState)("ax");
-  const [markFilter, setMarkFilter] = (0, import_react4.useState)("");
-  const [copiedAx, setCopiedAx] = (0, import_react4.useState)(false);
-  const [customRuleInput, setCustomRuleInput] = (0, import_react4.useState)("");
-  const [chatMessages, setChatMessages] = (0, import_react4.useState)([
+  const [activeModuleTab, setActiveModuleTab] = (0, import_react7.useState)("chat");
+  const [activeToolTab, setActiveToolTab] = (0, import_react7.useState)("ax");
+  const [markFilter, setMarkFilter] = (0, import_react7.useState)("");
+  const [copiedAx, setCopiedAx] = (0, import_react7.useState)(false);
+  const [customRuleInput, setCustomRuleInput] = (0, import_react7.useState)("");
+  const [chatMessages, setChatMessages] = (0, import_react7.useState)([
     {
       id: "docked-welcome",
       role: "assistant",
@@ -44977,17 +46464,17 @@ function AiHudSidebar({
       time: (/* @__PURE__ */ new Date()).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
     }
   ]);
-  const [chatInput, setChatInput] = (0, import_react4.useState)("");
-  const [isVoiceListening, setIsVoiceListening] = (0, import_react4.useState)(false);
-  const [voiceSpeechFeedback, setVoiceSpeechFeedback] = (0, import_react4.useState)(false);
-  const [isAiThinking, setIsAiThinking] = (0, import_react4.useState)(false);
-  const [whisperLang, setWhisperLang] = (0, import_react4.useState)("auto");
-  const [isWhisperRecording, setIsWhisperRecording] = (0, import_react4.useState)(false);
-  const [isWhisperTranscribing, setIsWhisperTranscribing] = (0, import_react4.useState)(false);
-  const [recordingTimer, setRecordingTimer] = (0, import_react4.useState)(0);
-  const [isGenerating, setIsGenerating] = (0, import_react4.useState)(false);
-  const [activeAiConfig, setActiveAiConfig] = (0, import_react4.useState)(() => getActiveProviderConfig());
-  (0, import_react4.useEffect)(() => {
+  const [chatInput, setChatInput] = (0, import_react7.useState)("");
+  const [isVoiceListening, setIsVoiceListening] = (0, import_react7.useState)(false);
+  const [voiceSpeechFeedback, setVoiceSpeechFeedback] = (0, import_react7.useState)(false);
+  const [isAiThinking, setIsAiThinking] = (0, import_react7.useState)(false);
+  const [whisperLang, setWhisperLang] = (0, import_react7.useState)("auto");
+  const [isWhisperRecording, setIsWhisperRecording] = (0, import_react7.useState)(false);
+  const [isWhisperTranscribing, setIsWhisperTranscribing] = (0, import_react7.useState)(false);
+  const [recordingTimer, setRecordingTimer] = (0, import_react7.useState)(0);
+  const [isGenerating, setIsGenerating] = (0, import_react7.useState)(false);
+  const [activeAiConfig, setActiveAiConfig] = (0, import_react7.useState)(() => getActiveProviderConfig());
+  (0, import_react7.useEffect)(() => {
     const handleProviderChanged = (e) => {
       if (e?.detail?.config) {
         setActiveAiConfig(e.detail.config);
@@ -44998,19 +46485,19 @@ function AiHudSidebar({
     window.addEventListener("antigravity-active-provider-changed", handleProviderChanged);
     return () => window.removeEventListener("antigravity-active-provider-changed", handleProviderChanged);
   }, []);
-  const recognitionRef = (0, import_react4.useRef)(null);
-  const messagesEndRef = (0, import_react4.useRef)(null);
-  const messagesContainerRef = (0, import_react4.useRef)(null);
-  const userScrolledUpRef = (0, import_react4.useRef)(false);
-  const [isScrolledUp, setIsScrolledUp] = (0, import_react4.useState)(false);
-  const timerIntervalRef = (0, import_react4.useRef)(null);
-  const audioCtxRef = (0, import_react4.useRef)(null);
-  const mediaStreamRef = (0, import_react4.useRef)(null);
-  const audioProcessorRef = (0, import_react4.useRef)(null);
-  const recordingActiveRef = (0, import_react4.useRef)(false);
-  const sampleRateRef = (0, import_react4.useRef)(16e3);
-  const audioChunksRef = (0, import_react4.useRef)([]);
-  const abortControllerRef = (0, import_react4.useRef)(null);
+  const recognitionRef = (0, import_react7.useRef)(null);
+  const messagesEndRef = (0, import_react7.useRef)(null);
+  const messagesContainerRef = (0, import_react7.useRef)(null);
+  const userScrolledUpRef = (0, import_react7.useRef)(false);
+  const [isScrolledUp, setIsScrolledUp] = (0, import_react7.useState)(false);
+  const timerIntervalRef = (0, import_react7.useRef)(null);
+  const audioCtxRef = (0, import_react7.useRef)(null);
+  const mediaStreamRef = (0, import_react7.useRef)(null);
+  const audioProcessorRef = (0, import_react7.useRef)(null);
+  const recordingActiveRef = (0, import_react7.useRef)(false);
+  const sampleRateRef = (0, import_react7.useRef)(16e3);
+  const audioChunksRef = (0, import_react7.useRef)([]);
+  const abortControllerRef = (0, import_react7.useRef)(null);
   const handleMessagesWheel = (e) => {
     if (e.deltaY < 0) {
       userScrolledUpRef.current = true;
@@ -45061,13 +46548,13 @@ function AiHudSidebar({
     setIsAiThinking(false);
     setChatMessages((prev) => prev.map((m) => m.isStreaming ? { ...m, isStreaming: false, isThinking: false } : m));
   };
-  (0, import_react4.useEffect)(() => {
+  (0, import_react7.useEffect)(() => {
     if (userScrolledUpRef.current) return;
     if (messagesContainerRef.current) {
       messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
     }
   }, [chatMessages, isAiThinking]);
-  (0, import_react4.useEffect)(() => {
+  (0, import_react7.useEffect)(() => {
     try {
       const { ipcRenderer: ipcRenderer4 } = require("electron");
       if (ipcRenderer4 && ipcRenderer4.invoke) {
@@ -45077,8 +46564,8 @@ function AiHudSidebar({
     } catch (e) {
     }
   }, []);
-  const nlpHandlerRef = (0, import_react4.useRef)(null);
-  (0, import_react4.useEffect)(() => {
+  const nlpHandlerRef = (0, import_react7.useRef)(null);
+  (0, import_react7.useEffect)(() => {
     const handleCustomQuery = (e) => {
       if (e.detail?.query && nlpHandlerRef.current) {
         nlpHandlerRef.current(e.detail.query);
@@ -45502,14 +46989,14 @@ function AiHudSidebar({
     }
   };
   if (!isOpen || isDetached) return null;
-  return /* @__PURE__ */ import_react4.default.createElement("aside", { className: "ai-hud-sidebar mac-docked-cockpit", id: "aiHudSidebar" }, /* @__PURE__ */ import_react4.default.createElement("header", { className: "mac-docked-header" }, /* @__PURE__ */ import_react4.default.createElement("div", { className: "mac-cockpit-brand" }, /* @__PURE__ */ import_react4.default.createElement("span", { className: "mac-brand-sparkle" }, "\u2726"), /* @__PURE__ */ import_react4.default.createElement("span", { className: "mac-brand-name" }, "Antigravity Copilot")), /* @__PURE__ */ import_react4.default.createElement("div", { className: "mac-header-actions" }, /* @__PURE__ */ import_react4.default.createElement("label", { className: "som-toggle-label", title: "Render Set-of-Marks numerical bounding boxes over elements" }, /* @__PURE__ */ import_react4.default.createElement(
+  return /* @__PURE__ */ import_react7.default.createElement("aside", { className: "ai-hud-sidebar mac-docked-cockpit", id: "aiHudSidebar" }, /* @__PURE__ */ import_react7.default.createElement("header", { className: "mac-docked-header" }, /* @__PURE__ */ import_react7.default.createElement("div", { className: "mac-cockpit-brand" }, /* @__PURE__ */ import_react7.default.createElement("span", { className: "mac-brand-sparkle" }, "\u2726"), /* @__PURE__ */ import_react7.default.createElement("span", { className: "mac-brand-name" }, "Antigravity Copilot")), /* @__PURE__ */ import_react7.default.createElement("div", { className: "mac-header-actions" }, /* @__PURE__ */ import_react7.default.createElement("label", { className: "som-toggle-label", title: "Render Set-of-Marks numerical bounding boxes over elements" }, /* @__PURE__ */ import_react7.default.createElement(
     "input",
     {
       type: "checkbox",
       checked: somEnabled,
       onChange: (e) => onToggleSom && onToggleSom(e.target.checked)
     }
-  ), /* @__PURE__ */ import_react4.default.createElement("span", { className: "som-toggle-badge" }, "SoM")), /* @__PURE__ */ import_react4.default.createElement(
+  ), /* @__PURE__ */ import_react7.default.createElement("span", { className: "som-toggle-badge" }, "SoM")), /* @__PURE__ */ import_react7.default.createElement(
     "button",
     {
       className: "mac-pill-btn",
@@ -45530,7 +47017,7 @@ function AiHudSidebar({
     },
     "\u26A1 ",
     activeAiConfig?.name ? `${activeAiConfig.name}: ${activeAiConfig.model || ""}` : "AI Model"
-  ), /* @__PURE__ */ import_react4.default.createElement(
+  ), /* @__PURE__ */ import_react7.default.createElement(
     "button",
     {
       className: "mac-pill-btn",
@@ -45539,7 +47026,7 @@ function AiHudSidebar({
       style: { color: "#94a3b8", borderColor: "rgba(255, 255, 255, 0.15)" }
     },
     "\u2699\uFE0F Keys"
-  ), /* @__PURE__ */ import_react4.default.createElement(
+  ), /* @__PURE__ */ import_react7.default.createElement(
     "button",
     {
       className: "mac-pill-btn",
@@ -45547,7 +47034,7 @@ function AiHudSidebar({
       onClick: onDetachHud
     },
     "\u29C9 Detach \u2197"
-  ), onCloseHud && /* @__PURE__ */ import_react4.default.createElement(
+  ), onCloseHud && /* @__PURE__ */ import_react7.default.createElement(
     "button",
     {
       className: "mac-pill-btn close-x",
@@ -45555,14 +47042,14 @@ function AiHudSidebar({
       onClick: onCloseHud
     },
     "\u2715"
-  ))), /* @__PURE__ */ import_react4.default.createElement("nav", { className: "mac-cockpit-nav" }, /* @__PURE__ */ import_react4.default.createElement(
+  ))), /* @__PURE__ */ import_react7.default.createElement("nav", { className: "mac-cockpit-nav" }, /* @__PURE__ */ import_react7.default.createElement(
     "button",
     {
       className: `mac-nav-tab ${activeModuleTab === "chat" ? "active" : ""}`,
       onClick: () => setActiveModuleTab("chat")
     },
     "\u{1F4AC} AI Chat & Voice"
-  ), /* @__PURE__ */ import_react4.default.createElement(
+  ), /* @__PURE__ */ import_react7.default.createElement(
     "button",
     {
       className: `mac-nav-tab ${activeModuleTab === "shields" ? "active" : ""}`,
@@ -45571,14 +47058,14 @@ function AiHudSidebar({
     "\u{1F981} Shields (",
     shieldsStats.totalBlocked || 0,
     ")"
-  ), /* @__PURE__ */ import_react4.default.createElement(
+  ), /* @__PURE__ */ import_react7.default.createElement(
     "button",
     {
       className: `mac-nav-tab ${activeModuleTab === "tools" ? "active" : ""}`,
       onClick: () => setActiveModuleTab("tools")
     },
     "\u{1F6E0}\uFE0F Core Tools"
-  )), /* @__PURE__ */ import_react4.default.createElement("main", { className: "mac-cockpit-body" }, activeModuleTab === "chat" && /* @__PURE__ */ import_react4.default.createElement("div", { className: "mac-chat-view" }, /* @__PURE__ */ import_react4.default.createElement("div", { className: "mac-context-bar" }, /* @__PURE__ */ import_react4.default.createElement("span", { style: { fontSize: "13px" } }, "\u{1F310}"), /* @__PURE__ */ import_react4.default.createElement("span", { className: "mac-context-title" }, activeTab.title || "New Tab"), /* @__PURE__ */ import_react4.default.createElement("span", { className: "mac-context-badge" }, "\u{1F6E1}\uFE0F ", shieldsStats.totalBlocked || 0, " Blocked"), /* @__PURE__ */ import_react4.default.createElement(
+  )), /* @__PURE__ */ import_react7.default.createElement("main", { className: "mac-cockpit-body" }, activeModuleTab === "chat" && /* @__PURE__ */ import_react7.default.createElement("div", { className: "mac-chat-view" }, /* @__PURE__ */ import_react7.default.createElement("div", { className: "mac-context-bar" }, /* @__PURE__ */ import_react7.default.createElement("span", { style: { fontSize: "13px" } }, "\u{1F310}"), /* @__PURE__ */ import_react7.default.createElement("span", { className: "mac-context-title" }, activeTab.title || "New Tab"), /* @__PURE__ */ import_react7.default.createElement("span", { className: "mac-context-badge" }, "\u{1F6E1}\uFE0F ", shieldsStats.totalBlocked || 0, " Blocked"), /* @__PURE__ */ import_react7.default.createElement(
     "button",
     {
       className: `mac-speech-toggle ${voiceSpeechFeedback ? "active" : ""}`,
@@ -45586,7 +47073,7 @@ function AiHudSidebar({
       onClick: () => setVoiceSpeechFeedback(!voiceSpeechFeedback)
     },
     voiceSpeechFeedback ? "\u{1F50A} Speaking" : "\u{1F507} Muted"
-  )), /* @__PURE__ */ import_react4.default.createElement(
+  )), /* @__PURE__ */ import_react7.default.createElement(
     "div",
     {
       className: "mac-messages-stream",
@@ -45594,7 +47081,7 @@ function AiHudSidebar({
       onScroll: handleMessagesScroll,
       onWheel: handleMessagesWheel
     },
-    chatMessages.map((msg) => /* @__PURE__ */ import_react4.default.createElement("div", { key: msg.id, className: `mac-msg-row ${msg.role}` }, /* @__PURE__ */ import_react4.default.createElement("div", { className: "mac-msg-bubble" }, /* @__PURE__ */ import_react4.default.createElement("div", { className: "mac-msg-header" }, /* @__PURE__ */ import_react4.default.createElement("span", { className: "mac-msg-author" }, msg.role === "user" ? "You" : "\u2726 Copilot"), /* @__PURE__ */ import_react4.default.createElement("span", { className: "mac-msg-time" }, msg.time)), msg.role === "assistant" && msg.reasoning && /* @__PURE__ */ import_react4.default.createElement("div", { className: `chatgpt-thought-container ${msg.isThinking ? "active-thinking" : ""}` }, /* @__PURE__ */ import_react4.default.createElement("div", { className: "thought-header", onClick: () => toggleThoughtCollapse(msg.id) }, /* @__PURE__ */ import_react4.default.createElement("div", { className: "thought-title-group" }, msg.isThinking ? /* @__PURE__ */ import_react4.default.createElement(import_react4.default.Fragment, null, /* @__PURE__ */ import_react4.default.createElement("span", { className: "thought-shimmer-pulse" }), /* @__PURE__ */ import_react4.default.createElement("span", null, "Thinking... ", msg.thoughtDuration ? `(${msg.thoughtDuration}s)` : "")) : /* @__PURE__ */ import_react4.default.createElement(import_react4.default.Fragment, null, /* @__PURE__ */ import_react4.default.createElement("span", null, "\u{1F4AD}"), /* @__PURE__ */ import_react4.default.createElement("span", null, "Thought for ", msg.thoughtDuration || "2.4", "s"))), /* @__PURE__ */ import_react4.default.createElement(
+    chatMessages.map((msg) => /* @__PURE__ */ import_react7.default.createElement("div", { key: msg.id, className: `mac-msg-row ${msg.role}` }, /* @__PURE__ */ import_react7.default.createElement("div", { className: "mac-msg-bubble" }, /* @__PURE__ */ import_react7.default.createElement("div", { className: "mac-msg-header" }, /* @__PURE__ */ import_react7.default.createElement("span", { className: "mac-msg-author" }, msg.role === "user" ? "You" : "\u2726 Copilot"), /* @__PURE__ */ import_react7.default.createElement("span", { className: "mac-msg-time" }, msg.time)), msg.role === "assistant" && msg.reasoning && /* @__PURE__ */ import_react7.default.createElement("div", { className: `chatgpt-thought-container ${msg.isThinking ? "active-thinking" : ""}` }, /* @__PURE__ */ import_react7.default.createElement("div", { className: "thought-header", onClick: () => toggleThoughtCollapse(msg.id) }, /* @__PURE__ */ import_react7.default.createElement("div", { className: "thought-title-group" }, msg.isThinking ? /* @__PURE__ */ import_react7.default.createElement(import_react7.default.Fragment, null, /* @__PURE__ */ import_react7.default.createElement("span", { className: "thought-shimmer-pulse" }), /* @__PURE__ */ import_react7.default.createElement("span", null, "Thinking... ", msg.thoughtDuration ? `(${msg.thoughtDuration}s)` : "")) : /* @__PURE__ */ import_react7.default.createElement(import_react7.default.Fragment, null, /* @__PURE__ */ import_react7.default.createElement("span", null, "\u{1F4AD}"), /* @__PURE__ */ import_react7.default.createElement("span", null, "Thought for ", msg.thoughtDuration || "2.4", "s"))), /* @__PURE__ */ import_react7.default.createElement(
       "button",
       {
         type: "button",
@@ -45606,10 +47093,10 @@ function AiHudSidebar({
         title: msg.thoughtCollapsed ? "Expand reasoning process" : "Collapse / Retract reasoning process"
       },
       msg.thoughtCollapsed ? "\u25B6 Expand Thought" : "\u25BC Collapse Thought"
-    )), !msg.thoughtCollapsed && /* @__PURE__ */ import_react4.default.createElement("div", { className: "thought-stream-body" }, msg.reasoning, msg.isThinking && /* @__PURE__ */ import_react4.default.createElement("span", { className: "streaming-caret" }))), msg.role === "assistant" && msg.toolEvents && msg.toolEvents.length > 0 && /* @__PURE__ */ import_react4.default.createElement("div", { className: "antigravity-tools-group" }, msg.toolEvents.map((tool) => /* @__PURE__ */ import_react4.default.createElement("div", { key: tool.id, className: `antigravity-tool-card ${tool.status}` }, /* @__PURE__ */ import_react4.default.createElement("div", { className: "tool-card-header", onClick: () => toggleToolCollapse(msg.id, tool.id) }, /* @__PURE__ */ import_react4.default.createElement("div", { className: "tool-card-title" }, /* @__PURE__ */ import_react4.default.createElement("span", null, tool.tool.includes("download") ? "\u{1F4E5}" : tool.tool.includes("tab") ? "\u{1F5C2}\uFE0F" : tool.tool.includes("search") ? "\u{1F50D}" : tool.tool.includes("remind") ? "\u{1F514}" : tool.tool.includes("click") ? "\u{1F5B1}\uFE0F" : "\u26A1"), /* @__PURE__ */ import_react4.default.createElement("span", null, "Tool:"), /* @__PURE__ */ import_react4.default.createElement("code", { className: "tool-name-code" }, tool.tool)), /* @__PURE__ */ import_react4.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: 6 } }, tool.status === "running" && /* @__PURE__ */ import_react4.default.createElement("span", { className: "tool-status-badge running" }, /* @__PURE__ */ import_react4.default.createElement("span", { className: "tool-card-spinner" }), " Running..."), tool.status === "completed" && /* @__PURE__ */ import_react4.default.createElement("span", { className: "tool-status-badge completed" }, "\u2713 Verified ", tool.durationMs ? `(${tool.durationMs}ms)` : ""), tool.status === "failed" && /* @__PURE__ */ import_react4.default.createElement("span", { className: "tool-status-badge failed" }, "\u2717 Failed"), /* @__PURE__ */ import_react4.default.createElement("span", { style: { fontSize: 10, color: "#94a3b8" } }, tool.collapsed ? "\u25B6" : "\u25BC"))), !tool.collapsed && /* @__PURE__ */ import_react4.default.createElement("div", { className: "tool-card-body" }, tool.args && Object.keys(tool.args).length > 0 && /* @__PURE__ */ import_react4.default.createElement("div", null, /* @__PURE__ */ import_react4.default.createElement("div", { className: "tool-params-label" }, "Parameters"), /* @__PURE__ */ import_react4.default.createElement("pre", { className: "tool-params-pre" }, JSON.stringify(tool.args, null, 2))), (tool.observation || tool.result) && /* @__PURE__ */ import_react4.default.createElement("div", { className: "tool-obs-box" }, /* @__PURE__ */ import_react4.default.createElement("strong", null, "Live Observation:"), " ", tool.observation || tool.result))))), (() => {
+    )), !msg.thoughtCollapsed && /* @__PURE__ */ import_react7.default.createElement("div", { className: "thought-stream-body" }, msg.reasoning, msg.isThinking && /* @__PURE__ */ import_react7.default.createElement("span", { className: "streaming-caret" }))), msg.role === "assistant" && msg.toolEvents && msg.toolEvents.length > 0 && /* @__PURE__ */ import_react7.default.createElement("div", { className: "antigravity-tools-group" }, msg.toolEvents.map((tool) => /* @__PURE__ */ import_react7.default.createElement("div", { key: tool.id, className: `antigravity-tool-card ${tool.status}` }, /* @__PURE__ */ import_react7.default.createElement("div", { className: "tool-card-header", onClick: () => toggleToolCollapse(msg.id, tool.id) }, /* @__PURE__ */ import_react7.default.createElement("div", { className: "tool-card-title" }, /* @__PURE__ */ import_react7.default.createElement("span", null, tool.tool.includes("download") ? "\u{1F4E5}" : tool.tool.includes("tab") ? "\u{1F5C2}\uFE0F" : tool.tool.includes("search") ? "\u{1F50D}" : tool.tool.includes("remind") ? "\u{1F514}" : tool.tool.includes("click") ? "\u{1F5B1}\uFE0F" : "\u26A1"), /* @__PURE__ */ import_react7.default.createElement("span", null, "Tool:"), /* @__PURE__ */ import_react7.default.createElement("code", { className: "tool-name-code" }, tool.tool)), /* @__PURE__ */ import_react7.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: 6 } }, tool.status === "running" && /* @__PURE__ */ import_react7.default.createElement("span", { className: "tool-status-badge running" }, /* @__PURE__ */ import_react7.default.createElement("span", { className: "tool-card-spinner" }), " Running..."), tool.status === "completed" && /* @__PURE__ */ import_react7.default.createElement("span", { className: "tool-status-badge completed" }, "\u2713 Verified ", tool.durationMs ? `(${tool.durationMs}ms)` : ""), tool.status === "failed" && /* @__PURE__ */ import_react7.default.createElement("span", { className: "tool-status-badge failed" }, "\u2717 Failed"), /* @__PURE__ */ import_react7.default.createElement("span", { style: { fontSize: 10, color: "#94a3b8" } }, tool.collapsed ? "\u25B6" : "\u25BC"))), !tool.collapsed && /* @__PURE__ */ import_react7.default.createElement("div", { className: "tool-card-body" }, tool.args && Object.keys(tool.args).length > 0 && /* @__PURE__ */ import_react7.default.createElement("div", null, /* @__PURE__ */ import_react7.default.createElement("div", { className: "tool-params-label" }, "Parameters"), /* @__PURE__ */ import_react7.default.createElement("pre", { className: "tool-params-pre" }, JSON.stringify(tool.args, null, 2))), (tool.observation || tool.result) && /* @__PURE__ */ import_react7.default.createElement("div", { className: "tool-obs-box" }, /* @__PURE__ */ import_react7.default.createElement("strong", null, "Live Observation:"), " ", tool.observation || tool.result))))), (() => {
       const displayText = stripToolCallsFromText(msg.text);
       if (displayText) {
-        return /* @__PURE__ */ import_react4.default.createElement(
+        return /* @__PURE__ */ import_react7.default.createElement(
           "div",
           {
             className: "mac-msg-text",
@@ -45619,12 +47106,12 @@ function AiHudSidebar({
         );
       }
       if (msg.isStreaming && !msg.isThinking && !msg.reasoning && (!msg.toolEvents || msg.toolEvents.length === 0)) {
-        return /* @__PURE__ */ import_react4.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: 8, padding: "4px 0", color: "#94a3b8" } }, /* @__PURE__ */ import_react4.default.createElement("span", { className: "dot-live", style: { width: 6, height: 6, display: "inline-block" } }), /* @__PURE__ */ import_react4.default.createElement("span", { style: { fontSize: "12px" } }, "Connecting to AI model..."));
+        return /* @__PURE__ */ import_react7.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: 8, padding: "4px 0", color: "#94a3b8" } }, /* @__PURE__ */ import_react7.default.createElement("span", { className: "dot-live", style: { width: 6, height: 6, display: "inline-block" } }), /* @__PURE__ */ import_react7.default.createElement("span", { style: { fontSize: "12px" } }, "Connecting to AI model..."));
       }
       return null;
-    })(), msg.isStreaming && !msg.isThinking && stripToolCallsFromText(msg.text) && /* @__PURE__ */ import_react4.default.createElement("span", { className: "streaming-caret" })))),
-    isAiThinking && !chatMessages.some((m) => m.isStreaming) && /* @__PURE__ */ import_react4.default.createElement("div", { className: "mac-msg-row assistant" }, /* @__PURE__ */ import_react4.default.createElement("div", { className: "mac-msg-bubble thinking" }, /* @__PURE__ */ import_react4.default.createElement("span", { className: "dot-live", style: { width: 6, height: 6, display: "inline-block" } }), /* @__PURE__ */ import_react4.default.createElement("span", { style: { fontSize: "12px", color: "#94a3b8" } }, "Copilot is thinking..."))),
-    isScrolledUp && /* @__PURE__ */ import_react4.default.createElement(
+    })(), msg.isStreaming && !msg.isThinking && stripToolCallsFromText(msg.text) && /* @__PURE__ */ import_react7.default.createElement("span", { className: "streaming-caret" })))),
+    isAiThinking && !chatMessages.some((m) => m.isStreaming) && /* @__PURE__ */ import_react7.default.createElement("div", { className: "mac-msg-row assistant" }, /* @__PURE__ */ import_react7.default.createElement("div", { className: "mac-msg-bubble thinking" }, /* @__PURE__ */ import_react7.default.createElement("span", { className: "dot-live", style: { width: 6, height: 6, display: "inline-block" } }), /* @__PURE__ */ import_react7.default.createElement("span", { style: { fontSize: "12px", color: "#94a3b8" } }, "Copilot is thinking..."))),
+    isScrolledUp && /* @__PURE__ */ import_react7.default.createElement(
       "button",
       {
         type: "button",
@@ -45634,8 +47121,8 @@ function AiHudSidebar({
       },
       "\u2193 Latest"
     ),
-    /* @__PURE__ */ import_react4.default.createElement("div", { ref: messagesEndRef })
-  ), latestSnapshot && latestSnapshot.path && /* @__PURE__ */ import_react4.default.createElement("div", { style: {
+    /* @__PURE__ */ import_react7.default.createElement("div", { ref: messagesEndRef })
+  ), latestSnapshot && latestSnapshot.path && /* @__PURE__ */ import_react7.default.createElement("div", { style: {
     margin: "6px 0",
     padding: "6px 10px",
     borderRadius: "6px",
@@ -45646,7 +47133,7 @@ function AiHudSidebar({
     justifyContent: "space-between",
     fontSize: "11px",
     color: "#e2e8f0"
-  } }, /* @__PURE__ */ import_react4.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: "6px", overflow: "hidden" } }, /* @__PURE__ */ import_react4.default.createElement("span", null, "\u{1F4F8}"), /* @__PURE__ */ import_react4.default.createElement("span", { style: { fontFamily: "monospace", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }, title: latestSnapshot.path }, latestSnapshot.filename || latestSnapshot.path)), /* @__PURE__ */ import_react4.default.createElement(
+  } }, /* @__PURE__ */ import_react7.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: "6px", overflow: "hidden" } }, /* @__PURE__ */ import_react7.default.createElement("span", null, "\u{1F4F8}"), /* @__PURE__ */ import_react7.default.createElement("span", { style: { fontFamily: "monospace", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }, title: latestSnapshot.path }, latestSnapshot.filename || latestSnapshot.path)), /* @__PURE__ */ import_react7.default.createElement(
     "button",
     {
       onClick: () => {
@@ -45664,7 +47151,7 @@ function AiHudSidebar({
       title: "Copy full local path"
     },
     "Copy Path"
-  )), /* @__PURE__ */ import_react4.default.createElement("div", { className: "mac-whisper-bar" }, /* @__PURE__ */ import_react4.default.createElement("div", { className: "mac-lang-chips" }, /* @__PURE__ */ import_react4.default.createElement("span", { className: "mac-whisper-badge" }, "\u{1F9E0} Whisper Local ASR"), /* @__PURE__ */ import_react4.default.createElement(
+  )), /* @__PURE__ */ import_react7.default.createElement("div", { className: "mac-whisper-bar" }, /* @__PURE__ */ import_react7.default.createElement("div", { className: "mac-lang-chips" }, /* @__PURE__ */ import_react7.default.createElement("span", { className: "mac-whisper-badge" }, "\u{1F9E0} Whisper Local ASR"), /* @__PURE__ */ import_react7.default.createElement(
     "button",
     {
       className: `mac-lang-chip ${whisperLang === "auto" ? "active" : ""}`,
@@ -45672,7 +47159,7 @@ function AiHudSidebar({
       onClick: () => setWhisperLang("auto")
     },
     "\u{1F310} Auto"
-  ), /* @__PURE__ */ import_react4.default.createElement(
+  ), /* @__PURE__ */ import_react7.default.createElement(
     "button",
     {
       className: `mac-lang-chip ${whisperLang === "en" ? "active" : ""}`,
@@ -45680,7 +47167,7 @@ function AiHudSidebar({
       onClick: () => setWhisperLang("en")
     },
     "\u{1F1FA}\u{1F1F8} English"
-  ), /* @__PURE__ */ import_react4.default.createElement(
+  ), /* @__PURE__ */ import_react7.default.createElement(
     "button",
     {
       className: `mac-lang-chip ${whisperLang === "hi" ? "active" : ""}`,
@@ -45688,7 +47175,7 @@ function AiHudSidebar({
       onClick: () => setWhisperLang("hi")
     },
     "\u{1F1EE}\u{1F1F3} \u0939\u093F\u0928\u094D\u0926\u0940"
-  ), /* @__PURE__ */ import_react4.default.createElement(
+  ), /* @__PURE__ */ import_react7.default.createElement(
     "button",
     {
       className: `mac-lang-chip ${whisperLang === "ko" ? "active" : ""}`,
@@ -45696,7 +47183,7 @@ function AiHudSidebar({
       onClick: () => setWhisperLang("ko")
     },
     "\u{1F1F0}\u{1F1F7} \uD55C\uAD6D\uC5B4"
-  )), isWhisperRecording && /* @__PURE__ */ import_react4.default.createElement("div", { className: "mac-recording-indicator" }, /* @__PURE__ */ import_react4.default.createElement("span", { className: "pulse-red-dot" }), /* @__PURE__ */ import_react4.default.createElement("span", null, "Recording 16kHz PCM (", recordingTimer, "s)...")), isWhisperTranscribing && /* @__PURE__ */ import_react4.default.createElement("div", { className: "mac-transcribing-indicator" }, /* @__PURE__ */ import_react4.default.createElement("span", { className: "pulse-cyan-dot" }), /* @__PURE__ */ import_react4.default.createElement("span", null, "Whisper transcribing speech..."))), /* @__PURE__ */ import_react4.default.createElement("div", { className: "mac-chat-input-bar" }, /* @__PURE__ */ import_react4.default.createElement("div", { className: "mac-mic-group" }, /* @__PURE__ */ import_react4.default.createElement(
+  )), isWhisperRecording && /* @__PURE__ */ import_react7.default.createElement("div", { className: "mac-recording-indicator" }, /* @__PURE__ */ import_react7.default.createElement("span", { className: "pulse-red-dot" }), /* @__PURE__ */ import_react7.default.createElement("span", null, "Recording 16kHz PCM (", recordingTimer, "s)...")), isWhisperTranscribing && /* @__PURE__ */ import_react7.default.createElement("div", { className: "mac-transcribing-indicator" }, /* @__PURE__ */ import_react7.default.createElement("span", { className: "pulse-cyan-dot" }), /* @__PURE__ */ import_react7.default.createElement("span", null, "Whisper transcribing speech..."))), /* @__PURE__ */ import_react7.default.createElement("div", { className: "mac-chat-input-bar" }, /* @__PURE__ */ import_react7.default.createElement("div", { className: "mac-mic-group" }, /* @__PURE__ */ import_react7.default.createElement(
     "button",
     {
       className: `mac-mic-btn ${isWhisperRecording || isVoiceListening ? "listening" : ""}`,
@@ -45704,7 +47191,7 @@ function AiHudSidebar({
       onClick: toggleWhisperRecording
     },
     isWhisperRecording ? "\u{1F534}" : isWhisperTranscribing ? "\u23F3" : "\u{1F399}\uFE0F"
-  ), /* @__PURE__ */ import_react4.default.createElement(
+  ), /* @__PURE__ */ import_react7.default.createElement(
     "button",
     {
       className: "mac-mic-lang-badge",
@@ -45716,7 +47203,7 @@ function AiHudSidebar({
       }
     },
     whisperLang === "auto" ? "\u{1F310} Auto" : whisperLang === "en" ? "\u{1F1FA}\u{1F1F8} EN" : whisperLang === "hi" ? "\u{1F1EE}\u{1F1F3} HI" : "\u{1F1F0}\u{1F1F7} KO"
-  )), /* @__PURE__ */ import_react4.default.createElement(
+  )), /* @__PURE__ */ import_react7.default.createElement(
     "input",
     {
       type: "text",
@@ -45728,7 +47215,7 @@ function AiHudSidebar({
         if (e.key === "Enter") handleProcessNlpCommand(chatInput);
       }
     }
-  ), isGenerating ? /* @__PURE__ */ import_react4.default.createElement(
+  ), isGenerating ? /* @__PURE__ */ import_react7.default.createElement(
     "button",
     {
       type: "button",
@@ -45737,7 +47224,7 @@ function AiHudSidebar({
       onClick: handleStopGeneration
     },
     "\u23F9 Stop"
-  ) : /* @__PURE__ */ import_react4.default.createElement(
+  ) : /* @__PURE__ */ import_react7.default.createElement(
     "button",
     {
       className: "mac-send-btn",
@@ -45745,7 +47232,7 @@ function AiHudSidebar({
       onClick: () => handleProcessNlpCommand(chatInput)
     },
     "\u27A4"
-  ))), activeModuleTab === "shields" && /* @__PURE__ */ import_react4.default.createElement("div", { className: "mac-shields-view" }, /* @__PURE__ */ import_react4.default.createElement("div", { className: "mac-shields-hero" }, /* @__PURE__ */ import_react4.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: 10 } }, /* @__PURE__ */ import_react4.default.createElement("span", { style: { fontSize: "24px" } }, "\u{1F981}"), /* @__PURE__ */ import_react4.default.createElement("div", null, /* @__PURE__ */ import_react4.default.createElement("h3", { style: { fontSize: "14px", color: "#fff", margin: 0 } }, "Brave Shields Protection"), /* @__PURE__ */ import_react4.default.createElement("span", { style: { fontSize: "11px", color: "#94a3b8" } }, "EasyList + uBlock Origin \u2022 Rust Engine"))), /* @__PURE__ */ import_react4.default.createElement("span", { style: { fontSize: "11px", color: "#10b981", fontWeight: 600 } }, "\u25CF Active")), /* @__PURE__ */ import_react4.default.createElement("div", { className: "mac-metrics-grid" }, /* @__PURE__ */ import_react4.default.createElement("div", { className: "mac-metric-card" }, /* @__PURE__ */ import_react4.default.createElement("span", { className: "metric-val" }, shieldsStats.totalBlocked || 0), /* @__PURE__ */ import_react4.default.createElement("span", { className: "metric-lbl" }, "BLOCKED")), /* @__PURE__ */ import_react4.default.createElement("div", { className: "mac-metric-card" }, /* @__PURE__ */ import_react4.default.createElement("span", { className: "metric-val" }, shieldsStats.trackersBlocked || 0), /* @__PURE__ */ import_react4.default.createElement("span", { className: "metric-lbl" }, "TRACKERS")), /* @__PURE__ */ import_react4.default.createElement("div", { className: "mac-metric-card" }, /* @__PURE__ */ import_react4.default.createElement("span", { className: "metric-val" }, shieldsStats.savedBytes ? Math.round(shieldsStats.savedBytes / 1024) + " KB" : "0 KB"), /* @__PURE__ */ import_react4.default.createElement("span", { className: "metric-lbl" }, "SAVED")), /* @__PURE__ */ import_react4.default.createElement("div", { className: "mac-metric-card" }, /* @__PURE__ */ import_react4.default.createElement("span", { className: "metric-val" }, shieldsStats.savedTimeMs ? (shieldsStats.savedTimeMs / 1e3).toFixed(2) + "s" : "0.00s"), /* @__PURE__ */ import_react4.default.createElement("span", { className: "metric-lbl" }, "TIME"))), /* @__PURE__ */ import_react4.default.createElement("div", { className: "mac-rule-bar" }, /* @__PURE__ */ import_react4.default.createElement(
+  ))), activeModuleTab === "shields" && /* @__PURE__ */ import_react7.default.createElement("div", { className: "mac-shields-view" }, /* @__PURE__ */ import_react7.default.createElement("div", { className: "mac-shields-hero" }, /* @__PURE__ */ import_react7.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: 10 } }, /* @__PURE__ */ import_react7.default.createElement("span", { style: { fontSize: "24px" } }, "\u{1F981}"), /* @__PURE__ */ import_react7.default.createElement("div", null, /* @__PURE__ */ import_react7.default.createElement("h3", { style: { fontSize: "14px", color: "#fff", margin: 0 } }, "Brave Shields Protection"), /* @__PURE__ */ import_react7.default.createElement("span", { style: { fontSize: "11px", color: "#94a3b8" } }, "EasyList + uBlock Origin \u2022 Rust Engine"))), /* @__PURE__ */ import_react7.default.createElement("span", { style: { fontSize: "11px", color: "#10b981", fontWeight: 600 } }, "\u25CF Active")), /* @__PURE__ */ import_react7.default.createElement("div", { className: "mac-metrics-grid" }, /* @__PURE__ */ import_react7.default.createElement("div", { className: "mac-metric-card" }, /* @__PURE__ */ import_react7.default.createElement("span", { className: "metric-val" }, shieldsStats.totalBlocked || 0), /* @__PURE__ */ import_react7.default.createElement("span", { className: "metric-lbl" }, "BLOCKED")), /* @__PURE__ */ import_react7.default.createElement("div", { className: "mac-metric-card" }, /* @__PURE__ */ import_react7.default.createElement("span", { className: "metric-val" }, shieldsStats.trackersBlocked || 0), /* @__PURE__ */ import_react7.default.createElement("span", { className: "metric-lbl" }, "TRACKERS")), /* @__PURE__ */ import_react7.default.createElement("div", { className: "mac-metric-card" }, /* @__PURE__ */ import_react7.default.createElement("span", { className: "metric-val" }, shieldsStats.savedBytes ? Math.round(shieldsStats.savedBytes / 1024) + " KB" : "0 KB"), /* @__PURE__ */ import_react7.default.createElement("span", { className: "metric-lbl" }, "SAVED")), /* @__PURE__ */ import_react7.default.createElement("div", { className: "mac-metric-card" }, /* @__PURE__ */ import_react7.default.createElement("span", { className: "metric-val" }, shieldsStats.savedTimeMs ? (shieldsStats.savedTimeMs / 1e3).toFixed(2) + "s" : "0.00s"), /* @__PURE__ */ import_react7.default.createElement("span", { className: "metric-lbl" }, "TIME"))), /* @__PURE__ */ import_react7.default.createElement("div", { className: "mac-rule-bar" }, /* @__PURE__ */ import_react7.default.createElement(
     "input",
     {
       type: "text",
@@ -45760,7 +47247,7 @@ function AiHudSidebar({
         }
       }
     }
-  ), /* @__PURE__ */ import_react4.default.createElement(
+  ), /* @__PURE__ */ import_react7.default.createElement(
     "button",
     {
       className: "mac-pill-btn",
@@ -45772,35 +47259,35 @@ function AiHudSidebar({
       }
     },
     "+ Add"
-  )), /* @__PURE__ */ import_react4.default.createElement("div", { className: "mac-events-container" }, /* @__PURE__ */ import_react4.default.createElement("span", { style: { fontSize: "11px", fontWeight: 700, color: "#94a3b8", textTransform: "uppercase" } }, "Recent Zero-Byte Interceptions"), /* @__PURE__ */ import_react4.default.createElement("div", { className: "mac-events-list" }, !shieldsStats.recentEvents || shieldsStats.recentEvents.length === 0 ? /* @__PURE__ */ import_react4.default.createElement("div", { style: { padding: "16px", textAlign: "center", color: "#64748b", fontSize: "12px" } }, "No tracking requests detected yet.") : shieldsStats.recentEvents.map((ev, i) => /* @__PURE__ */ import_react4.default.createElement("div", { key: i, className: "mac-event-item" }, /* @__PURE__ */ import_react4.default.createElement("span", { className: "event-tag" }, "BLOCKED"), /* @__PURE__ */ import_react4.default.createElement("span", { className: "event-url", title: ev.url }, ev.url)))))), activeModuleTab === "tools" && /* @__PURE__ */ import_react4.default.createElement("div", { className: "mac-tools-view" }, /* @__PURE__ */ import_react4.default.createElement("div", { className: "mac-sub-nav" }, /* @__PURE__ */ import_react4.default.createElement(
+  )), /* @__PURE__ */ import_react7.default.createElement("div", { className: "mac-events-container" }, /* @__PURE__ */ import_react7.default.createElement("span", { style: { fontSize: "11px", fontWeight: 700, color: "#94a3b8", textTransform: "uppercase" } }, "Recent Zero-Byte Interceptions"), /* @__PURE__ */ import_react7.default.createElement("div", { className: "mac-events-list" }, !shieldsStats.recentEvents || shieldsStats.recentEvents.length === 0 ? /* @__PURE__ */ import_react7.default.createElement("div", { style: { padding: "16px", textAlign: "center", color: "#64748b", fontSize: "12px" } }, "No tracking requests detected yet.") : shieldsStats.recentEvents.map((ev, i) => /* @__PURE__ */ import_react7.default.createElement("div", { key: i, className: "mac-event-item" }, /* @__PURE__ */ import_react7.default.createElement("span", { className: "event-tag" }, "BLOCKED"), /* @__PURE__ */ import_react7.default.createElement("span", { className: "event-url", title: ev.url }, ev.url)))))), activeModuleTab === "tools" && /* @__PURE__ */ import_react7.default.createElement("div", { className: "mac-tools-view" }, /* @__PURE__ */ import_react7.default.createElement("div", { className: "mac-sub-nav" }, /* @__PURE__ */ import_react7.default.createElement(
     "button",
     {
       className: `sub-btn ${activeToolTab === "ax" ? "active" : ""}`,
       onClick: () => setActiveToolTab("ax")
     },
     "\u{1F332} AX Tree"
-  ), /* @__PURE__ */ import_react4.default.createElement(
+  ), /* @__PURE__ */ import_react7.default.createElement(
     "button",
     {
       className: `sub-btn ${activeToolTab === "grep" ? "active" : ""}`,
       onClick: () => setActiveToolTab("grep")
     },
     "\u{1F50D} Grep"
-  ), /* @__PURE__ */ import_react4.default.createElement(
+  ), /* @__PURE__ */ import_react7.default.createElement(
     "button",
     {
       className: `sub-btn ${activeToolTab === "autofill" ? "active" : ""}`,
       onClick: () => setActiveToolTab("autofill")
     },
     "\u{1F4DD} Autofill"
-  ), /* @__PURE__ */ import_react4.default.createElement(
+  ), /* @__PURE__ */ import_react7.default.createElement(
     "button",
     {
       className: `sub-btn ${activeToolTab === "telemetry" ? "active" : ""}`,
       onClick: () => setActiveToolTab("telemetry")
     },
     "\u{1F504} Telemetry"
-  )), activeToolTab === "ax" && /* @__PURE__ */ import_react4.default.createElement("div", { className: "mac-tool-panel" }, /* @__PURE__ */ import_react4.default.createElement("div", { style: { display: "flex", gap: 8, marginBottom: 8 } }, /* @__PURE__ */ import_react4.default.createElement(
+  )), activeToolTab === "ax" && /* @__PURE__ */ import_react7.default.createElement("div", { className: "mac-tool-panel" }, /* @__PURE__ */ import_react7.default.createElement("div", { style: { display: "flex", gap: 8, marginBottom: 8 } }, /* @__PURE__ */ import_react7.default.createElement(
     "input",
     {
       type: "text",
@@ -45809,7 +47296,7 @@ function AiHudSidebar({
       value: markFilter,
       onChange: (e) => setMarkFilter(e.target.value)
     }
-  ), /* @__PURE__ */ import_react4.default.createElement("button", { className: "mac-pill-btn", onClick: handleCopyAx }, copiedAx ? "\u2713 Copied" : "\u{1F4CB} Copy"), /* @__PURE__ */ import_react4.default.createElement("button", { className: "mac-pill-btn", onClick: onRescanAx }, "\u{1F504} Rescan")), /* @__PURE__ */ import_react4.default.createElement("pre", { className: "mac-code-box" }, getFilteredAxText())), activeToolTab === "grep" && /* @__PURE__ */ import_react4.default.createElement("div", { className: "mac-tool-panel" }, /* @__PURE__ */ import_react4.default.createElement("div", { style: { display: "flex", gap: 8, marginBottom: 8 } }, /* @__PURE__ */ import_react4.default.createElement(
+  ), /* @__PURE__ */ import_react7.default.createElement("button", { className: "mac-pill-btn", onClick: handleCopyAx }, copiedAx ? "\u2713 Copied" : "\u{1F4CB} Copy"), /* @__PURE__ */ import_react7.default.createElement("button", { className: "mac-pill-btn", onClick: onRescanAx }, "\u{1F504} Rescan")), /* @__PURE__ */ import_react7.default.createElement("pre", { className: "mac-code-box" }, getFilteredAxText())), activeToolTab === "grep" && /* @__PURE__ */ import_react7.default.createElement("div", { className: "mac-tool-panel" }, /* @__PURE__ */ import_react7.default.createElement("div", { style: { display: "flex", gap: 8, marginBottom: 8 } }, /* @__PURE__ */ import_react7.default.createElement(
     "input",
     {
       type: "text",
@@ -45823,7 +47310,7 @@ function AiHudSidebar({
         }
       }
     }
-  ), /* @__PURE__ */ import_react4.default.createElement(
+  ), /* @__PURE__ */ import_react7.default.createElement(
     "button",
     {
       className: "mac-pill-btn",
@@ -45832,49 +47319,63 @@ function AiHudSidebar({
       }
     },
     "Execute"
-  )), /* @__PURE__ */ import_react4.default.createElement("div", { className: "mac-code-box" }, grepMatches.length === 0 ? /* @__PURE__ */ import_react4.default.createElement("div", { style: { color: "#64748b", textAlign: "center", padding: "16px" } }, "No grep matches found. Type a query above.") : grepMatches.map((m, i) => /* @__PURE__ */ import_react4.default.createElement("div", { key: i, style: { padding: "4px 0", borderBottom: "1px solid rgba(255,255,255,0.05)", fontFamily: "var(--font-mono)" } }, typeof m === "object" ? JSON.stringify(m) : String(m))))), activeToolTab === "autofill" && /* @__PURE__ */ import_react4.default.createElement("div", { className: "mac-tool-panel" }, /* @__PURE__ */ import_react4.default.createElement("div", { style: { padding: "12px", background: "rgba(255,255,255,0.03)", borderRadius: 8, marginBottom: 12 } }, /* @__PURE__ */ import_react4.default.createElement("h4", { style: { color: "#fff", fontSize: "13px", marginBottom: 4 } }, "Autofill Engine (`components/autofill`)"), /* @__PURE__ */ import_react4.default.createElement("p", { style: { color: "#94a3b8", fontSize: "11px", margin: 0 } }, "Populate checkout and login fields using in-process C++ AutofillProfile heuristics.")), /* @__PURE__ */ import_react4.default.createElement("div", { style: { display: "flex", gap: 8 } }, /* @__PURE__ */ import_react4.default.createElement("button", { className: "mac-pill-btn", onClick: onTriggerAutofill }, "\u26A1 Execute Autofill Now"), /* @__PURE__ */ import_react4.default.createElement("button", { className: "mac-pill-btn", onClick: () => onLoadDemo && onLoadDemo("checkout") }, "Load Demo")), /* @__PURE__ */ import_react4.default.createElement("div", { style: { marginTop: 12, padding: "10px", background: "rgba(0,0,0,0.3)", borderRadius: 6, fontSize: "11px", color: "#10b981", fontFamily: "var(--font-mono)" } }, autofillStatus || "Ready for autofill execution.")), activeToolTab === "telemetry" && /* @__PURE__ */ import_react4.default.createElement("div", { className: "mac-tool-panel" }, /* @__PURE__ */ import_react4.default.createElement("div", { style: { display: "flex", justifyContent: "space-between", marginBottom: 8 } }, /* @__PURE__ */ import_react4.default.createElement("span", { style: { fontSize: "11px", color: "#94a3b8" } }, "Live In-Process Event Bus"), /* @__PURE__ */ import_react4.default.createElement("button", { className: "mac-pill-btn", onClick: onClearTelemetry }, "Clear Logs")), /* @__PURE__ */ import_react4.default.createElement("div", { className: "mac-code-box" }, telemetryLogs.length === 0 ? /* @__PURE__ */ import_react4.default.createElement("div", { style: { color: "#64748b", textAlign: "center", padding: "16px" } }, "No events logged yet.") : [...telemetryLogs].reverse().map((log, i) => /* @__PURE__ */ import_react4.default.createElement("div", { key: i, style: { padding: "3px 0", fontSize: "11px", fontFamily: "var(--font-mono)" } }, /* @__PURE__ */ import_react4.default.createElement("span", { style: { color: "#64748b" } }, "[", log.time, "] "), /* @__PURE__ */ import_react4.default.createElement("span", { style: { color: log.type === "act" ? "#00e5ff" : log.type === "verify" ? "#10b981" : "#e2e8f0" } }, log.msg))))))));
+  )), /* @__PURE__ */ import_react7.default.createElement("div", { className: "mac-code-box" }, grepMatches.length === 0 ? /* @__PURE__ */ import_react7.default.createElement("div", { style: { color: "#64748b", textAlign: "center", padding: "16px" } }, "No grep matches found. Type a query above.") : grepMatches.map((m, i) => /* @__PURE__ */ import_react7.default.createElement("div", { key: i, style: { padding: "4px 0", borderBottom: "1px solid rgba(255,255,255,0.05)", fontFamily: "var(--font-mono)" } }, typeof m === "object" ? JSON.stringify(m) : String(m))))), activeToolTab === "autofill" && /* @__PURE__ */ import_react7.default.createElement("div", { className: "mac-tool-panel" }, /* @__PURE__ */ import_react7.default.createElement("div", { style: { padding: "12px", background: "rgba(255,255,255,0.03)", borderRadius: 8, marginBottom: 12 } }, /* @__PURE__ */ import_react7.default.createElement("h4", { style: { color: "#fff", fontSize: "13px", marginBottom: 4 } }, "Autofill Engine (`components/autofill`)"), /* @__PURE__ */ import_react7.default.createElement("p", { style: { color: "#94a3b8", fontSize: "11px", margin: 0 } }, "Populate checkout and login fields using in-process C++ AutofillProfile heuristics.")), /* @__PURE__ */ import_react7.default.createElement("div", { style: { display: "flex", gap: 8 } }, /* @__PURE__ */ import_react7.default.createElement("button", { className: "mac-pill-btn", onClick: onTriggerAutofill }, "\u26A1 Execute Autofill Now"), /* @__PURE__ */ import_react7.default.createElement("button", { className: "mac-pill-btn", onClick: () => onLoadDemo && onLoadDemo("checkout") }, "Load Demo")), /* @__PURE__ */ import_react7.default.createElement("div", { style: { marginTop: 12, padding: "10px", background: "rgba(0,0,0,0.3)", borderRadius: 6, fontSize: "11px", color: "#10b981", fontFamily: "var(--font-mono)" } }, autofillStatus || "Ready for autofill execution.")), activeToolTab === "telemetry" && /* @__PURE__ */ import_react7.default.createElement("div", { className: "mac-tool-panel" }, /* @__PURE__ */ import_react7.default.createElement("div", { style: { display: "flex", justifyContent: "space-between", marginBottom: 8 } }, /* @__PURE__ */ import_react7.default.createElement("span", { style: { fontSize: "11px", color: "#94a3b8" } }, "Live In-Process Event Bus"), /* @__PURE__ */ import_react7.default.createElement("button", { className: "mac-pill-btn", onClick: onClearTelemetry }, "Clear Logs")), /* @__PURE__ */ import_react7.default.createElement("div", { className: "mac-code-box" }, telemetryLogs.length === 0 ? /* @__PURE__ */ import_react7.default.createElement("div", { style: { color: "#64748b", textAlign: "center", padding: "16px" } }, "No events logged yet.") : [...telemetryLogs].reverse().map((log, i) => /* @__PURE__ */ import_react7.default.createElement("div", { key: i, style: { padding: "3px 0", fontSize: "11px", fontFamily: "var(--font-mono)" } }, /* @__PURE__ */ import_react7.default.createElement("span", { style: { color: "#64748b" } }, "[", log.time, "] "), /* @__PURE__ */ import_react7.default.createElement("span", { style: { color: log.type === "act" ? "#00e5ff" : log.type === "verify" ? "#10b981" : "#e2e8f0" } }, log.msg))))))));
 }
 
 // desktop/src/components/BookmarksBar.jsx
-var import_react5 = __toESM(require_react());
+var import_react8 = __toESM(require_react());
 function BookmarksBar({
   bookmarks = [],
   onNavigate,
   onAddCurrentPage,
   onRemoveBookmark,
-  onOpenHistory
+  onOpenHistory,
+  isEditMode = false,
+  onOpenElementEditor
 }) {
-  return /* @__PURE__ */ import_react5.default.createElement("div", { className: "bookmarks-bar", id: "bookmarksBar" }, /* @__PURE__ */ import_react5.default.createElement(
+  return /* @__PURE__ */ import_react8.default.createElement("div", { className: "bookmarks-bar", id: "bookmarksBar" }, /* @__PURE__ */ import_react8.default.createElement(
     "div",
     {
       className: "bookmark-pill add-btn",
       title: "Bookmark active tab (Ctrl+D)",
       onClick: onAddCurrentPage
     },
-    /* @__PURE__ */ import_react5.default.createElement("span", null, "\u2795"),
-    /* @__PURE__ */ import_react5.default.createElement("span", null, "Add Bookmark")
-  ), bookmarks.map((bm) => /* @__PURE__ */ import_react5.default.createElement(
-    "div",
+    /* @__PURE__ */ import_react8.default.createElement("span", null, "\u2795"),
+    /* @__PURE__ */ import_react8.default.createElement("span", null, "Add Bookmark")
+  ), /* @__PURE__ */ import_react8.default.createElement(
+    CustomizableElementWrapper,
     {
-      key: bm.id || bm.url,
-      className: "bookmark-pill",
-      draggable: true,
-      onDragStart: (e) => {
-        e.dataTransfer.effectAllowed = "copyMove";
-        e.dataTransfer.setData("application/json", JSON.stringify(bm));
-        e.dataTransfer.setData("text/plain", bm.url);
-        e.dataTransfer.setData("text/uri-list", bm.url);
+      elementId: "element_bookmark_pill",
+      isEditMode,
+      onOpenElementEditor,
+      onAction: (action, payload) => {
+        if (action === "navigate" && payload?.val) onNavigate(payload.val);
       },
-      title: `${bm.title} (${bm.url}) \u2014 Left-click to open, right-click to remove, drag onto home page`,
-      onClick: () => onNavigate(bm.url),
-      onContextMenu: (e) => {
-        e.preventDefault();
-        if (onRemoveBookmark) onRemoveBookmark(bm.id || bm.url);
-      }
+      style: { display: "flex", alignItems: "center", gap: 6 }
     },
-    /* @__PURE__ */ import_react5.default.createElement("span", null, "\u{1F516}"),
-    /* @__PURE__ */ import_react5.default.createElement("span", null, bm.title || bm.url)
-  )), /* @__PURE__ */ import_react5.default.createElement(
+    /* @__PURE__ */ import_react8.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: 6 } }, bookmarks.map((bm) => /* @__PURE__ */ import_react8.default.createElement(
+      "div",
+      {
+        key: bm.id || bm.url,
+        className: "bookmark-pill",
+        draggable: true,
+        onDragStart: (e) => {
+          e.dataTransfer.effectAllowed = "copyMove";
+          e.dataTransfer.setData("application/json", JSON.stringify(bm));
+          e.dataTransfer.setData("text/plain", bm.url);
+          e.dataTransfer.setData("text/uri-list", bm.url);
+        },
+        title: `${bm.title} (${bm.url}) \u2014 Left-click to open, right-click to remove, drag onto home page`,
+        onClick: () => onNavigate(bm.url),
+        onContextMenu: (e) => {
+          e.preventDefault();
+          if (onRemoveBookmark) onRemoveBookmark(bm.id || bm.url);
+        }
+      },
+      /* @__PURE__ */ import_react8.default.createElement("span", null, "\u{1F516}"),
+      /* @__PURE__ */ import_react8.default.createElement("span", null, bm.title || bm.url)
+    )))
+  ), /* @__PURE__ */ import_react8.default.createElement(
     "div",
     {
       className: "bookmark-pill",
@@ -45882,13 +47383,100 @@ function BookmarksBar({
       style: { marginLeft: "auto", background: "rgba(255, 255, 255, 0.05)", borderColor: "rgba(255, 255, 255, 0.12)" },
       onClick: onOpenHistory
     },
-    /* @__PURE__ */ import_react5.default.createElement("span", null, "\u{1F552}"),
-    /* @__PURE__ */ import_react5.default.createElement("span", null, "History")
+    /* @__PURE__ */ import_react8.default.createElement("span", null, "\u{1F552}"),
+    /* @__PURE__ */ import_react8.default.createElement("span", null, "History")
   ));
 }
 
+// desktop/src/services/dndLayoutService.js
+var STORAGE_KEY2 = "antigravity_ui_layout_v1";
+var DEFAULT_UI_LAYOUT = {
+  toolbarOrder: [
+    "nav-controls",
+    "engine-toggle",
+    "omnibox",
+    "go-btn",
+    "tools-actions",
+    "status-pill"
+  ],
+  sidebarDock: "right",
+  // 'right' | 'left' | 'bottom' | 'float'
+  sidebarWidth: 380,
+  sidebarHeight: 280,
+  splitView: {
+    active: false,
+    leftTabId: null,
+    rightTabId: null,
+    ratio: 0.5
+  },
+  newTabWidgets: ["time-greeting", "search-hero", "speed-dials", "ai-bar"],
+  editMode: false
+};
+var VALID_DOCK_POSITIONS = /* @__PURE__ */ new Set(["right", "left", "bottom", "float"]);
+function isValidDockPosition(pos) {
+  return VALID_DOCK_POSITIONS.has(pos);
+}
+function arrayMove(array, fromIndex, toIndex) {
+  if (!Array.isArray(array)) return [];
+  if (fromIndex === toIndex || fromIndex < 0 || fromIndex >= array.length) {
+    return [...array];
+  }
+  const targetIdx = Math.max(0, Math.min(toIndex, array.length - 1));
+  const result = [...array];
+  const [movedItem] = result.splice(fromIndex, 1);
+  result.splice(targetIdx, 0, movedItem);
+  return result;
+}
+function loadLayoutConfig() {
+  try {
+    if (typeof localStorage === "undefined") return { ...DEFAULT_UI_LAYOUT };
+    const stored = localStorage.getItem(STORAGE_KEY2);
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      return {
+        ...DEFAULT_UI_LAYOUT,
+        ...parsed,
+        toolbarOrder: Array.isArray(parsed.toolbarOrder) && parsed.toolbarOrder.length > 0 ? parsed.toolbarOrder : DEFAULT_UI_LAYOUT.toolbarOrder,
+        sidebarDock: isValidDockPosition(parsed.sidebarDock) ? parsed.sidebarDock : DEFAULT_UI_LAYOUT.sidebarDock
+      };
+    }
+  } catch (e) {
+    console.warn("[dndLayoutService] Failed reading layout, using defaults:", e);
+  }
+  return { ...DEFAULT_UI_LAYOUT };
+}
+function saveLayoutConfig(config) {
+  try {
+    if (typeof localStorage === "undefined") return false;
+    const current = loadLayoutConfig();
+    const merged = { ...current, ...config };
+    localStorage.setItem(STORAGE_KEY2, JSON.stringify(merged));
+    if (typeof window !== "undefined" && window.dispatchEvent) {
+      window.dispatchEvent(new CustomEvent("antigravity-layout-changed", { detail: merged }));
+    }
+    return true;
+  } catch (e) {
+    console.error("[dndLayoutService] Failed saving layout config:", e);
+    return false;
+  }
+}
+function reorderTabs(tabsList, sourceTabId, targetTabId) {
+  if (!Array.isArray(tabsList)) return [];
+  const fromIndex = tabsList.findIndex((t) => t && t.id === sourceTabId);
+  const toIndex = tabsList.findIndex((t) => t && t.id === targetTabId);
+  if (fromIndex === -1 || toIndex === -1 || fromIndex === toIndex) return [...tabsList];
+  return arrayMove(tabsList, fromIndex, toIndex);
+}
+function reorderToolbar(currentOrder, sourceModuleId, targetModuleId) {
+  const list = Array.isArray(currentOrder) ? currentOrder : DEFAULT_UI_LAYOUT.toolbarOrder;
+  const fromIndex = list.indexOf(sourceModuleId);
+  const toIndex = list.indexOf(targetModuleId);
+  if (fromIndex === -1 || toIndex === -1 || fromIndex === toIndex) return [...list];
+  return arrayMove(list, fromIndex, toIndex);
+}
+
 // desktop/src/components/TabSearchModal.jsx
-var import_react6 = __toESM(require_react());
+var import_react9 = __toESM(require_react());
 function TabSearchModal({
   isOpen,
   tabs = [],
@@ -45896,10 +47484,10 @@ function TabSearchModal({
   onSelectTab,
   onClose
 }) {
-  const [query, setQuery] = (0, import_react6.useState)("");
-  const [selectedIndex, setSelectedIndex] = (0, import_react6.useState)(0);
-  const inputRef = (0, import_react6.useRef)(null);
-  (0, import_react6.useEffect)(() => {
+  const [query, setQuery] = (0, import_react9.useState)("");
+  const [selectedIndex, setSelectedIndex] = (0, import_react9.useState)(0);
+  const inputRef = (0, import_react9.useRef)(null);
+  (0, import_react9.useEffect)(() => {
     if (isOpen) {
       setQuery("");
       setSelectedIndex(0);
@@ -45934,13 +47522,13 @@ function TabSearchModal({
       }
     }
   };
-  return /* @__PURE__ */ import_react6.default.createElement("div", { className: "command-palette-modal", onClick: onClose }, /* @__PURE__ */ import_react6.default.createElement("div", { className: "command-palette-backdrop" }), /* @__PURE__ */ import_react6.default.createElement(
+  return /* @__PURE__ */ import_react9.default.createElement("div", { className: "command-palette-modal", onClick: onClose }, /* @__PURE__ */ import_react9.default.createElement("div", { className: "command-palette-backdrop" }), /* @__PURE__ */ import_react9.default.createElement(
     "div",
     {
       className: "command-palette-container",
       onClick: (e) => e.stopPropagation()
     },
-    /* @__PURE__ */ import_react6.default.createElement("div", { className: "command-palette-header" }, /* @__PURE__ */ import_react6.default.createElement("span", { className: "palette-icon" }, "\u{1F50D}"), /* @__PURE__ */ import_react6.default.createElement(
+    /* @__PURE__ */ import_react9.default.createElement("div", { className: "command-palette-header" }, /* @__PURE__ */ import_react9.default.createElement("span", { className: "palette-icon" }, "\u{1F50D}"), /* @__PURE__ */ import_react9.default.createElement(
       "input",
       {
         ref: inputRef,
@@ -45954,11 +47542,11 @@ function TabSearchModal({
         },
         onKeyDown: handleKeyDown
       }
-    ), /* @__PURE__ */ import_react6.default.createElement("span", { className: "palette-badge", onClick: onClose }, "ESC")),
-    /* @__PURE__ */ import_react6.default.createElement("div", { className: "command-palette-results" }, filteredTabs.length === 0 ? /* @__PURE__ */ import_react6.default.createElement("div", { style: { padding: "20px", textAlign: "center", color: "#94a3b8", fontSize: "13px" } }, 'No open tabs matching "', query, '"') : filteredTabs.map((tab, idx) => {
+    ), /* @__PURE__ */ import_react9.default.createElement("span", { className: "palette-badge", onClick: onClose }, "ESC")),
+    /* @__PURE__ */ import_react9.default.createElement("div", { className: "command-palette-results" }, filteredTabs.length === 0 ? /* @__PURE__ */ import_react9.default.createElement("div", { style: { padding: "20px", textAlign: "center", color: "#94a3b8", fontSize: "13px" } }, 'No open tabs matching "', query, '"') : filteredTabs.map((tab, idx) => {
       const isSelected = idx === selectedIndex;
       const isCurrentActive = tab.id === activeTabId;
-      return /* @__PURE__ */ import_react6.default.createElement(
+      return /* @__PURE__ */ import_react9.default.createElement(
         "div",
         {
           key: tab.id,
@@ -45968,35 +47556,35 @@ function TabSearchModal({
             onClose();
           }
         },
-        /* @__PURE__ */ import_react6.default.createElement("span", { style: { fontSize: "16px" } }, tab.url && tab.url.startsWith("https://") ? "\u{1F310}" : "\u{1F4C4}"),
-        /* @__PURE__ */ import_react6.default.createElement("div", { style: { flex: 1, minWidth: 0 } }, /* @__PURE__ */ import_react6.default.createElement("div", { className: "palette-result-title" }, tab.title || "New Tab", isCurrentActive && /* @__PURE__ */ import_react6.default.createElement("span", { style: { marginLeft: 6, fontSize: 10, color: "var(--accent-cyan)", background: "rgba(0,229,255,0.15)", padding: "1px 5px", borderRadius: 4 } }, "Current")), /* @__PURE__ */ import_react6.default.createElement("div", { className: "palette-result-url" }, tab.url || "about:blank")),
-        /* @__PURE__ */ import_react6.default.createElement("span", { style: { fontSize: "11px", color: "#64748b" } }, "Tab #", tab.id)
+        /* @__PURE__ */ import_react9.default.createElement("span", { style: { fontSize: "16px" } }, tab.url && tab.url.startsWith("https://") ? "\u{1F310}" : "\u{1F4C4}"),
+        /* @__PURE__ */ import_react9.default.createElement("div", { style: { flex: 1, minWidth: 0 } }, /* @__PURE__ */ import_react9.default.createElement("div", { className: "palette-result-title" }, tab.title || "New Tab", isCurrentActive && /* @__PURE__ */ import_react9.default.createElement("span", { style: { marginLeft: 6, fontSize: 10, color: "var(--accent-cyan)", background: "rgba(0,229,255,0.15)", padding: "1px 5px", borderRadius: 4 } }, "Current")), /* @__PURE__ */ import_react9.default.createElement("div", { className: "palette-result-url" }, tab.url || "about:blank")),
+        /* @__PURE__ */ import_react9.default.createElement("span", { style: { fontSize: "11px", color: "#64748b" } }, "Tab #", tab.id)
       );
     }))
   ));
 }
 
 // desktop/src/components/ReaderModeModal.jsx
-var import_react7 = __toESM(require_react());
+var import_react10 = __toESM(require_react());
 function ReaderModeModal({
   isOpen,
   title,
   content,
   onClose
 }) {
-  const [fontSize, setFontSize] = (0, import_react7.useState)(16);
+  const [fontSize, setFontSize] = (0, import_react10.useState)(16);
   if (!isOpen) return null;
   const handleFontSizeToggle = () => {
     setFontSize((prev) => prev >= 22 ? 14 : prev + 2);
   };
-  return /* @__PURE__ */ import_react7.default.createElement("div", { className: "command-palette-modal", onClick: onClose }, /* @__PURE__ */ import_react7.default.createElement("div", { className: "command-palette-backdrop" }), /* @__PURE__ */ import_react7.default.createElement(
+  return /* @__PURE__ */ import_react10.default.createElement("div", { className: "command-palette-modal", onClick: onClose }, /* @__PURE__ */ import_react10.default.createElement("div", { className: "command-palette-backdrop" }), /* @__PURE__ */ import_react10.default.createElement(
     "div",
     {
       className: "command-palette-container",
       style: { width: "740px", maxHeight: "85vh" },
       onClick: (e) => e.stopPropagation()
     },
-    /* @__PURE__ */ import_react7.default.createElement("div", { className: "command-palette-header" }, /* @__PURE__ */ import_react7.default.createElement("span", { className: "palette-icon" }, "\u{1F4D6}"), /* @__PURE__ */ import_react7.default.createElement("span", { style: { fontWeight: 700, fontSize: "13.5px", color: "var(--accent-cyan)" } }, "Clean Reader Mode: ", title || "Web Article"), /* @__PURE__ */ import_react7.default.createElement(
+    /* @__PURE__ */ import_react10.default.createElement("div", { className: "command-palette-header" }, /* @__PURE__ */ import_react10.default.createElement("span", { className: "palette-icon" }, "\u{1F4D6}"), /* @__PURE__ */ import_react10.default.createElement("span", { style: { fontWeight: 700, fontSize: "13.5px", color: "var(--accent-cyan)" } }, "Clean Reader Mode: ", title || "Web Article"), /* @__PURE__ */ import_react10.default.createElement(
       "button",
       {
         className: "btn-toolbar-tool",
@@ -46007,8 +47595,8 @@ function ReaderModeModal({
       "A+ Font (",
       fontSize,
       "px)"
-    ), /* @__PURE__ */ import_react7.default.createElement("span", { className: "palette-badge", onClick: onClose }, "ESC")),
-    /* @__PURE__ */ import_react7.default.createElement(
+    ), /* @__PURE__ */ import_react10.default.createElement("span", { className: "palette-badge", onClick: onClose }, "ESC")),
+    /* @__PURE__ */ import_react10.default.createElement(
       "div",
       {
         style: {
@@ -46021,20 +47609,20 @@ function ReaderModeModal({
           fontFamily: "'Plus Jakarta Sans', sans-serif"
         }
       },
-      /* @__PURE__ */ import_react7.default.createElement("h1", { style: { fontSize: `${fontSize + 8}px`, marginBottom: "16px", color: "#f8fafc", fontWeight: 800 } }, title || "Article Content"),
-      content ? /* @__PURE__ */ import_react7.default.createElement("div", { style: { whiteSpace: "pre-line" } }, content) : /* @__PURE__ */ import_react7.default.createElement("div", { style: { color: "#94a3b8", fontStyle: "italic" } }, "Loading distraction-free article text from active page...")
+      /* @__PURE__ */ import_react10.default.createElement("h1", { style: { fontSize: `${fontSize + 8}px`, marginBottom: "16px", color: "#f8fafc", fontWeight: 800 } }, title || "Article Content"),
+      content ? /* @__PURE__ */ import_react10.default.createElement("div", { style: { whiteSpace: "pre-line" } }, content) : /* @__PURE__ */ import_react10.default.createElement("div", { style: { color: "#94a3b8", fontStyle: "italic" } }, "Loading distraction-free article text from active page...")
     )
   ));
 }
 
 // desktop/src/components/QrCodeModal.jsx
-var import_react8 = __toESM(require_react());
+var import_react11 = __toESM(require_react());
 function QrCodeModal({
   isOpen,
   url,
   onClose
 }) {
-  const [copied, setCopied] = (0, import_react8.useState)(false);
+  const [copied, setCopied] = (0, import_react11.useState)(false);
   if (!isOpen) return null;
   const cleanUrl = url && (url.startsWith("http://") || url.startsWith("https://")) ? url : "https://www.google.com";
   const qrImageUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(cleanUrl)}`;
@@ -46045,22 +47633,22 @@ function QrCodeModal({
     }).catch(() => {
     });
   };
-  return /* @__PURE__ */ import_react8.default.createElement("div", { className: "command-palette-modal", onClick: onClose }, /* @__PURE__ */ import_react8.default.createElement("div", { className: "command-palette-backdrop" }), /* @__PURE__ */ import_react8.default.createElement(
+  return /* @__PURE__ */ import_react11.default.createElement("div", { className: "command-palette-modal", onClick: onClose }, /* @__PURE__ */ import_react11.default.createElement("div", { className: "command-palette-backdrop" }), /* @__PURE__ */ import_react11.default.createElement(
     "div",
     {
       className: "command-palette-container",
       style: { width: "420px" },
       onClick: (e) => e.stopPropagation()
     },
-    /* @__PURE__ */ import_react8.default.createElement("div", { className: "command-palette-header" }, /* @__PURE__ */ import_react8.default.createElement("span", { className: "palette-icon" }, "\u{1F4F1}"), /* @__PURE__ */ import_react8.default.createElement("span", { style: { fontWeight: 700, fontSize: "13px", color: "var(--accent-cyan)" } }, "Scan QR Code on Phone"), /* @__PURE__ */ import_react8.default.createElement("span", { className: "palette-badge", style: { marginLeft: "auto" }, onClick: onClose }, "ESC")),
-    /* @__PURE__ */ import_react8.default.createElement("div", { style: { padding: "24px", display: "flex", flexDirection: "column", alignItem: "center", alignItems: "center", gap: "14px", textAlign: "center" } }, /* @__PURE__ */ import_react8.default.createElement("div", { style: { padding: "10px", background: "#fff", borderRadius: "10px", boxShadow: "0 4px 15px rgba(0,0,0,0.5)" } }, /* @__PURE__ */ import_react8.default.createElement(
+    /* @__PURE__ */ import_react11.default.createElement("div", { className: "command-palette-header" }, /* @__PURE__ */ import_react11.default.createElement("span", { className: "palette-icon" }, "\u{1F4F1}"), /* @__PURE__ */ import_react11.default.createElement("span", { style: { fontWeight: 700, fontSize: "13px", color: "var(--accent-cyan)" } }, "Scan QR Code on Phone"), /* @__PURE__ */ import_react11.default.createElement("span", { className: "palette-badge", style: { marginLeft: "auto" }, onClick: onClose }, "ESC")),
+    /* @__PURE__ */ import_react11.default.createElement("div", { style: { padding: "24px", display: "flex", flexDirection: "column", alignItem: "center", alignItems: "center", gap: "14px", textAlign: "center" } }, /* @__PURE__ */ import_react11.default.createElement("div", { style: { padding: "10px", background: "#fff", borderRadius: "10px", boxShadow: "0 4px 15px rgba(0,0,0,0.5)" } }, /* @__PURE__ */ import_react11.default.createElement(
       "img",
       {
         src: qrImageUrl,
         alt: "QR Code",
         style: { width: "180px", height: "180px", display: "block" }
       }
-    )), /* @__PURE__ */ import_react8.default.createElement("div", { style: { fontSize: "11px", color: "#94a3b8", wordBreak: "break-all", maxWidth: "340px", fontFamily: "var(--font-mono)" } }, cleanUrl), /* @__PURE__ */ import_react8.default.createElement("div", { style: { fontSize: "12px", color: "#f8fafc", fontWeight: 500 } }, "Point your smartphone camera to open page instantly on mobile."), /* @__PURE__ */ import_react8.default.createElement(
+    )), /* @__PURE__ */ import_react11.default.createElement("div", { style: { fontSize: "11px", color: "#94a3b8", wordBreak: "break-all", maxWidth: "340px", fontFamily: "var(--font-mono)" } }, cleanUrl), /* @__PURE__ */ import_react11.default.createElement("div", { style: { fontSize: "12px", color: "#f8fafc", fontWeight: 500 } }, "Point your smartphone camera to open page instantly on mobile."), /* @__PURE__ */ import_react11.default.createElement(
       "button",
       {
         className: "btn-toolbar-tool",
@@ -46073,7 +47661,7 @@ function QrCodeModal({
 }
 
 // desktop/src/components/HistoryModal.jsx
-var import_react9 = __toESM(require_react());
+var import_react12 = __toESM(require_react());
 function HistoryModal({
   isOpen,
   history = [],
@@ -46082,10 +47670,10 @@ function HistoryModal({
   onClearHistory,
   onClose
 }) {
-  const [query, setQuery] = (0, import_react9.useState)("");
-  const [selectedIndex, setSelectedIndex] = (0, import_react9.useState)(0);
-  const inputRef = (0, import_react9.useRef)(null);
-  (0, import_react9.useEffect)(() => {
+  const [query, setQuery] = (0, import_react12.useState)("");
+  const [selectedIndex, setSelectedIndex] = (0, import_react12.useState)(0);
+  const inputRef = (0, import_react12.useRef)(null);
+  (0, import_react12.useEffect)(() => {
     if (isOpen) {
       setQuery("");
       setSelectedIndex(0);
@@ -46129,14 +47717,14 @@ function HistoryModal({
       }
     }
   };
-  return /* @__PURE__ */ import_react9.default.createElement("div", { className: "command-palette-modal", onClick: onClose }, /* @__PURE__ */ import_react9.default.createElement("div", { className: "command-palette-backdrop" }), /* @__PURE__ */ import_react9.default.createElement(
+  return /* @__PURE__ */ import_react12.default.createElement("div", { className: "command-palette-modal", onClick: onClose }, /* @__PURE__ */ import_react12.default.createElement("div", { className: "command-palette-backdrop" }), /* @__PURE__ */ import_react12.default.createElement(
     "div",
     {
       className: "command-palette-container",
       style: { width: "650px", maxHeight: "520px" },
       onClick: (e) => e.stopPropagation()
     },
-    /* @__PURE__ */ import_react9.default.createElement("div", { className: "command-palette-header" }, /* @__PURE__ */ import_react9.default.createElement("span", { className: "palette-icon" }, "\u{1F552}"), /* @__PURE__ */ import_react9.default.createElement(
+    /* @__PURE__ */ import_react12.default.createElement("div", { className: "command-palette-header" }, /* @__PURE__ */ import_react12.default.createElement("span", { className: "palette-icon" }, "\u{1F552}"), /* @__PURE__ */ import_react12.default.createElement(
       "input",
       {
         ref: inputRef,
@@ -46150,7 +47738,7 @@ function HistoryModal({
         },
         onKeyDown: handleKeyDown
       }
-    ), /* @__PURE__ */ import_react9.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: "8px" } }, history.length > 0 && /* @__PURE__ */ import_react9.default.createElement(
+    ), /* @__PURE__ */ import_react12.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: "8px" } }, history.length > 0 && /* @__PURE__ */ import_react12.default.createElement(
       "button",
       {
         style: {
@@ -46167,10 +47755,10 @@ function HistoryModal({
         onClick: onClearHistory
       },
       "Clear All"
-    ), /* @__PURE__ */ import_react9.default.createElement("span", { className: "palette-badge", onClick: onClose }, "ESC"))),
-    /* @__PURE__ */ import_react9.default.createElement("div", { className: "command-palette-results", style: { maxHeight: "420px" } }, filteredHistory.length === 0 ? /* @__PURE__ */ import_react9.default.createElement("div", { style: { padding: "28px", textAlign: "center", color: "#94a3b8", fontSize: "13px" } }, query ? `No history entries matching "${query}"` : "Browsing history is empty") : filteredHistory.map((item, idx) => {
+    ), /* @__PURE__ */ import_react12.default.createElement("span", { className: "palette-badge", onClick: onClose }, "ESC"))),
+    /* @__PURE__ */ import_react12.default.createElement("div", { className: "command-palette-results", style: { maxHeight: "420px" } }, filteredHistory.length === 0 ? /* @__PURE__ */ import_react12.default.createElement("div", { style: { padding: "28px", textAlign: "center", color: "#94a3b8", fontSize: "13px" } }, query ? `No history entries matching "${query}"` : "Browsing history is empty") : filteredHistory.map((item, idx) => {
       const isSelected = idx === selectedIndex;
-      return /* @__PURE__ */ import_react9.default.createElement(
+      return /* @__PURE__ */ import_react12.default.createElement(
         "div",
         {
           key: item.id || `${item.url}-${item.timestamp}`,
@@ -46180,9 +47768,9 @@ function HistoryModal({
             onClose();
           }
         },
-        /* @__PURE__ */ import_react9.default.createElement("span", { style: { fontSize: "15px" } }, item.url && item.url.startsWith("https://") ? "\u{1F310}" : "\u{1F4C4}"),
-        /* @__PURE__ */ import_react9.default.createElement("div", { style: { flex: 1, minWidth: 0 } }, /* @__PURE__ */ import_react9.default.createElement("div", { className: "palette-result-title" }, item.title || item.url), /* @__PURE__ */ import_react9.default.createElement("div", { className: "palette-result-url" }, item.url)),
-        /* @__PURE__ */ import_react9.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: "10px" } }, /* @__PURE__ */ import_react9.default.createElement("span", { style: { fontSize: "11px", color: "#64748b" } }, formatTime(item.timestamp)), /* @__PURE__ */ import_react9.default.createElement(
+        /* @__PURE__ */ import_react12.default.createElement("span", { style: { fontSize: "15px" } }, item.url && item.url.startsWith("https://") ? "\u{1F310}" : "\u{1F4C4}"),
+        /* @__PURE__ */ import_react12.default.createElement("div", { style: { flex: 1, minWidth: 0 } }, /* @__PURE__ */ import_react12.default.createElement("div", { className: "palette-result-title" }, item.title || item.url), /* @__PURE__ */ import_react12.default.createElement("div", { className: "palette-result-url" }, item.url)),
+        /* @__PURE__ */ import_react12.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: "10px" } }, /* @__PURE__ */ import_react12.default.createElement("span", { style: { fontSize: "11px", color: "#64748b" } }, formatTime(item.timestamp)), /* @__PURE__ */ import_react12.default.createElement(
           "button",
           {
             style: {
@@ -46210,7 +47798,7 @@ function HistoryModal({
 }
 
 // desktop/src/components/WallpaperStudioModal.jsx
-var import_react10 = __toESM(require_react());
+var import_react13 = __toESM(require_react());
 var PRESET_WALLPAPERS = [
   {
     id: "cosmic",
@@ -46258,14 +47846,14 @@ function WallpaperStudioModal({
 }) {
   const activeType = currentType || currentWallpaperType || "image";
   const normalizedOpacity = currentOpacity <= 1 ? Math.round(currentOpacity * 100) : currentOpacity;
-  const [previewUrl, setPreviewUrl] = (0, import_react10.useState)(currentWallpaper || "");
-  const [previewType, setPreviewType] = (0, import_react10.useState)(activeType);
-  const [opacity, setOpacity] = (0, import_react10.useState)(normalizedOpacity);
-  const [color, setColor] = (0, import_react10.useState)(currentColor);
-  const [isMuted, setIsMuted] = (0, import_react10.useState)(currentMuted !== void 0 ? currentMuted : true);
-  const [customUrlInput, setCustomUrlInput] = (0, import_react10.useState)("");
-  const fileInputRef = (0, import_react10.useRef)(null);
-  (0, import_react10.useEffect)(() => {
+  const [previewUrl, setPreviewUrl] = (0, import_react13.useState)(currentWallpaper || "");
+  const [previewType, setPreviewType] = (0, import_react13.useState)(activeType);
+  const [opacity, setOpacity] = (0, import_react13.useState)(normalizedOpacity);
+  const [color, setColor] = (0, import_react13.useState)(currentColor);
+  const [isMuted, setIsMuted] = (0, import_react13.useState)(currentMuted !== void 0 ? currentMuted : true);
+  const [customUrlInput, setCustomUrlInput] = (0, import_react13.useState)("");
+  const fileInputRef = (0, import_react13.useRef)(null);
+  (0, import_react13.useEffect)(() => {
     if (isOpen) {
       setPreviewUrl(currentWallpaper || "");
       setPreviewType(currentType || currentWallpaperType || "image");
@@ -46339,7 +47927,7 @@ function WallpaperStudioModal({
     }
     onClose();
   };
-  return /* @__PURE__ */ import_react10.default.createElement("div", { className: "ui-modal-backdrop", onClick: onClose }, /* @__PURE__ */ import_react10.default.createElement(
+  return /* @__PURE__ */ import_react13.default.createElement("div", { className: "ui-modal-backdrop", onClick: onClose }, /* @__PURE__ */ import_react13.default.createElement(
     "div",
     {
       className: "modal-container wallpaper-modal",
@@ -46352,14 +47940,14 @@ function WallpaperStudioModal({
       },
       onClick: (e) => e.stopPropagation()
     },
-    /* @__PURE__ */ import_react10.default.createElement("div", { className: "modal-header" }, /* @__PURE__ */ import_react10.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: "8px" } }, /* @__PURE__ */ import_react10.default.createElement("span", { style: { fontSize: "18px" } }, "\u{1F3A8}"), /* @__PURE__ */ import_react10.default.createElement("h3", { style: { margin: 0, fontSize: "15px", fontWeight: 600, color: "#f8fafc" } }, "Custom Wallpaper Studio")), /* @__PURE__ */ import_react10.default.createElement("button", { className: "modal-close-btn", onClick: onClose, title: "Close" }, "\u2715")),
-    /* @__PURE__ */ import_react10.default.createElement("div", { className: "wallpaper-modal-body" }, /* @__PURE__ */ import_react10.default.createElement(
+    /* @__PURE__ */ import_react13.default.createElement("div", { className: "modal-header" }, /* @__PURE__ */ import_react13.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: "8px" } }, /* @__PURE__ */ import_react13.default.createElement("span", { style: { fontSize: "18px" } }, "\u{1F3A8}"), /* @__PURE__ */ import_react13.default.createElement("h3", { style: { margin: 0, fontSize: "15px", fontWeight: 600, color: "#f8fafc" } }, "Custom Wallpaper Studio")), /* @__PURE__ */ import_react13.default.createElement("button", { className: "modal-close-btn", onClick: onClose, title: "Close" }, "\u2715")),
+    /* @__PURE__ */ import_react13.default.createElement("div", { className: "wallpaper-modal-body" }, /* @__PURE__ */ import_react13.default.createElement(
       "div",
       {
         className: "wallpaper-preview-box",
         style: { backgroundColor: color }
       },
-      previewUrl ? previewType === "video" ? /* @__PURE__ */ import_react10.default.createElement(
+      previewUrl ? previewType === "video" ? /* @__PURE__ */ import_react13.default.createElement(
         "video",
         {
           src: previewUrl,
@@ -46369,15 +47957,15 @@ function WallpaperStudioModal({
           loop: true,
           playsInline: true
         }
-      ) : /* @__PURE__ */ import_react10.default.createElement(
+      ) : /* @__PURE__ */ import_react13.default.createElement(
         "img",
         {
           src: previewUrl,
           alt: "Wallpaper Preview",
           style: { width: "100%", height: "100%", objectFit: "cover" }
         }
-      ) : /* @__PURE__ */ import_react10.default.createElement("span", { className: "wallpaper-preview-placeholder" }, "No wallpaper selected (Default browser dark theme)"),
-      previewUrl && /* @__PURE__ */ import_react10.default.createElement(
+      ) : /* @__PURE__ */ import_react13.default.createElement("span", { className: "wallpaper-preview-placeholder" }, "No wallpaper selected (Default browser dark theme)"),
+      previewUrl && /* @__PURE__ */ import_react13.default.createElement(
         "div",
         {
           style: {
@@ -46388,7 +47976,7 @@ function WallpaperStudioModal({
           }
         }
       )
-    ), /* @__PURE__ */ import_react10.default.createElement("div", null, /* @__PURE__ */ import_react10.default.createElement("label", { style: { fontSize: "12px", fontWeight: 600, color: "#94a3b8", display: "block", marginBottom: "8px" } }, "Studio Presets (Images & Loop Videos)"), /* @__PURE__ */ import_react10.default.createElement("div", { style: { display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: "8px" } }, PRESET_WALLPAPERS.map((preset) => /* @__PURE__ */ import_react10.default.createElement(
+    ), /* @__PURE__ */ import_react13.default.createElement("div", null, /* @__PURE__ */ import_react13.default.createElement("label", { style: { fontSize: "12px", fontWeight: 600, color: "#94a3b8", display: "block", marginBottom: "8px" } }, "Studio Presets (Images & Loop Videos)"), /* @__PURE__ */ import_react13.default.createElement("div", { style: { display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: "8px" } }, PRESET_WALLPAPERS.map((preset) => /* @__PURE__ */ import_react13.default.createElement(
       "div",
       {
         key: preset.id,
@@ -46412,8 +48000,8 @@ function WallpaperStudioModal({
           transition: "all 0.15s ease"
         }
       },
-      preset.type === "video" && /* @__PURE__ */ import_react10.default.createElement("div", { style: { fontSize: "10px", color: "#38bdf8", fontWeight: 600, textAlign: "center", padding: "2px" } }, "\u{1F3AC} Video")
-    )))), /* @__PURE__ */ import_react10.default.createElement("div", { className: "wallpaper-actions" }, /* @__PURE__ */ import_react10.default.createElement("div", { style: { display: "flex", gap: "8px" } }, /* @__PURE__ */ import_react10.default.createElement(
+      preset.type === "video" && /* @__PURE__ */ import_react13.default.createElement("div", { style: { fontSize: "10px", color: "#38bdf8", fontWeight: 600, textAlign: "center", padding: "2px" } }, "\u{1F3AC} Video")
+    )))), /* @__PURE__ */ import_react13.default.createElement("div", { className: "wallpaper-actions" }, /* @__PURE__ */ import_react13.default.createElement("div", { style: { display: "flex", gap: "8px" } }, /* @__PURE__ */ import_react13.default.createElement(
       "input",
       {
         type: "text",
@@ -46426,14 +48014,14 @@ function WallpaperStudioModal({
         },
         style: { flex: 1 }
       }
-    ), /* @__PURE__ */ import_react10.default.createElement(
+    ), /* @__PURE__ */ import_react13.default.createElement(
       "button",
       {
         className: "btn-wallpaper-action btn-blue",
         onClick: handleSetCustomUrl
       },
       "Set URL"
-    )), /* @__PURE__ */ import_react10.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: "8px" } }, /* @__PURE__ */ import_react10.default.createElement(
+    )), /* @__PURE__ */ import_react13.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: "8px" } }, /* @__PURE__ */ import_react13.default.createElement(
       "button",
       {
         type: "button",
@@ -46442,7 +48030,7 @@ function WallpaperStudioModal({
         onClick: handlePickNativeFile
       },
       "\u{1F4C1} Choose Local Image / Video / GIF (Native Dialog)"
-    ), /* @__PURE__ */ import_react10.default.createElement(
+    ), /* @__PURE__ */ import_react13.default.createElement(
       "input",
       {
         ref: fileInputRef,
@@ -46451,7 +48039,7 @@ function WallpaperStudioModal({
         style: { display: "none" },
         onChange: handleFileUpload
       }
-    )), previewType === "video" && /* @__PURE__ */ import_react10.default.createElement("div", { className: "wallpaper-audio-row" }, /* @__PURE__ */ import_react10.default.createElement("span", { style: { fontSize: "12px", color: "#94a3b8" } }, "Video Sound Playback:"), /* @__PURE__ */ import_react10.default.createElement("div", { style: { display: "flex", gap: "6px" } }, /* @__PURE__ */ import_react10.default.createElement(
+    )), previewType === "video" && /* @__PURE__ */ import_react13.default.createElement("div", { className: "wallpaper-audio-row" }, /* @__PURE__ */ import_react13.default.createElement("span", { style: { fontSize: "12px", color: "#94a3b8" } }, "Video Sound Playback:"), /* @__PURE__ */ import_react13.default.createElement("div", { style: { display: "flex", gap: "6px" } }, /* @__PURE__ */ import_react13.default.createElement(
       "button",
       {
         type: "button",
@@ -46459,7 +48047,7 @@ function WallpaperStudioModal({
         onClick: () => setIsMuted(true)
       },
       "\u{1F507} Muted (Quiet)"
-    ), /* @__PURE__ */ import_react10.default.createElement(
+    ), /* @__PURE__ */ import_react13.default.createElement(
       "button",
       {
         type: "button",
@@ -46467,7 +48055,7 @@ function WallpaperStudioModal({
         onClick: () => setIsMuted(false)
       },
       "\u{1F50A} Play Audio"
-    ))), /* @__PURE__ */ import_react10.default.createElement("div", { className: "wallpaper-opacity-row" }, /* @__PURE__ */ import_react10.default.createElement("label", { style: { fontSize: "12px", color: "#94a3b8" } }, "Dark Scrim Opacity:"), /* @__PURE__ */ import_react10.default.createElement(
+    ))), /* @__PURE__ */ import_react13.default.createElement("div", { className: "wallpaper-opacity-row" }, /* @__PURE__ */ import_react13.default.createElement("label", { style: { fontSize: "12px", color: "#94a3b8" } }, "Dark Scrim Opacity:"), /* @__PURE__ */ import_react13.default.createElement(
       "input",
       {
         type: "range",
@@ -46477,7 +48065,7 @@ function WallpaperStudioModal({
         onChange: (e) => setOpacity(parseInt(e.target.value, 10)),
         className: "wallpaper-range"
       }
-    ), /* @__PURE__ */ import_react10.default.createElement("span", { style: { fontSize: "11px", color: "#64748b", fontFamily: "var(--font-mono)" } }, opacity, "%")), /* @__PURE__ */ import_react10.default.createElement("div", { className: "wallpaper-color-row" }, /* @__PURE__ */ import_react10.default.createElement("label", { style: { fontSize: "12px", color: "#94a3b8" } }, "Base Underlay Color:"), /* @__PURE__ */ import_react10.default.createElement(
+    ), /* @__PURE__ */ import_react13.default.createElement("span", { style: { fontSize: "11px", color: "#64748b", fontFamily: "var(--font-mono)" } }, opacity, "%")), /* @__PURE__ */ import_react13.default.createElement("div", { className: "wallpaper-color-row" }, /* @__PURE__ */ import_react13.default.createElement("label", { style: { fontSize: "12px", color: "#94a3b8" } }, "Base Underlay Color:"), /* @__PURE__ */ import_react13.default.createElement(
       "input",
       {
         type: "color",
@@ -46485,7 +48073,7 @@ function WallpaperStudioModal({
         onChange: (e) => setColor(e.target.value),
         className: "wallpaper-color-input"
       }
-    )), /* @__PURE__ */ import_react10.default.createElement("div", { style: { display: "flex", gap: "8px", marginTop: "10px" } }, /* @__PURE__ */ import_react10.default.createElement(
+    )), /* @__PURE__ */ import_react13.default.createElement("div", { style: { display: "flex", gap: "8px", marginTop: "10px" } }, /* @__PURE__ */ import_react13.default.createElement(
       "button",
       {
         className: "btn-wallpaper-action btn-green",
@@ -46493,7 +48081,7 @@ function WallpaperStudioModal({
         onClick: handleApply
       },
       "\u2705 Apply Wallpaper"
-    ), currentWallpaper && /* @__PURE__ */ import_react10.default.createElement(
+    ), currentWallpaper && /* @__PURE__ */ import_react13.default.createElement(
       "button",
       {
         className: "btn-wallpaper-action btn-red",
@@ -46505,7 +48093,7 @@ function WallpaperStudioModal({
 }
 
 // desktop/src/components/DownloadsPage.jsx
-var import_react11 = __toESM(require_react());
+var import_react14 = __toESM(require_react());
 function DownloadsPage({
   downloads = [],
   onCancelDownload,
@@ -46516,7 +48104,7 @@ function DownloadsPage({
   onOpenDownloadsFolder,
   onClearCompleted
 }) {
-  const [searchTerm, setSearchTerm] = (0, import_react11.useState)("");
+  const [searchTerm, setSearchTerm] = (0, import_react14.useState)("");
   const getFileIcon = (filename = "", mimeType = "") => {
     const ext = filename.split(".").pop()?.toLowerCase() || "";
     if (["mp4", "mkv", "avi", "mov", "webm"].includes(ext) || mimeType.includes("video")) return "\u{1F3AC}";
@@ -46542,7 +48130,7 @@ function DownloadsPage({
   });
   const activeDownloads = filteredDownloads.filter((d) => d.state === "progressing");
   const pastDownloads = filteredDownloads.filter((d) => d.state !== "progressing");
-  return /* @__PURE__ */ import_react11.default.createElement("div", { className: "downloads-page-container" }, /* @__PURE__ */ import_react11.default.createElement("header", { className: "downloads-header" }, /* @__PURE__ */ import_react11.default.createElement("div", { className: "downloads-header-left" }, /* @__PURE__ */ import_react11.default.createElement("span", { className: "downloads-logo-icon" }, "\u{1F4E5}"), /* @__PURE__ */ import_react11.default.createElement("div", null, /* @__PURE__ */ import_react11.default.createElement("h1", { className: "downloads-title" }, "Downloads"), /* @__PURE__ */ import_react11.default.createElement("p", { className: "downloads-subtitle" }, activeDownloads.length > 0 ? `${activeDownloads.length} active download${activeDownloads.length > 1 ? "s" : ""}` : `${downloads.length} total downloads`))), /* @__PURE__ */ import_react11.default.createElement("div", { className: "downloads-search-wrapper" }, /* @__PURE__ */ import_react11.default.createElement("span", { className: "search-icon" }, "\u{1F50D}"), /* @__PURE__ */ import_react11.default.createElement(
+  return /* @__PURE__ */ import_react14.default.createElement("div", { className: "downloads-page-container" }, /* @__PURE__ */ import_react14.default.createElement("header", { className: "downloads-header" }, /* @__PURE__ */ import_react14.default.createElement("div", { className: "downloads-header-left" }, /* @__PURE__ */ import_react14.default.createElement("span", { className: "downloads-logo-icon" }, "\u{1F4E5}"), /* @__PURE__ */ import_react14.default.createElement("div", null, /* @__PURE__ */ import_react14.default.createElement("h1", { className: "downloads-title" }, "Downloads"), /* @__PURE__ */ import_react14.default.createElement("p", { className: "downloads-subtitle" }, activeDownloads.length > 0 ? `${activeDownloads.length} active download${activeDownloads.length > 1 ? "s" : ""}` : `${downloads.length} total downloads`))), /* @__PURE__ */ import_react14.default.createElement("div", { className: "downloads-search-wrapper" }, /* @__PURE__ */ import_react14.default.createElement("span", { className: "search-icon" }, "\u{1F50D}"), /* @__PURE__ */ import_react14.default.createElement(
     "input",
     {
       type: "text",
@@ -46551,7 +48139,7 @@ function DownloadsPage({
       value: searchTerm,
       onChange: (e) => setSearchTerm(e.target.value)
     }
-  ), searchTerm && /* @__PURE__ */ import_react11.default.createElement("button", { className: "search-clear-btn", onClick: () => setSearchTerm("") }, "\u2715")), /* @__PURE__ */ import_react11.default.createElement("div", { className: "downloads-header-actions" }, /* @__PURE__ */ import_react11.default.createElement(
+  ), searchTerm && /* @__PURE__ */ import_react14.default.createElement("button", { className: "search-clear-btn", onClick: () => setSearchTerm("") }, "\u2715")), /* @__PURE__ */ import_react14.default.createElement("div", { className: "downloads-header-actions" }, /* @__PURE__ */ import_react14.default.createElement(
     "button",
     {
       className: "downloads-action-btn primary",
@@ -46559,7 +48147,7 @@ function DownloadsPage({
       onClick: onOpenDownloadsFolder
     },
     "\u{1F4C1} Open Downloads Folder"
-  ), downloads.some((d) => d.state === "completed" || d.state === "cancelled") && /* @__PURE__ */ import_react11.default.createElement(
+  ), downloads.some((d) => d.state === "completed" || d.state === "cancelled") && /* @__PURE__ */ import_react14.default.createElement(
     "button",
     {
       className: "downloads-action-btn secondary",
@@ -46567,12 +48155,12 @@ function DownloadsPage({
       onClick: onClearCompleted
     },
     "\u{1F9F9} Clear Completed"
-  ))), /* @__PURE__ */ import_react11.default.createElement("main", { className: "downloads-content" }, filteredDownloads.length === 0 ? /* @__PURE__ */ import_react11.default.createElement("div", { className: "downloads-empty-state" }, /* @__PURE__ */ import_react11.default.createElement("div", { className: "empty-icon-circle" }, "\u{1F4E5}"), /* @__PURE__ */ import_react11.default.createElement("h2", null, searchTerm ? "No downloads match your search" : "No downloads yet"), /* @__PURE__ */ import_react11.default.createElement("p", null, searchTerm ? "Try searching for another filename or keyword." : "Files you download using Antigravity Browser will appear here with live speed and progress."), /* @__PURE__ */ import_react11.default.createElement("button", { className: "downloads-action-btn primary", onClick: onOpenDownloadsFolder }, "Open Downloads Folder")) : /* @__PURE__ */ import_react11.default.createElement("div", { className: "downloads-list" }, filteredDownloads.map((dl) => {
+  ))), /* @__PURE__ */ import_react14.default.createElement("main", { className: "downloads-content" }, filteredDownloads.length === 0 ? /* @__PURE__ */ import_react14.default.createElement("div", { className: "downloads-empty-state" }, /* @__PURE__ */ import_react14.default.createElement("div", { className: "empty-icon-circle" }, "\u{1F4E5}"), /* @__PURE__ */ import_react14.default.createElement("h2", null, searchTerm ? "No downloads match your search" : "No downloads yet"), /* @__PURE__ */ import_react14.default.createElement("p", null, searchTerm ? "Try searching for another filename or keyword." : "Files you download using Antigravity Browser will appear here with live speed and progress."), /* @__PURE__ */ import_react14.default.createElement("button", { className: "downloads-action-btn primary", onClick: onOpenDownloadsFolder }, "Open Downloads Folder")) : /* @__PURE__ */ import_react14.default.createElement("div", { className: "downloads-list" }, filteredDownloads.map((dl) => {
     const isProgressing = dl.state === "progressing";
     const isCompleted = dl.state === "completed";
     const isPaused = dl.isPaused || dl.state === "paused";
     const isCancelled = dl.state === "cancelled" || dl.state === "interrupted";
-    return /* @__PURE__ */ import_react11.default.createElement("div", { key: dl.id, className: `download-card ${dl.state}` }, /* @__PURE__ */ import_react11.default.createElement("div", { className: "download-file-icon" }, getFileIcon(dl.filename, dl.mimeType)), /* @__PURE__ */ import_react11.default.createElement("div", { className: "download-info" }, /* @__PURE__ */ import_react11.default.createElement("div", { className: "download-title-row" }, /* @__PURE__ */ import_react11.default.createElement(
+    return /* @__PURE__ */ import_react14.default.createElement("div", { key: dl.id, className: `download-card ${dl.state}` }, /* @__PURE__ */ import_react14.default.createElement("div", { className: "download-file-icon" }, getFileIcon(dl.filename, dl.mimeType)), /* @__PURE__ */ import_react14.default.createElement("div", { className: "download-info" }, /* @__PURE__ */ import_react14.default.createElement("div", { className: "download-title-row" }, /* @__PURE__ */ import_react14.default.createElement(
       "span",
       {
         className: `download-filename ${isCompleted ? "clickable" : ""}`,
@@ -46582,7 +48170,7 @@ function DownloadsPage({
         }
       },
       dl.filename
-    ), /* @__PURE__ */ import_react11.default.createElement("span", { className: `download-badge ${dl.state}` }, isProgressing && !isPaused && "\u26A1 Downloading", isPaused && "\u23F8 Paused", isCompleted && "\u2713 Completed", isCancelled && "\u2715 Cancelled")), /* @__PURE__ */ import_react11.default.createElement("div", { className: "download-source-row" }, /* @__PURE__ */ import_react11.default.createElement(
+    ), /* @__PURE__ */ import_react14.default.createElement("span", { className: `download-badge ${dl.state}` }, isProgressing && !isPaused && "\u26A1 Downloading", isPaused && "\u23F8 Paused", isCompleted && "\u2713 Completed", isCancelled && "\u2715 Cancelled")), /* @__PURE__ */ import_react14.default.createElement("div", { className: "download-source-row" }, /* @__PURE__ */ import_react14.default.createElement(
       "a",
       {
         href: dl.url,
@@ -46593,13 +48181,13 @@ function DownloadsPage({
       },
       "\u{1F310} ",
       formatDomain(dl.url)
-    ), dl.savePath && /* @__PURE__ */ import_react11.default.createElement("span", { className: "download-save-path", title: dl.savePath }, "\u2022 ", dl.savePath)), /* @__PURE__ */ import_react11.default.createElement("div", { className: "download-progress-track" }, /* @__PURE__ */ import_react11.default.createElement(
+    ), dl.savePath && /* @__PURE__ */ import_react14.default.createElement("span", { className: "download-save-path", title: dl.savePath }, "\u2022 ", dl.savePath)), /* @__PURE__ */ import_react14.default.createElement("div", { className: "download-progress-track" }, /* @__PURE__ */ import_react14.default.createElement(
       "div",
       {
         className: `download-progress-fill ${isCompleted ? "fill-done" : ""} ${isCancelled ? "fill-cancelled" : ""}`,
         style: { width: `${Math.max(3, dl.percent || 0)}%` }
       }
-    )), /* @__PURE__ */ import_react11.default.createElement("div", { className: "download-metrics-row" }, /* @__PURE__ */ import_react11.default.createElement("div", { className: "metrics-left" }, /* @__PURE__ */ import_react11.default.createElement("span", { className: "metric-bytes" }, dl.receivedBytesFormatted || "0 B", " of ", dl.totalBytesFormatted || "Unknown size"), isProgressing && !isPaused && /* @__PURE__ */ import_react11.default.createElement("span", { className: "metric-speed" }, "\u2022 \u{1F680} ", dl.speed || "0 KB/s"), /* @__PURE__ */ import_react11.default.createElement("span", { className: "metric-percent" }, "\u2022 ", dl.percent || 0, "%")), /* @__PURE__ */ import_react11.default.createElement("div", { className: "metrics-right" }, /* @__PURE__ */ import_react11.default.createElement("span", { className: "metric-time" }, new Date(dl.startTime).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" }))))), /* @__PURE__ */ import_react11.default.createElement("div", { className: "download-actions" }, isProgressing && /* @__PURE__ */ import_react11.default.createElement(import_react11.default.Fragment, null, isPaused ? /* @__PURE__ */ import_react11.default.createElement(
+    )), /* @__PURE__ */ import_react14.default.createElement("div", { className: "download-metrics-row" }, /* @__PURE__ */ import_react14.default.createElement("div", { className: "metrics-left" }, /* @__PURE__ */ import_react14.default.createElement("span", { className: "metric-bytes" }, dl.receivedBytesFormatted || "0 B", " of ", dl.totalBytesFormatted || "Unknown size"), isProgressing && !isPaused && /* @__PURE__ */ import_react14.default.createElement("span", { className: "metric-speed" }, "\u2022 \u{1F680} ", dl.speed || "0 KB/s"), /* @__PURE__ */ import_react14.default.createElement("span", { className: "metric-percent" }, "\u2022 ", dl.percent || 0, "%")), /* @__PURE__ */ import_react14.default.createElement("div", { className: "metrics-right" }, /* @__PURE__ */ import_react14.default.createElement("span", { className: "metric-time" }, new Date(dl.startTime).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" }))))), /* @__PURE__ */ import_react14.default.createElement("div", { className: "download-actions" }, isProgressing && /* @__PURE__ */ import_react14.default.createElement(import_react14.default.Fragment, null, isPaused ? /* @__PURE__ */ import_react14.default.createElement(
       "button",
       {
         className: "dl-btn resume-btn",
@@ -46607,7 +48195,7 @@ function DownloadsPage({
         onClick: () => onResumeDownload && onResumeDownload(dl.id)
       },
       "\u25B6 Resume"
-    ) : /* @__PURE__ */ import_react11.default.createElement(
+    ) : /* @__PURE__ */ import_react14.default.createElement(
       "button",
       {
         className: "dl-btn pause-btn",
@@ -46615,7 +48203,7 @@ function DownloadsPage({
         onClick: () => onPauseDownload && onPauseDownload(dl.id)
       },
       "\u23F8 Pause"
-    ), /* @__PURE__ */ import_react11.default.createElement(
+    ), /* @__PURE__ */ import_react14.default.createElement(
       "button",
       {
         className: "dl-btn cancel-btn",
@@ -46623,7 +48211,7 @@ function DownloadsPage({
         onClick: () => onCancelDownload && onCancelDownload(dl.id)
       },
       "\u2715 Cancel"
-    )), isCompleted && /* @__PURE__ */ import_react11.default.createElement(import_react11.default.Fragment, null, /* @__PURE__ */ import_react11.default.createElement(
+    )), isCompleted && /* @__PURE__ */ import_react14.default.createElement(import_react14.default.Fragment, null, /* @__PURE__ */ import_react14.default.createElement(
       "button",
       {
         className: "dl-btn folder-btn",
@@ -46631,7 +48219,7 @@ function DownloadsPage({
         onClick: () => onShowInFolder && onShowInFolder(dl.savePath)
       },
       "\u{1F4C2} Show in Folder"
-    ), /* @__PURE__ */ import_react11.default.createElement(
+    ), /* @__PURE__ */ import_react14.default.createElement(
       "button",
       {
         className: "dl-btn open-btn",
@@ -46644,14 +48232,14 @@ function DownloadsPage({
 }
 
 // desktop/src/components/HistoryPage.jsx
-var import_react12 = __toESM(require_react());
+var import_react15 = __toESM(require_react());
 function HistoryPage({
   history = [],
   onNavigate,
   onRemoveHistoryItem,
   onClearHistory
 }) {
-  const [searchTerm, setSearchTerm] = (0, import_react12.useState)("");
+  const [searchTerm, setSearchTerm] = (0, import_react15.useState)("");
   const filteredHistory = history.filter((item) => {
     if (!searchTerm.trim()) return true;
     const q = searchTerm.toLowerCase();
@@ -46678,7 +48266,7 @@ function HistoryPage({
     acc[heading].push(item);
     return acc;
   }, {});
-  return /* @__PURE__ */ import_react12.default.createElement("div", { className: "history-page-container" }, /* @__PURE__ */ import_react12.default.createElement("header", { className: "history-header" }, /* @__PURE__ */ import_react12.default.createElement("div", { className: "history-header-left" }, /* @__PURE__ */ import_react12.default.createElement("span", { className: "history-logo-icon" }, "\u{1F552}"), /* @__PURE__ */ import_react12.default.createElement("div", null, /* @__PURE__ */ import_react12.default.createElement("h1", { className: "history-title" }, "Browsing History"), /* @__PURE__ */ import_react12.default.createElement("p", { className: "history-subtitle" }, filteredHistory.length, " visited pages persisted locally"))), /* @__PURE__ */ import_react12.default.createElement("div", { className: "history-search-wrapper" }, /* @__PURE__ */ import_react12.default.createElement("span", { className: "search-icon" }, "\u{1F50D}"), /* @__PURE__ */ import_react12.default.createElement(
+  return /* @__PURE__ */ import_react15.default.createElement("div", { className: "history-page-container" }, /* @__PURE__ */ import_react15.default.createElement("header", { className: "history-header" }, /* @__PURE__ */ import_react15.default.createElement("div", { className: "history-header-left" }, /* @__PURE__ */ import_react15.default.createElement("span", { className: "history-logo-icon" }, "\u{1F552}"), /* @__PURE__ */ import_react15.default.createElement("div", null, /* @__PURE__ */ import_react15.default.createElement("h1", { className: "history-title" }, "Browsing History"), /* @__PURE__ */ import_react15.default.createElement("p", { className: "history-subtitle" }, filteredHistory.length, " visited pages persisted locally"))), /* @__PURE__ */ import_react15.default.createElement("div", { className: "history-search-wrapper" }, /* @__PURE__ */ import_react15.default.createElement("span", { className: "search-icon" }, "\u{1F50D}"), /* @__PURE__ */ import_react15.default.createElement(
     "input",
     {
       type: "text",
@@ -46687,7 +48275,7 @@ function HistoryPage({
       value: searchTerm,
       onChange: (e) => setSearchTerm(e.target.value)
     }
-  ), searchTerm && /* @__PURE__ */ import_react12.default.createElement("button", { className: "search-clear-btn", onClick: () => setSearchTerm("") }, "\u2715")), /* @__PURE__ */ import_react12.default.createElement("div", { className: "history-header-actions" }, history.length > 0 && /* @__PURE__ */ import_react12.default.createElement(
+  ), searchTerm && /* @__PURE__ */ import_react15.default.createElement("button", { className: "search-clear-btn", onClick: () => setSearchTerm("") }, "\u2715")), /* @__PURE__ */ import_react15.default.createElement("div", { className: "history-header-actions" }, history.length > 0 && /* @__PURE__ */ import_react15.default.createElement(
     "button",
     {
       className: "history-action-btn secondary",
@@ -46695,15 +48283,15 @@ function HistoryPage({
       onClick: onClearHistory
     },
     "\u{1F5D1}\uFE0F Clear Browsing Data"
-  ))), /* @__PURE__ */ import_react12.default.createElement("main", { className: "history-content" }, filteredHistory.length === 0 ? /* @__PURE__ */ import_react12.default.createElement("div", { className: "history-empty-state" }, /* @__PURE__ */ import_react12.default.createElement("div", { className: "empty-icon-circle" }, "\u{1F552}"), /* @__PURE__ */ import_react12.default.createElement("h2", null, searchTerm ? "No history matches your search" : "No browsing history yet"), /* @__PURE__ */ import_react12.default.createElement("p", null, searchTerm ? "Try searching for another keyword or URL." : "Pages you visit across all tabs will appear here and persist across restarts.")) : /* @__PURE__ */ import_react12.default.createElement("div", { className: "history-grouped-list" }, Object.entries(grouped).map(([heading, items]) => /* @__PURE__ */ import_react12.default.createElement("div", { key: heading, className: "history-group" }, /* @__PURE__ */ import_react12.default.createElement("h3", { className: "history-group-heading" }, heading), /* @__PURE__ */ import_react12.default.createElement("div", { className: "history-group-items" }, items.map((item) => /* @__PURE__ */ import_react12.default.createElement("div", { key: item.id || `${item.url}-${item.timestamp}`, className: "history-item-row" }, /* @__PURE__ */ import_react12.default.createElement("span", { className: "history-item-time" }, formatTime(item.timestamp)), /* @__PURE__ */ import_react12.default.createElement("span", { className: "history-item-icon" }, item.url && item.url.startsWith("https://") ? "\u{1F310}" : "\u{1F4C4}"), /* @__PURE__ */ import_react12.default.createElement(
+  ))), /* @__PURE__ */ import_react15.default.createElement("main", { className: "history-content" }, filteredHistory.length === 0 ? /* @__PURE__ */ import_react15.default.createElement("div", { className: "history-empty-state" }, /* @__PURE__ */ import_react15.default.createElement("div", { className: "empty-icon-circle" }, "\u{1F552}"), /* @__PURE__ */ import_react15.default.createElement("h2", null, searchTerm ? "No history matches your search" : "No browsing history yet"), /* @__PURE__ */ import_react15.default.createElement("p", null, searchTerm ? "Try searching for another keyword or URL." : "Pages you visit across all tabs will appear here and persist across restarts.")) : /* @__PURE__ */ import_react15.default.createElement("div", { className: "history-grouped-list" }, Object.entries(grouped).map(([heading, items]) => /* @__PURE__ */ import_react15.default.createElement("div", { key: heading, className: "history-group" }, /* @__PURE__ */ import_react15.default.createElement("h3", { className: "history-group-heading" }, heading), /* @__PURE__ */ import_react15.default.createElement("div", { className: "history-group-items" }, items.map((item) => /* @__PURE__ */ import_react15.default.createElement("div", { key: item.id || `${item.url}-${item.timestamp}`, className: "history-item-row" }, /* @__PURE__ */ import_react15.default.createElement("span", { className: "history-item-time" }, formatTime(item.timestamp)), /* @__PURE__ */ import_react15.default.createElement("span", { className: "history-item-icon" }, item.url && item.url.startsWith("https://") ? "\u{1F310}" : "\u{1F4C4}"), /* @__PURE__ */ import_react15.default.createElement(
     "div",
     {
       className: "history-item-details",
       onClick: () => onNavigate && onNavigate(item.url)
     },
-    /* @__PURE__ */ import_react12.default.createElement("span", { className: "history-item-title", title: item.title || item.url }, item.title || item.url),
-    /* @__PURE__ */ import_react12.default.createElement("span", { className: "history-item-url", title: item.url }, item.url)
-  ), /* @__PURE__ */ import_react12.default.createElement(
+    /* @__PURE__ */ import_react15.default.createElement("span", { className: "history-item-title", title: item.title || item.url }, item.title || item.url),
+    /* @__PURE__ */ import_react15.default.createElement("span", { className: "history-item-url", title: item.url }, item.url)
+  ), /* @__PURE__ */ import_react15.default.createElement(
     "button",
     {
       className: "history-item-remove-btn",
@@ -46715,7 +48303,7 @@ function HistoryPage({
 }
 
 // desktop/src/components/TypographyStudioModal.jsx
-var import_react13 = __toESM(require_react());
+var import_react16 = __toESM(require_react());
 var TYPOGRAPHY_FONT_SIZES = {
   "compact": { px: 14, name: "Compact (14px)", lineHeight: 1.65 },
   "standard": { px: 16, name: "Standard (16px)", lineHeight: 1.75 },
@@ -46797,12 +48385,12 @@ function TypographyStudioModal({
   onApplyTypography,
   onClose
 }) {
-  const [selectedSize, setSelectedSize] = (0, import_react13.useState)(currentFontSize);
-  const [selectedStyle, setSelectedStyle] = (0, import_react13.useState)(currentFontStyle);
-  (0, import_react13.useEffect)(() => {
+  const [selectedSize, setSelectedSize] = (0, import_react16.useState)(currentFontSize);
+  const [selectedStyle, setSelectedStyle] = (0, import_react16.useState)(currentFontStyle);
+  (0, import_react16.useEffect)(() => {
     setSelectedSize(currentFontSize);
   }, [currentFontSize]);
-  (0, import_react13.useEffect)(() => {
+  (0, import_react16.useEffect)(() => {
     setSelectedStyle(currentFontStyle);
   }, [currentFontStyle]);
   if (!isOpen) return null;
@@ -46821,7 +48409,7 @@ function TypographyStudioModal({
     if (onSelectFontStyle) onSelectFontStyle("inter");
     if (onApplyTypography) onApplyTypography("standard", "inter");
   };
-  return /* @__PURE__ */ import_react13.default.createElement("div", { className: "ui-modal-backdrop", id: "typographyBackdrop", onClick: onClose, style: {
+  return /* @__PURE__ */ import_react16.default.createElement("div", { className: "ui-modal-backdrop", id: "typographyBackdrop", onClick: onClose, style: {
     position: "fixed",
     inset: 0,
     backgroundColor: "rgba(3, 7, 18, 0.75)",
@@ -46830,7 +48418,7 @@ function TypographyStudioModal({
     alignItems: "center",
     justifyContent: "center",
     zIndex: 1e5
-  } }, /* @__PURE__ */ import_react13.default.createElement(
+  } }, /* @__PURE__ */ import_react16.default.createElement(
     "div",
     {
       className: "typography-modal-container",
@@ -46850,7 +48438,7 @@ function TypographyStudioModal({
         fontFamily: "'Inter', sans-serif"
       }
     },
-    /* @__PURE__ */ import_react13.default.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "18px", borderBottom: "1px solid rgba(255, 255, 255, 0.08)", paddingBottom: "12px" } }, /* @__PURE__ */ import_react13.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: "10px" } }, /* @__PURE__ */ import_react13.default.createElement("span", { style: { fontSize: "24px" } }, "\u{1F524}"), /* @__PURE__ */ import_react13.default.createElement("div", null, /* @__PURE__ */ import_react13.default.createElement("h2", { style: { fontSize: "18px", fontWeight: "700", color: "#f8fafc", margin: 0 } }, "Modern Typography & Font Canvas Studio"), /* @__PURE__ */ import_react13.default.createElement("p", { style: { fontSize: "12px", color: "#94a3b8", margin: 0, marginTop: "2px" } }, "Curated typography engine with live font canvas, scaling & instant website injection"))), /* @__PURE__ */ import_react13.default.createElement(
+    /* @__PURE__ */ import_react16.default.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "18px", borderBottom: "1px solid rgba(255, 255, 255, 0.08)", paddingBottom: "12px" } }, /* @__PURE__ */ import_react16.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: "10px" } }, /* @__PURE__ */ import_react16.default.createElement("span", { style: { fontSize: "24px" } }, "\u{1F524}"), /* @__PURE__ */ import_react16.default.createElement("div", null, /* @__PURE__ */ import_react16.default.createElement("h2", { style: { fontSize: "18px", fontWeight: "700", color: "#f8fafc", margin: 0 } }, "Modern Typography & Font Canvas Studio"), /* @__PURE__ */ import_react16.default.createElement("p", { style: { fontSize: "12px", color: "#94a3b8", margin: 0, marginTop: "2px" } }, "Curated typography engine with live font canvas, scaling & instant website injection"))), /* @__PURE__ */ import_react16.default.createElement(
       "button",
       {
         id: "btnCloseTypographyModal",
@@ -46867,9 +48455,9 @@ function TypographyStudioModal({
       },
       "\u2715"
     )),
-    /* @__PURE__ */ import_react13.default.createElement("div", { style: { marginBottom: "20px" } }, /* @__PURE__ */ import_react13.default.createElement("label", { style: { display: "block", fontSize: "12px", fontWeight: "700", color: "#38bdf8", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: "10px" } }, "1. Select Curated Font Style (8 Styles):"), /* @__PURE__ */ import_react13.default.createElement("div", { style: { display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "10px" } }, Object.entries(TYPOGRAPHY_FONT_STYLES).map(([key, font]) => {
+    /* @__PURE__ */ import_react16.default.createElement("div", { style: { marginBottom: "20px" } }, /* @__PURE__ */ import_react16.default.createElement("label", { style: { display: "block", fontSize: "12px", fontWeight: "700", color: "#38bdf8", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: "10px" } }, "1. Select Curated Font Style (8 Styles):"), /* @__PURE__ */ import_react16.default.createElement("div", { style: { display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "10px" } }, Object.entries(TYPOGRAPHY_FONT_STYLES).map(([key, font]) => {
       const isSelected = selectedStyle === key;
-      return /* @__PURE__ */ import_react13.default.createElement(
+      return /* @__PURE__ */ import_react16.default.createElement(
         "div",
         {
           key,
@@ -46886,13 +48474,13 @@ function TypographyStudioModal({
             boxShadow: isSelected ? "0 0 16px rgba(0, 229, 255, 0.2)" : "none"
           }
         },
-        /* @__PURE__ */ import_react13.default.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "4px" } }, /* @__PURE__ */ import_react13.default.createElement("span", { style: { fontSize: "16px", fontWeight: "700", fontFamily: font.fontFamily, color: isSelected ? "#00e5ff" : "#ffffff" } }, font.name), /* @__PURE__ */ import_react13.default.createElement("span", { style: { fontSize: "10px", background: "rgba(255,255,255,0.08)", padding: "2px 6px", borderRadius: "4px", color: "#94a3b8", fontFamily: "monospace" } }, font.badge)),
-        /* @__PURE__ */ import_react13.default.createElement("div", { style: { fontSize: "11px", color: "#94a3b8", fontFamily: font.fontFamily } }, font.author)
+        /* @__PURE__ */ import_react16.default.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "4px" } }, /* @__PURE__ */ import_react16.default.createElement("span", { style: { fontSize: "16px", fontWeight: "700", fontFamily: font.fontFamily, color: isSelected ? "#00e5ff" : "#ffffff" } }, font.name), /* @__PURE__ */ import_react16.default.createElement("span", { style: { fontSize: "10px", background: "rgba(255,255,255,0.08)", padding: "2px 6px", borderRadius: "4px", color: "#94a3b8", fontFamily: "monospace" } }, font.badge)),
+        /* @__PURE__ */ import_react16.default.createElement("div", { style: { fontSize: "11px", color: "#94a3b8", fontFamily: font.fontFamily } }, font.author)
       );
     }))),
-    /* @__PURE__ */ import_react13.default.createElement("div", { style: { marginBottom: "20px" } }, /* @__PURE__ */ import_react13.default.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" } }, /* @__PURE__ */ import_react13.default.createElement("label", { style: { fontSize: "12px", fontWeight: "700", color: "#38bdf8", textTransform: "uppercase", letterSpacing: "0.05em" } }, "2. Select Font Size (Shortcuts: Ctrl + / - or Ctrl+Wheel):"), /* @__PURE__ */ import_react13.default.createElement("span", { id: "typographySizeLabel", style: { fontSize: "12px", color: "#00e5ff", fontFamily: "monospace", fontWeight: "700" } }, sizeObj.name)), /* @__PURE__ */ import_react13.default.createElement("div", { style: { display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "10px" } }, Object.entries(TYPOGRAPHY_FONT_SIZES).map(([key, sz]) => {
+    /* @__PURE__ */ import_react16.default.createElement("div", { style: { marginBottom: "20px" } }, /* @__PURE__ */ import_react16.default.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" } }, /* @__PURE__ */ import_react16.default.createElement("label", { style: { fontSize: "12px", fontWeight: "700", color: "#38bdf8", textTransform: "uppercase", letterSpacing: "0.05em" } }, "2. Select Font Size (Shortcuts: Ctrl + / - or Ctrl+Wheel):"), /* @__PURE__ */ import_react16.default.createElement("span", { id: "typographySizeLabel", style: { fontSize: "12px", color: "#00e5ff", fontFamily: "monospace", fontWeight: "700" } }, sizeObj.name)), /* @__PURE__ */ import_react16.default.createElement("div", { style: { display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "10px" } }, Object.entries(TYPOGRAPHY_FONT_SIZES).map(([key, sz]) => {
       const isSelected = selectedSize === key;
-      return /* @__PURE__ */ import_react13.default.createElement(
+      return /* @__PURE__ */ import_react16.default.createElement(
         "button",
         {
           key,
@@ -46913,11 +48501,11 @@ function TypographyStudioModal({
             transition: "all 0.15s ease"
           }
         },
-        /* @__PURE__ */ import_react13.default.createElement("span", { style: { fontSize: `${sz.px}px`, fontWeight: "800" } }, "Aa"),
-        /* @__PURE__ */ import_react13.default.createElement("span", { style: { fontSize: "11px", color: isSelected ? "#38bdf8" : "#94a3b8" } }, sz.name)
+        /* @__PURE__ */ import_react16.default.createElement("span", { style: { fontSize: `${sz.px}px`, fontWeight: "800" } }, "Aa"),
+        /* @__PURE__ */ import_react16.default.createElement("span", { style: { fontSize: "11px", color: isSelected ? "#38bdf8" : "#94a3b8" } }, sz.name)
       );
     }))),
-    /* @__PURE__ */ import_react13.default.createElement("div", { style: { marginBottom: "22px" } }, /* @__PURE__ */ import_react13.default.createElement("label", { style: { display: "block", fontSize: "12px", fontWeight: "700", color: "#38bdf8", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: "8px" } }, "Live Rendering Canvas Preview:"), /* @__PURE__ */ import_react13.default.createElement(
+    /* @__PURE__ */ import_react16.default.createElement("div", { style: { marginBottom: "22px" } }, /* @__PURE__ */ import_react16.default.createElement("label", { style: { display: "block", fontSize: "12px", fontWeight: "700", color: "#38bdf8", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: "8px" } }, "Live Rendering Canvas Preview:"), /* @__PURE__ */ import_react16.default.createElement(
       "div",
       {
         id: "typographyPreviewCanvas",
@@ -46936,11 +48524,11 @@ function TypographyStudioModal({
           transition: "all 0.2s ease"
         }
       },
-      /* @__PURE__ */ import_react13.default.createElement("div", { id: "previewHeadline", style: { fontSize: `${Math.round(sizeObj.px * 1.35)}px`, fontWeight: "700", color: "#ffffff", marginBottom: "6px" } }, "The Evolution of Modern Web Typography"),
-      /* @__PURE__ */ import_react13.default.createElement("div", { id: "previewMeta", style: { fontSize: "11px", color: "#64748b", marginBottom: "10px" } }, "Published by Web Standards Review \u2022 4 min read \u2022 Active Font: ", styleObj.name),
-      /* @__PURE__ */ import_react13.default.createElement("p", { id: "previewParagraph", style: { color: "#cbd5e1", margin: 0 } }, "Typography on the modern web balances aesthetic minimalism with effortless legibility. When line height and optical letter spacing harmonize, long-form reading feels natural rather than computerized.")
+      /* @__PURE__ */ import_react16.default.createElement("div", { id: "previewHeadline", style: { fontSize: `${Math.round(sizeObj.px * 1.35)}px`, fontWeight: "700", color: "#ffffff", marginBottom: "6px" } }, "The Evolution of Modern Web Typography"),
+      /* @__PURE__ */ import_react16.default.createElement("div", { id: "previewMeta", style: { fontSize: "11px", color: "#64748b", marginBottom: "10px" } }, "Published by Web Standards Review \u2022 4 min read \u2022 Active Font: ", styleObj.name),
+      /* @__PURE__ */ import_react16.default.createElement("p", { id: "previewParagraph", style: { color: "#cbd5e1", margin: 0 } }, "Typography on the modern web balances aesthetic minimalism with effortless legibility. When line height and optical letter spacing harmonize, long-form reading feels natural rather than computerized.")
     )),
-    /* @__PURE__ */ import_react13.default.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: "10px", borderTop: "1px solid rgba(255, 255, 255, 0.08)" } }, /* @__PURE__ */ import_react13.default.createElement(
+    /* @__PURE__ */ import_react16.default.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", paddingTop: "10px", borderTop: "1px solid rgba(255, 255, 255, 0.08)" } }, /* @__PURE__ */ import_react16.default.createElement(
       "button",
       {
         id: "btnResetTypography",
@@ -46957,7 +48545,7 @@ function TypographyStudioModal({
         }
       },
       "\u21BA Reset Default"
-    ), /* @__PURE__ */ import_react13.default.createElement("div", { style: { display: "flex", gap: "10px" } }, /* @__PURE__ */ import_react13.default.createElement(
+    ), /* @__PURE__ */ import_react16.default.createElement("div", { style: { display: "flex", gap: "10px" } }, /* @__PURE__ */ import_react16.default.createElement(
       "button",
       {
         id: "btnCloseTypographyBtn",
@@ -46974,7 +48562,7 @@ function TypographyStudioModal({
         }
       },
       "Close"
-    ), /* @__PURE__ */ import_react13.default.createElement(
+    ), /* @__PURE__ */ import_react16.default.createElement(
       "button",
       {
         id: "btnApplyTypography",
@@ -46997,7 +48585,7 @@ function TypographyStudioModal({
 }
 
 // desktop/src/components/AiProviderModal.jsx
-var import_react14 = __toESM(require_react());
+var import_react17 = __toESM(require_react());
 var import_react_dom = __toESM(require_react_dom());
 init_aiProviderService();
 function AiProviderModal({
@@ -47006,27 +48594,27 @@ function AiProviderModal({
   onCaptureSnapshot,
   latestSnapshot
 }) {
-  const [configs, setConfigs] = (0, import_react14.useState)(() => getAiProvidersConfig());
-  const [selectedProviderId, setSelectedProviderId] = (0, import_react14.useState)(() => getActiveProviderId());
-  const [activeProviderId, setActiveId] = (0, import_react14.useState)(() => getActiveProviderId());
-  const [showApiKey, setShowApiKey] = (0, import_react14.useState)(false);
-  const [testStatus, setTestStatus] = (0, import_react14.useState)(null);
-  const [saveFeedback, setSaveFeedback] = (0, import_react14.useState)(false);
-  const [vlmSnapshotResult, setVlmSnapshotResult] = (0, import_react14.useState)(latestSnapshot || null);
-  const [isCapturingVlm, setIsCapturingVlm] = (0, import_react14.useState)(false);
-  const [snapshotTarget, setSnapshotTarget] = (0, import_react14.useState)("webview");
-  const [newModelInput, setNewModelInput] = (0, import_react14.useState)("");
-  const [detectedModels, setDetectedModels] = (0, import_react14.useState)([]);
-  const [isScanningModels, setIsScanningModels] = (0, import_react14.useState)(false);
-  const [showAddProviderForm, setShowAddProviderForm] = (0, import_react14.useState)(false);
-  const [customProviderDraft, setCustomProviderDraft] = (0, import_react14.useState)({
+  const [configs, setConfigs] = (0, import_react17.useState)(() => getAiProvidersConfig());
+  const [selectedProviderId, setSelectedProviderId] = (0, import_react17.useState)(() => getActiveProviderId());
+  const [activeProviderId, setActiveId] = (0, import_react17.useState)(() => getActiveProviderId());
+  const [showApiKey, setShowApiKey] = (0, import_react17.useState)(false);
+  const [testStatus, setTestStatus] = (0, import_react17.useState)(null);
+  const [saveFeedback, setSaveFeedback] = (0, import_react17.useState)(false);
+  const [vlmSnapshotResult, setVlmSnapshotResult] = (0, import_react17.useState)(latestSnapshot || null);
+  const [isCapturingVlm, setIsCapturingVlm] = (0, import_react17.useState)(false);
+  const [snapshotTarget, setSnapshotTarget] = (0, import_react17.useState)("webview");
+  const [newModelInput, setNewModelInput] = (0, import_react17.useState)("");
+  const [detectedModels, setDetectedModels] = (0, import_react17.useState)([]);
+  const [isScanningModels, setIsScanningModels] = (0, import_react17.useState)(false);
+  const [showAddProviderForm, setShowAddProviderForm] = (0, import_react17.useState)(false);
+  const [customProviderDraft, setCustomProviderDraft] = (0, import_react17.useState)({
     name: "",
     model: "",
     baseUrl: "http://localhost:11434/v1",
     apiKey: "",
     type: "openai_compatible"
   });
-  (0, import_react14.useEffect)(() => {
+  (0, import_react17.useEffect)(() => {
     if (isOpen) {
       const loaded = getAiProvidersConfig();
       setConfigs(loaded);
@@ -47039,13 +48627,13 @@ function AiProviderModal({
       setShowAddProviderForm(false);
     }
   }, [isOpen]);
-  (0, import_react14.useEffect)(() => {
+  (0, import_react17.useEffect)(() => {
     if (latestSnapshot) {
       setVlmSnapshotResult(latestSnapshot);
     }
   }, [latestSnapshot]);
   const currentConfig = configs[selectedProviderId] || DEFAULT_PROVIDERS[selectedProviderId] || Object.values(configs)[0] || DEFAULT_PROVIDERS.ollama;
-  (0, import_react14.useEffect)(() => {
+  (0, import_react17.useEffect)(() => {
     if (!isOpen || !currentConfig) return;
     let cancelled = false;
     setDetectedModels([]);
@@ -47269,7 +48857,7 @@ function AiProviderModal({
     ...Array.isArray(currentConfig.presetModels) ? currentConfig.presetModels : [],
     ...currentConfig.model ? [currentConfig.model] : []
   ]));
-  const modalNode = /* @__PURE__ */ import_react14.default.createElement(
+  const modalNode = /* @__PURE__ */ import_react17.default.createElement(
     "div",
     {
       className: "ai-model-setup-popup",
@@ -47290,7 +48878,7 @@ function AiProviderModal({
       },
       onClick: onClose
     },
-    /* @__PURE__ */ import_react14.default.createElement(
+    /* @__PURE__ */ import_react17.default.createElement(
       "div",
       {
         className: "modal-container",
@@ -47312,7 +48900,7 @@ function AiProviderModal({
         },
         onClick: (e) => e.stopPropagation()
       },
-      /* @__PURE__ */ import_react14.default.createElement(
+      /* @__PURE__ */ import_react17.default.createElement(
         "div",
         {
           style: {
@@ -47324,8 +48912,8 @@ function AiProviderModal({
             background: "rgba(255, 255, 255, 0.02)"
           }
         },
-        /* @__PURE__ */ import_react14.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: "10px" } }, /* @__PURE__ */ import_react14.default.createElement("span", { style: { fontSize: "20px" } }, "\u26A1"), /* @__PURE__ */ import_react14.default.createElement("div", null, /* @__PURE__ */ import_react14.default.createElement("h3", { style: { margin: 0, fontSize: "16px", fontWeight: 700, color: "#f8fafc" } }, "AI Model Setup & Provider Keys"), /* @__PURE__ */ import_react14.default.createElement("span", { style: { fontSize: "11px", color: "#94a3b8" } }, "Add models, scan local Ollama / LM Studio models, and configure API endpoints"))),
-        /* @__PURE__ */ import_react14.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: "10px" } }, /* @__PURE__ */ import_react14.default.createElement(
+        /* @__PURE__ */ import_react17.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: "10px" } }, /* @__PURE__ */ import_react17.default.createElement("span", { style: { fontSize: "20px" } }, "\u26A1"), /* @__PURE__ */ import_react17.default.createElement("div", null, /* @__PURE__ */ import_react17.default.createElement("h3", { style: { margin: 0, fontSize: "16px", fontWeight: 700, color: "#f8fafc" } }, "AI Model Setup & Provider Keys"), /* @__PURE__ */ import_react17.default.createElement("span", { style: { fontSize: "11px", color: "#94a3b8" } }, "Add models, scan local Ollama / LM Studio models, and configure API endpoints"))),
+        /* @__PURE__ */ import_react17.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: "10px" } }, /* @__PURE__ */ import_react17.default.createElement(
           "button",
           {
             type: "button",
@@ -47342,7 +48930,7 @@ function AiProviderModal({
             }
           },
           showAddProviderForm ? "\u2715 Close Add Setup" : "+ Add New Model Setup"
-        ), /* @__PURE__ */ import_react14.default.createElement(
+        ), /* @__PURE__ */ import_react17.default.createElement(
           "button",
           {
             className: "modal-close-btn",
@@ -47361,7 +48949,7 @@ function AiProviderModal({
           "\u2715"
         ))
       ),
-      /* @__PURE__ */ import_react14.default.createElement("div", { style: { display: "flex", flex: 1, overflow: "hidden" } }, /* @__PURE__ */ import_react14.default.createElement(
+      /* @__PURE__ */ import_react17.default.createElement("div", { style: { display: "flex", flex: 1, overflow: "hidden" } }, /* @__PURE__ */ import_react17.default.createElement(
         "div",
         {
           style: {
@@ -47375,12 +48963,12 @@ function AiProviderModal({
             gap: "5px"
           }
         },
-        /* @__PURE__ */ import_react14.default.createElement("div", { style: { padding: "4px 8px", fontSize: "10px", fontWeight: 700, color: "#64748b", letterSpacing: "0.08em", textTransform: "uppercase" } }, "AI Model Providers"),
+        /* @__PURE__ */ import_react17.default.createElement("div", { style: { padding: "4px 8px", fontSize: "10px", fontWeight: 700, color: "#64748b", letterSpacing: "0.08em", textTransform: "uppercase" } }, "AI Model Providers"),
         providerList.map((prov) => {
           const isSelected = prov.id === currentConfig.id && !showAddProviderForm;
           const isActive = prov.id === activeProviderId;
           const hasKeyOrLocal = prov.apiKey || prov.id === "lmstudio" || prov.id === "ollama" || prov.id === "ornith" || prov.isCustom;
-          return /* @__PURE__ */ import_react14.default.createElement(
+          return /* @__PURE__ */ import_react17.default.createElement(
             "button",
             {
               key: prov.id,
@@ -47411,15 +48999,15 @@ function AiProviderModal({
                 transition: "all 0.15s ease"
               }
             },
-            /* @__PURE__ */ import_react14.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: "8px", minWidth: 0, flex: 1 } }, /* @__PURE__ */ import_react14.default.createElement("span", { style: {
+            /* @__PURE__ */ import_react17.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: "8px", minWidth: 0, flex: 1 } }, /* @__PURE__ */ import_react17.default.createElement("span", { style: {
               width: "8px",
               height: "8px",
               borderRadius: "50%",
               flexShrink: 0,
               background: isActive ? "#00e5ff" : hasKeyOrLocal ? "#10b981" : "#475569",
               boxShadow: isActive ? "0 0 8px #00e5ff" : "none"
-            } }), /* @__PURE__ */ import_react14.default.createElement("div", { style: { overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" } }, /* @__PURE__ */ import_react14.default.createElement("div", null, prov.name), /* @__PURE__ */ import_react14.default.createElement("div", { style: { fontSize: "10px", color: "#64748b", fontFamily: "monospace" } }, prov.model || "default"))),
-            /* @__PURE__ */ import_react14.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: "4px", flexShrink: 0 } }, isActive && /* @__PURE__ */ import_react14.default.createElement("span", { style: {
+            } }), /* @__PURE__ */ import_react17.default.createElement("div", { style: { overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" } }, /* @__PURE__ */ import_react17.default.createElement("div", null, prov.name), /* @__PURE__ */ import_react17.default.createElement("div", { style: { fontSize: "10px", color: "#64748b", fontFamily: "monospace" } }, prov.model || "default"))),
+            /* @__PURE__ */ import_react17.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: "4px", flexShrink: 0 } }, isActive && /* @__PURE__ */ import_react17.default.createElement("span", { style: {
               fontSize: "9px",
               fontWeight: 700,
               background: "#00e5ff",
@@ -47427,7 +49015,7 @@ function AiProviderModal({
               padding: "1px 5px",
               borderRadius: "4px",
               textTransform: "uppercase"
-            } }, "Active"), prov.isCustom && /* @__PURE__ */ import_react14.default.createElement(
+            } }, "Active"), prov.isCustom && /* @__PURE__ */ import_react17.default.createElement(
               "span",
               {
                 onClick: (e) => handleDeleteCustomProvider(prov.id, e),
@@ -47443,7 +49031,7 @@ function AiProviderModal({
             ))
           );
         }),
-        /* @__PURE__ */ import_react14.default.createElement(
+        /* @__PURE__ */ import_react17.default.createElement(
           "button",
           {
             type: "button",
@@ -47464,10 +49052,10 @@ function AiProviderModal({
               gap: "6px"
             }
           },
-          /* @__PURE__ */ import_react14.default.createElement("span", null, "\uFF0B"),
-          /* @__PURE__ */ import_react14.default.createElement("span", null, "Add Model / Custom Setup")
+          /* @__PURE__ */ import_react17.default.createElement("span", null, "\uFF0B"),
+          /* @__PURE__ */ import_react17.default.createElement("span", null, "Add Model / Custom Setup")
         )
-      ), /* @__PURE__ */ import_react14.default.createElement(
+      ), /* @__PURE__ */ import_react17.default.createElement(
         "div",
         {
           style: {
@@ -47479,7 +49067,7 @@ function AiProviderModal({
             gap: "16px"
           }
         },
-        showAddProviderForm ? /* @__PURE__ */ import_react14.default.createElement(
+        showAddProviderForm ? /* @__PURE__ */ import_react17.default.createElement(
           "div",
           {
             style: {
@@ -47492,8 +49080,8 @@ function AiProviderModal({
               gap: "14px"
             }
           },
-          /* @__PURE__ */ import_react14.default.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center" } }, /* @__PURE__ */ import_react14.default.createElement("div", null, /* @__PURE__ */ import_react14.default.createElement("div", { style: { fontSize: "15px", fontWeight: 700, color: "#00e5ff" } }, "\uFF0B Add New AI Model Setup"), /* @__PURE__ */ import_react14.default.createElement("div", { style: { fontSize: "11.5px", color: "#94a3b8" } }, "Register any local or cloud model endpoint (Ollama, LM Studio, vLLM, OpenRouter, OpenAI)"))),
-          /* @__PURE__ */ import_react14.default.createElement("div", null, /* @__PURE__ */ import_react14.default.createElement("label", { style: { display: "block", fontSize: "12px", fontWeight: 600, color: "#cbd5e1", marginBottom: "5px" } }, "Setup / Provider Display Name"), /* @__PURE__ */ import_react14.default.createElement(
+          /* @__PURE__ */ import_react17.default.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center" } }, /* @__PURE__ */ import_react17.default.createElement("div", null, /* @__PURE__ */ import_react17.default.createElement("div", { style: { fontSize: "15px", fontWeight: 700, color: "#00e5ff" } }, "\uFF0B Add New AI Model Setup"), /* @__PURE__ */ import_react17.default.createElement("div", { style: { fontSize: "11.5px", color: "#94a3b8" } }, "Register any local or cloud model endpoint (Ollama, LM Studio, vLLM, OpenRouter, OpenAI)"))),
+          /* @__PURE__ */ import_react17.default.createElement("div", null, /* @__PURE__ */ import_react17.default.createElement("label", { style: { display: "block", fontSize: "12px", fontWeight: 600, color: "#cbd5e1", marginBottom: "5px" } }, "Setup / Provider Display Name"), /* @__PURE__ */ import_react17.default.createElement(
             "input",
             {
               type: "text",
@@ -47512,7 +49100,7 @@ function AiProviderModal({
               }
             }
           )),
-          /* @__PURE__ */ import_react14.default.createElement("div", null, /* @__PURE__ */ import_react14.default.createElement("label", { style: { display: "block", fontSize: "12px", fontWeight: 600, color: "#cbd5e1", marginBottom: "5px" } }, "Model ID / Name"), /* @__PURE__ */ import_react14.default.createElement(
+          /* @__PURE__ */ import_react17.default.createElement("div", null, /* @__PURE__ */ import_react17.default.createElement("label", { style: { display: "block", fontSize: "12px", fontWeight: 600, color: "#cbd5e1", marginBottom: "5px" } }, "Model ID / Name"), /* @__PURE__ */ import_react17.default.createElement(
             "input",
             {
               type: "text",
@@ -47532,7 +49120,7 @@ function AiProviderModal({
               }
             }
           )),
-          /* @__PURE__ */ import_react14.default.createElement("div", null, /* @__PURE__ */ import_react14.default.createElement("label", { style: { display: "block", fontSize: "12px", fontWeight: 600, color: "#cbd5e1", marginBottom: "5px" } }, "Base Endpoint URL"), /* @__PURE__ */ import_react14.default.createElement(
+          /* @__PURE__ */ import_react17.default.createElement("div", null, /* @__PURE__ */ import_react17.default.createElement("label", { style: { display: "block", fontSize: "12px", fontWeight: 600, color: "#cbd5e1", marginBottom: "5px" } }, "Base Endpoint URL"), /* @__PURE__ */ import_react17.default.createElement(
             "input",
             {
               type: "text",
@@ -47552,7 +49140,7 @@ function AiProviderModal({
               }
             }
           )),
-          /* @__PURE__ */ import_react14.default.createElement("div", null, /* @__PURE__ */ import_react14.default.createElement("label", { style: { display: "block", fontSize: "12px", fontWeight: 600, color: "#cbd5e1", marginBottom: "5px" } }, "API Key (Optional for Local Models)"), /* @__PURE__ */ import_react14.default.createElement(
+          /* @__PURE__ */ import_react17.default.createElement("div", null, /* @__PURE__ */ import_react17.default.createElement("label", { style: { display: "block", fontSize: "12px", fontWeight: 600, color: "#cbd5e1", marginBottom: "5px" } }, "API Key (Optional for Local Models)"), /* @__PURE__ */ import_react17.default.createElement(
             "input",
             {
               type: "password",
@@ -47572,7 +49160,7 @@ function AiProviderModal({
               }
             }
           )),
-          /* @__PURE__ */ import_react14.default.createElement("div", { style: { display: "flex", gap: "10px", justifyContent: "flex-end", marginTop: "4px" } }, /* @__PURE__ */ import_react14.default.createElement(
+          /* @__PURE__ */ import_react17.default.createElement("div", { style: { display: "flex", gap: "10px", justifyContent: "flex-end", marginTop: "4px" } }, /* @__PURE__ */ import_react17.default.createElement(
             "button",
             {
               type: "button",
@@ -47588,7 +49176,7 @@ function AiProviderModal({
               }
             },
             "Cancel"
-          ), /* @__PURE__ */ import_react14.default.createElement(
+          ), /* @__PURE__ */ import_react17.default.createElement(
             "button",
             {
               type: "button",
@@ -47606,7 +49194,7 @@ function AiProviderModal({
             },
             "\u2713 Add & Activate Model Setup"
           ))
-        ) : /* @__PURE__ */ import_react14.default.createElement(import_react14.default.Fragment, null, /* @__PURE__ */ import_react14.default.createElement(
+        ) : /* @__PURE__ */ import_react17.default.createElement(import_react17.default.Fragment, null, /* @__PURE__ */ import_react17.default.createElement(
           "div",
           {
             style: {
@@ -47619,8 +49207,8 @@ function AiProviderModal({
               border: currentConfig.id === activeProviderId ? "1px solid rgba(0, 229, 255, 0.25)" : "1px solid rgba(255, 255, 255, 0.06)"
             }
           },
-          /* @__PURE__ */ import_react14.default.createElement("div", null, /* @__PURE__ */ import_react14.default.createElement("div", { style: { fontSize: "15px", fontWeight: 600, color: "#f8fafc" } }, currentConfig.name, " ", /* @__PURE__ */ import_react14.default.createElement("span", { style: { fontSize: "12px", color: "#00e5ff", fontFamily: "monospace" } }, "(", currentConfig.model, ")")), /* @__PURE__ */ import_react14.default.createElement("div", { style: { fontSize: "12px", color: "#94a3b8" } }, currentConfig.id === activeProviderId ? "Currently designated as primary AI engine for browser commands and VLM queries." : "Click to make this the active provider for AI commands.")),
-          /* @__PURE__ */ import_react14.default.createElement(
+          /* @__PURE__ */ import_react17.default.createElement("div", null, /* @__PURE__ */ import_react17.default.createElement("div", { style: { fontSize: "15px", fontWeight: 600, color: "#f8fafc" } }, currentConfig.name, " ", /* @__PURE__ */ import_react17.default.createElement("span", { style: { fontSize: "12px", color: "#00e5ff", fontFamily: "monospace" } }, "(", currentConfig.model, ")")), /* @__PURE__ */ import_react17.default.createElement("div", { style: { fontSize: "12px", color: "#94a3b8" } }, currentConfig.id === activeProviderId ? "Currently designated as primary AI engine for browser commands and VLM queries." : "Click to make this the active provider for AI commands.")),
+          /* @__PURE__ */ import_react17.default.createElement(
             "button",
             {
               onClick: handleSetActive,
@@ -47638,7 +49226,7 @@ function AiProviderModal({
             },
             currentConfig.id === activeProviderId ? "\u2713 Active Provider" : "Set as Active"
           )
-        ), /* @__PURE__ */ import_react14.default.createElement(
+        ), /* @__PURE__ */ import_react17.default.createElement(
           "div",
           {
             style: {
@@ -47651,7 +49239,7 @@ function AiProviderModal({
               gap: "10px"
             }
           },
-          /* @__PURE__ */ import_react14.default.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center" } }, /* @__PURE__ */ import_react14.default.createElement("div", null, /* @__PURE__ */ import_react14.default.createElement("label", { style: { fontSize: "13px", fontWeight: 700, color: "#f8fafc" } }, "\u{1F9E0} Model Setup & Selection"), /* @__PURE__ */ import_react14.default.createElement("div", { style: { fontSize: "11px", color: "#94a3b8" } }, "Select an active model below or add a new model ID to this provider")), /* @__PURE__ */ import_react14.default.createElement(
+          /* @__PURE__ */ import_react17.default.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center" } }, /* @__PURE__ */ import_react17.default.createElement("div", null, /* @__PURE__ */ import_react17.default.createElement("label", { style: { fontSize: "13px", fontWeight: 700, color: "#f8fafc" } }, "\u{1F9E0} Model Setup & Selection"), /* @__PURE__ */ import_react17.default.createElement("div", { style: { fontSize: "11px", color: "#94a3b8" } }, "Select an active model below or add a new model ID to this provider")), /* @__PURE__ */ import_react17.default.createElement(
             "button",
             {
               type: "button",
@@ -47670,7 +49258,7 @@ function AiProviderModal({
             },
             isScanningModels ? "\u23F3 Scanning..." : "\u{1F504} Scan Installed Models"
           )),
-          /* @__PURE__ */ import_react14.default.createElement("div", { style: { display: "flex", gap: "8px" } }, /* @__PURE__ */ import_react14.default.createElement(
+          /* @__PURE__ */ import_react17.default.createElement("div", { style: { display: "flex", gap: "8px" } }, /* @__PURE__ */ import_react17.default.createElement(
             "input",
             {
               type: "text",
@@ -47690,7 +49278,7 @@ function AiProviderModal({
                 boxSizing: "border-box"
               }
             }
-          ), /* @__PURE__ */ import_react14.default.createElement(
+          ), /* @__PURE__ */ import_react17.default.createElement(
             "input",
             {
               type: "text",
@@ -47715,7 +49303,7 @@ function AiProviderModal({
                 boxSizing: "border-box"
               }
             }
-          ), /* @__PURE__ */ import_react14.default.createElement(
+          ), /* @__PURE__ */ import_react17.default.createElement(
             "button",
             {
               type: "button",
@@ -47734,10 +49322,10 @@ function AiProviderModal({
             },
             "+ Add Model"
           )),
-          allModelsForCurrent.length > 0 && /* @__PURE__ */ import_react14.default.createElement("div", { style: { display: "flex", flexWrap: "wrap", gap: "6px", marginTop: "4px" } }, allModelsForCurrent.map((m) => {
+          allModelsForCurrent.length > 0 && /* @__PURE__ */ import_react17.default.createElement("div", { style: { display: "flex", flexWrap: "wrap", gap: "6px", marginTop: "4px" } }, allModelsForCurrent.map((m) => {
             const isCurrentModel = currentConfig.model === m;
             const isDetectedLive = detectedModels.includes(m);
-            return /* @__PURE__ */ import_react14.default.createElement(
+            return /* @__PURE__ */ import_react17.default.createElement(
               "div",
               {
                 key: m,
@@ -47756,7 +49344,7 @@ function AiProviderModal({
                   cursor: "pointer"
                 }
               },
-              isDetectedLive && /* @__PURE__ */ import_react14.default.createElement(
+              isDetectedLive && /* @__PURE__ */ import_react17.default.createElement(
                 "span",
                 {
                   title: "Installed & detected on endpoint",
@@ -47768,9 +49356,9 @@ function AiProviderModal({
                   }
                 }
               ),
-              /* @__PURE__ */ import_react14.default.createElement("span", null, m),
-              isCurrentModel && /* @__PURE__ */ import_react14.default.createElement("span", { style: { fontSize: "10px", fontWeight: 700 } }, "\u2713"),
-              allModelsForCurrent.length > 1 && /* @__PURE__ */ import_react14.default.createElement(
+              /* @__PURE__ */ import_react17.default.createElement("span", null, m),
+              isCurrentModel && /* @__PURE__ */ import_react17.default.createElement("span", { style: { fontSize: "10px", fontWeight: 700 } }, "\u2713"),
+              allModelsForCurrent.length > 1 && /* @__PURE__ */ import_react17.default.createElement(
                 "span",
                 {
                   onClick: (e) => handleRemoveModel(m, e),
@@ -47786,7 +49374,7 @@ function AiProviderModal({
               )
             );
           }))
-        ), /* @__PURE__ */ import_react14.default.createElement("div", null, /* @__PURE__ */ import_react14.default.createElement("div", { style: { display: "flex", justifyContent: "space-between", marginBottom: "6px" } }, /* @__PURE__ */ import_react14.default.createElement("label", { style: { fontSize: "12px", fontWeight: 600, color: "#cbd5e1" } }, "Base Endpoint URL"), /* @__PURE__ */ import_react14.default.createElement(
+        ), /* @__PURE__ */ import_react17.default.createElement("div", null, /* @__PURE__ */ import_react17.default.createElement("div", { style: { display: "flex", justifyContent: "space-between", marginBottom: "6px" } }, /* @__PURE__ */ import_react17.default.createElement("label", { style: { fontSize: "12px", fontWeight: 600, color: "#cbd5e1" } }, "Base Endpoint URL"), /* @__PURE__ */ import_react17.default.createElement(
           "button",
           {
             onClick: handleResetDefaultUrl,
@@ -47800,7 +49388,7 @@ function AiProviderModal({
             }
           },
           "Reset to Default"
-        )), /* @__PURE__ */ import_react14.default.createElement(
+        )), /* @__PURE__ */ import_react17.default.createElement(
           "input",
           {
             type: "text",
@@ -47819,7 +49407,7 @@ function AiProviderModal({
               boxSizing: "border-box"
             }
           }
-        )), /* @__PURE__ */ import_react14.default.createElement("div", null, /* @__PURE__ */ import_react14.default.createElement("div", { style: { display: "flex", justifyContent: "space-between", marginBottom: "6px" } }, /* @__PURE__ */ import_react14.default.createElement("label", { style: { fontSize: "12px", fontWeight: 600, color: "#cbd5e1" } }, "API Key ", currentConfig.id === "lmstudio" || currentConfig.id === "ollama" || currentConfig.id === "ornith" ? "(Optional for local)" : "(Required)"), /* @__PURE__ */ import_react14.default.createElement(
+        )), /* @__PURE__ */ import_react17.default.createElement("div", null, /* @__PURE__ */ import_react17.default.createElement("div", { style: { display: "flex", justifyContent: "space-between", marginBottom: "6px" } }, /* @__PURE__ */ import_react17.default.createElement("label", { style: { fontSize: "12px", fontWeight: 600, color: "#cbd5e1" } }, "API Key ", currentConfig.id === "lmstudio" || currentConfig.id === "ollama" || currentConfig.id === "ornith" ? "(Optional for local)" : "(Required)"), /* @__PURE__ */ import_react17.default.createElement(
           "button",
           {
             onClick: () => setShowApiKey((prev) => !prev),
@@ -47833,7 +49421,7 @@ function AiProviderModal({
             }
           },
           showApiKey ? "Hide Key" : "Show Key"
-        )), /* @__PURE__ */ import_react14.default.createElement(
+        )), /* @__PURE__ */ import_react17.default.createElement(
           "input",
           {
             type: showApiKey ? "text" : "password",
@@ -47852,7 +49440,7 @@ function AiProviderModal({
               boxSizing: "border-box"
             }
           }
-        )), /* @__PURE__ */ import_react14.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: "12px", marginTop: "2px" } }, /* @__PURE__ */ import_react14.default.createElement(
+        )), /* @__PURE__ */ import_react17.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: "12px", marginTop: "2px" } }, /* @__PURE__ */ import_react17.default.createElement(
           "button",
           {
             onClick: handleRunTest,
@@ -47872,12 +49460,12 @@ function AiProviderModal({
             }
           },
           testStatus?.loading ? "\u23F3 Pinging Endpoint..." : "\u26A1 Test Connection"
-        ), testStatus && !testStatus.loading && /* @__PURE__ */ import_react14.default.createElement("span", { style: {
+        ), testStatus && !testStatus.loading && /* @__PURE__ */ import_react17.default.createElement("span", { style: {
           fontSize: "12px",
           color: testStatus.success ? "#10b981" : "#ef4444",
           fontWeight: 500
         } }, testStatus.success ? "\u{1F7E2}" : "\u{1F534}", " ", testStatus.message))),
-        /* @__PURE__ */ import_react14.default.createElement(
+        /* @__PURE__ */ import_react17.default.createElement(
           "div",
           {
             style: {
@@ -47888,7 +49476,7 @@ function AiProviderModal({
               border: "1px solid rgba(255, 255, 255, 0.06)"
             }
           },
-          /* @__PURE__ */ import_react14.default.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" } }, /* @__PURE__ */ import_react14.default.createElement("div", null, /* @__PURE__ */ import_react14.default.createElement("div", { style: { fontSize: "13px", fontWeight: 600, color: "#f8fafc" } }, "\u{1F4F8} VLM Visual Comprehension Tester"), /* @__PURE__ */ import_react14.default.createElement("div", { style: { fontSize: "11px", color: "#94a3b8" } }, "Capture the live browser webview to disk and expose the absolute file path for Vision Models")), /* @__PURE__ */ import_react14.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: "8px" } }, /* @__PURE__ */ import_react14.default.createElement(
+          /* @__PURE__ */ import_react17.default.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" } }, /* @__PURE__ */ import_react17.default.createElement("div", null, /* @__PURE__ */ import_react17.default.createElement("div", { style: { fontSize: "13px", fontWeight: 600, color: "#f8fafc" } }, "\u{1F4F8} VLM Visual Comprehension Tester"), /* @__PURE__ */ import_react17.default.createElement("div", { style: { fontSize: "11px", color: "#94a3b8" } }, "Capture the live browser webview to disk and expose the absolute file path for Vision Models")), /* @__PURE__ */ import_react17.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: "8px" } }, /* @__PURE__ */ import_react17.default.createElement(
             "select",
             {
               value: snapshotTarget,
@@ -47902,9 +49490,9 @@ function AiProviderModal({
                 fontSize: "11px"
               }
             },
-            /* @__PURE__ */ import_react14.default.createElement("option", { value: "webview" }, "Guest Webview (Page)"),
-            /* @__PURE__ */ import_react14.default.createElement("option", { value: "window" }, "Full Window (Chrome + Page)")
-          ), /* @__PURE__ */ import_react14.default.createElement(
+            /* @__PURE__ */ import_react17.default.createElement("option", { value: "webview" }, "Guest Webview (Page)"),
+            /* @__PURE__ */ import_react17.default.createElement("option", { value: "window" }, "Full Window (Chrome + Page)")
+          ), /* @__PURE__ */ import_react17.default.createElement(
             "button",
             {
               onClick: handleTriggerModalSnapshot,
@@ -47922,7 +49510,7 @@ function AiProviderModal({
             },
             isCapturingVlm ? "Capturing..." : "Capture Snapshot"
           ))),
-          vlmSnapshotResult && vlmSnapshotResult.path && /* @__PURE__ */ import_react14.default.createElement("div", { style: {
+          vlmSnapshotResult && vlmSnapshotResult.path && /* @__PURE__ */ import_react17.default.createElement("div", { style: {
             display: "flex",
             alignItems: "center",
             gap: "12px",
@@ -47930,7 +49518,7 @@ function AiProviderModal({
             borderRadius: "6px",
             background: "rgba(0, 0, 0, 0.3)",
             border: "1px solid rgba(0, 229, 255, 0.2)"
-          } }, vlmSnapshotResult.dataUrl && /* @__PURE__ */ import_react14.default.createElement(
+          } }, vlmSnapshotResult.dataUrl && /* @__PURE__ */ import_react17.default.createElement(
             "img",
             {
               src: vlmSnapshotResult.dataUrl,
@@ -47943,7 +49531,7 @@ function AiProviderModal({
                 border: "1px solid rgba(255, 255, 255, 0.1)"
               }
             }
-          ), /* @__PURE__ */ import_react14.default.createElement("div", { style: { flex: 1, minWidth: 0 } }, /* @__PURE__ */ import_react14.default.createElement("div", { style: { fontSize: "10px", color: "#10b981", fontWeight: 700 } }, "\u2713 Saved to disk (", vlmSnapshotResult.width, "x", vlmSnapshotResult.height, ")"), /* @__PURE__ */ import_react14.default.createElement(
+          ), /* @__PURE__ */ import_react17.default.createElement("div", { style: { flex: 1, minWidth: 0 } }, /* @__PURE__ */ import_react17.default.createElement("div", { style: { fontSize: "10px", color: "#10b981", fontWeight: 700 } }, "\u2713 Saved to disk (", vlmSnapshotResult.width, "x", vlmSnapshotResult.height, ")"), /* @__PURE__ */ import_react17.default.createElement(
             "div",
             {
               style: {
@@ -47957,7 +49545,7 @@ function AiProviderModal({
               title: vlmSnapshotResult.path
             },
             vlmSnapshotResult.path
-          )), /* @__PURE__ */ import_react14.default.createElement(
+          )), /* @__PURE__ */ import_react17.default.createElement(
             "button",
             {
               onClick: () => {
@@ -47979,7 +49567,7 @@ function AiProviderModal({
           ))
         )
       )),
-      /* @__PURE__ */ import_react14.default.createElement(
+      /* @__PURE__ */ import_react17.default.createElement(
         "div",
         {
           style: {
@@ -47991,8 +49579,8 @@ function AiProviderModal({
             background: "rgba(7, 11, 20, 0.7)"
           }
         },
-        /* @__PURE__ */ import_react14.default.createElement("div", { style: { fontSize: "11px", color: "#64748b" } }, "Active Provider: ", /* @__PURE__ */ import_react14.default.createElement("strong", { style: { color: "#00e5ff" } }, configs[activeProviderId]?.name || "OpenAI"), " (", configs[activeProviderId]?.model || "default", ")"),
-        /* @__PURE__ */ import_react14.default.createElement("div", { style: { display: "flex", gap: "8px" } }, /* @__PURE__ */ import_react14.default.createElement(
+        /* @__PURE__ */ import_react17.default.createElement("div", { style: { fontSize: "11px", color: "#64748b" } }, "Active Provider: ", /* @__PURE__ */ import_react17.default.createElement("strong", { style: { color: "#00e5ff" } }, configs[activeProviderId]?.name || "OpenAI"), " (", configs[activeProviderId]?.model || "default", ")"),
+        /* @__PURE__ */ import_react17.default.createElement("div", { style: { display: "flex", gap: "8px" } }, /* @__PURE__ */ import_react17.default.createElement(
           "button",
           {
             onClick: onClose,
@@ -48007,7 +49595,7 @@ function AiProviderModal({
             }
           },
           "Cancel"
-        ), /* @__PURE__ */ import_react14.default.createElement(
+        ), /* @__PURE__ */ import_react17.default.createElement(
           "button",
           {
             onClick: handleSaveAndApply,
@@ -48055,17 +49643,37 @@ var GUEST_PRELOAD_URL = (() => {
   }
 })();
 function App() {
-  const [activeEngine, setActiveEngine] = (0, import_react15.useState)(() => {
+  const [activeEngine, setActiveEngine] = (0, import_react18.useState)(() => {
     return localStorage.getItem("antigravity_search_engine") || "google";
   });
-  const [tabs, setTabs] = (0, import_react15.useState)([
+  const [tabs, setTabs] = (0, import_react18.useState)([
     { id: 1, url: "", initialUrl: "about:blank", title: "New Tab", isNewTab: true }
   ]);
-  const [activeTabId, setActiveTabId] = (0, import_react15.useState)(1);
-  const nextTabIdRef = (0, import_react15.useRef)(2);
-  const lastOpenedTabRef = (0, import_react15.useRef)({ url: "", time: 0 });
-  const [adblockCount, setAdblockCount] = (0, import_react15.useState)(0);
-  const [shieldsStats, setShieldsStats] = (0, import_react15.useState)({
+  const [activeTabId, setActiveTabId] = (0, import_react18.useState)(1);
+  const nextTabIdRef = (0, import_react18.useRef)(2);
+  const lastOpenedTabRef = (0, import_react18.useRef)({ url: "", time: 0 });
+  const [isGlobalEditMode, setIsGlobalEditMode] = (0, import_react18.useState)(false);
+  const [activeCodeEditingElementId, setActiveCodeEditingElementId] = (0, import_react18.useState)(null);
+  const [uiLayout, setUiLayout] = (0, import_react18.useState)(() => loadLayoutConfig());
+  const handleReorderTabs = (sourceTabId, targetTabId) => {
+    setTabs((prev) => reorderTabs(prev, sourceTabId, targetTabId));
+  };
+  const handleReorderToolbar = (sourceModId, targetModId) => {
+    setUiLayout((prev) => {
+      const nextOrder = reorderToolbar(prev.toolbarOrder, sourceModId, targetModId);
+      const updated = { ...prev, toolbarOrder: nextOrder };
+      saveLayoutConfig(updated);
+      return updated;
+    });
+  };
+  const handleToggleGlobalEditMode = () => {
+    setIsGlobalEditMode((prev) => !prev);
+  };
+  const handleOpenCodeStudio = (elementId) => {
+    setActiveCodeEditingElementId(elementId);
+  };
+  const [adblockCount, setAdblockCount] = (0, import_react18.useState)(0);
+  const [shieldsStats, setShieldsStats] = (0, import_react18.useState)({
     mode: "aggressive",
     isNativeRust: true,
     totalBlocked: 0,
@@ -48075,31 +49683,31 @@ function App() {
     savedTimeMs: 0,
     recentEvents: []
   });
-  const [hudTab, setHudTab] = (0, import_react15.useState)("shields");
-  const [isHudOpen, setIsHudOpen] = (0, import_react15.useState)(true);
-  const [somEnabled, setSomEnabled] = (0, import_react15.useState)(true);
-  const [somMode, setSomMode] = (0, import_react15.useState)("summarized");
-  const [isHudDetached, setIsHudDetached] = (0, import_react15.useState)(() => {
+  const [hudTab, setHudTab] = (0, import_react18.useState)("shields");
+  const [isHudOpen, setIsHudOpen] = (0, import_react18.useState)(true);
+  const [somEnabled, setSomEnabled] = (0, import_react18.useState)(true);
+  const [somMode, setSomMode] = (0, import_react18.useState)("summarized");
+  const [isHudDetached, setIsHudDetached] = (0, import_react18.useState)(() => {
     try {
       return localStorage.getItem("antigravity_hud_detached") === "true";
     } catch (e) {
       return false;
     }
   });
-  const [isExternalHudVisible, setIsExternalHudVisible] = (0, import_react15.useState)(false);
-  const [axTreeMarkdown, setAxTreeMarkdown] = (0, import_react15.useState)("");
-  const [grepQuery, setGrepQuery] = (0, import_react15.useState)("href");
-  const [grepMatches, setGrepMatches] = (0, import_react15.useState)([]);
-  const [grepPage, setGrepPage] = (0, import_react15.useState)(1);
-  const [autofillStatus, setAutofillStatus] = (0, import_react15.useState)("Ready to autofill inputs on active page.");
-  const [isHitlActive, setIsHitlActive] = (0, import_react15.useState)(false);
-  const [isAiProviderModalOpen, setIsAiProviderModalOpen] = (0, import_react15.useState)(false);
-  const [latestSnapshot, setLatestSnapshot] = (0, import_react15.useState)(null);
-  const [telemetryLogs, setTelemetryLogs] = (0, import_react15.useState)([
+  const [isExternalHudVisible, setIsExternalHudVisible] = (0, import_react18.useState)(false);
+  const [axTreeMarkdown, setAxTreeMarkdown] = (0, import_react18.useState)("");
+  const [grepQuery, setGrepQuery] = (0, import_react18.useState)("href");
+  const [grepMatches, setGrepMatches] = (0, import_react18.useState)([]);
+  const [grepPage, setGrepPage] = (0, import_react18.useState)(1);
+  const [autofillStatus, setAutofillStatus] = (0, import_react18.useState)("Ready to autofill inputs on active page.");
+  const [isHitlActive, setIsHitlActive] = (0, import_react18.useState)(false);
+  const [isAiProviderModalOpen, setIsAiProviderModalOpen] = (0, import_react18.useState)(false);
+  const [latestSnapshot, setLatestSnapshot] = (0, import_react18.useState)(null);
+  const [telemetryLogs, setTelemetryLogs] = (0, import_react18.useState)([
     { time: (/* @__PURE__ */ new Date()).toLocaleTimeString(), type: "info", msg: "Antigravity React Native Desktop Shell initialized" },
     { time: (/* @__PURE__ */ new Date()).toLocaleTimeString(), type: "info", msg: "Brave adblock-rust engine active (EasyList + uBlock Origin)" }
   ]);
-  const [bookmarks, setBookmarks] = (0, import_react15.useState)(() => {
+  const [bookmarks, setBookmarks] = (0, import_react18.useState)(() => {
     try {
       const saved = localStorage.getItem("antigravity_bookmarks");
       if (saved) return JSON.parse(saved);
@@ -48112,14 +49720,14 @@ function App() {
       { id: "bm-4", url: "https://github.com", title: "GitHub" }
     ];
   });
-  const [isTabSearchOpen, setIsTabSearchOpen] = (0, import_react15.useState)(false);
-  const [isReaderModeOpen, setIsReaderModeOpen] = (0, import_react15.useState)(false);
-  const [readerContent, setReaderContent] = (0, import_react15.useState)("");
-  const [readerTitle, setReaderTitle] = (0, import_react15.useState)("");
-  const [isQrCodeOpen, setIsQrCodeOpen] = (0, import_react15.useState)(false);
-  const [isHistoryOpen, setIsHistoryOpen] = (0, import_react15.useState)(false);
-  const [aiLiveBanner, setAiLiveBanner] = (0, import_react15.useState)(null);
-  const [history, setHistory] = (0, import_react15.useState)(() => {
+  const [isTabSearchOpen, setIsTabSearchOpen] = (0, import_react18.useState)(false);
+  const [isReaderModeOpen, setIsReaderModeOpen] = (0, import_react18.useState)(false);
+  const [readerContent, setReaderContent] = (0, import_react18.useState)("");
+  const [readerTitle, setReaderTitle] = (0, import_react18.useState)("");
+  const [isQrCodeOpen, setIsQrCodeOpen] = (0, import_react18.useState)(false);
+  const [isHistoryOpen, setIsHistoryOpen] = (0, import_react18.useState)(false);
+  const [aiLiveBanner, setAiLiveBanner] = (0, import_react18.useState)(null);
+  const [history, setHistory] = (0, import_react18.useState)(() => {
     try {
       const saved = localStorage.getItem("antigravity_browsing_history");
       if (saved) return JSON.parse(saved);
@@ -48131,47 +49739,47 @@ function App() {
       { id: "h-3", url: "https://www.google.com", title: "Google", timestamp: Date.now() - 108e5 }
     ];
   });
-  const [wallpaper, setWallpaper] = (0, import_react15.useState)(() => {
+  const [wallpaper, setWallpaper] = (0, import_react18.useState)(() => {
     return localStorage.getItem("antigravity_wallpaper") || "";
   });
-  const [wallpaperType, setWallpaperType] = (0, import_react15.useState)(() => {
+  const [wallpaperType, setWallpaperType] = (0, import_react18.useState)(() => {
     return localStorage.getItem("antigravity_wallpaper_type") || "none";
   });
-  const [wallpaperOpacity, setWallpaperOpacity] = (0, import_react15.useState)(() => {
+  const [wallpaperOpacity, setWallpaperOpacity] = (0, import_react18.useState)(() => {
     const val = localStorage.getItem("antigravity_wallpaper_opacity");
     return val !== null ? parseFloat(val) : 0.65;
   });
-  const [wallpaperColor, setWallpaperColor] = (0, import_react15.useState)(() => {
+  const [wallpaperColor, setWallpaperColor] = (0, import_react18.useState)(() => {
     return localStorage.getItem("antigravity_wallpaper_color") || "#0b0f19";
   });
-  const [wallpaperMuted, setWallpaperMuted] = (0, import_react15.useState)(() => {
+  const [wallpaperMuted, setWallpaperMuted] = (0, import_react18.useState)(() => {
     return localStorage.getItem("antigravity_wallpaper_muted") === "false" ? false : true;
   });
-  const [isWindowFocused, setIsWindowFocused] = (0, import_react15.useState)(() => {
+  const [isWindowFocused, setIsWindowFocused] = (0, import_react18.useState)(() => {
     return typeof document !== "undefined" ? document.hasFocus() : true;
   });
-  const wallpaperVideoRef = (0, import_react15.useRef)(null);
-  const [isWallpaperStudioOpen, setIsWallpaperStudioOpen] = (0, import_react15.useState)(false);
-  const [downloads, setDownloads] = (0, import_react15.useState)([]);
-  const [canvasFontSize, setCanvasFontSize] = (0, import_react15.useState)(() => {
+  const wallpaperVideoRef = (0, import_react18.useRef)(null);
+  const [isWallpaperStudioOpen, setIsWallpaperStudioOpen] = (0, import_react18.useState)(false);
+  const [downloads, setDownloads] = (0, import_react18.useState)([]);
+  const [canvasFontSize, setCanvasFontSize] = (0, import_react18.useState)(() => {
     return localStorage.getItem("antigravity_canvas_font_size") || "standard";
   });
-  const [canvasFontStyle, setCanvasFontStyle] = (0, import_react15.useState)(() => {
+  const [canvasFontStyle, setCanvasFontStyle] = (0, import_react18.useState)(() => {
     return localStorage.getItem("antigravity_canvas_font_style") || "inter";
   });
-  const [isTypographyOpen, setIsTypographyOpen] = (0, import_react15.useState)(false);
-  const tabsRef = (0, import_react15.useRef)(tabs);
+  const [isTypographyOpen, setIsTypographyOpen] = (0, import_react18.useState)(false);
+  const tabsRef = (0, import_react18.useRef)(tabs);
   tabsRef.current = tabs;
-  const activeTabIdRef = (0, import_react15.useRef)(activeTabId);
+  const activeTabIdRef = (0, import_react18.useRef)(activeTabId);
   activeTabIdRef.current = activeTabId;
   const activeTab = tabs.find((t) => t.id === activeTabId) || tabs[0] || { id: 1, title: "New Tab", url: "", isNewTab: true };
-  const activeTabRef = (0, import_react15.useRef)(activeTab);
+  const activeTabRef = (0, import_react18.useRef)(activeTab);
   activeTabRef.current = activeTab;
-  const canvasFontSizeRef = (0, import_react15.useRef)(canvasFontSize);
+  const canvasFontSizeRef = (0, import_react18.useRef)(canvasFontSize);
   canvasFontSizeRef.current = canvasFontSize;
-  const canvasFontStyleRef = (0, import_react15.useRef)(canvasFontStyle);
+  const canvasFontStyleRef = (0, import_react18.useRef)(canvasFontStyle);
   canvasFontStyleRef.current = canvasFontStyle;
-  const hudStateRef = (0, import_react15.useRef)({
+  const hudStateRef = (0, import_react18.useRef)({
     tabs,
     activeTabId,
     somEnabled,
@@ -48261,7 +49869,7 @@ function App() {
     } catch (e) {
     }
   };
-  (0, import_react15.useEffect)(() => {
+  (0, import_react18.useEffect)(() => {
     if (!ipcRenderer2) return;
     ipcRenderer2.invoke("get-downloads").then((list) => {
       if (Array.isArray(list)) setDownloads(list);
@@ -48441,7 +50049,7 @@ function App() {
     }]);
     setActiveTabId(newId);
   };
-  (0, import_react15.useEffect)(() => {
+  (0, import_react18.useEffect)(() => {
     const hasWp = wallpaperType !== "none" && !!wallpaper;
     document.body.classList.toggle("has-wallpaper", hasWp);
     document.body.style.setProperty("--wallpaper-overlay-opacity", String(wallpaperOpacity));
@@ -48468,7 +50076,7 @@ function App() {
     localStorage.removeItem("antigravity_wallpaper");
     logTelemetry("act", "Wallpaper removed");
   };
-  (0, import_react15.useEffect)(() => {
+  (0, import_react18.useEffect)(() => {
     const handleFocus = () => setIsWindowFocused(true);
     const handleBlur = () => setIsWindowFocused(false);
     const handleVisibility = () => {
@@ -48503,7 +50111,7 @@ function App() {
   const isNewTab = Boolean(activeTab.isNewTab) && (!activeTab.url || activeTab.url === "" || activeTab.url === "about:blank") && !activeTab.isDownloads && !activeTab.isHistory;
   const shouldPlayWallpaperAudio = !wallpaperMuted && Boolean(isNewTab) && Boolean(isWindowFocused);
   const effectiveWallpaperMuted = !shouldPlayWallpaperAudio;
-  (0, import_react15.useEffect)(() => {
+  (0, import_react18.useEffect)(() => {
     if (wallpaperVideoRef.current) {
       wallpaperVideoRef.current.muted = effectiveWallpaperMuted;
     }
@@ -48514,7 +50122,7 @@ function App() {
       return [...trimmed, { time: (/* @__PURE__ */ new Date()).toLocaleTimeString(), type, msg, meta }];
     });
   };
-  (0, import_react15.useEffect)(() => {
+  (0, import_react18.useEffect)(() => {
     if (ipcRenderer2.invoke) {
       ipcRenderer2.invoke("get-adblock-stats").then((stats) => {
         if (stats) {
@@ -49041,7 +50649,7 @@ function App() {
       ipcRenderer2.removeListener("open-docked-hud", handleOpenDockedHud);
     };
   }, []);
-  (0, import_react15.useEffect)(() => {
+  (0, import_react18.useEffect)(() => {
     if (!isHudDetached || !ipcRenderer2) return;
     const timer = setTimeout(() => {
       ipcRenderer2.send("sync-hud-state", {
@@ -49332,7 +50940,7 @@ function App() {
     }
     logTelemetry("act", "Cleared all browsing history");
   };
-  (0, import_react15.useEffect)(() => {
+  (0, import_react18.useEffect)(() => {
     const handleKeyDown = (e) => {
       if ((e.ctrlKey || e.metaKey) && (e.key === "k" || e.key === "K")) {
         e.preventDefault();
@@ -49531,7 +51139,7 @@ function App() {
     logTelemetry("act", `WebContents::GetController().LoadURL("${finalUrl}")`);
   };
   window.__antigravityNavigate = handleNavigate;
-  (0, import_react15.useEffect)(() => {
+  (0, import_react18.useEffect)(() => {
     const handleKeyDown = (e) => {
       if (e.ctrlKey && (e.key === "t" || e.key === "T")) {
         e.preventDefault();
@@ -49742,7 +51350,7 @@ function App() {
       }
     });
   };
-  return /* @__PURE__ */ import_react15.default.createElement("div", { className: "native-browser-app" }, wallpaperType !== "none" && wallpaper && /* @__PURE__ */ import_react15.default.createElement(
+  return /* @__PURE__ */ import_react18.default.createElement("div", { className: "native-browser-app" }, wallpaperType !== "none" && wallpaper && /* @__PURE__ */ import_react18.default.createElement(
     "div",
     {
       className: "wallpaper-layer",
@@ -49752,7 +51360,7 @@ function App() {
         ...wallpaperType === "color" ? { backgroundColor: wallpaper } : {}
       }
     },
-    wallpaperType === "video" && /* @__PURE__ */ import_react15.default.createElement(
+    wallpaperType === "video" && /* @__PURE__ */ import_react18.default.createElement(
       "video",
       {
         ref: wallpaperVideoRef,
@@ -49763,7 +51371,7 @@ function App() {
         playsInline: true
       }
     )
-  ), /* @__PURE__ */ import_react15.default.createElement(
+  ), /* @__PURE__ */ import_react18.default.createElement(
     TabStrip_default,
     {
       tabs,
@@ -49779,9 +51387,13 @@ function App() {
       onDetachToggleHud: handleDetachToggleHud,
       onDockHud: handleDockHud,
       onOpenShields: handleOpenShields,
-      onOpenTabSearch: () => setIsTabSearchOpen(true)
+      onOpenTabSearch: () => setIsTabSearchOpen(true),
+      isEditMode: isGlobalEditMode,
+      onToggleEditMode: handleToggleGlobalEditMode,
+      onOpenElementEditor: handleOpenCodeStudio,
+      onReorderTabs: handleReorderTabs
     }
-  ), /* @__PURE__ */ import_react15.default.createElement(
+  ), /* @__PURE__ */ import_react18.default.createElement(
     NavigationToolbar,
     {
       currentUrl: activeTab.isNewTab ? "" : activeTab.url,
@@ -49847,18 +51459,24 @@ function App() {
       onOpenDownloads: handleOpenDownloadsTab,
       onOpenHistory: handleOpenHistoryTab,
       onOpenTypography: () => setIsTypographyOpen(true),
-      onOpenAiProviderModal: () => setIsAiProviderModalOpen(true)
+      onOpenAiProviderModal: () => setIsAiProviderModalOpen(true),
+      isEditMode: isGlobalEditMode,
+      onOpenElementEditor: handleOpenCodeStudio,
+      toolbarOrder: uiLayout.toolbarOrder,
+      onReorderToolbar: handleReorderToolbar
     }
-  ), /* @__PURE__ */ import_react15.default.createElement(
+  ), /* @__PURE__ */ import_react18.default.createElement(
     BookmarksBar,
     {
       bookmarks,
       onNavigate: handleNavigate,
       onAddCurrentPage: handleToggleBookmark,
       onRemoveBookmark: handleRemoveBookmark,
-      onOpenHistory: handleOpenHistoryTab
+      onOpenHistory: handleOpenHistoryTab,
+      isEditMode: isGlobalEditMode,
+      onOpenElementEditor: handleOpenCodeStudio
     }
-  ), /* @__PURE__ */ import_react15.default.createElement("main", { className: "main-browser-workspace" }, /* @__PURE__ */ import_react15.default.createElement(
+  ), /* @__PURE__ */ import_react18.default.createElement("main", { className: "main-browser-workspace" }, /* @__PURE__ */ import_react18.default.createElement(
     "div",
     {
       className: "webview-container",
@@ -49875,7 +51493,7 @@ function App() {
       const isDownloadsTab = tab.isDownloads || tab.url === "antigravity://downloads";
       const isHistoryTab = tab.isHistory || tab.url === "antigravity://history";
       const showWebview = isActive && !tab.isNewTab && !isDownloadsTab && !isHistoryTab;
-      return /* @__PURE__ */ import_react15.default.createElement(
+      return /* @__PURE__ */ import_react18.default.createElement(
         "div",
         {
           key: tab.id,
@@ -49896,7 +51514,7 @@ function App() {
             flexDirection: "column"
           }
         },
-        /* @__PURE__ */ import_react15.default.createElement(
+        /* @__PURE__ */ import_react18.default.createElement(
           "div",
           {
             style: {
@@ -49911,7 +51529,7 @@ function App() {
               overflow: "hidden"
             }
           },
-          /* @__PURE__ */ import_react15.default.createElement(
+          /* @__PURE__ */ import_react18.default.createElement(
             "webview",
             {
               id: `wv-${tab.id}`,
@@ -49936,7 +51554,7 @@ function App() {
             }
           )
         ),
-        isDownloadsTab && /* @__PURE__ */ import_react15.default.createElement("div", { style: { width: "100%", height: "100%", overflowY: "auto" } }, /* @__PURE__ */ import_react15.default.createElement(
+        isDownloadsTab && /* @__PURE__ */ import_react18.default.createElement("div", { style: { width: "100%", height: "100%", overflowY: "auto" } }, /* @__PURE__ */ import_react18.default.createElement(
           DownloadsPage,
           {
             downloads,
@@ -49949,7 +51567,7 @@ function App() {
             onClearCompleted: handleClearCompletedDownloads
           }
         )),
-        isHistoryTab && /* @__PURE__ */ import_react15.default.createElement("div", { style: { width: "100%", height: "100%", overflowY: "auto" } }, /* @__PURE__ */ import_react15.default.createElement(
+        isHistoryTab && /* @__PURE__ */ import_react18.default.createElement("div", { style: { width: "100%", height: "100%", overflowY: "auto" } }, /* @__PURE__ */ import_react18.default.createElement(
           HistoryPage,
           {
             history,
@@ -49960,7 +51578,7 @@ function App() {
             onClearHistory: handleClearHistory
           }
         )),
-        tab.isNewTab && !isDownloadsTab && !isHistoryTab && /* @__PURE__ */ import_react15.default.createElement("div", { style: { width: "100%", height: "100%", overflowY: "auto" } }, /* @__PURE__ */ import_react15.default.createElement(
+        tab.isNewTab && !isDownloadsTab && !isHistoryTab && /* @__PURE__ */ import_react18.default.createElement("div", { style: { width: "100%", height: "100%", overflowY: "auto" } }, /* @__PURE__ */ import_react18.default.createElement(ErrorBoundary, { title: "New Tab Page" }, /* @__PURE__ */ import_react18.default.createElement(
           NewTabPage,
           {
             activeEngine,
@@ -49968,10 +51586,10 @@ function App() {
             onNavigate: handleNavigate,
             bookmarks
           }
-        ))
+        )))
       );
     })
-  ), !isHudDetached && isHudOpen && /* @__PURE__ */ import_react15.default.createElement(
+  ), !isHudDetached && isHudOpen && /* @__PURE__ */ import_react18.default.createElement(
     AiHudSidebar,
     {
       isOpen: isHudOpen,
@@ -50031,7 +51649,7 @@ function App() {
       onRemindUser: handleRemindUser,
       latestSnapshot
     }
-  )), /* @__PURE__ */ import_react15.default.createElement(
+  )), /* @__PURE__ */ import_react18.default.createElement(
     TabSearchModal,
     {
       isOpen: isTabSearchOpen,
@@ -50040,7 +51658,7 @@ function App() {
       onSelectTab: setActiveTabId,
       onClose: () => setIsTabSearchOpen(false)
     }
-  ), /* @__PURE__ */ import_react15.default.createElement(
+  ), /* @__PURE__ */ import_react18.default.createElement(
     ReaderModeModal,
     {
       isOpen: isReaderModeOpen,
@@ -50048,14 +51666,14 @@ function App() {
       content: readerContent,
       onClose: () => setIsReaderModeOpen(false)
     }
-  ), /* @__PURE__ */ import_react15.default.createElement(
+  ), /* @__PURE__ */ import_react18.default.createElement(
     QrCodeModal,
     {
       isOpen: isQrCodeOpen,
       url: activeTab.url,
       onClose: () => setIsQrCodeOpen(false)
     }
-  ), /* @__PURE__ */ import_react15.default.createElement(
+  ), /* @__PURE__ */ import_react18.default.createElement(
     HistoryModal,
     {
       isOpen: isHistoryOpen,
@@ -50065,7 +51683,7 @@ function App() {
       onClearHistory: handleClearHistory,
       onClose: () => setIsHistoryOpen(false)
     }
-  ), /* @__PURE__ */ import_react15.default.createElement(
+  ), /* @__PURE__ */ import_react18.default.createElement(
     WallpaperStudioModal,
     {
       isOpen: isWallpaperStudioOpen,
@@ -50078,7 +51696,7 @@ function App() {
       onRemoveWallpaper: handleRemoveWallpaper,
       onClose: () => setIsWallpaperStudioOpen(false)
     }
-  ), /* @__PURE__ */ import_react15.default.createElement(
+  ), /* @__PURE__ */ import_react18.default.createElement(
     TypographyStudioModal,
     {
       isOpen: isTypographyOpen,
@@ -50102,7 +51720,7 @@ function App() {
       },
       onClose: () => setIsTypographyOpen(false)
     }
-  ), /* @__PURE__ */ import_react15.default.createElement(
+  ), /* @__PURE__ */ import_react18.default.createElement(
     AiProviderModal,
     {
       isOpen: isAiProviderModalOpen,
@@ -50110,7 +51728,7 @@ function App() {
       onCaptureSnapshot: handleCaptureVlmSnapshot,
       latestSnapshot
     }
-  ), aiLiveBanner && /* @__PURE__ */ import_react15.default.createElement("div", { style: {
+  ), aiLiveBanner && /* @__PURE__ */ import_react18.default.createElement("div", { style: {
     position: "fixed",
     bottom: 24,
     left: "50%",
@@ -50128,45 +51746,55 @@ function App() {
     fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif",
     backdropFilter: "blur(16px)",
     pointerEvents: "none"
-  } }, /* @__PURE__ */ import_react15.default.createElement("div", { style: {
+  } }, /* @__PURE__ */ import_react18.default.createElement("div", { style: {
     width: 10,
     height: 10,
     borderRadius: "50%",
     background: aiLiveBanner.action === "REMINDER" ? "#10b981" : "#00e5ff",
     boxShadow: aiLiveBanner.action === "REMINDER" ? "0 0 14px #10b981" : "0 0 12px #00e5ff"
-  } }), /* @__PURE__ */ import_react15.default.createElement("span", { style: {
+  } }), /* @__PURE__ */ import_react18.default.createElement("span", { style: {
     fontSize: 11,
     fontWeight: 800,
     color: aiLiveBanner.action === "REMINDER" ? "#10b981" : "#00e5ff",
     letterSpacing: "0.1em",
     textTransform: "uppercase"
-  } }, aiLiveBanner.action === "REMINDER" ? "\u{1F514} AI REMINDER" : "\u26A1 AI AUTOPILOT"), /* @__PURE__ */ import_react15.default.createElement("span", { style: { fontSize: 14, fontWeight: 600, color: "#f1f5f9", letterSpacing: "-0.2px" } }, aiLiveBanner.text)));
+  } }, aiLiveBanner.action === "REMINDER" ? "\u{1F514} AI REMINDER" : "\u26A1 AI AUTOPILOT"), /* @__PURE__ */ import_react18.default.createElement("span", { style: { fontSize: 14, fontWeight: 600, color: "#f1f5f9", letterSpacing: "-0.2px" } }, aiLiveBanner.text)), activeCodeEditingElementId && /* @__PURE__ */ import_react18.default.createElement(
+    ElementEditModal,
+    {
+      isOpen: true,
+      elementId: activeCodeEditingElementId,
+      onClose: () => setActiveCodeEditingElementId(null),
+      onUpdated: (elId) => {
+        console.log(`[Antigravity] Element ${elId} custom code hot-swapped.`);
+      }
+    }
+  ));
 }
 
 // desktop/src/components/DetachedAiHudCockpit.jsx
-var import_react16 = __toESM(require_react());
+var import_react19 = __toESM(require_react());
 var { ipcRenderer: ipcRenderer3 } = require("electron");
 function DetachedAiHudCockpit() {
-  const [isAiProviderModalOpen, setIsAiProviderModalOpen] = (0, import_react16.useState)(false);
-  const [tabs, setTabs] = (0, import_react16.useState)([
+  const [isAiProviderModalOpen, setIsAiProviderModalOpen] = (0, import_react19.useState)(false);
+  const [tabs, setTabs] = (0, import_react19.useState)([
     { id: 1, title: "Tab 1: Hacker News", url: "https://news.ycombinator.com" },
     { id: 2, title: "Tab 2: Checkout Demo", url: "file:///demo_checkout.html" },
     { id: 3, title: "Tab 3: Wikipedia", url: "https://en.wikipedia.org" }
   ]);
-  const [activeTabId, setActiveTabId] = (0, import_react16.useState)(1);
-  const [activeModuleTab, setActiveModuleTab] = (0, import_react16.useState)("chat");
-  const [activeToolTab, setActiveToolTab] = (0, import_react16.useState)("ax");
-  const [somEnabled, setSomEnabled] = (0, import_react16.useState)(true);
-  const [axTreeMarkdown, setAxTreeMarkdown] = (0, import_react16.useState)("");
-  const [markFilterQuery, setMarkFilterQuery] = (0, import_react16.useState)("");
-  const [copiedAx, setCopiedAx] = (0, import_react16.useState)(false);
-  const [grepQuery, setGrepQuery] = (0, import_react16.useState)("href");
-  const [grepMatches, setGrepMatches] = (0, import_react16.useState)([]);
-  const [grepPage, setGrepPage] = (0, import_react16.useState)(1);
-  const [autofillStatus, setAutofillStatus] = (0, import_react16.useState)("Ready for autofill execution.");
-  const [isHitlActive, setIsHitlActive] = (0, import_react16.useState)(false);
-  const [telemetryLogs, setTelemetryLogs] = (0, import_react16.useState)([]);
-  const [shieldsStats, setShieldsStats] = (0, import_react16.useState)({
+  const [activeTabId, setActiveTabId] = (0, import_react19.useState)(1);
+  const [activeModuleTab, setActiveModuleTab] = (0, import_react19.useState)("chat");
+  const [activeToolTab, setActiveToolTab] = (0, import_react19.useState)("ax");
+  const [somEnabled, setSomEnabled] = (0, import_react19.useState)(true);
+  const [axTreeMarkdown, setAxTreeMarkdown] = (0, import_react19.useState)("");
+  const [markFilterQuery, setMarkFilterQuery] = (0, import_react19.useState)("");
+  const [copiedAx, setCopiedAx] = (0, import_react19.useState)(false);
+  const [grepQuery, setGrepQuery] = (0, import_react19.useState)("href");
+  const [grepMatches, setGrepMatches] = (0, import_react19.useState)([]);
+  const [grepPage, setGrepPage] = (0, import_react19.useState)(1);
+  const [autofillStatus, setAutofillStatus] = (0, import_react19.useState)("Ready for autofill execution.");
+  const [isHitlActive, setIsHitlActive] = (0, import_react19.useState)(false);
+  const [telemetryLogs, setTelemetryLogs] = (0, import_react19.useState)([]);
+  const [shieldsStats, setShieldsStats] = (0, import_react19.useState)({
     mode: "aggressive",
     isNativeRust: true,
     totalBlocked: 0,
@@ -50176,8 +51804,8 @@ function DetachedAiHudCockpit() {
     savedTimeMs: 0,
     recentEvents: []
   });
-  const [customRuleInput, setCustomRuleInput] = (0, import_react16.useState)("");
-  const [chatMessages, setChatMessages] = (0, import_react16.useState)([
+  const [customRuleInput, setCustomRuleInput] = (0, import_react19.useState)("");
+  const [chatMessages, setChatMessages] = (0, import_react19.useState)([
     {
       id: "msg-welcome",
       role: "assistant",
@@ -50185,27 +51813,27 @@ function DetachedAiHudCockpit() {
       time: (/* @__PURE__ */ new Date()).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
     }
   ]);
-  const [chatInput, setChatInput] = (0, import_react16.useState)("");
-  const [isVoiceListening, setIsVoiceListening] = (0, import_react16.useState)(false);
-  const [voiceSpeechFeedback, setVoiceSpeechFeedback] = (0, import_react16.useState)(false);
-  const [isAiThinking, setIsAiThinking] = (0, import_react16.useState)(false);
-  const [whisperLang, setWhisperLang] = (0, import_react16.useState)("auto");
-  const [isWhisperRecording, setIsWhisperRecording] = (0, import_react16.useState)(false);
-  const [isWhisperTranscribing, setIsWhisperTranscribing] = (0, import_react16.useState)(false);
-  const [recordingTimer, setRecordingTimer] = (0, import_react16.useState)(0);
-  const recognitionRef = (0, import_react16.useRef)(null);
-  const messagesEndRef = (0, import_react16.useRef)(null);
-  const messagesContainerRef = (0, import_react16.useRef)(null);
-  const userScrolledUpRef = (0, import_react16.useRef)(false);
-  const [isScrolledUp, setIsScrolledUp] = (0, import_react16.useState)(false);
-  const timerIntervalRef = (0, import_react16.useRef)(null);
-  const audioCtxRef = (0, import_react16.useRef)(null);
-  const audioProcessorRef = (0, import_react16.useRef)(null);
-  const recordingActiveRef = (0, import_react16.useRef)(false);
-  const sampleRateRef = (0, import_react16.useRef)(16e3);
-  const mediaStreamRef = (0, import_react16.useRef)(null);
-  const audioChunksRef = (0, import_react16.useRef)([]);
-  const activeAssistantIdRef = (0, import_react16.useRef)(null);
+  const [chatInput, setChatInput] = (0, import_react19.useState)("");
+  const [isVoiceListening, setIsVoiceListening] = (0, import_react19.useState)(false);
+  const [voiceSpeechFeedback, setVoiceSpeechFeedback] = (0, import_react19.useState)(false);
+  const [isAiThinking, setIsAiThinking] = (0, import_react19.useState)(false);
+  const [whisperLang, setWhisperLang] = (0, import_react19.useState)("auto");
+  const [isWhisperRecording, setIsWhisperRecording] = (0, import_react19.useState)(false);
+  const [isWhisperTranscribing, setIsWhisperTranscribing] = (0, import_react19.useState)(false);
+  const [recordingTimer, setRecordingTimer] = (0, import_react19.useState)(0);
+  const recognitionRef = (0, import_react19.useRef)(null);
+  const messagesEndRef = (0, import_react19.useRef)(null);
+  const messagesContainerRef = (0, import_react19.useRef)(null);
+  const userScrolledUpRef = (0, import_react19.useRef)(false);
+  const [isScrolledUp, setIsScrolledUp] = (0, import_react19.useState)(false);
+  const timerIntervalRef = (0, import_react19.useRef)(null);
+  const audioCtxRef = (0, import_react19.useRef)(null);
+  const audioProcessorRef = (0, import_react19.useRef)(null);
+  const recordingActiveRef = (0, import_react19.useRef)(false);
+  const sampleRateRef = (0, import_react19.useRef)(16e3);
+  const mediaStreamRef = (0, import_react19.useRef)(null);
+  const audioChunksRef = (0, import_react19.useRef)([]);
+  const activeAssistantIdRef = (0, import_react19.useRef)(null);
   const handleMessagesScroll = (e) => {
     const el = e.currentTarget;
     if (!el) return;
@@ -50242,7 +51870,7 @@ function DetachedAiHudCockpit() {
       return { ...m, toolEvents: updated };
     }));
   };
-  (0, import_react16.useEffect)(() => {
+  (0, import_react19.useEffect)(() => {
     try {
       if (ipcRenderer3.invoke) {
         ipcRenderer3.invoke("whisper-preload").catch(() => {
@@ -50251,13 +51879,13 @@ function DetachedAiHudCockpit() {
     } catch (e) {
     }
   }, []);
-  (0, import_react16.useEffect)(() => {
+  (0, import_react19.useEffect)(() => {
     if (userScrolledUpRef.current) return;
     if (messagesContainerRef.current) {
       messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
     }
   }, [chatMessages, isAiThinking]);
-  (0, import_react16.useEffect)(() => {
+  (0, import_react19.useEffect)(() => {
     try {
       ipcRenderer3.send("hud-action", { action: "request-initial-state" });
     } catch (e) {
@@ -50673,36 +52301,36 @@ function DetachedAiHudCockpit() {
       });
     }
   };
-  return /* @__PURE__ */ import_react16.default.createElement("div", { className: "mac-cockpit-window" }, /* @__PURE__ */ import_react16.default.createElement("header", { className: "mac-cockpit-header" }, /* @__PURE__ */ import_react16.default.createElement("div", { className: "mac-window-controls" }, /* @__PURE__ */ import_react16.default.createElement(
+  return /* @__PURE__ */ import_react19.default.createElement("div", { className: "mac-cockpit-window" }, /* @__PURE__ */ import_react19.default.createElement("header", { className: "mac-cockpit-header" }, /* @__PURE__ */ import_react19.default.createElement("div", { className: "mac-window-controls" }, /* @__PURE__ */ import_react19.default.createElement(
     "button",
     {
       className: "mac-btn mac-close",
       title: "Retract & Hide AI Window",
       onClick: handleHideWindow
     }
-  ), /* @__PURE__ */ import_react16.default.createElement(
+  ), /* @__PURE__ */ import_react19.default.createElement(
     "button",
     {
       className: "mac-btn mac-minimize",
       title: "Minimize Window",
       onClick: () => ipcRenderer3.send("hud-window-minimize")
     }
-  ), /* @__PURE__ */ import_react16.default.createElement(
+  ), /* @__PURE__ */ import_react19.default.createElement(
     "button",
     {
       className: "mac-btn mac-maximize",
       title: "Maximize / Restore",
       onClick: () => ipcRenderer3.send("hud-window-maximize")
     }
-  )), /* @__PURE__ */ import_react16.default.createElement("div", { className: "mac-cockpit-brand" }, /* @__PURE__ */ import_react16.default.createElement("span", { className: "mac-brand-sparkle" }, "\u2726"), /* @__PURE__ */ import_react16.default.createElement("span", { className: "mac-brand-name" }, "Antigravity Copilot")), /* @__PURE__ */ import_react16.default.createElement("div", { className: "mac-target-pill", title: "Current active tab in main browser" }, /* @__PURE__ */ import_react16.default.createElement("span", { style: { fontSize: "11px", opacity: 0.65 } }, "Target:"), /* @__PURE__ */ import_react16.default.createElement(
+  )), /* @__PURE__ */ import_react19.default.createElement("div", { className: "mac-cockpit-brand" }, /* @__PURE__ */ import_react19.default.createElement("span", { className: "mac-brand-sparkle" }, "\u2726"), /* @__PURE__ */ import_react19.default.createElement("span", { className: "mac-brand-name" }, "Antigravity Copilot")), /* @__PURE__ */ import_react19.default.createElement("div", { className: "mac-target-pill", title: "Current active tab in main browser" }, /* @__PURE__ */ import_react19.default.createElement("span", { style: { fontSize: "11px", opacity: 0.65 } }, "Target:"), /* @__PURE__ */ import_react19.default.createElement(
     "select",
     {
       className: "mac-target-select",
       value: activeTabId,
       onChange: (e) => handleTabChange(e.target.value)
     },
-    tabs.map((tab) => /* @__PURE__ */ import_react16.default.createElement("option", { key: tab.id, value: tab.id }, "Tab ", tab.id, ": ", tab.title ? tab.title.length > 22 ? tab.title.substring(0, 22) + "..." : tab.title : "New Tab"))
-  )), /* @__PURE__ */ import_react16.default.createElement("div", { className: "mac-header-actions" }, /* @__PURE__ */ import_react16.default.createElement(
+    tabs.map((tab) => /* @__PURE__ */ import_react19.default.createElement("option", { key: tab.id, value: tab.id }, "Tab ", tab.id, ": ", tab.title ? tab.title.length > 22 ? tab.title.substring(0, 22) + "..." : tab.title : "New Tab"))
+  )), /* @__PURE__ */ import_react19.default.createElement("div", { className: "mac-header-actions" }, /* @__PURE__ */ import_react19.default.createElement(
     "button",
     {
       className: "mac-pill-btn",
@@ -50711,7 +52339,7 @@ function DetachedAiHudCockpit() {
       style: { color: "#00e5ff", borderColor: "rgba(0, 229, 255, 0.35)" }
     },
     "\u{1F511} Keys"
-  ), /* @__PURE__ */ import_react16.default.createElement(
+  ), /* @__PURE__ */ import_react19.default.createElement(
     "button",
     {
       className: "mac-pill-btn",
@@ -50719,7 +52347,7 @@ function DetachedAiHudCockpit() {
       onClick: handleDockBack
     },
     "\u{1F4E5} Dock"
-  ), /* @__PURE__ */ import_react16.default.createElement(
+  ), /* @__PURE__ */ import_react19.default.createElement(
     "button",
     {
       className: "mac-pill-btn",
@@ -50727,7 +52355,7 @@ function DetachedAiHudCockpit() {
       onClick: handleFocusBrowser
     },
     "\u2197 Focus"
-  ), /* @__PURE__ */ import_react16.default.createElement(
+  ), /* @__PURE__ */ import_react19.default.createElement(
     "button",
     {
       className: "mac-pill-btn close-x",
@@ -50735,14 +52363,14 @@ function DetachedAiHudCockpit() {
       onClick: handleHideWindow
     },
     "\u2715"
-  ))), /* @__PURE__ */ import_react16.default.createElement("nav", { className: "mac-cockpit-nav" }, /* @__PURE__ */ import_react16.default.createElement(
+  ))), /* @__PURE__ */ import_react19.default.createElement("nav", { className: "mac-cockpit-nav" }, /* @__PURE__ */ import_react19.default.createElement(
     "button",
     {
       className: `mac-nav-tab ${activeModuleTab === "chat" ? "active" : ""}`,
       onClick: () => setActiveModuleTab("chat")
     },
     "\u{1F4AC} AI Chat & Voice"
-  ), /* @__PURE__ */ import_react16.default.createElement(
+  ), /* @__PURE__ */ import_react19.default.createElement(
     "button",
     {
       className: `mac-nav-tab ${activeModuleTab === "shields" ? "active" : ""}`,
@@ -50751,14 +52379,14 @@ function DetachedAiHudCockpit() {
     "\u{1F981} Shields (",
     shieldsStats.totalBlocked || 0,
     ")"
-  ), /* @__PURE__ */ import_react16.default.createElement(
+  ), /* @__PURE__ */ import_react19.default.createElement(
     "button",
     {
       className: `mac-nav-tab ${activeModuleTab === "tools" ? "active" : ""}`,
       onClick: () => setActiveModuleTab("tools")
     },
     "\u{1F6E0}\uFE0F Core Tools"
-  )), /* @__PURE__ */ import_react16.default.createElement("main", { className: "mac-cockpit-body" }, activeModuleTab === "chat" && /* @__PURE__ */ import_react16.default.createElement("div", { className: "mac-chat-view" }, /* @__PURE__ */ import_react16.default.createElement("div", { className: "mac-context-bar" }, /* @__PURE__ */ import_react16.default.createElement("span", { style: { fontSize: "13px" } }, "\u{1F310}"), /* @__PURE__ */ import_react16.default.createElement("span", { className: "mac-context-title" }, activeTab.title || "New Tab"), /* @__PURE__ */ import_react16.default.createElement("span", { className: "mac-context-badge" }, "\u{1F6E1}\uFE0F ", shieldsStats.totalBlocked || 0, " Blocked"), /* @__PURE__ */ import_react16.default.createElement(
+  )), /* @__PURE__ */ import_react19.default.createElement("main", { className: "mac-cockpit-body" }, activeModuleTab === "chat" && /* @__PURE__ */ import_react19.default.createElement("div", { className: "mac-chat-view" }, /* @__PURE__ */ import_react19.default.createElement("div", { className: "mac-context-bar" }, /* @__PURE__ */ import_react19.default.createElement("span", { style: { fontSize: "13px" } }, "\u{1F310}"), /* @__PURE__ */ import_react19.default.createElement("span", { className: "mac-context-title" }, activeTab.title || "New Tab"), /* @__PURE__ */ import_react19.default.createElement("span", { className: "mac-context-badge" }, "\u{1F6E1}\uFE0F ", shieldsStats.totalBlocked || 0, " Blocked"), /* @__PURE__ */ import_react19.default.createElement(
     "button",
     {
       className: `mac-speech-toggle ${voiceSpeechFeedback ? "active" : ""}`,
@@ -50766,7 +52394,7 @@ function DetachedAiHudCockpit() {
       onClick: () => setVoiceSpeechFeedback(!voiceSpeechFeedback)
     },
     voiceSpeechFeedback ? "\u{1F50A} Speaking" : "\u{1F507} Muted"
-  )), /* @__PURE__ */ import_react16.default.createElement("div", { className: "mac-quick-chips" }, /* @__PURE__ */ import_react16.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("CLK SB"), title: "Click Search Bar on web page" }, "\u{1F50D} CLK SB"), /* @__PURE__ */ import_react16.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("s50"), title: "Scroll down by 50%" }, "\u{1F4DC} S50"), /* @__PURE__ */ import_react16.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("open youtube"), title: "Open YouTube tab" }, "\u{1F4FA} YouTube"), /* @__PURE__ */ import_react16.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("show numbers"), title: "Highlight & number keywords on page" }, "\u{1F522} Numbers"), /* @__PURE__ */ import_react16.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("help shortcuts"), title: "Show all NLP commands" }, "\u{1F4A1} Shortcuts"), /* @__PURE__ */ import_react16.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("close tab"), title: "Close active tab" }, "\u274C Close"), /* @__PURE__ */ import_react16.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("summarize") }, "\u26A1 Summarize"), /* @__PURE__ */ import_react16.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("scroll down") }, "\u2B07 Scroll"), /* @__PURE__ */ import_react16.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("click play") }, "\u25B6\uFE0F Play"), /* @__PURE__ */ import_react16.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("autofill") }, "\u{1F4DD} Autofill"), /* @__PURE__ */ import_react16.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("\u092A\u0947\u091C \u0915\u093E \u0938\u093E\u0930\u093E\u0902\u0936 \u0926\u094B") }, "\u{1F1EE}\u{1F1F3} \u0938\u093E\u0930\u093E\u0902\u0936 (HI)"), /* @__PURE__ */ import_react16.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("\uD398\uC774\uC9C0 \uC694\uC57D") }, "\u{1F1F0}\u{1F1F7} \uC694\uC57D (KO)")), /* @__PURE__ */ import_react16.default.createElement("div", { className: "mac-messages-stream", ref: messagesContainerRef, onScroll: handleMessagesScroll }, chatMessages.map((msg) => /* @__PURE__ */ import_react16.default.createElement("div", { key: msg.id, className: `mac-msg-row ${msg.role}` }, /* @__PURE__ */ import_react16.default.createElement("div", { className: "mac-msg-bubble" }, /* @__PURE__ */ import_react16.default.createElement("div", { className: "mac-msg-header" }, /* @__PURE__ */ import_react16.default.createElement("span", { className: "mac-msg-author" }, msg.role === "user" ? "You" : "\u2726 Copilot"), /* @__PURE__ */ import_react16.default.createElement("span", { className: "mac-msg-time" }, msg.time)), msg.role === "assistant" && msg.reasoning && /* @__PURE__ */ import_react16.default.createElement("div", { className: `chatgpt-thought-container ${msg.isThinking ? "active-thinking" : ""}` }, /* @__PURE__ */ import_react16.default.createElement("div", { className: "thought-header", onClick: () => toggleThoughtCollapse(msg.id) }, /* @__PURE__ */ import_react16.default.createElement("div", { className: "thought-title-group" }, msg.isThinking ? /* @__PURE__ */ import_react16.default.createElement(import_react16.default.Fragment, null, /* @__PURE__ */ import_react16.default.createElement("span", { className: "thought-shimmer-pulse" }), /* @__PURE__ */ import_react16.default.createElement("span", null, "Thinking...")) : /* @__PURE__ */ import_react16.default.createElement(import_react16.default.Fragment, null, /* @__PURE__ */ import_react16.default.createElement("span", null, "\u{1F4AD}"), /* @__PURE__ */ import_react16.default.createElement("span", null, "Thought for ", msg.thoughtDuration || "2.4", "s"))), /* @__PURE__ */ import_react16.default.createElement(
+  )), /* @__PURE__ */ import_react19.default.createElement("div", { className: "mac-quick-chips" }, /* @__PURE__ */ import_react19.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("CLK SB"), title: "Click Search Bar on web page" }, "\u{1F50D} CLK SB"), /* @__PURE__ */ import_react19.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("s50"), title: "Scroll down by 50%" }, "\u{1F4DC} S50"), /* @__PURE__ */ import_react19.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("open youtube"), title: "Open YouTube tab" }, "\u{1F4FA} YouTube"), /* @__PURE__ */ import_react19.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("show numbers"), title: "Highlight & number keywords on page" }, "\u{1F522} Numbers"), /* @__PURE__ */ import_react19.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("help shortcuts"), title: "Show all NLP commands" }, "\u{1F4A1} Shortcuts"), /* @__PURE__ */ import_react19.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("close tab"), title: "Close active tab" }, "\u274C Close"), /* @__PURE__ */ import_react19.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("summarize") }, "\u26A1 Summarize"), /* @__PURE__ */ import_react19.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("scroll down") }, "\u2B07 Scroll"), /* @__PURE__ */ import_react19.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("click play") }, "\u25B6\uFE0F Play"), /* @__PURE__ */ import_react19.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("autofill") }, "\u{1F4DD} Autofill"), /* @__PURE__ */ import_react19.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("\u092A\u0947\u091C \u0915\u093E \u0938\u093E\u0930\u093E\u0902\u0936 \u0926\u094B") }, "\u{1F1EE}\u{1F1F3} \u0938\u093E\u0930\u093E\u0902\u0936 (HI)"), /* @__PURE__ */ import_react19.default.createElement("button", { className: "mac-chip", onClick: () => handleProcessNlpCommand("\uD398\uC774\uC9C0 \uC694\uC57D") }, "\u{1F1F0}\u{1F1F7} \uC694\uC57D (KO)")), /* @__PURE__ */ import_react19.default.createElement("div", { className: "mac-messages-stream", ref: messagesContainerRef, onScroll: handleMessagesScroll }, chatMessages.map((msg) => /* @__PURE__ */ import_react19.default.createElement("div", { key: msg.id, className: `mac-msg-row ${msg.role}` }, /* @__PURE__ */ import_react19.default.createElement("div", { className: "mac-msg-bubble" }, /* @__PURE__ */ import_react19.default.createElement("div", { className: "mac-msg-header" }, /* @__PURE__ */ import_react19.default.createElement("span", { className: "mac-msg-author" }, msg.role === "user" ? "You" : "\u2726 Copilot"), /* @__PURE__ */ import_react19.default.createElement("span", { className: "mac-msg-time" }, msg.time)), msg.role === "assistant" && msg.reasoning && /* @__PURE__ */ import_react19.default.createElement("div", { className: `chatgpt-thought-container ${msg.isThinking ? "active-thinking" : ""}` }, /* @__PURE__ */ import_react19.default.createElement("div", { className: "thought-header", onClick: () => toggleThoughtCollapse(msg.id) }, /* @__PURE__ */ import_react19.default.createElement("div", { className: "thought-title-group" }, msg.isThinking ? /* @__PURE__ */ import_react19.default.createElement(import_react19.default.Fragment, null, /* @__PURE__ */ import_react19.default.createElement("span", { className: "thought-shimmer-pulse" }), /* @__PURE__ */ import_react19.default.createElement("span", null, "Thinking...")) : /* @__PURE__ */ import_react19.default.createElement(import_react19.default.Fragment, null, /* @__PURE__ */ import_react19.default.createElement("span", null, "\u{1F4AD}"), /* @__PURE__ */ import_react19.default.createElement("span", null, "Thought for ", msg.thoughtDuration || "2.4", "s"))), /* @__PURE__ */ import_react19.default.createElement(
     "button",
     {
       type: "button",
@@ -50778,10 +52406,10 @@ function DetachedAiHudCockpit() {
       title: msg.thoughtCollapsed ? "Expand reasoning process" : "Collapse / Retract reasoning process"
     },
     msg.thoughtCollapsed ? "\u25B6 Expand Thought" : "\u25BC Collapse Thought"
-  )), !msg.thoughtCollapsed && /* @__PURE__ */ import_react16.default.createElement("div", { className: "thought-stream-body" }, msg.reasoning, msg.isThinking && /* @__PURE__ */ import_react16.default.createElement("span", { className: "streaming-caret" }))), msg.role === "assistant" && msg.toolEvents && msg.toolEvents.length > 0 && /* @__PURE__ */ import_react16.default.createElement("div", { className: "antigravity-tools-group" }, msg.toolEvents.map((tool) => /* @__PURE__ */ import_react16.default.createElement("div", { key: tool.id, className: `antigravity-tool-card ${tool.status}` }, /* @__PURE__ */ import_react16.default.createElement("div", { className: "tool-card-header", onClick: () => toggleToolCollapse(msg.id, tool.id) }, /* @__PURE__ */ import_react16.default.createElement("div", { className: "tool-card-title" }, /* @__PURE__ */ import_react16.default.createElement("span", null, tool.tool.includes("download") ? "\u{1F4E5}" : tool.tool.includes("tab") ? "\u{1F5C2}\uFE0F" : tool.tool.includes("search") ? "\u{1F50D}" : tool.tool.includes("remind") ? "\u{1F514}" : tool.tool.includes("click") ? "\u{1F5B1}\uFE0F" : "\u26A1"), /* @__PURE__ */ import_react16.default.createElement("span", null, "Tool:"), /* @__PURE__ */ import_react16.default.createElement("code", { className: "tool-name-code" }, tool.tool)), /* @__PURE__ */ import_react16.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: 6 } }, tool.status === "running" && /* @__PURE__ */ import_react16.default.createElement("span", { className: "tool-status-badge running" }, /* @__PURE__ */ import_react16.default.createElement("span", { className: "tool-card-spinner" }), " Running..."), tool.status === "completed" && /* @__PURE__ */ import_react16.default.createElement("span", { className: "tool-status-badge completed" }, "\u2713 Verified ", tool.durationMs ? `(${tool.durationMs}ms)` : ""), tool.status === "failed" && /* @__PURE__ */ import_react16.default.createElement("span", { className: "tool-status-badge failed" }, "\u2717 Failed"), /* @__PURE__ */ import_react16.default.createElement("span", { style: { fontSize: 10, color: "#94a3b8" } }, tool.collapsed ? "\u25B6" : "\u25BC"))), !tool.collapsed && /* @__PURE__ */ import_react16.default.createElement("div", { className: "tool-card-body" }, tool.args && Object.keys(tool.args).length > 0 && /* @__PURE__ */ import_react16.default.createElement("div", null, /* @__PURE__ */ import_react16.default.createElement("div", { className: "tool-params-label" }, "Parameters"), /* @__PURE__ */ import_react16.default.createElement("pre", { className: "tool-params-pre" }, JSON.stringify(tool.args, null, 2))), (tool.observation || tool.result) && /* @__PURE__ */ import_react16.default.createElement("div", { className: "tool-obs-box" }, /* @__PURE__ */ import_react16.default.createElement("strong", null, "Live Observation:"), " ", tool.observation || tool.result))))), (() => {
+  )), !msg.thoughtCollapsed && /* @__PURE__ */ import_react19.default.createElement("div", { className: "thought-stream-body" }, msg.reasoning, msg.isThinking && /* @__PURE__ */ import_react19.default.createElement("span", { className: "streaming-caret" }))), msg.role === "assistant" && msg.toolEvents && msg.toolEvents.length > 0 && /* @__PURE__ */ import_react19.default.createElement("div", { className: "antigravity-tools-group" }, msg.toolEvents.map((tool) => /* @__PURE__ */ import_react19.default.createElement("div", { key: tool.id, className: `antigravity-tool-card ${tool.status}` }, /* @__PURE__ */ import_react19.default.createElement("div", { className: "tool-card-header", onClick: () => toggleToolCollapse(msg.id, tool.id) }, /* @__PURE__ */ import_react19.default.createElement("div", { className: "tool-card-title" }, /* @__PURE__ */ import_react19.default.createElement("span", null, tool.tool.includes("download") ? "\u{1F4E5}" : tool.tool.includes("tab") ? "\u{1F5C2}\uFE0F" : tool.tool.includes("search") ? "\u{1F50D}" : tool.tool.includes("remind") ? "\u{1F514}" : tool.tool.includes("click") ? "\u{1F5B1}\uFE0F" : "\u26A1"), /* @__PURE__ */ import_react19.default.createElement("span", null, "Tool:"), /* @__PURE__ */ import_react19.default.createElement("code", { className: "tool-name-code" }, tool.tool)), /* @__PURE__ */ import_react19.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: 6 } }, tool.status === "running" && /* @__PURE__ */ import_react19.default.createElement("span", { className: "tool-status-badge running" }, /* @__PURE__ */ import_react19.default.createElement("span", { className: "tool-card-spinner" }), " Running..."), tool.status === "completed" && /* @__PURE__ */ import_react19.default.createElement("span", { className: "tool-status-badge completed" }, "\u2713 Verified ", tool.durationMs ? `(${tool.durationMs}ms)` : ""), tool.status === "failed" && /* @__PURE__ */ import_react19.default.createElement("span", { className: "tool-status-badge failed" }, "\u2717 Failed"), /* @__PURE__ */ import_react19.default.createElement("span", { style: { fontSize: 10, color: "#94a3b8" } }, tool.collapsed ? "\u25B6" : "\u25BC"))), !tool.collapsed && /* @__PURE__ */ import_react19.default.createElement("div", { className: "tool-card-body" }, tool.args && Object.keys(tool.args).length > 0 && /* @__PURE__ */ import_react19.default.createElement("div", null, /* @__PURE__ */ import_react19.default.createElement("div", { className: "tool-params-label" }, "Parameters"), /* @__PURE__ */ import_react19.default.createElement("pre", { className: "tool-params-pre" }, JSON.stringify(tool.args, null, 2))), (tool.observation || tool.result) && /* @__PURE__ */ import_react19.default.createElement("div", { className: "tool-obs-box" }, /* @__PURE__ */ import_react19.default.createElement("strong", null, "Live Observation:"), " ", tool.observation || tool.result))))), (() => {
     const displayText = stripToolCallsFromText(msg.text);
     if (displayText) {
-      return /* @__PURE__ */ import_react16.default.createElement(
+      return /* @__PURE__ */ import_react19.default.createElement(
         "div",
         {
           className: "mac-msg-text",
@@ -50791,10 +52419,10 @@ function DetachedAiHudCockpit() {
       );
     }
     if (msg.isStreaming && !msg.isThinking && !msg.reasoning && (!msg.toolEvents || msg.toolEvents.length === 0)) {
-      return /* @__PURE__ */ import_react16.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: 8, padding: "4px 0", color: "#94a3b8" } }, /* @__PURE__ */ import_react16.default.createElement("span", { className: "dot-live", style: { width: 6, height: 6, display: "inline-block" } }), /* @__PURE__ */ import_react16.default.createElement("span", { style: { fontSize: "12px" } }, "Connecting to AI model..."));
+      return /* @__PURE__ */ import_react19.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: 8, padding: "4px 0", color: "#94a3b8" } }, /* @__PURE__ */ import_react19.default.createElement("span", { className: "dot-live", style: { width: 6, height: 6, display: "inline-block" } }), /* @__PURE__ */ import_react19.default.createElement("span", { style: { fontSize: "12px" } }, "Connecting to AI model..."));
     }
     return null;
-  })(), msg.isStreaming && !msg.isThinking && stripToolCallsFromText(msg.text) && /* @__PURE__ */ import_react16.default.createElement("span", { className: "streaming-caret" })))), isAiThinking && !chatMessages.some((m) => m.isStreaming) && /* @__PURE__ */ import_react16.default.createElement("div", { className: "mac-msg-row assistant" }, /* @__PURE__ */ import_react16.default.createElement("div", { className: "mac-msg-bubble thinking" }, /* @__PURE__ */ import_react16.default.createElement("span", { className: "dot-live", style: { width: 6, height: 6, display: "inline-block" } }), /* @__PURE__ */ import_react16.default.createElement("span", { style: { fontSize: "12px", color: "#94a3b8" } }, "Copilot is thinking..."))), isScrolledUp && /* @__PURE__ */ import_react16.default.createElement(
+  })(), msg.isStreaming && !msg.isThinking && stripToolCallsFromText(msg.text) && /* @__PURE__ */ import_react19.default.createElement("span", { className: "streaming-caret" })))), isAiThinking && !chatMessages.some((m) => m.isStreaming) && /* @__PURE__ */ import_react19.default.createElement("div", { className: "mac-msg-row assistant" }, /* @__PURE__ */ import_react19.default.createElement("div", { className: "mac-msg-bubble thinking" }, /* @__PURE__ */ import_react19.default.createElement("span", { className: "dot-live", style: { width: 6, height: 6, display: "inline-block" } }), /* @__PURE__ */ import_react19.default.createElement("span", { style: { fontSize: "12px", color: "#94a3b8" } }, "Copilot is thinking..."))), isScrolledUp && /* @__PURE__ */ import_react19.default.createElement(
     "button",
     {
       type: "button",
@@ -50803,7 +52431,7 @@ function DetachedAiHudCockpit() {
       title: "Jump down to latest messages"
     },
     "\u2193 Latest"
-  ), /* @__PURE__ */ import_react16.default.createElement("div", { ref: messagesEndRef })), /* @__PURE__ */ import_react16.default.createElement("div", { className: "mac-whisper-bar" }, /* @__PURE__ */ import_react16.default.createElement("div", { className: "mac-lang-chips" }, /* @__PURE__ */ import_react16.default.createElement("span", { className: "mac-whisper-badge" }, "\u{1F9E0} Whisper Local ASR"), /* @__PURE__ */ import_react16.default.createElement(
+  ), /* @__PURE__ */ import_react19.default.createElement("div", { ref: messagesEndRef })), /* @__PURE__ */ import_react19.default.createElement("div", { className: "mac-whisper-bar" }, /* @__PURE__ */ import_react19.default.createElement("div", { className: "mac-lang-chips" }, /* @__PURE__ */ import_react19.default.createElement("span", { className: "mac-whisper-badge" }, "\u{1F9E0} Whisper Local ASR"), /* @__PURE__ */ import_react19.default.createElement(
     "button",
     {
       className: `mac-lang-chip ${whisperLang === "auto" ? "active" : ""}`,
@@ -50811,7 +52439,7 @@ function DetachedAiHudCockpit() {
       onClick: () => setWhisperLang("auto")
     },
     "\u{1F310} Auto"
-  ), /* @__PURE__ */ import_react16.default.createElement(
+  ), /* @__PURE__ */ import_react19.default.createElement(
     "button",
     {
       className: `mac-lang-chip ${whisperLang === "en" ? "active" : ""}`,
@@ -50819,7 +52447,7 @@ function DetachedAiHudCockpit() {
       onClick: () => setWhisperLang("en")
     },
     "\u{1F1FA}\u{1F1F8} English"
-  ), /* @__PURE__ */ import_react16.default.createElement(
+  ), /* @__PURE__ */ import_react19.default.createElement(
     "button",
     {
       className: `mac-lang-chip ${whisperLang === "hi" ? "active" : ""}`,
@@ -50827,7 +52455,7 @@ function DetachedAiHudCockpit() {
       onClick: () => setWhisperLang("hi")
     },
     "\u{1F1EE}\u{1F1F3} \u0939\u093F\u0928\u094D\u0926\u0940"
-  ), /* @__PURE__ */ import_react16.default.createElement(
+  ), /* @__PURE__ */ import_react19.default.createElement(
     "button",
     {
       className: `mac-lang-chip ${whisperLang === "ko" ? "active" : ""}`,
@@ -50835,7 +52463,7 @@ function DetachedAiHudCockpit() {
       onClick: () => setWhisperLang("ko")
     },
     "\u{1F1F0}\u{1F1F7} \uD55C\uAD6D\uC5B4"
-  )), isWhisperRecording && /* @__PURE__ */ import_react16.default.createElement("div", { className: "mac-recording-indicator" }, /* @__PURE__ */ import_react16.default.createElement("span", { className: "pulse-red-dot" }), /* @__PURE__ */ import_react16.default.createElement("span", null, "Recording 16kHz PCM (", recordingTimer, "s)...")), isWhisperTranscribing && /* @__PURE__ */ import_react16.default.createElement("div", { className: "mac-transcribing-indicator" }, /* @__PURE__ */ import_react16.default.createElement("span", { className: "pulse-cyan-dot" }), /* @__PURE__ */ import_react16.default.createElement("span", null, "Whisper transcribing speech..."))), /* @__PURE__ */ import_react16.default.createElement("div", { className: "mac-chat-input-bar" }, /* @__PURE__ */ import_react16.default.createElement("div", { className: "mac-mic-group" }, /* @__PURE__ */ import_react16.default.createElement(
+  )), isWhisperRecording && /* @__PURE__ */ import_react19.default.createElement("div", { className: "mac-recording-indicator" }, /* @__PURE__ */ import_react19.default.createElement("span", { className: "pulse-red-dot" }), /* @__PURE__ */ import_react19.default.createElement("span", null, "Recording 16kHz PCM (", recordingTimer, "s)...")), isWhisperTranscribing && /* @__PURE__ */ import_react19.default.createElement("div", { className: "mac-transcribing-indicator" }, /* @__PURE__ */ import_react19.default.createElement("span", { className: "pulse-cyan-dot" }), /* @__PURE__ */ import_react19.default.createElement("span", null, "Whisper transcribing speech..."))), /* @__PURE__ */ import_react19.default.createElement("div", { className: "mac-chat-input-bar" }, /* @__PURE__ */ import_react19.default.createElement("div", { className: "mac-mic-group" }, /* @__PURE__ */ import_react19.default.createElement(
     "button",
     {
       className: `mac-mic-btn ${isWhisperRecording || isVoiceListening ? "listening" : ""}`,
@@ -50843,7 +52471,7 @@ function DetachedAiHudCockpit() {
       onClick: toggleWhisperRecording
     },
     isWhisperRecording ? "\u{1F534}" : isWhisperTranscribing ? "\u23F3" : "\u{1F399}\uFE0F"
-  ), /* @__PURE__ */ import_react16.default.createElement(
+  ), /* @__PURE__ */ import_react19.default.createElement(
     "button",
     {
       className: "mac-mic-lang-badge",
@@ -50855,7 +52483,7 @@ function DetachedAiHudCockpit() {
       }
     },
     whisperLang === "auto" ? "\u{1F310} Auto" : whisperLang === "en" ? "\u{1F1FA}\u{1F1F8} EN" : whisperLang === "hi" ? "\u{1F1EE}\u{1F1F3} HI" : "\u{1F1F0}\u{1F1F7} KO"
-  )), /* @__PURE__ */ import_react16.default.createElement(
+  )), /* @__PURE__ */ import_react19.default.createElement(
     "input",
     {
       type: "text",
@@ -50867,7 +52495,7 @@ function DetachedAiHudCockpit() {
         if (e.key === "Enter") handleProcessNlpCommand(chatInput);
       }
     }
-  ), /* @__PURE__ */ import_react16.default.createElement(
+  ), /* @__PURE__ */ import_react19.default.createElement(
     "button",
     {
       className: "mac-send-btn",
@@ -50875,7 +52503,7 @@ function DetachedAiHudCockpit() {
       onClick: () => handleProcessNlpCommand(chatInput)
     },
     "\u27A4"
-  ))), activeModuleTab === "shields" && /* @__PURE__ */ import_react16.default.createElement("div", { className: "mac-shields-view" }, /* @__PURE__ */ import_react16.default.createElement("div", { className: "mac-shields-hero" }, /* @__PURE__ */ import_react16.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: 10 } }, /* @__PURE__ */ import_react16.default.createElement("span", { style: { fontSize: "24px" } }, "\u{1F981}"), /* @__PURE__ */ import_react16.default.createElement("div", null, /* @__PURE__ */ import_react16.default.createElement("h3", { style: { fontSize: "15px", color: "#fff", margin: 0 } }, "Brave Shields Protection"), /* @__PURE__ */ import_react16.default.createElement("span", { style: { fontSize: "11px", color: "#94a3b8" } }, "EasyList + uBlock Origin \u2022 Sub-Microsecond Rust Engine"))), /* @__PURE__ */ import_react16.default.createElement("span", { style: { fontSize: "11px", color: "#10b981", fontWeight: 600 } }, "\u25CF Native Active")), /* @__PURE__ */ import_react16.default.createElement("div", { className: "mac-metrics-grid" }, /* @__PURE__ */ import_react16.default.createElement("div", { className: "mac-metric-card" }, /* @__PURE__ */ import_react16.default.createElement("span", { className: "metric-val" }, shieldsStats.totalBlocked || 0), /* @__PURE__ */ import_react16.default.createElement("span", { className: "metric-lbl" }, "TOTAL BLOCKED")), /* @__PURE__ */ import_react16.default.createElement("div", { className: "mac-metric-card" }, /* @__PURE__ */ import_react16.default.createElement("span", { className: "metric-val" }, shieldsStats.trackersBlocked || 0), /* @__PURE__ */ import_react16.default.createElement("span", { className: "metric-lbl" }, "TRACKERS")), /* @__PURE__ */ import_react16.default.createElement("div", { className: "mac-metric-card" }, /* @__PURE__ */ import_react16.default.createElement("span", { className: "metric-val" }, shieldsStats.savedBytes ? Math.round(shieldsStats.savedBytes / 1024) + " KB" : "0 KB"), /* @__PURE__ */ import_react16.default.createElement("span", { className: "metric-lbl" }, "DATA SAVED")), /* @__PURE__ */ import_react16.default.createElement("div", { className: "mac-metric-card" }, /* @__PURE__ */ import_react16.default.createElement("span", { className: "metric-val" }, shieldsStats.savedTimeMs ? (shieldsStats.savedTimeMs / 1e3).toFixed(2) + "s" : "0.00s"), /* @__PURE__ */ import_react16.default.createElement("span", { className: "metric-lbl" }, "TIME SAVED"))), /* @__PURE__ */ import_react16.default.createElement("div", { className: "mac-rule-bar" }, /* @__PURE__ */ import_react16.default.createElement(
+  ))), activeModuleTab === "shields" && /* @__PURE__ */ import_react19.default.createElement("div", { className: "mac-shields-view" }, /* @__PURE__ */ import_react19.default.createElement("div", { className: "mac-shields-hero" }, /* @__PURE__ */ import_react19.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: 10 } }, /* @__PURE__ */ import_react19.default.createElement("span", { style: { fontSize: "24px" } }, "\u{1F981}"), /* @__PURE__ */ import_react19.default.createElement("div", null, /* @__PURE__ */ import_react19.default.createElement("h3", { style: { fontSize: "15px", color: "#fff", margin: 0 } }, "Brave Shields Protection"), /* @__PURE__ */ import_react19.default.createElement("span", { style: { fontSize: "11px", color: "#94a3b8" } }, "EasyList + uBlock Origin \u2022 Sub-Microsecond Rust Engine"))), /* @__PURE__ */ import_react19.default.createElement("span", { style: { fontSize: "11px", color: "#10b981", fontWeight: 600 } }, "\u25CF Native Active")), /* @__PURE__ */ import_react19.default.createElement("div", { className: "mac-metrics-grid" }, /* @__PURE__ */ import_react19.default.createElement("div", { className: "mac-metric-card" }, /* @__PURE__ */ import_react19.default.createElement("span", { className: "metric-val" }, shieldsStats.totalBlocked || 0), /* @__PURE__ */ import_react19.default.createElement("span", { className: "metric-lbl" }, "TOTAL BLOCKED")), /* @__PURE__ */ import_react19.default.createElement("div", { className: "mac-metric-card" }, /* @__PURE__ */ import_react19.default.createElement("span", { className: "metric-val" }, shieldsStats.trackersBlocked || 0), /* @__PURE__ */ import_react19.default.createElement("span", { className: "metric-lbl" }, "TRACKERS")), /* @__PURE__ */ import_react19.default.createElement("div", { className: "mac-metric-card" }, /* @__PURE__ */ import_react19.default.createElement("span", { className: "metric-val" }, shieldsStats.savedBytes ? Math.round(shieldsStats.savedBytes / 1024) + " KB" : "0 KB"), /* @__PURE__ */ import_react19.default.createElement("span", { className: "metric-lbl" }, "DATA SAVED")), /* @__PURE__ */ import_react19.default.createElement("div", { className: "mac-metric-card" }, /* @__PURE__ */ import_react19.default.createElement("span", { className: "metric-val" }, shieldsStats.savedTimeMs ? (shieldsStats.savedTimeMs / 1e3).toFixed(2) + "s" : "0.00s"), /* @__PURE__ */ import_react19.default.createElement("span", { className: "metric-lbl" }, "TIME SAVED"))), /* @__PURE__ */ import_react19.default.createElement("div", { className: "mac-rule-bar" }, /* @__PURE__ */ import_react19.default.createElement(
     "input",
     {
       type: "text",
@@ -50890,7 +52518,7 @@ function DetachedAiHudCockpit() {
         }
       }
     }
-  ), /* @__PURE__ */ import_react16.default.createElement(
+  ), /* @__PURE__ */ import_react19.default.createElement(
     "button",
     {
       className: "mac-pill-btn",
@@ -50902,35 +52530,35 @@ function DetachedAiHudCockpit() {
       }
     },
     "+ Add Rule"
-  )), /* @__PURE__ */ import_react16.default.createElement("div", { className: "mac-events-container" }, /* @__PURE__ */ import_react16.default.createElement("span", { style: { fontSize: "11px", fontWeight: 700, color: "#94a3b8", textTransform: "uppercase" } }, "Recent Zero-Byte Interceptions"), /* @__PURE__ */ import_react16.default.createElement("div", { className: "mac-events-list" }, !shieldsStats.recentEvents || shieldsStats.recentEvents.length === 0 ? /* @__PURE__ */ import_react16.default.createElement("div", { style: { padding: "16px", textAlign: "center", color: "#64748b", fontSize: "12px" } }, "No tracking requests detected yet.") : shieldsStats.recentEvents.map((ev, i) => /* @__PURE__ */ import_react16.default.createElement("div", { key: i, className: "mac-event-item" }, /* @__PURE__ */ import_react16.default.createElement("span", { className: "event-tag" }, "BLOCKED"), /* @__PURE__ */ import_react16.default.createElement("span", { className: "event-url", title: ev.url }, ev.url)))))), activeModuleTab === "tools" && /* @__PURE__ */ import_react16.default.createElement("div", { className: "mac-tools-view" }, /* @__PURE__ */ import_react16.default.createElement("div", { className: "mac-sub-nav" }, /* @__PURE__ */ import_react16.default.createElement(
+  )), /* @__PURE__ */ import_react19.default.createElement("div", { className: "mac-events-container" }, /* @__PURE__ */ import_react19.default.createElement("span", { style: { fontSize: "11px", fontWeight: 700, color: "#94a3b8", textTransform: "uppercase" } }, "Recent Zero-Byte Interceptions"), /* @__PURE__ */ import_react19.default.createElement("div", { className: "mac-events-list" }, !shieldsStats.recentEvents || shieldsStats.recentEvents.length === 0 ? /* @__PURE__ */ import_react19.default.createElement("div", { style: { padding: "16px", textAlign: "center", color: "#64748b", fontSize: "12px" } }, "No tracking requests detected yet.") : shieldsStats.recentEvents.map((ev, i) => /* @__PURE__ */ import_react19.default.createElement("div", { key: i, className: "mac-event-item" }, /* @__PURE__ */ import_react19.default.createElement("span", { className: "event-tag" }, "BLOCKED"), /* @__PURE__ */ import_react19.default.createElement("span", { className: "event-url", title: ev.url }, ev.url)))))), activeModuleTab === "tools" && /* @__PURE__ */ import_react19.default.createElement("div", { className: "mac-tools-view" }, /* @__PURE__ */ import_react19.default.createElement("div", { className: "mac-sub-nav" }, /* @__PURE__ */ import_react19.default.createElement(
     "button",
     {
       className: `sub-btn ${activeToolTab === "ax" ? "active" : ""}`,
       onClick: () => setActiveToolTab("ax")
     },
     "\u{1F332} AX Tree & Grounding"
-  ), /* @__PURE__ */ import_react16.default.createElement(
+  ), /* @__PURE__ */ import_react19.default.createElement(
     "button",
     {
       className: `sub-btn ${activeToolTab === "grep" ? "active" : ""}`,
       onClick: () => setActiveToolTab("grep")
     },
     "\u{1F50D} In-Memory Grep"
-  ), /* @__PURE__ */ import_react16.default.createElement(
+  ), /* @__PURE__ */ import_react19.default.createElement(
     "button",
     {
       className: `sub-btn ${activeToolTab === "autofill" ? "active" : ""}`,
       onClick: () => setActiveToolTab("autofill")
     },
     "\u{1F4DD} Autofill"
-  ), /* @__PURE__ */ import_react16.default.createElement(
+  ), /* @__PURE__ */ import_react19.default.createElement(
     "button",
     {
       className: `sub-btn ${activeToolTab === "telemetry" ? "active" : ""}`,
       onClick: () => setActiveToolTab("telemetry")
     },
     "\u{1F504} Telemetry"
-  )), activeToolTab === "ax" && /* @__PURE__ */ import_react16.default.createElement("div", { className: "mac-tool-panel" }, /* @__PURE__ */ import_react16.default.createElement("div", { style: { display: "flex", gap: 8, marginBottom: 8 } }, /* @__PURE__ */ import_react16.default.createElement(
+  )), activeToolTab === "ax" && /* @__PURE__ */ import_react19.default.createElement("div", { className: "mac-tool-panel" }, /* @__PURE__ */ import_react19.default.createElement("div", { style: { display: "flex", gap: 8, marginBottom: 8 } }, /* @__PURE__ */ import_react19.default.createElement(
     "input",
     {
       type: "text",
@@ -50939,7 +52567,7 @@ function DetachedAiHudCockpit() {
       value: markFilterQuery,
       onChange: (e) => setMarkFilterQuery(e.target.value)
     }
-  ), /* @__PURE__ */ import_react16.default.createElement("button", { className: "mac-pill-btn", onClick: handleCopyAx }, copiedAx ? "\u2713 Copied" : "\u{1F4CB} Copy"), /* @__PURE__ */ import_react16.default.createElement("button", { className: "mac-pill-btn", onClick: () => sendHudAction("rescan-ax", { tabId: activeTabId }) }, "\u{1F504} Rescan")), /* @__PURE__ */ import_react16.default.createElement("pre", { className: "mac-code-box" }, getFilteredAxContent())), activeToolTab === "grep" && /* @__PURE__ */ import_react16.default.createElement("div", { className: "mac-tool-panel" }, /* @__PURE__ */ import_react16.default.createElement("div", { style: { display: "flex", gap: 8, marginBottom: 8 } }, /* @__PURE__ */ import_react16.default.createElement(
+  ), /* @__PURE__ */ import_react19.default.createElement("button", { className: "mac-pill-btn", onClick: handleCopyAx }, copiedAx ? "\u2713 Copied" : "\u{1F4CB} Copy"), /* @__PURE__ */ import_react19.default.createElement("button", { className: "mac-pill-btn", onClick: () => sendHudAction("rescan-ax", { tabId: activeTabId }) }, "\u{1F504} Rescan")), /* @__PURE__ */ import_react19.default.createElement("pre", { className: "mac-code-box" }, getFilteredAxContent())), activeToolTab === "grep" && /* @__PURE__ */ import_react19.default.createElement("div", { className: "mac-tool-panel" }, /* @__PURE__ */ import_react19.default.createElement("div", { style: { display: "flex", gap: 8, marginBottom: 8 } }, /* @__PURE__ */ import_react19.default.createElement(
     "input",
     {
       type: "text",
@@ -50953,7 +52581,7 @@ function DetachedAiHudCockpit() {
         }
       }
     }
-  ), /* @__PURE__ */ import_react16.default.createElement(
+  ), /* @__PURE__ */ import_react19.default.createElement(
     "button",
     {
       className: "mac-pill-btn",
@@ -50962,7 +52590,7 @@ function DetachedAiHudCockpit() {
       }
     },
     "Execute Grep"
-  )), /* @__PURE__ */ import_react16.default.createElement("div", { className: "mac-code-box" }, grepMatches.length === 0 ? /* @__PURE__ */ import_react16.default.createElement("div", { style: { color: "#64748b", textAlign: "center", padding: "16px" } }, "No grep matches found. Type a query above.") : grepMatches.map((m, i) => /* @__PURE__ */ import_react16.default.createElement("div", { key: i, style: { padding: "4px 0", borderBottom: "1px solid rgba(255,255,255,0.05)", fontFamily: "var(--font-mono)" } }, typeof m === "object" ? JSON.stringify(m) : String(m))))), activeToolTab === "autofill" && /* @__PURE__ */ import_react16.default.createElement("div", { className: "mac-tool-panel" }, /* @__PURE__ */ import_react16.default.createElement("div", { style: { padding: "12px", background: "rgba(255,255,255,0.03)", borderRadius: 8, marginBottom: 12 } }, /* @__PURE__ */ import_react16.default.createElement("h4", { style: { color: "#fff", fontSize: "13px", marginBottom: 4 } }, "Autofill Engine (`components/autofill`)"), /* @__PURE__ */ import_react16.default.createElement("p", { style: { color: "#94a3b8", fontSize: "11px", margin: 0 } }, "Populate checkout and login fields using in-process C++ AutofillProfile heuristics.")), /* @__PURE__ */ import_react16.default.createElement("div", { style: { display: "flex", gap: 8 } }, /* @__PURE__ */ import_react16.default.createElement("button", { className: "mac-pill-btn", onClick: () => sendHudAction("trigger-autofill", { tabId: activeTabId }) }, "\u26A1 Execute Autofill Now"), /* @__PURE__ */ import_react16.default.createElement("button", { className: "mac-pill-btn", onClick: () => sendHudAction("load-demo", { demoType: "checkout" }) }, "Load Checkout Demo")), /* @__PURE__ */ import_react16.default.createElement("div", { style: { marginTop: 12, padding: "10px", background: "rgba(0,0,0,0.3)", borderRadius: 6, fontSize: "11px", color: "#10b981", fontFamily: "var(--font-mono)" } }, autofillStatus)), activeToolTab === "telemetry" && /* @__PURE__ */ import_react16.default.createElement("div", { className: "mac-tool-panel" }, /* @__PURE__ */ import_react16.default.createElement("div", { style: { display: "flex", justifyContent: "space-between", marginBottom: 8 } }, /* @__PURE__ */ import_react16.default.createElement("span", { style: { fontSize: "11px", color: "#94a3b8" } }, "Live In-Process Event Bus"), /* @__PURE__ */ import_react16.default.createElement("button", { className: "mac-pill-btn", onClick: () => setTelemetryLogs([]) }, "Clear Logs")), /* @__PURE__ */ import_react16.default.createElement("div", { className: "mac-code-box" }, telemetryLogs.length === 0 ? /* @__PURE__ */ import_react16.default.createElement("div", { style: { color: "#64748b", textAlign: "center", padding: "16px" } }, "No events logged yet.") : [...telemetryLogs].reverse().map((log, i) => /* @__PURE__ */ import_react16.default.createElement("div", { key: i, style: { padding: "3px 0", fontSize: "11px", fontFamily: "var(--font-mono)" } }, /* @__PURE__ */ import_react16.default.createElement("span", { style: { color: "#64748b" } }, "[", log.time, "] "), /* @__PURE__ */ import_react16.default.createElement("span", { style: { color: log.type === "act" ? "#00e5ff" : log.type === "verify" ? "#10b981" : "#e2e8f0" } }, log.msg))))))), /* @__PURE__ */ import_react16.default.createElement(
+  )), /* @__PURE__ */ import_react19.default.createElement("div", { className: "mac-code-box" }, grepMatches.length === 0 ? /* @__PURE__ */ import_react19.default.createElement("div", { style: { color: "#64748b", textAlign: "center", padding: "16px" } }, "No grep matches found. Type a query above.") : grepMatches.map((m, i) => /* @__PURE__ */ import_react19.default.createElement("div", { key: i, style: { padding: "4px 0", borderBottom: "1px solid rgba(255,255,255,0.05)", fontFamily: "var(--font-mono)" } }, typeof m === "object" ? JSON.stringify(m) : String(m))))), activeToolTab === "autofill" && /* @__PURE__ */ import_react19.default.createElement("div", { className: "mac-tool-panel" }, /* @__PURE__ */ import_react19.default.createElement("div", { style: { padding: "12px", background: "rgba(255,255,255,0.03)", borderRadius: 8, marginBottom: 12 } }, /* @__PURE__ */ import_react19.default.createElement("h4", { style: { color: "#fff", fontSize: "13px", marginBottom: 4 } }, "Autofill Engine (`components/autofill`)"), /* @__PURE__ */ import_react19.default.createElement("p", { style: { color: "#94a3b8", fontSize: "11px", margin: 0 } }, "Populate checkout and login fields using in-process C++ AutofillProfile heuristics.")), /* @__PURE__ */ import_react19.default.createElement("div", { style: { display: "flex", gap: 8 } }, /* @__PURE__ */ import_react19.default.createElement("button", { className: "mac-pill-btn", onClick: () => sendHudAction("trigger-autofill", { tabId: activeTabId }) }, "\u26A1 Execute Autofill Now"), /* @__PURE__ */ import_react19.default.createElement("button", { className: "mac-pill-btn", onClick: () => sendHudAction("load-demo", { demoType: "checkout" }) }, "Load Checkout Demo")), /* @__PURE__ */ import_react19.default.createElement("div", { style: { marginTop: 12, padding: "10px", background: "rgba(0,0,0,0.3)", borderRadius: 6, fontSize: "11px", color: "#10b981", fontFamily: "var(--font-mono)" } }, autofillStatus)), activeToolTab === "telemetry" && /* @__PURE__ */ import_react19.default.createElement("div", { className: "mac-tool-panel" }, /* @__PURE__ */ import_react19.default.createElement("div", { style: { display: "flex", justifyContent: "space-between", marginBottom: 8 } }, /* @__PURE__ */ import_react19.default.createElement("span", { style: { fontSize: "11px", color: "#94a3b8" } }, "Live In-Process Event Bus"), /* @__PURE__ */ import_react19.default.createElement("button", { className: "mac-pill-btn", onClick: () => setTelemetryLogs([]) }, "Clear Logs")), /* @__PURE__ */ import_react19.default.createElement("div", { className: "mac-code-box" }, telemetryLogs.length === 0 ? /* @__PURE__ */ import_react19.default.createElement("div", { style: { color: "#64748b", textAlign: "center", padding: "16px" } }, "No events logged yet.") : [...telemetryLogs].reverse().map((log, i) => /* @__PURE__ */ import_react19.default.createElement("div", { key: i, style: { padding: "3px 0", fontSize: "11px", fontFamily: "var(--font-mono)" } }, /* @__PURE__ */ import_react19.default.createElement("span", { style: { color: "#64748b" } }, "[", log.time, "] "), /* @__PURE__ */ import_react19.default.createElement("span", { style: { color: log.type === "act" ? "#00e5ff" : log.type === "verify" ? "#10b981" : "#e2e8f0" } }, log.msg))))))), /* @__PURE__ */ import_react19.default.createElement(
     AiProviderModal,
     {
       isOpen: isAiProviderModalOpen,
@@ -50978,10 +52606,14 @@ if (container) {
   const params = new URLSearchParams(window.location.search);
   const isDetached = params.get("view") === "detached-hud" || window.location.hash === "#detached-hud";
   if (isDetached) {
-    root.render(/* @__PURE__ */ import_react17.default.createElement(DetachedAiHudCockpit, null));
+    root.render(
+      /* @__PURE__ */ import_react20.default.createElement(ErrorBoundary, { title: "Detached AI Cockpit Error" }, /* @__PURE__ */ import_react20.default.createElement(DetachedAiHudCockpit, null))
+    );
     console.log("[Antigravity] React Detached AI Cockpit mounted successfully.");
   } else {
-    root.render(/* @__PURE__ */ import_react17.default.createElement(App, null));
+    root.render(
+      /* @__PURE__ */ import_react20.default.createElement(ErrorBoundary, { title: "Antigravity Browser Core UI" }, /* @__PURE__ */ import_react20.default.createElement(App, null))
+    );
     console.log("[Antigravity] React Desktop App mounted successfully.");
   }
 } else {

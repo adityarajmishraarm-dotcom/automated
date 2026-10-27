@@ -594,7 +594,6 @@ class BraveAdblockEngine {
                 flags.web_enable_ab_rsp_cl = false;
                 flags.ab_pl_man = false;
                 flags.all_web_network_machine_raw_request = false;
-                flags.web_streaming_watch = false;
             } catch(e) {}
         }
         if (window.ytcfg && window.ytcfg.data_ && window.ytcfg.data_.EXPERIMENT_FLAGS) {

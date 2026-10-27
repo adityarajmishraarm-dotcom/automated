@@ -599,6 +599,81 @@ export const BROWSER_TOOLS = [
                 required: ['message']
             }
         }
+    },
+    {
+        type: 'function',
+        function: {
+            name: 'get_tools_on_demand',
+            description: 'Page specialized browser or memory tools into context on demand (Codex tool dispatcher). Keeps the model context lean.',
+            parameters: {
+                type: 'object',
+                properties: {
+                    category: {
+                        type: 'string',
+                        enum: ['all', 'second_brain', 'media', 'download', 'inspection', 'skills'],
+                        description: 'Tool category to retrieve'
+                    },
+                    query: {
+                        type: 'string',
+                        description: 'Specific tool name or operation to find'
+                    }
+                }
+            }
+        }
+    },
+    {
+        type: 'function',
+        function: {
+            name: 'search_memory',
+            description: 'Search long-term memory: searches fast SQLite session summaries across 90 days and curated user preferences/facts in MEMORY.md.',
+            parameters: {
+                type: 'object',
+                properties: {
+                    query: { type: 'string', description: 'Search query keyword, topic, or date' },
+                    limit: { type: 'integer', description: 'Max summaries to return (default 5)' }
+                },
+                required: ['query']
+            }
+        }
+    },
+    {
+        type: 'function',
+        function: {
+            name: 'read_raw_session',
+            description: 'Fetch the complete, uncompressed raw chat transcript for a session from the 90-day archive on demand. Guarantees no detail is lost.',
+            parameters: {
+                type: 'object',
+                properties: {
+                    session_id: { type: 'string', description: 'Session ID to retrieve' }
+                },
+                required: ['session_id']
+            }
+        }
+    },
+    {
+        type: 'function',
+        function: {
+            name: 'list_skills',
+            description: 'List all available procedural Antigravity skills (DOM navigator, credential autofill, gateway bypass, ponytale, etc.) with zero token bloat.',
+            parameters: {
+                type: 'object',
+                properties: {}
+            }
+        }
+    },
+    {
+        type: 'function',
+        function: {
+            name: 'read_skill',
+            description: 'Load full procedural instructions for a skill on demand into working context.',
+            parameters: {
+                type: 'object',
+                properties: {
+                    name: { type: 'string', description: 'Name of the skill to load (e.g. "adblock-gateway-bypass", "credential-autofill", "ponytale")' }
+                },
+                required: ['name']
+            }
+        }
     }
 ];
 

@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
+import CustomizableElementWrapper from './CustomizableElementWrapper.jsx';
+import ElementEditModal from './ElementEditModal.jsx';
 
 const DEFAULT_LAYOUT = {
     cardScale: 1.0,
@@ -37,6 +39,8 @@ export default function NewTabPage({
     const [timeStr, setTimeStr] = useState('');
     const [defaultGreeting, setDefaultGreeting] = useState('Good day');
     const [query, setQuery] = useState('');
+    const [activeEditingElement, setActiveEditingElement] = useState(null);
+    const [elementUpdateTick, setElementUpdateTick] = useState(0);
 
     const wrapperRef = useRef(null);
 
@@ -723,6 +727,20 @@ export default function NewTabPage({
                     onMouseDown={(e) => startPointerDrag(e, targetId, type)}
                 >
                     <span className="canva-bar-pill drag-handle" title="Drag to move">⋮⋮ Move</span>
+                    <button
+                        type="button"
+                        className="canva-bar-btn code-edit-btn"
+                        title={`Inspect and hot-swap ${targetId} code in The Big Box`}
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            const codeId = targetId === 'time' ? 'element_ntp_clock' :
+                                           targetId === 'search' ? 'element_ntp_search_bar' :
+                                           'element_speed_dial';
+                            setActiveEditingElement(codeId);
+                        }}
+                    >
+                        ⚡ Edit Code
+                    </button>
                     {type === 'shortcut' && itemProps.shortcut && (
                         <>
                             <button
@@ -1016,66 +1034,80 @@ export default function NewTabPage({
                     }}
                 >
                     {renderCanvaBoundingBox('time', 'time')}
-                    <div
-                        className="time-box"
-                        onMouseDown={(e) => {
-                            if (isEditMode && !isEditingGreetingInline) {
-                                startPointerDrag(e, 'time', 'section');
+                    {/* ========================================================================= */}
+                    {/* ///// time code /////                                                     */}
+                    {/* ========================================================================= */}
+                    <CustomizableElementWrapper
+                        elementId="element_ntp_clock"
+                        isEditMode={isEditMode}
+                        onOpenElementEditor={(id) => setActiveEditingElement(id)}
+                        onAction={(action) => {
+                            if (action === 'toggle-format') {
+                                saveLayout({ ...layout, timeFormat: layout.timeFormat === '12h' ? '24h' : '12h' });
                             }
                         }}
                     >
                         <div
-                            className={`clock-display ${isEditMode ? 'editable' : 'locked'}`}
-                            id="clockDisplay"
-                            style={{ fontSize: `${layout.clockSize}px`, cursor: isEditMode ? 'pointer' : 'default' }}
-                            title={isEditMode ? "Click to toggle 12h / 24h format" : undefined}
-                            onClick={isEditMode ? () => saveLayout({ ...layout, timeFormat: layout.timeFormat === '12h' ? '24h' : '12h' }) : undefined}
+                            className="time-box"
+                            onMouseDown={(e) => {
+                                if (isEditMode && !isEditingGreetingInline) {
+                                    startPointerDrag(e, 'time', 'section');
+                                }
+                            }}
                         >
-                            {timeStr || '12:00 PM'}
-                        </div>
-                        
-                        {layout.showGreeting && (
-                            <div className="greeting-wrapper">
-                                {isEditMode && isEditingGreetingInline ? (
-                                    <div className="inline-greeting-editor">
-                                        <input
-                                            type="text"
-                                            className="inline-greeting-input"
-                                            value={inlineGreetingText}
-                                            autoFocus
-                                            placeholder="Enter greeting..."
-                                            onChange={(e) => setInlineGreetingText(e.target.value)}
-                                            onKeyDown={(e) => {
-                                                if (e.key === 'Enter') {
+                            <div
+                                className={`clock-display ${isEditMode ? 'editable' : 'locked'}`}
+                                id="clockDisplay"
+                                style={{ fontSize: `${layout.clockSize}px`, cursor: isEditMode ? 'pointer' : 'default' }}
+                                title={isEditMode ? "Click to toggle 12h / 24h format" : undefined}
+                                onClick={isEditMode ? () => saveLayout({ ...layout, timeFormat: layout.timeFormat === '12h' ? '24h' : '12h' }) : undefined}
+                            >
+                                {timeStr || '12:00 PM'}
+                            </div>
+                            
+                            {layout.showGreeting && (
+                                <div className="greeting-wrapper">
+                                    {isEditMode && isEditingGreetingInline ? (
+                                        <div className="inline-greeting-editor">
+                                            <input
+                                                type="text"
+                                                className="inline-greeting-input"
+                                                value={inlineGreetingText}
+                                                autoFocus
+                                                placeholder="Enter greeting..."
+                                                onChange={(e) => setInlineGreetingText(e.target.value)}
+                                                onKeyDown={(e) => {
+                                                    if (e.key === 'Enter') {
+                                                        saveLayout({ ...layout, customGreeting: inlineGreetingText.trim() });
+                                                        setIsEditingGreetingInline(false);
+                                                    } else if (e.key === 'Escape') {
+                                                        setIsEditingGreetingInline(false);
+                                                    }
+                                                }}
+                                                onBlur={() => {
                                                     saveLayout({ ...layout, customGreeting: inlineGreetingText.trim() });
                                                     setIsEditingGreetingInline(false);
-                                                } else if (e.key === 'Escape') {
-                                                    setIsEditingGreetingInline(false);
-                                                }
-                                            }}
-                                            onBlur={() => {
-                                                saveLayout({ ...layout, customGreeting: inlineGreetingText.trim() });
-                                                setIsEditingGreetingInline(false);
-                                            }}
-                                        />
-                                    </div>
-                                ) : (
-                                    <div
-                                        className={`greeting-display ${isEditMode ? 'clickable' : 'locked'}`}
-                                        id="greetingDisplay"
-                                        title={isEditMode ? "Click to edit greeting text" : undefined}
-                                        onClick={isEditMode ? () => {
-                                            setInlineGreetingText(layout.customGreeting || defaultGreeting);
-                                            setIsEditingGreetingInline(true);
-                                        } : undefined}
-                                    >
-                                        <span>{currentGreeting}! Where would you like to go today?</span>
-                                        {isEditMode && <span className="greeting-edit-icon">✏️</span>}
-                                    </div>
-                                )}
-                            </div>
-                        )}
-                    </div>
+                                                }}
+                                            />
+                                        </div>
+                                    ) : (
+                                        <div
+                                            className={`greeting-display ${isEditMode ? 'clickable' : 'locked'}`}
+                                            id="greetingDisplay"
+                                            title={isEditMode ? "Click to edit greeting text" : undefined}
+                                            onClick={isEditMode ? () => {
+                                                setInlineGreetingText(layout.customGreeting || defaultGreeting);
+                                                setIsEditingGreetingInline(true);
+                                            } : undefined}
+                                        >
+                                            <span>{currentGreeting}! Where would you like to go today?</span>
+                                            {isEditMode && <span className="greeting-edit-icon">✏️</span>}
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+                        </div>
+                    </CustomizableElementWrapper>
                 </div>
             );
         }
@@ -1145,42 +1177,64 @@ export default function NewTabPage({
                     }}
                 >
                     {renderCanvaBoundingBox('search', 'search')}
-                    <form
-                        className="search-wrapper"
-                        onSubmit={handleSearchSubmit}
-                        onMouseDown={(e) => {
-                            if (isEditMode && e.target.tagName !== 'INPUT' && e.target.tagName !== 'BUTTON') {
-                                startPointerDrag(e, 'search', 'section');
+                    {/* ========================================================================= */}
+                    {/* ///// search code /////                                                   */}
+                    {/* ========================================================================= */}
+                    <CustomizableElementWrapper
+                        elementId="element_ntp_search_bar"
+                        isEditMode={isEditMode}
+                        onOpenElementEditor={(id) => setActiveEditingElement(id)}
+                        onAction={(action, payload) => {
+                            if (action === 'navigate' || action === 'submit') {
+                                const targetQuery = payload?.val || query;
+                                if (targetQuery && onNavigate) {
+                                    const url = activeEngine === 'brave'
+                                        ? `https://search.brave.com/search?q=${encodeURIComponent(targetQuery)}`
+                                        : `https://www.google.com/search?q=${encodeURIComponent(targetQuery)}`;
+                                    onNavigate(url);
+                                }
+                            } else if (action === 'toggle-engine') {
+                                onSetEngine(activeEngine === 'google' ? 'brave' : 'google');
                             }
                         }}
                     >
-                        {/* Unified Search Engine Switcher directly inside the single search bar */}
-                        <button
-                            type="button"
-                            className="engine-toggle-pill"
-                            id="btnToggleEngine"
-                            onClick={() => onSetEngine(activeEngine === 'google' ? 'brave' : 'google')}
-                            title={`Searching with ${activeEngine === 'brave' ? 'Brave' : 'Google'}. Click to switch engine.`}
+                        <form
+                            className="search-wrapper"
+                            onSubmit={handleSearchSubmit}
+                            onMouseDown={(e) => {
+                                if (isEditMode && e.target.tagName !== 'INPUT' && e.target.tagName !== 'BUTTON') {
+                                    startPointerDrag(e, 'search', 'section');
+                                }
+                            }}
                         >
-                            <span className="engine-toggle-icon">{activeEngine === 'brave' ? '🦁' : '🔍'}</span>
-                            <span className="engine-toggle-name">{activeEngine === 'brave' ? 'Brave' : 'Google'}</span>
-                            <span className="engine-toggle-arrow">⇄</span>
-                        </button>
-                        <input
-                            type="text"
-                            id="ntpSearchInput"
-                            className="search-box with-engine-pill"
-                            placeholder={placeholder}
-                            value={query}
-                            onChange={(e) => setQuery(e.target.value)}
-                            autoComplete="off"
-                            spellCheck="false"
-                            autoFocus
-                        />
-                        <button type="submit" className="btn-submit-search" id="btnSubmitSearch">
-                            Search
-                        </button>
-                    </form>
+                            {/* Unified Search Engine Switcher directly inside the single search bar */}
+                            <button
+                                type="button"
+                                className="engine-toggle-pill"
+                                id="btnToggleEngine"
+                                onClick={() => onSetEngine(activeEngine === 'google' ? 'brave' : 'google')}
+                                title={`Searching with ${activeEngine === 'brave' ? 'Brave' : 'Google'}. Click to switch engine.`}
+                            >
+                                <span className="engine-toggle-icon">{activeEngine === 'brave' ? '🦁' : '🔍'}</span>
+                                <span className="engine-toggle-name">{activeEngine === 'brave' ? 'Brave' : 'Google'}</span>
+                                <span className="engine-toggle-arrow">⇄</span>
+                            </button>
+                            <input
+                                type="text"
+                                id="ntpSearchInput"
+                                className="search-box with-engine-pill"
+                                placeholder={placeholder}
+                                value={query}
+                                onChange={(e) => setQuery(e.target.value)}
+                                autoComplete="off"
+                                spellCheck="false"
+                                autoFocus
+                            />
+                            <button type="submit" className="btn-submit-search" id="btnSubmitSearch">
+                                Search
+                            </button>
+                        </form>
+                    </CustomizableElementWrapper>
                 </div>
             );
         }
@@ -1207,16 +1261,29 @@ export default function NewTabPage({
                     onDrop={(e) => handleSectionDrop(e, 'shortcuts')}
                     onDragEnd={handleDragEnd}
                 >
-                    <div
-                        className="shortcuts-grid-wrapper"
-                        onDragOver={(e) => {
-                            if (isEditMode) {
-                                e.preventDefault();
-                                e.dataTransfer.dropEffect = 'copy';
+                    {/* ========================================================================= */}
+                    {/* ///// shortcuts code /////                                                */}
+                    {/* ========================================================================= */}
+                    <CustomizableElementWrapper
+                        elementId="element_speed_dial"
+                        isEditMode={isEditMode}
+                        onOpenElementEditor={(id) => setActiveEditingElement(id)}
+                        onAction={(action, payload) => {
+                            if (action === 'navigate' && payload?.val && onNavigate) {
+                                onNavigate(payload.val);
                             }
                         }}
-                        onDrop={handleGridDrop}
                     >
+                        <div
+                            className="shortcuts-grid-wrapper"
+                            onDragOver={(e) => {
+                                if (isEditMode) {
+                                    e.preventDefault();
+                                    e.dataTransfer.dropEffect = 'copy';
+                                }
+                            }}
+                            onDrop={handleGridDrop}
+                        >
                         <div
                             className="shortcuts-grid"
                             style={{
@@ -1327,9 +1394,10 @@ export default function NewTabPage({
                             )}
                         </div>
                     </div>
-                </div>
-            );
-        }
+                </CustomizableElementWrapper>
+            </div>
+        );
+    }
 
         if (sectionId === 'features' && layout.showFeaturePills) {
             const featPos = layout.positions && layout.positions['features'];
@@ -1429,6 +1497,14 @@ export default function NewTabPage({
                             onClick={() => setIsCustomizeOpen(prev => !prev)}
                         >
                             ⚙️ Customize Home
+                        </button>
+                        <button
+                            type="button"
+                            className="ntp-tool-pill-btn btn-code-studio"
+                            title="Open Universal Element Code Studio (The Big Box)"
+                            onClick={() => setActiveEditingElement('element_ntp_search_bar')}
+                        >
+                            ⚡ Code Studio
                         </button>
                     </>
                 )}
@@ -1793,6 +1869,17 @@ export default function NewTabPage({
                     </div>
                 </div>
             )}
+
+            {/* Universal Live Element Code Studio ("The Big Box") */}
+            <ElementEditModal
+                isOpen={!!activeEditingElement}
+                elementId={activeEditingElement}
+                onClose={() => setActiveEditingElement(null)}
+                onUpdated={(id) => {
+                    setElementUpdateTick(t => t + 1);
+                    showToast(`⚡ Element code compiled and hot-swapped!`);
+                }}
+            />
 
             {/* Notification Toast */}
             {toastMessage && (

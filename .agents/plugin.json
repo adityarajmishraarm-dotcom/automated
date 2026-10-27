@@ -1,0 +1,12 @@
+{
+  "name": "automated-browser-ecosystem",
+  "version": "1.0.0",
+  "description": "Agent optimization ecosystem for Antigravity Browser, integrating CodeRabbit, Ralph Loop, GSD, Ponytale, and GRAVITAS.",
+  "plugins": [
+    "coderabbit",
+    "ralph-loop",
+    "gsd",
+    "ponytale",
+    "gravitas"
+  ]
+}

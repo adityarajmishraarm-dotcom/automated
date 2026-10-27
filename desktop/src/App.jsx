@@ -4,6 +4,9 @@ import NavigationToolbar from './components/NavigationToolbar.jsx';
 import NewTabPage from './components/NewTabPage.jsx';
 import AiHudSidebar from './components/AiHudSidebar.jsx';
 import BookmarksBar from './components/BookmarksBar.jsx';
+import ErrorBoundary from './components/ErrorBoundary.jsx';
+import ElementEditModal from './components/ElementEditModal.jsx';
+import { loadLayoutConfig, saveLayoutConfig, reorderTabs, reorderToolbar } from './services/dndLayoutService.js';
 import TabSearchModal from './components/TabSearchModal.jsx';
 import ReaderModeModal from './components/ReaderModeModal.jsx';
 import QrCodeModal from './components/QrCodeModal.jsx';
@@ -62,6 +65,32 @@ export default function App() {
     const [activeTabId, setActiveTabId] = useState(1);
     const nextTabIdRef = useRef(2);
     const lastOpenedTabRef = useRef({ url: '', time: 0 });
+
+    // Drag & Drop Layout & Live Element Customizer State
+    const [isGlobalEditMode, setIsGlobalEditMode] = useState(false);
+    const [activeCodeEditingElementId, setActiveCodeEditingElementId] = useState(null);
+    const [uiLayout, setUiLayout] = useState(() => loadLayoutConfig());
+
+    const handleReorderTabs = (sourceTabId, targetTabId) => {
+        setTabs(prev => reorderTabs(prev, sourceTabId, targetTabId));
+    };
+
+    const handleReorderToolbar = (sourceModId, targetModId) => {
+        setUiLayout(prev => {
+            const nextOrder = reorderToolbar(prev.toolbarOrder, sourceModId, targetModId);
+            const updated = { ...prev, toolbarOrder: nextOrder };
+            saveLayoutConfig(updated);
+            return updated;
+        });
+    };
+
+    const handleToggleGlobalEditMode = () => {
+        setIsGlobalEditMode(prev => !prev);
+    };
+
+    const handleOpenCodeStudio = (elementId) => {
+        setActiveCodeEditingElementId(elementId);
+    };
 
     // Browser UI state
     const [adblockCount, setAdblockCount] = useState(0);
@@ -1886,6 +1915,10 @@ export default function App() {
                 onDockHud={handleDockHud}
                 onOpenShields={handleOpenShields}
                 onOpenTabSearch={() => setIsTabSearchOpen(true)}
+                isEditMode={isGlobalEditMode}
+                onToggleEditMode={handleToggleGlobalEditMode}
+                onOpenElementEditor={handleOpenCodeStudio}
+                onReorderTabs={handleReorderTabs}
             />
 
             {/* Top Navigation Toolbar Component */}
@@ -1944,6 +1977,10 @@ export default function App() {
                 onOpenHistory={handleOpenHistoryTab}
                 onOpenTypography={() => setIsTypographyOpen(true)}
                 onOpenAiProviderModal={() => setIsAiProviderModalOpen(true)}
+                isEditMode={isGlobalEditMode}
+                onOpenElementEditor={handleOpenCodeStudio}
+                toolbarOrder={uiLayout.toolbarOrder}
+                onReorderToolbar={handleReorderToolbar}
             />
 
             {/* Bookmarks Quick-Links Bar */}
@@ -1953,6 +1990,8 @@ export default function App() {
                 onAddCurrentPage={handleToggleBookmark}
                 onRemoveBookmark={handleRemoveBookmark}
                 onOpenHistory={handleOpenHistoryTab}
+                isEditMode={isGlobalEditMode}
+                onOpenElementEditor={handleOpenCodeStudio}
             />
 
             {/* Main Content: Adaptive Viewport (100% full-width when detached, or splits with sidebar when docked) */}
@@ -2058,12 +2097,14 @@ export default function App() {
 
                                 {tab.isNewTab && !isDownloadsTab && !isHistoryTab && (
                                     <div style={{ width: '100%', height: '100%', overflowY: 'auto' }}>
-                                        <NewTabPage
-                                            activeEngine={activeEngine}
-                                            onSetEngine={handleSetEngine}
-                                            onNavigate={handleNavigate}
-                                            bookmarks={bookmarks}
-                                        />
+                                        <ErrorBoundary title="New Tab Page">
+                                            <NewTabPage
+                                                activeEngine={activeEngine}
+                                                onSetEngine={handleSetEngine}
+                                                onNavigate={handleNavigate}
+                                                bookmarks={bookmarks}
+                                            />
+                                        </ErrorBoundary>
                                     </div>
                                 )}
                             </div>
@@ -2254,6 +2295,18 @@ export default function App() {
                         {aiLiveBanner.text}
                     </span>
                 </div>
+            )}
+
+            {/* The Big Box: Live Element Code Studio Modal */}
+            {activeCodeEditingElementId && (
+                <ElementEditModal
+                    isOpen={true}
+                    elementId={activeCodeEditingElementId}
+                    onClose={() => setActiveCodeEditingElementId(null)}
+                    onUpdated={(elId) => {
+                        console.log(`[Antigravity] Element ${elId} custom code hot-swapped.`);
+                    }}
+                />
             )}
         </div>
     );

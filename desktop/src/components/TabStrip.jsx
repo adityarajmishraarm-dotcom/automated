@@ -1,4 +1,5 @@
-import React, { memo } from 'react';
+import React, { memo, useState } from 'react';
+import CustomizableElementWrapper from './CustomizableElementWrapper.jsx';
 
 const electron = typeof window !== 'undefined' && window.require
     ? window.require('electron')
@@ -19,8 +20,14 @@ function TabStripComponent({
     onDetachToggleHud,
     onDockHud,
     onOpenShields,
-    onOpenTabSearch
+    onOpenTabSearch,
+    isEditMode = false,
+    onToggleEditMode,
+    onOpenElementEditor,
+    onReorderTabs
 }) {
+    const [draggedTabId, setDraggedTabId] = useState(null);
+    const [dropTargetTabId, setDropTargetTabId] = useState(null);
     const getTabFavicon = (tab) => {
         if (tab.isDownloads || tab.url === 'antigravity://downloads') return '📥';
         if (tab.isNewTab || !tab.url || tab.url.includes('newtab.html') || tab.url === 'antigravity://newtab') {
@@ -77,39 +84,86 @@ function TabStripComponent({
                 <span className="brand-title">Antigravity</span>
             </div>
 
-            {/* Clean, Consistent Native Tabs Track */}
+            {/* Clean, Consistent Native Tabs Track with Drag & Drop */}
             <div className="tabs-track" id="tabsTrack">
                 {tabs.map((tab) => {
                     const isActive = tab.id === activeTabId;
+                    const isDropTarget = dropTargetTabId === tab.id;
                     return (
                         <div
                             key={tab.id}
-                            className={`native-tab ${isActive ? 'active' : ''}`}
-                            title={tab.title ? `${tab.title}\n${tab.url}` : (tab.url || 'New Tab')}
-                            onClick={() => onSelectTab(tab.id)}
+                            className={`native-tab-dnd-container ${isDropTarget ? 'tab-drop-indicator' : ''}`}
+                            draggable={true}
+                            onDragStart={(e) => {
+                                e.dataTransfer.setData('application/x-antigravity-tab', tab.id);
+                                e.dataTransfer.setData('text/plain', tab.url || '');
+                                e.dataTransfer.effectAllowed = 'move';
+                                setDraggedTabId(tab.id);
+                            }}
+                            onDragOver={(e) => {
+                                e.preventDefault();
+                                if (draggedTabId && draggedTabId !== tab.id) {
+                                    setDropTargetTabId(tab.id);
+                                }
+                            }}
+                            onDragLeave={() => {
+                                if (dropTargetTabId === tab.id) setDropTargetTabId(null);
+                            }}
+                            onDrop={(e) => {
+                                e.preventDefault();
+                                const sourceId = e.dataTransfer.getData('application/x-antigravity-tab') || draggedTabId;
+                                if (sourceId && sourceId !== tab.id && onReorderTabs) {
+                                    onReorderTabs(sourceId, tab.id);
+                                }
+                                setDraggedTabId(null);
+                                setDropTargetTabId(null);
+                            }}
+                            onDragEnd={() => {
+                                setDraggedTabId(null);
+                                setDropTargetTabId(null);
+                            }}
                         >
-                            {getTabFavicon(tab) ? (
-                                <span className="tab-favicon">
-                                    {getTabFavicon(tab)}
-                                </span>
-                            ) : null}
-                            <span className="tab-label">
-                                {tab.title || 'New Tab'}
-                            </span>
-                            <button
-                                className="tab-close-btn"
-                                title="Close Tab (Ctrl+W)"
-                                aria-label="Close Tab"
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    onCloseTab(tab.id);
+                            {/* ========================================================================= */}
+                            {/* ///// tab code /////                                                      */}
+                            {/* ========================================================================= */}
+                            <CustomizableElementWrapper
+                                elementId="element_tab_pill"
+                                isEditMode={isEditMode && isActive}
+                                onOpenElementEditor={onOpenElementEditor}
+                                onAction={(action) => {
+                                    if (action === 'close-tab') onCloseTab(tab.id);
+                                    else onSelectTab(tab.id);
                                 }}
                             >
-                                <svg width="7" height="7" viewBox="0 0 10 10" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                                    <line x1="1" y1="1" x2="9" y2="9" />
-                                    <line x1="9" y1="1" x2="1" y2="9" />
-                                </svg>
-                            </button>
+                                <div
+                                    className={`native-tab ${isActive ? 'active' : ''}`}
+                                    title={tab.title ? `${tab.title}\n${tab.url}` : (tab.url || 'New Tab')}
+                                    onClick={() => onSelectTab(tab.id)}
+                                >
+                                    {getTabFavicon(tab) ? (
+                                        <span className="tab-favicon">
+                                            {getTabFavicon(tab)}
+                                        </span>
+                                    ) : null}
+                                    <span className="tab-label">
+                                        {tab.title || 'New Tab'}
+                                    </span>
+                                    <button
+                                        className="tab-close-btn"
+                                        title="Close Tab (Ctrl+W)"
+                                        aria-label="Close Tab"
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            onCloseTab(tab.id);
+                                        }}
+                                    >
+                                        <svg width="7" height="7" viewBox="0 0 10 10" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                                            <line x1="1" y1="1" x2="9" y2="9" />
+                                            <line x1="9" y1="1" x2="1" y2="9" />
+                                        </svg>
+                                    </button>
+                                </div>
+                            </CustomizableElementWrapper>
                         </div>
                     );
                 })}
@@ -136,6 +190,32 @@ function TabStripComponent({
 
             {/* Unified Apple Intelligence & System Controls */}
             <div className="window-controls-placeholder">
+                {/* Unified Edit Mode Switcher */}
+                <button
+                    className={`btn-toolbar-tool ${isEditMode ? 'active-edit-mode' : ''}`}
+                    id="btnGlobalEditMode"
+                    title={isEditMode ? "Exit Edit Mode (Lock Layout)" : "Enter Edit Mode (Click any highlighted section to edit its code, drag to reorder)"}
+                    onClick={onToggleEditMode}
+                    style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '6px',
+                        padding: '5px 12px',
+                        borderRadius: '8px',
+                        border: isEditMode ? '1px solid #00e5ff' : '1px solid rgba(255, 255, 255, 0.15)',
+                        background: isEditMode ? 'linear-gradient(135deg, rgba(0, 229, 255, 0.28), rgba(2, 132, 199, 0.28))' : 'rgba(255, 255, 255, 0.06)',
+                        color: isEditMode ? '#00e5ff' : '#cbd5e1',
+                        fontSize: '11px',
+                        fontWeight: '700',
+                        cursor: 'pointer',
+                        boxShadow: isEditMode ? '0 0 14px rgba(0, 229, 255, 0.45)' : 'none',
+                        transition: 'all 0.18s ease'
+                    }}
+                >
+                    <span>{isEditMode ? '🔒' : '🛠️'}</span>
+                    <span>{isEditMode ? 'Edit Mode (ON)' : 'Edit Mode'}</span>
+                </button>
+
                 {/* Clean Shields Pill */}
                 <div
                     className="mac-shield-pill"

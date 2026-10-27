@@ -1,0 +1,5 @@
+{
+  "name": "ponytale",
+  "version": "1.0.0",
+  "description": "Ponytale Context Optimizer: Intelligent context caching, DOM pruning, and token compression for long-running browser automation."
+}

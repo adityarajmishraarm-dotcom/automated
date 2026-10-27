@@ -1,0 +1,51 @@
+{
+  "module": "ponytale-context-optimizer",
+  "version": "1.0.0",
+  "enabled": true,
+  "browser_optimization": {
+    "max_dom_tokens": 3000,
+    "strip_tags": ["script", "style", "svg", "noscript", "iframe[hidden]"],
+    "strip_attributes": ["style", "class", "on*"],
+    "preserve_attributes": [
+      "id",
+      "name",
+      "role",
+      "aria-label",
+      "type",
+      "href",
+      "placeholder",
+      "value",
+      "data-som-id"
+    ],
+    "filter_invisible_nodes": true,
+    "collapse_whitespace": true
+  },
+  "caching": {
+    "enabled": true,
+    "cache_static_layout": true,
+    "differential_dom_updates": true,
+    "ttl_seconds": 3600
+  },
+  "in_memory_grep": {
+    "context_lines_before": 10,
+    "context_lines_after": 10,
+    "max_matches_per_page": 10,
+    "pagination": true
+  },
+  "log_sanitization": {
+    "deduplicate_network": true,
+    "truncate_verbose_traces": true,
+    "max_trace_lines": 25,
+    "filter_urls": [
+      "*.doubleclick.net/*",
+      "*.google-analytics.com/*",
+      "*/telemetry/*"
+    ]
+  },
+  "guardrails": {
+    "enforce_zero_accuracy_loss": true,
+    "always_preserve_url": true,
+    "always_preserve_http_status": true,
+    "always_preserve_assertions": true
+  }
+}

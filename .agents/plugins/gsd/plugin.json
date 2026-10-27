@@ -1,0 +1,5 @@
+{
+  "name": "gsd",
+  "version": "1.0.0",
+  "description": "Get Shit Done (GSD) for Antigravity: Context engineering and spec-driven development layer with XML task scaffolding to manage subagent token limits."
+}

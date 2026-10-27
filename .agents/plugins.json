@@ -1,0 +1,19 @@
+{
+  "entries": [
+    {
+      "path": ".agents/plugins/coderabbit"
+    },
+    {
+      "path": ".agents/plugins/ralph-loop"
+    },
+    {
+      "path": ".agents/plugins/gsd"
+    },
+    {
+      "path": ".agents/plugins/ponytale"
+    },
+    {
+      "path": ".agents/plugins/gravitas"
+    }
+  ]
+}

@@ -6299,16 +6299,450 @@ body.has-wallpaper .ai-hud-sidebar {
     transform: translateY(-50%) scale(1.3) !important;
 }
 
+/* ==========================================================================
+   Element Code Studio Modal ("The Big Box") & Customizable Element Wrapper
+   ========================================================================== */
 
+.element-edit-modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(4, 7, 15, 0.75);
+    backdrop-filter: blur(14px);
+    z-index: 100000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.2s ease;
+}
 
+.element-edit-modal-container {
+    width: 900px;
+    max-width: 95vw;
+    height: 720px;
+    max-height: 90vh;
+    background: rgba(14, 20, 34, 0.96);
+    border: 1px solid rgba(0, 229, 255, 0.35);
+    border-radius: 16px;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6), 0 0 35px rgba(0, 229, 255, 0.2);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    color: #f8fafc;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
 
+.element-edit-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    background: rgba(255, 255, 255, 0.03);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
 
+.element-title-cluster {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
 
+.element-header-icon {
+    font-size: 24px;
+}
 
+.element-main-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #f1f5f9;
+}
 
+.element-meta-id {
+    font-size: 12px;
+    color: #94a3b8;
+    margin-top: 2px;
+}
 
+.element-meta-id code {
+    color: #00e5ff;
+    font-family: monospace;
+}
 
+.status-pill-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 10px;
+    font-weight: 600;
+}
 
+.status-pill-badge.prebuilt-default {
+    background: rgba(255, 255, 255, 0.08);
+    color: #cbd5e1;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+}
 
+.status-pill-badge.custom-active {
+    background: rgba(0, 229, 255, 0.15);
+    color: #00e5ff;
+    border: 1px solid rgba(0, 229, 255, 0.4);
+}
 
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-close-modal {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #94a3b8;
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s ease;
+}
+
+.btn-close-modal:hover {
+    background: rgba(239, 68, 68, 0.2);
+    border-color: rgba(239, 68, 68, 0.4);
+    color: #ef4444;
+}
+
+.element-edit-tabs {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 20px;
+    background: rgba(0, 0, 0, 0.25);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.edit-tab-btn {
+    background: transparent;
+    border: 1px solid transparent;
+    padding: 6px 14px;
+    border-radius: 8px;
+    color: #94a3b8;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.edit-tab-btn:hover {
+    color: #e2e8f0;
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.edit-tab-btn.active {
+    background: rgba(0, 229, 255, 0.12);
+    border-color: rgba(0, 229, 255, 0.35);
+    color: #00e5ff;
+}
+
+.element-edit-toast {
+    margin-left: auto;
+    font-size: 12px;
+    font-weight: 600;
+    color: #10b981;
+    background: rgba(16, 185, 129, 0.15);
+    border: 1px solid rgba(16, 185, 129, 0.35);
+    padding: 3px 10px;
+    border-radius: 8px;
+    animation: fadeIn 0.2s ease;
+}
+
+.element-edit-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+    background: #080d19;
+}
+
+.code-editor-pane {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.editor-banner-hint {
+    padding: 8px 16px;
+    background: rgba(255, 255, 255, 0.02);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    font-size: 11px;
+    color: #64748b;
+}
+
+.editor-banner-hint code {
+    color: #a855f7;
+    background: rgba(168, 85, 247, 0.1);
+    padding: 1px 4px;
+    border-radius: 4px;
+}
+
+.big-box-textarea {
+    flex: 1;
+    width: 100%;
+    background: #070b14;
+    color: #00e5ff;
+    border: none;
+    outline: none;
+    padding: 16px;
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 13px;
+    line-height: 1.6;
+    resize: none;
+    tab-size: 2;
+}
+
+.preview-canvas-pane {
+    flex: 1;
+    padding: 24px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: radial-gradient(circle at center, #111827 0%, #070b14 100%);
+}
+
+.preview-label {
+    align-self: flex-start;
+    font-size: 12px;
+    font-weight: 700;
+    color: #94a3b8;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.preview-sandbox-mount {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+    border: 1px dashed rgba(255, 255, 255, 0.15);
+    border-radius: 12px;
+    background: rgba(0, 0, 0, 0.3);
+}
+
+.compiler-status-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 20px;
+    font-size: 11px;
+    font-weight: 500;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.compiler-status-bar.status-idle {
+    background: rgba(255, 255, 255, 0.02);
+    color: #94a3b8;
+}
+
+.compiler-status-bar.status-success {
+    background: rgba(16, 185, 129, 0.12);
+    color: #10b981;
+}
+
+.compiler-status-bar.status-error {
+    background: rgba(239, 68, 68, 0.15);
+    color: #f87171;
+}
+
+.element-edit-footer {
+    display: flex;
+    align-items: center;
+    padding: 14px 20px;
+    background: rgba(255, 255, 255, 0.02);
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.btn-danger-revert {
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.25);
+    color: #f87171;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.btn-danger-revert:hover {
+    background: rgba(239, 68, 68, 0.2);
+    border-color: rgba(239, 68, 68, 0.5);
+    color: #ef4444;
+}
+
+.btn-secondary-cancel {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #cbd5e1;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.btn-secondary-cancel:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+}
+
+.btn-primary-compile {
+    background: linear-gradient(135deg, #00e5ff, #0284c7);
+    border: none;
+    color: #070b14;
+    padding: 8px 20px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0, 229, 255, 0.3);
+    transition: all 0.15s ease;
+}
+
+.btn-primary-compile:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(0, 229, 255, 0.45);
+}
+
+/* Customizable Element Wrapper (Edit Mode Direct-Click Outlines & Instant Studio Trigger) */
+.customizable-element-wrapper {
+    position: relative;
+    transition: outline 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+
+.customizable-element-wrapper.edit-mode-active {
+    outline: 1.5px dashed rgba(0, 229, 255, 0.65);
+    outline-offset: 1px;
+    border-radius: 7px;
+    cursor: pointer !important;
+}
+
+.customizable-element-wrapper.edit-mode-active * {
+    cursor: pointer !important;
+}
+
+.customizable-element-wrapper.edit-mode-active:hover {
+    outline: 2px solid #00e5ff;
+    box-shadow: 0 0 16px rgba(0, 229, 255, 0.45);
+    background: rgba(0, 229, 255, 0.08);
+    z-index: 10000;
+}
+
+.element-switcher-select {
+    background: #0f172a;
+    border: 1px solid rgba(0, 229, 255, 0.4);
+    color: #00e5ff;
+    border-radius: 8px;
+    padding: 4px 10px;
+    font-size: 12px;
+    font-weight: 700;
+    outline: none;
+    cursor: pointer;
+    transition: border-color 0.15s ease;
+}
+
+.element-switcher-select:hover,
+.element-switcher-select:focus {
+    border-color: #00e5ff;
+    box-shadow: 0 0 10px rgba(0, 229, 255, 0.3);
+}
+
+.btn-code-studio {
+    background: linear-gradient(135deg, rgba(0, 229, 255, 0.2), rgba(168, 85, 247, 0.2)) !important;
+    border: 1px solid rgba(0, 229, 255, 0.5) !important;
+    color: #00e5ff !important;
+    font-weight: 700 !important;
+}
+
+.btn-code-studio:hover {
+    background: linear-gradient(135deg, rgba(0, 229, 255, 0.35), rgba(168, 85, 247, 0.35)) !important;
+    border-color: #00e5ff !important;
+    box-shadow: 0 0 14px rgba(0, 229, 255, 0.4) !important;
+}
+
+.canva-bar-btn.code-edit-btn {
+    background: rgba(0, 229, 255, 0.18) !important;
+    border: 1px solid rgba(0, 229, 255, 0.5) !important;
+    color: #00e5ff !important;
+    font-weight: 700 !important;
+}
+
+.canva-bar-btn.code-edit-btn:hover {
+    background: #00e5ff !important;
+    color: #070b14 !important;
+}
+
+/* ========================================================================= */
+/* Batch 2: Drag & Drop Tab Strip & Modular Toolbar Styling                 */
+/* ========================================================================= */
+.native-tab-dnd-container {
+    display: inline-flex;
+    align-items: center;
+    position: relative;
+    transition: transform 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.native-tab-dnd-container.tab-drop-indicator {
+    border-left: 2.5px solid #00e5ff;
+    box-shadow: -3px 0 10px rgba(0, 229, 255, 0.6);
+    transform: translateX(3px);
+}
+
+.modular-toolbar-unit {
+    position: relative;
+    transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+.modular-toolbar-unit.dnd-enabled {
+    border: 1px dashed rgba(0, 229, 255, 0.3);
+    border-radius: 8px;
+    padding: 2px 4px;
+    background: rgba(0, 229, 255, 0.03);
+}
+
+.modular-toolbar-unit.dnd-enabled:hover {
+    border-color: rgba(0, 229, 255, 0.7);
+    background: rgba(0, 229, 255, 0.08);
+}
+
+.modular-toolbar-unit.toolbar-drop-indicator {
+    border-color: #00e5ff !important;
+    box-shadow: 0 0 12px rgba(0, 229, 255, 0.5);
+    transform: scale(1.02);
+}
+
+.toolbar-dnd-handle {
+    cursor: grab;
+    user-select: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 4px;
+    font-size: 13px;
+    color: #00e5ff;
+    opacity: 0.85;
+}
+
+.toolbar-dnd-handle:active {
+    cursor: grabbing;
+}
 

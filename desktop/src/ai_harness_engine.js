@@ -2440,6 +2440,171 @@ export async function executeToolCallAndVerify(toolCall, context = {}) {
         };
     }
 
+    if (name === 'get_tools_on_demand') {
+        const category = (args.category || 'all').toLowerCase();
+        const query = (args.query || '').toLowerCase();
+        try {
+            const provMod = await import('./services/aiProviderService.js');
+            const allTools = provMod.BROWSER_TOOLS || [];
+            let matched = allTools;
+            if (category !== 'all') {
+                if (category === 'second_brain' || category === 'memory') {
+                    matched = allTools.filter(t => ['search_memory', 'read_raw_session'].includes(t.function.name));
+                } else if (category === 'skills') {
+                    matched = allTools.filter(t => ['list_skills', 'read_skill'].includes(t.function.name));
+                } else if (category === 'media') {
+                    matched = allTools.filter(t => ['verify_media_playback', 'press_key'].includes(t.function.name));
+                } else if (category === 'download') {
+                    matched = allTools.filter(t => ['download_item', 'verify_download'].includes(t.function.name));
+                } else if (category === 'inspection') {
+                    matched = allTools.filter(t => ['read_page', 'grep_page'].includes(t.function.name));
+                }
+            }
+            if (query) {
+                matched = matched.filter(t => t.function.name.toLowerCase().includes(query) || t.function.description.toLowerCase().includes(query));
+            }
+            return {
+                success: true,
+                action: 'get_tools_on_demand',
+                pagedTools: matched,
+                count: matched.length,
+                message: `Paged ${matched.length} tools into context: ${matched.map(t => t.function.name).join(', ')}`,
+                verification: `✅ [Verified: On-demand tool pager dynamically loaded ${matched.length} tool schemas without prompt bloat]`
+            };
+        } catch (e) {
+            return {
+                success: false,
+                action: 'get_tools_on_demand',
+                error: e.message,
+                verification: `⚠️ [Tool Pager Failed: ${e.message}]`
+            };
+        }
+    }
+
+    if (name === 'search_memory') {
+        const query = args.query || '';
+        const limit = args.limit || 5;
+        try {
+            const res = await fetch('http://127.0.0.1:4892/api/memory/search', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ query, limit })
+            }).then(r => r.json());
+            const factsCount = res.facts ? res.facts.length : 0;
+            const summariesCount = res.summaries ? res.summaries.length : 0;
+            return {
+                success: true,
+                action: 'search_memory',
+                data: res,
+                message: `Memory Search Results for "${query}": Found ${factsCount} permanent facts/preferences, ${summariesCount} session summaries.\n` +
+                    (res.facts || []).map(f => `- ${f.category}: ${f.snippet}`).join('\n') + '\n' +
+                    (res.summaries || []).map(s => `• [Session ${s.session_id} (${s.date})]: ${s.title}\n  Summary: ${s.summary}`).join('\n'),
+                verification: `✅ [Verified Memory Search: Found ${factsCount} facts, ${summariesCount} summaries]`
+            };
+        } catch (e) {
+            return {
+                success: false,
+                action: 'search_memory',
+                error: e.message,
+                verification: `⚠️ [Memory Search Failed: ${e.message}]`
+            };
+        }
+    }
+
+    if (name === 'read_raw_session') {
+        const sessionId = args.session_id || args.sessionId || '';
+        try {
+            const res = await fetch('http://127.0.0.1:4892/api/memory/raw', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ session_id: sessionId })
+            }).then(r => r.json());
+            if (res.found) {
+                return {
+                    success: true,
+                    action: 'read_raw_session',
+                    sessionId,
+                    content: res.content,
+                    filePath: res.filePath,
+                    message: `Loaded full uncompressed raw session chat (${sessionId}) from disk (${res.filePath}). Length: ${res.content.length} chars.`,
+                    verification: `✅ [Verified Action: Full 90-day raw chat loaded for session ${sessionId}]`
+                };
+            } else {
+                return {
+                    success: false,
+                    action: 'read_raw_session',
+                    error: res.error || 'Session transcript not found',
+                    verification: `⚠️ [Raw Chat Not Found: ${sessionId}]`
+                };
+            }
+        } catch (e) {
+            return {
+                success: false,
+                action: 'read_raw_session',
+                error: e.message,
+                verification: `⚠️ [Raw Chat Load Failed: ${e.message}]`
+            };
+        }
+    }
+
+    if (name === 'list_skills') {
+        try {
+            const res = await fetch('http://127.0.0.1:4892/api/skills').then(r => r.json());
+            const skills = res.skills || [];
+            return {
+                success: true,
+                action: 'list_skills',
+                skills,
+                count: skills.length,
+                message: `Available Antigravity Skills (${skills.length}):\n` + skills.map(s => `• ${s.name}: ${s.description}`).join('\n'),
+                verification: `✅ [Verified: Retrieved ${skills.length} procedural skills with zero token bloat]`
+            };
+        } catch (e) {
+            return {
+                success: false,
+                action: 'list_skills',
+                error: e.message,
+                verification: `⚠️ [List Skills Failed: ${e.message}]`
+            };
+        }
+    }
+
+    if (name === 'read_skill') {
+        const skillName = args.name || '';
+        try {
+            const res = await fetch('http://127.0.0.1:4892/api/skills/read', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name: skillName })
+            }).then(r => r.json());
+            if (res.found) {
+                return {
+                    success: true,
+                    action: 'read_skill',
+                    name: skillName,
+                    meta: res.meta,
+                    instructions: res.instructions,
+                    message: `Loaded procedural skill "${skillName}" (v${res.meta?.version || '1.0.0'}):\n${res.instructions}`,
+                    verification: `✅ [Verified: Loaded procedural skill instructions for "${skillName}"]`
+                };
+            } else {
+                return {
+                    success: false,
+                    action: 'read_skill',
+                    error: res.error || `Skill "${skillName}" not found`,
+                    verification: `⚠️ [Skill Not Found: "${skillName}"]`
+                };
+            }
+        } catch (e) {
+            return {
+                success: false,
+                action: 'read_skill',
+                error: e.message,
+                verification: `⚠️ [Read Skill Failed: ${e.message}]`
+            };
+        }
+    }
+
     return {
         success: false,
         error: `Unknown tool: ${name}`,

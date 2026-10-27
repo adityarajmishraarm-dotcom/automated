@@ -47,6 +47,32 @@ process.on('unhandledRejection', (reason) => {
 const braveAdblock = require('./adblock_engine');
 const whisperEngine = require('./whisper_engine');
 
+// Second Brain Subsystem Initialization (Hybrid Markdown + SQLite Memory Layer)
+let secondBrainMemoryManager = null;
+let secondBrainMemoryRetriever = null;
+let secondBrainSkillManager = null;
+let secondBrainReflectionEngine = null;
+
+try {
+    const sbPath = path.resolve(__dirname, '..', '..', 'second brain');
+    const MemoryManager = require(path.join(sbPath, 'memory_manager'));
+    const MemoryRetriever = require(path.join(sbPath, 'memory_retriever'));
+    const SkillManager = require(path.join(sbPath, 'skill_manager'));
+    const ReflectionEngine = require(path.join(sbPath, 'reflection_engine'));
+
+    secondBrainMemoryManager = new MemoryManager();
+    secondBrainMemoryRetriever = new MemoryRetriever(secondBrainMemoryManager);
+    secondBrainSkillManager = new SkillManager();
+    secondBrainReflectionEngine = new ReflectionEngine({
+        memoryManager: secondBrainMemoryManager,
+        memoryRetriever: secondBrainMemoryRetriever,
+        skillManager: secondBrainSkillManager
+    });
+    console.log('[Second Brain] Initialized with', secondBrainSkillManager.listSkills().length, 'procedural skills.');
+} catch (e) {
+    console.warn('[Second Brain Init in main.js]', e.message);
+}
+
 let mainWindow;
 
 // Adblock filter list (EasyList & uBlock Origin rules)
@@ -1097,6 +1123,74 @@ function startAiControlServer(port = 4892) {
             if (pathname === '/api/page/content' && req.method === 'GET') {
                 const result = await sendAiControlRequest('get-page-content');
                 return sendJson(200, { success: true, page: result });
+            }
+
+            // --- Second Brain REST Endpoints ---
+            if (pathname === '/api/memory/status' && req.method === 'GET') {
+                if (!secondBrainMemoryManager) return sendJson(503, { success: false, error: 'Second Brain not initialized' });
+                const anchors = secondBrainMemoryManager.readAnchorFiles();
+                const summaries = secondBrainMemoryRetriever.searchSummaries('', 100);
+                const skills = secondBrainSkillManager.listSkills();
+                return sendJson(200, {
+                    success: true,
+                    totalSummaries: summaries.length,
+                    totalSkills: skills.length,
+                    anchors: {
+                        soulLength: anchors.soul.length,
+                        userLength: anchors.user.length,
+                        memoryLength: anchors.memory.length,
+                        heartbeatLength: anchors.heartbeat.length
+                    }
+                });
+            }
+
+            if (pathname === '/api/memory/search' && req.method === 'POST') {
+                if (!secondBrainMemoryRetriever) return sendJson(503, { success: false, error: 'Second Brain not initialized' });
+                const body = await readBody();
+                const query = body.query || '';
+                const limit = body.limit || 5;
+                const result = secondBrainMemoryRetriever.searchMemory({ query, limit });
+                return sendJson(200, { success: true, ...result });
+            }
+
+            if (pathname === '/api/memory/raw' && req.method === 'POST') {
+                if (!secondBrainMemoryRetriever) return sendJson(503, { success: false, error: 'Second Brain not initialized' });
+                const body = await readBody();
+                const sessionId = body.session_id || body.sessionId || '';
+                const result = secondBrainMemoryRetriever.readRawSession(sessionId);
+                return sendJson(result.found ? 200 : 404, result);
+            }
+
+            if (pathname === '/api/skills' && req.method === 'GET') {
+                if (!secondBrainSkillManager) return sendJson(503, { success: false, error: 'Second Brain not initialized' });
+                const skills = secondBrainSkillManager.listSkills();
+                return sendJson(200, { success: true, skills });
+            }
+
+            if (pathname === '/api/skills/read' && req.method === 'POST') {
+                if (!secondBrainSkillManager) return sendJson(503, { success: false, error: 'Second Brain not initialized' });
+                const body = await readBody();
+                const name = body.name || '';
+                const result = secondBrainSkillManager.readSkill(name);
+                return sendJson(result.found ? 200 : 404, result);
+            }
+
+            if (pathname === '/api/memory/reflect' && req.method === 'POST') {
+                if (!secondBrainReflectionEngine) return sendJson(503, { success: false, error: 'Second Brain not initialized' });
+                const body = await readBody();
+                const force = body.force !== false;
+                const result = secondBrainReflectionEngine.runMorningReflection({ force });
+                return sendJson(200, { success: true, ...result });
+            }
+
+            if (pathname === '/api/memory/session/save' && req.method === 'POST') {
+                if (!secondBrainMemoryManager) return sendJson(503, { success: false, error: 'Second Brain not initialized' });
+                const body = await readBody();
+                const sessionId = body.session_id || body.sessionId || ('session_' + Date.now());
+                const turns = body.turns || [];
+                const title = body.title || 'Browser Automation Session';
+                const relPath = secondBrainMemoryManager.writeRawSession(sessionId, turns, title);
+                return sendJson(200, { success: true, sessionId, relPath });
             }
 
             if (pathname === '/api/eval' && req.method === 'POST') {

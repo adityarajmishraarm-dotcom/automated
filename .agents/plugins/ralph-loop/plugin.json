@@ -1,0 +1,5 @@
+{
+  "name": "ralph-loop",
+  "version": "1.0.0",
+  "description": "Ralph Loop for Antigravity: Autonomous AI agent execution loop with externalized file-based memory, iteration management, and model fallbacks."
+}
