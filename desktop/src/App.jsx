@@ -108,13 +108,7 @@ export default function App() {
     const [isHudOpen, setIsHudOpen] = useState(true);
     const [somEnabled, setSomEnabled] = useState(true);
     const [somMode, setSomMode] = useState('summarized');
-    const [isHudDetached, setIsHudDetached] = useState(() => {
-        try {
-            return localStorage.getItem('antigravity_hud_detached') === 'true';
-        } catch (e) {
-            return false;
-        }
-    });
+    const [isHudDetached, setIsHudDetached] = useState(false);
     const [isExternalHudVisible, setIsExternalHudVisible] = useState(false);
     const [axTreeMarkdown, setAxTreeMarkdown] = useState('');
     const [grepQuery, setGrepQuery] = useState('href');
