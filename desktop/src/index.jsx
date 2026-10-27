@@ -12,19 +12,19 @@ if (container) {
 
     if (isDetached) {
         root.render(
-            <ErrorBoundary title="Detached AI Cockpit Error">
+            <ErrorBoundary title="Nexora Detached AI Cockpit Error">
                 <DetachedAiHudCockpit />
             </ErrorBoundary>
         );
-        console.log('[Antigravity] React Detached AI Cockpit mounted successfully.');
+        console.log('[Nexora] React Detached AI Cockpit mounted successfully.');
     } else {
         root.render(
-            <ErrorBoundary title="Antigravity Browser Core UI">
+            <ErrorBoundary title="Nexora Browser Core UI">
                 <App />
             </ErrorBoundary>
         );
-        console.log('[Antigravity] React Desktop App mounted successfully.');
+        console.log('[Nexora] React Desktop App mounted successfully.');
     }
 } else {
-    console.error('[Antigravity] Root element not found.');
+    console.error('[Nexora] Root element not found.');
 }

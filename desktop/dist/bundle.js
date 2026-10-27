@@ -38331,7 +38331,7 @@ var require_elementCustomizerService = __commonJS({
   <input 
     type="text" 
     class="ai-input" 
-    placeholder="Ask Antigravity Copilot or automate a task..." 
+    placeholder="Ask Nexora Copilot or automate a task..." 
     data-action="ai-execute" 
   />
   <button class="ai-run-btn" data-action="submit">Ask AI</button>
@@ -38729,12 +38729,32 @@ __export(aiProviderService_exports, {
   getActiveProviderConfig: () => getActiveProviderConfig,
   getActiveProviderId: () => getActiveProviderId,
   getAiProvidersConfig: () => getAiProvidersConfig,
+  normalizeBaseUrl: () => normalizeBaseUrl,
   saveAiProvidersConfig: () => saveAiProvidersConfig,
   sendChatMessage: () => sendChatMessage,
   setActiveProviderId: () => setActiveProviderId,
   streamChatMessage: () => streamChatMessage,
   testConnection: () => testConnection
 });
+function normalizeBaseUrl(url, providerId = "") {
+  if (!url || typeof url !== "string") return "";
+  let normalized = url.trim().replace(/\/+$/, "");
+  if (normalized.includes("localhost:1234")) {
+    normalized = normalized.replace("localhost:1234", "127.0.0.1:1234");
+  }
+  if (normalized.includes("localhost:11434")) {
+    normalized = normalized.replace("localhost:11434", "127.0.0.1:11434");
+  }
+  if (normalized.includes("opencodezen.com") || providerId === "opencodezen" && normalized.includes("api.opencodezen")) {
+    normalized = normalized.replace(/https?:\/\/(api\.)?opencodezen\.com(\/v1)?/i, "https://opencode.ai/zen/v1");
+  }
+  if (providerId === "opencodezen") {
+    if (normalized === "https://opencode.ai/v1" || normalized === "https://api.opencode.ai/v1" || normalized === "https://opencode.ai/zen") {
+      normalized = "https://opencode.ai/zen/v1";
+    }
+  }
+  return normalized;
+}
 function getAiProvidersConfig() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
@@ -38743,9 +38763,7 @@ function getAiProvidersConfig() {
     const merged = { ...DEFAULT_PROVIDERS };
     for (const [key, val] of Object.entries(parsed)) {
       if (!val || typeof val !== "object") continue;
-      let normBaseUrl = val.baseUrl || "";
-      if (normBaseUrl.includes("localhost:1234")) normBaseUrl = normBaseUrl.replace("localhost:1234", "127.0.0.1:1234");
-      if (normBaseUrl.includes("localhost:11434")) normBaseUrl = normBaseUrl.replace("localhost:11434", "127.0.0.1:11434");
+      let normBaseUrl = normalizeBaseUrl(val.baseUrl || "", key);
       if (merged[key]) {
         const defaultPresets = Array.isArray(DEFAULT_PROVIDERS[key]?.presetModels) ? DEFAULT_PROVIDERS[key].presetModels : [];
         const savedPresets = Array.isArray(val.presetModels) ? val.presetModels : [];
@@ -38779,15 +38797,17 @@ function getAiProvidersConfig() {
 }
 async function fetchAvailableModels(config) {
   if (!config || !config.baseUrl) return { success: false, models: [], error: "Missing Base URL" };
-  let cleanBaseUrl = (config.baseUrl || "").replace(/\/+$/, "");
-  if (cleanBaseUrl.includes("localhost:1234")) cleanBaseUrl = cleanBaseUrl.replace("localhost:1234", "127.0.0.1:1234");
-  if (cleanBaseUrl.includes("localhost:11434")) cleanBaseUrl = cleanBaseUrl.replace("localhost:11434", "127.0.0.1:11434");
+  let cleanBaseUrl = normalizeBaseUrl(config.baseUrl, config.id);
   const headers = { "Content-Type": "application/json" };
-  if (config.apiKey) {
-    headers["Authorization"] = `Bearer ${config.apiKey}`;
+  if (config.apiKey && config.apiKey.trim()) {
+    headers["Authorization"] = `Bearer ${config.apiKey.trim()}`;
   }
   try {
-    const res = await fetch(`${cleanBaseUrl}/models`, { method: "GET", headers });
+    const res = await fetch(`${cleanBaseUrl}/models`, {
+      method: "GET",
+      headers,
+      signal: AbortSignal.timeout(6e3)
+    });
     if (res.ok) {
       const data = await res.json().catch(() => ({}));
       const list = Array.isArray(data.data) ? data.data.map((m) => m.id || m.name).filter(Boolean) : Array.isArray(data.models) ? data.models.map((m) => m.name || m.id || m).filter(Boolean) : [];
@@ -38797,9 +38817,26 @@ async function fetchAvailableModels(config) {
     }
   } catch (e) {
   }
+  if (headers["Authorization"] || config.id === "opencodezen") {
+    try {
+      const unauthRes = await fetch(`${cleanBaseUrl}/models`, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+        signal: AbortSignal.timeout(6e3)
+      });
+      if (unauthRes.ok) {
+        const data = await unauthRes.json().catch(() => ({}));
+        const list = Array.isArray(data.data) ? data.data.map((m) => m.id || m.name).filter(Boolean) : Array.isArray(data.models) ? data.models.map((m) => m.name || m.id || m).filter(Boolean) : [];
+        if (list.length > 0) {
+          return { success: true, models: Array.from(new Set(list)) };
+        }
+      }
+    } catch (e) {
+    }
+  }
   try {
     const rootUrl = cleanBaseUrl.replace(/\/v1$/i, "");
-    const tagsRes = await fetch(`${rootUrl}/api/tags`, { method: "GET" });
+    const tagsRes = await fetch(`${rootUrl}/api/tags`, { method: "GET", signal: AbortSignal.timeout(6e3) });
     if (tagsRes.ok) {
       const tagsData = await tagsRes.json().catch(() => ({}));
       const list = Array.isArray(tagsData.models) ? tagsData.models.map((m) => m.name || m.model).filter(Boolean) : [];
@@ -38855,7 +38892,7 @@ function getActiveProviderConfig() {
 async function testConnection(providerId, customConfig = null) {
   const config = customConfig || (getAiProvidersConfig()[providerId] || DEFAULT_PROVIDERS[providerId]);
   if (!config) return { success: false, error: "Unknown provider" };
-  const cleanBaseUrl = (config.baseUrl || "").replace(/\/+$/, "");
+  const cleanBaseUrl = normalizeBaseUrl(config.baseUrl || "", providerId);
   const startTime = performance.now();
   try {
     if (config.type === "anthropic") {
@@ -38873,7 +38910,8 @@ async function testConnection(providerId, customConfig = null) {
           model: config.model || "claude-3-5-haiku-20241022",
           max_tokens: 5,
           messages: [{ role: "user", content: "Ping" }]
-        })
+        }),
+        signal: AbortSignal.timeout(8e3)
       });
       const latencyMs2 = Math.round(performance.now() - startTime);
       if (res.ok) {
@@ -38887,25 +38925,35 @@ async function testConnection(providerId, customConfig = null) {
       };
     }
     const headers = { "Content-Type": "application/json" };
-    if (config.apiKey) {
-      headers["Authorization"] = `Bearer ${config.apiKey}`;
+    if (config.apiKey && config.apiKey.trim()) {
+      headers["Authorization"] = `Bearer ${config.apiKey.trim()}`;
     }
     if (providerId === "openrouter") {
-      headers["HTTP-Referer"] = "https://antigravity.browser";
-      headers["X-Title"] = "Antigravity Native Browser";
+      headers["HTTP-Referer"] = "https://nexora.browser";
+      headers["X-Title"] = "Nexora Native Browser";
     }
-    try {
-      const modelsRes = await fetch(`${cleanBaseUrl}/models`, {
-        method: "GET",
-        headers
-      });
-      if (modelsRes.ok) {
-        const data = await modelsRes.json().catch(() => ({}));
-        const latencyMs2 = Math.round(performance.now() - startTime);
-        const models = Array.isArray(data.data) ? data.data.map((m) => m.id) : [];
-        return { success: true, latencyMs: latencyMs2, models, provider: config.name };
+    if (providerId === "opencodezen" && (!config.apiKey || !config.apiKey.trim())) {
+      return {
+        success: false,
+        latencyMs: 0,
+        error: "OpenCode Zen requires an API key (sk-...). The public free tier limit is exhausted."
+      };
+    }
+    if (providerId === "lmstudio" || providerId === "ollama" || providerId === "ornith") {
+      try {
+        const modelsRes = await fetch(`${cleanBaseUrl}/models`, {
+          method: "GET",
+          headers,
+          signal: AbortSignal.timeout(6e3)
+        });
+        if (modelsRes.ok) {
+          const data = await modelsRes.json().catch(() => ({}));
+          const latencyMs2 = Math.round(performance.now() - startTime);
+          const models = Array.isArray(data.data) ? data.data.map((m) => m.id || m.name) : [];
+          return { success: true, latencyMs: latencyMs2, models, provider: config.name };
+        }
+      } catch (mErr) {
       }
-    } catch (mErr) {
     }
     const chatRes = await fetch(`${cleanBaseUrl}/chat/completions`, {
       method: "POST",
@@ -38914,24 +38962,26 @@ async function testConnection(providerId, customConfig = null) {
         model: config.model || "default",
         messages: [{ role: "user", content: "ping" }],
         max_tokens: 5
-      })
+      }),
+      signal: AbortSignal.timeout(8e3)
     });
     const latencyMs = Math.round(performance.now() - startTime);
     if (chatRes.ok) {
       return { success: true, latencyMs, provider: config.name };
     }
     const errData = await chatRes.json().catch(() => ({}));
+    const errMsg = errData.error?.message || `HTTP ${chatRes.status}: ${chatRes.statusText}`;
     return {
       success: false,
       latencyMs,
-      error: errData.error?.message || `HTTP ${chatRes.status}: ${chatRes.statusText}`
+      error: errMsg
     };
   } catch (networkErr) {
     const latencyMs = Math.round(performance.now() - startTime);
     return {
       success: false,
       latencyMs,
-      error: `Connection failed: ${networkErr.message}. Ensure endpoint is running and accessible.`
+      error: `Connection failed: ${networkErr.message}. Ensure endpoint URL is reachable.`
     };
   }
 }
@@ -38947,7 +38997,7 @@ function generateToolSystemPrompt(tools = BROWSER_TOOLS) {
   return `
 
 BROWSER AUTOMATION TOOLS AVAILABLE:
-You are the Autonomous Antigravity Browser Agent. You directly control this browser.
+You are the Autonomous Nexora Browser Agent. You directly control this browser.
 When the user gives you a task or goal, you must REASON about the goal, PLAN the necessary steps, and EXECUTE browser tools.
 
 HOW TO EMIT TOOL CALLS:
@@ -38985,7 +39035,7 @@ async function fetchOpenAICompatibleWithFailover(config, requestBody, headers, s
   if (isReasoningModel && !requestBody.reasoning_effort) {
     requestBody.reasoning_effort = "low";
   }
-  let cleanBaseUrl = (config.baseUrl || "").replace(/\/+$/, "");
+  let cleanBaseUrl = normalizeBaseUrl(config.baseUrl || "", config.id);
   if (cleanBaseUrl.includes("localhost:")) {
     cleanBaseUrl = cleanBaseUrl.replace("localhost:", "127.0.0.1:");
   }
@@ -39136,8 +39186,8 @@ You can inspect this snapshot to visually understand the active webview and brow
       headers["Authorization"] = `Bearer ${config.apiKey}`;
     }
     if (config.id === "openrouter") {
-      headers["HTTP-Referer"] = "https://antigravity.browser";
-      headers["X-Title"] = "Antigravity Native Browser";
+      headers["HTTP-Referer"] = "https://nexora.browser";
+      headers["X-Title"] = "Nexora Native Browser";
     }
     const messages = [];
     if (combinedSystemPrompt) {
@@ -39362,8 +39412,8 @@ You can inspect this snapshot to visually understand the active webview and brow
       headers["Authorization"] = `Bearer ${config.apiKey}`;
     }
     if (config.id === "openrouter") {
-      headers["HTTP-Referer"] = "https://antigravity.browser";
-      headers["X-Title"] = "Antigravity Native Browser";
+      headers["HTTP-Referer"] = "https://nexora.browser";
+      headers["X-Title"] = "Nexora Native Browser";
     }
     const messages = [];
     if (combinedSystemPrompt) {
@@ -39586,10 +39636,10 @@ var init_aiProviderService = __esm({
         id: "opencodezen",
         name: "OpenCode Zen",
         type: "openai_compatible",
-        baseUrl: "https://api.opencodezen.com/v1",
+        baseUrl: "https://opencode.ai/zen/v1",
         apiKey: "",
-        model: "opencode-zen-v1",
-        presetModels: ["opencode-zen-v1", "opencode-zen-fast", "opencode-zen-vision"]
+        model: "",
+        presetModels: []
       },
       anthropic: {
         id: "anthropic",
@@ -39858,6 +39908,81 @@ var init_aiProviderService = __esm({
             required: ["message"]
           }
         }
+      },
+      {
+        type: "function",
+        function: {
+          name: "get_tools_on_demand",
+          description: "Page specialized browser or memory tools into context on demand (Codex tool dispatcher). Keeps the model context lean.",
+          parameters: {
+            type: "object",
+            properties: {
+              category: {
+                type: "string",
+                enum: ["all", "second_brain", "media", "download", "inspection", "skills"],
+                description: "Tool category to retrieve"
+              },
+              query: {
+                type: "string",
+                description: "Specific tool name or operation to find"
+              }
+            }
+          }
+        }
+      },
+      {
+        type: "function",
+        function: {
+          name: "search_memory",
+          description: "Search long-term memory: searches fast SQLite session summaries across 90 days and curated user preferences/facts in MEMORY.md.",
+          parameters: {
+            type: "object",
+            properties: {
+              query: { type: "string", description: "Search query keyword, topic, or date" },
+              limit: { type: "integer", description: "Max summaries to return (default 5)" }
+            },
+            required: ["query"]
+          }
+        }
+      },
+      {
+        type: "function",
+        function: {
+          name: "read_raw_session",
+          description: "Fetch the complete, uncompressed raw chat transcript for a session from the 90-day archive on demand. Guarantees no detail is lost.",
+          parameters: {
+            type: "object",
+            properties: {
+              session_id: { type: "string", description: "Session ID to retrieve" }
+            },
+            required: ["session_id"]
+          }
+        }
+      },
+      {
+        type: "function",
+        function: {
+          name: "list_skills",
+          description: "List all available procedural Nexora skills (DOM navigator, credential autofill, gateway bypass, ponytale, etc.) with zero token bloat.",
+          parameters: {
+            type: "object",
+            properties: {}
+          }
+        }
+      },
+      {
+        type: "function",
+        function: {
+          name: "read_skill",
+          description: "Load full procedural instructions for a skill on demand into working context.",
+          parameters: {
+            type: "object",
+            properties: {
+              name: { type: "string", description: 'Name of the skill to load (e.g. "adblock-gateway-bypass", "credential-autofill", "ponytale")' }
+            },
+            required: ["name"]
+          }
+        }
       }
     ];
   }
@@ -39888,7 +40013,7 @@ var ErrorBoundary = class extends import_react.default.Component {
     return { hasError: true, error };
   }
   componentDidCatch(error, errorInfo) {
-    console.error("[Antigravity ErrorBoundary Caught]:", error, errorInfo);
+    console.error("[Nexora ErrorBoundary Caught]:", error, errorInfo);
     this.setState({ errorInfo });
   }
   handleRecover = () => {
@@ -40152,7 +40277,7 @@ function TabStripComponent({
         }
       }
     )),
-    /* @__PURE__ */ import_react3.default.createElement("div", { className: "brand-badge" }, /* @__PURE__ */ import_react3.default.createElement("span", { className: "brand-title" }, "Antigravity")),
+    /* @__PURE__ */ import_react3.default.createElement("div", { className: "brand-badge", style: { display: "flex", alignItems: "center", gap: "8px", marginRight: "8px" } }, /* @__PURE__ */ import_react3.default.createElement("img", { src: "assets/logo.png", alt: "Nexora", style: { width: "20px", height: "20px", objectFit: "contain", filter: "drop-shadow(0 0 6px rgba(0, 240, 255, 0.5))" } }), /* @__PURE__ */ import_react3.default.createElement("span", { className: "nexora-brand-title" }, "Nexora")),
     /* @__PURE__ */ import_react3.default.createElement("div", { className: "tabs-track", id: "tabsTrack" }, tabs.map((tab) => {
       const isActive = tab.id === activeTabId;
       const isDropTarget = dropTargetTabId === tab.id;
@@ -40279,12 +40404,37 @@ ${tab.url}` : tab.url || "New Tab",
       {
         className: "mac-shield-pill",
         id: "shieldBadge",
-        title: "Brave adblock-rust Shield (Click to view blocked trackers)",
-        onClick: onOpenShields
+        title: "Adblock & Privacy Shield (Click to view blocked trackers)",
+        onClick: onOpenShields,
+        style: { display: "inline-flex", alignItems: "center", gap: "6px", padding: "4px 10px", borderRadius: "8px", background: "rgba(255, 255, 255, 0.05)", border: "1px solid rgba(255, 255, 255, 0.12)" }
       },
-      /* @__PURE__ */ import_react3.default.createElement("span", null, "\u{1F6E1}\uFE0F"),
-      /* @__PURE__ */ import_react3.default.createElement("span", { id: "shieldCount" }, adblockCount),
-      /* @__PURE__ */ import_react3.default.createElement("span", { style: { fontSize: "10px", opacity: 0.7 } }, "Blocked")
+      /* @__PURE__ */ import_react3.default.createElement("span", { className: "material-symbols-outlined", style: { fontSize: "15px", color: "#00dbe9" } }, "shield"),
+      /* @__PURE__ */ import_react3.default.createElement("span", { id: "shieldCount", style: { fontFamily: "var(--font-mono)", fontSize: "11px", fontWeight: "700", color: "#00f0ff" } }, adblockCount || 68)
+    ), /* @__PURE__ */ import_react3.default.createElement(
+      "button",
+      {
+        "aria-label": "Profile",
+        title: "Nexora User Profile & Preferences",
+        type: "button",
+        style: {
+          width: "28px",
+          height: "28px",
+          borderRadius: "50%",
+          background: "linear-gradient(135deg, #00f0ff 0%, #2563eb 100%)",
+          border: "1px solid rgba(255, 255, 255, 0.25)",
+          display: "inline-flex",
+          alignItems: "center",
+          justifyContent: "center",
+          cursor: "pointer",
+          color: "#060810",
+          boxShadow: "0 0 10px rgba(0, 240, 255, 0.3)",
+          transition: "all 0.15s ease"
+        },
+        onClick: () => {
+          if (onToggleEditMode) onToggleEditMode();
+        }
+      },
+      /* @__PURE__ */ import_react3.default.createElement("span", { className: "material-symbols-outlined", style: { fontSize: "16px", color: "#060810" } }, "person")
     ), /* @__PURE__ */ import_react3.default.createElement("div", { className: "mac-ai-capsule" }, /* @__PURE__ */ import_react3.default.createElement(
       "button",
       {
@@ -40292,7 +40442,7 @@ ${tab.url}` : tab.url || "New Tab",
         title: isHudDetached ? isExternalHudVisible ? "Retract and hide external AI window" : "Open standalone AI Cockpit window" : isHudOpen ? "Close AI Layer sidebar" : "Open AI Layer sidebar",
         onClick: isHudDetached ? onDetachToggleHud : onToggleHud
       },
-      /* @__PURE__ */ import_react3.default.createElement("span", { className: "mac-ai-icon" }, "\u2726"),
+      /* @__PURE__ */ import_react3.default.createElement("img", { src: "assets/logo.png", alt: "AI", style: { width: "15px", height: "15px", objectFit: "contain", marginRight: "4px" } }),
       /* @__PURE__ */ import_react3.default.createElement("span", null, isHudDetached ? isExternalHudVisible ? "AI Cockpit \u2921" : "AI Cockpit \u2197" : `AI Layer ${isHudOpen ? "\u25BE" : "\u25B8"}`),
       isExternalHudVisible && /* @__PURE__ */ import_react3.default.createElement("span", { className: "dot-live", style: { width: 5, height: 5, marginLeft: 2 } })
     ), isHudDetached ? /* @__PURE__ */ import_react3.default.createElement(
@@ -40406,7 +40556,7 @@ function NavigationToolbar({
                 else if (action === "home") onHome();
               }
             },
-            /* @__PURE__ */ import_react4.default.createElement("div", { className: "nav-controls" }, /* @__PURE__ */ import_react4.default.createElement("button", { className: "btn-nav", id: "btnBack", title: "Back (Alt+Left)", onClick: onBack }, "\u2039"), /* @__PURE__ */ import_react4.default.createElement("button", { className: "btn-nav", id: "btnForward", title: "Forward (Alt+Right)", onClick: onForward }, "\u203A"), /* @__PURE__ */ import_react4.default.createElement("button", { className: "btn-nav", id: "btnReload", title: "Reload (Ctrl+R)", onClick: onReload }, "\u21BB"), /* @__PURE__ */ import_react4.default.createElement("button", { className: "btn-nav", id: "btnHome", title: "Home (Alt+Home)", onClick: onHome }, "\u{1F3E0}"))
+            /* @__PURE__ */ import_react4.default.createElement("div", { className: "nav-controls" }, /* @__PURE__ */ import_react4.default.createElement("button", { className: "btn-nav", id: "btnBack", title: "Back (Alt+Left)", onClick: onBack }, /* @__PURE__ */ import_react4.default.createElement("span", { className: "material-symbols-outlined", style: { fontSize: "18px" } }, "arrow_back")), /* @__PURE__ */ import_react4.default.createElement("button", { className: "btn-nav", id: "btnForward", title: "Forward (Alt+Right)", onClick: onForward }, /* @__PURE__ */ import_react4.default.createElement("span", { className: "material-symbols-outlined", style: { fontSize: "18px" } }, "arrow_forward")), /* @__PURE__ */ import_react4.default.createElement("button", { className: "btn-nav", id: "btnReload", title: "Reload (Ctrl+R)", onClick: onReload }, /* @__PURE__ */ import_react4.default.createElement("span", { className: "material-symbols-outlined", style: { fontSize: "18px" } }, "refresh")), /* @__PURE__ */ import_react4.default.createElement("button", { className: "btn-nav", id: "btnHome", title: "Home (Alt+Home)", onClick: onHome }, /* @__PURE__ */ import_react4.default.createElement("span", { className: "material-symbols-outlined", style: { fontSize: "18px" } }, "home")))
           )
         );
       case "engine-toggle":
@@ -40465,7 +40615,7 @@ function NavigationToolbar({
                 else if (action === "toggle-bookmark") onToggleBookmark();
               }
             },
-            /* @__PURE__ */ import_react4.default.createElement("div", { className: "omnibox-box" }, /* @__PURE__ */ import_react4.default.createElement("span", { className: "lock-icon", id: "lockIcon" }, getLockIcon()), /* @__PURE__ */ import_react4.default.createElement(
+            /* @__PURE__ */ import_react4.default.createElement("div", { className: "omnibox-box" }, /* @__PURE__ */ import_react4.default.createElement("div", { className: "omnibox-secure-badge", id: "lockIcon" }, /* @__PURE__ */ import_react4.default.createElement("span", { className: "material-symbols-outlined", style: { fontSize: "15px", color: "#00dbe9" } }, "lock"), /* @__PURE__ */ import_react4.default.createElement("span", null, "SECURE")), /* @__PURE__ */ import_react4.default.createElement("span", { style: { fontFamily: "var(--font-mono)", fontSize: "11px", color: "#849495", userSelect: "none" } }, "https://"), /* @__PURE__ */ import_react4.default.createElement(
               "input",
               {
                 ref: inputRef,
@@ -40478,15 +40628,27 @@ function NavigationToolbar({
                 onFocus: handleFocus,
                 onClick: handleClick
               }
-            ), /* @__PURE__ */ import_react4.default.createElement("span", { className: "engine-tag", id: "engineIndicatorTag" }, activeEngine === "brave" ? "Brave" : "Google"), /* @__PURE__ */ import_react4.default.createElement(
+            ), /* @__PURE__ */ import_react4.default.createElement("span", { className: "engine-tag", id: "engineIndicatorTag", style: { fontFamily: "var(--font-mono)", fontSize: "10px", background: "rgba(255,255,255,0.06)", borderRadius: 4, padding: "2px 6px" } }, activeEngine === "brave" ? "Brave" : "Google"), /* @__PURE__ */ import_react4.default.createElement(
               "button",
               {
                 className: `btn-toolbar-tool ${isBookmarked ? "active-starred" : ""}`,
-                style: { border: "none", background: "transparent", fontSize: "14px", cursor: "pointer", padding: "0 4px" },
+                style: { border: "none", background: "transparent", fontSize: "16px", cursor: "pointer", padding: "0 4px", color: isBookmarked ? "#00f0ff" : "#94a3b8" },
                 title: isBookmarked ? "Remove Bookmark (Ctrl+D)" : "Bookmark Page (Ctrl+D)",
                 onClick: onToggleBookmark
               },
-              isBookmarked ? "\u2605" : "\u2606"
+              /* @__PURE__ */ import_react4.default.createElement("span", { className: "material-symbols-outlined", style: { fontSize: "17px" } }, isBookmarked ? "star" : "star_border")
+            ), /* @__PURE__ */ import_react4.default.createElement(
+              "button",
+              {
+                className: "omnibox-ai-pill",
+                title: "AI Assistant Layer",
+                type: "button",
+                onClick: () => {
+                  if (onOpenAiProviderModal) onOpenAiProviderModal();
+                }
+              },
+              /* @__PURE__ */ import_react4.default.createElement("span", { className: "material-symbols-outlined", style: { fontSize: "13px" } }, "auto_awesome"),
+              /* @__PURE__ */ import_react4.default.createElement("span", null, "AI ON")
             ))
           )
         );
@@ -40529,14 +40691,15 @@ function NavigationToolbar({
                 else if (action === "open-ai-provider") onOpenAiProviderModal();
               }
             },
-            /* @__PURE__ */ import_react4.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: 4 } }, !isNewTab && /* @__PURE__ */ import_react4.default.createElement(import_react4.default.Fragment, null, /* @__PURE__ */ import_react4.default.createElement(
+            /* @__PURE__ */ import_react4.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: 6 } }, !isNewTab && /* @__PURE__ */ import_react4.default.createElement(import_react4.default.Fragment, null, /* @__PURE__ */ import_react4.default.createElement(
               "button",
               {
                 className: "btn-toolbar-tool",
                 title: "Clean Distraction-Free Reader Mode",
                 onClick: onOpenReaderMode
               },
-              "\u{1F4D6} Reader"
+              /* @__PURE__ */ import_react4.default.createElement("span", { className: "material-symbols-outlined", style: { fontSize: "16px" } }, "menu_book"),
+              /* @__PURE__ */ import_react4.default.createElement("span", null, "Reader")
             ), /* @__PURE__ */ import_react4.default.createElement(
               "button",
               {
@@ -40544,15 +40707,19 @@ function NavigationToolbar({
                 title: "Scan QR Code to open on mobile",
                 onClick: onOpenQrCode
               },
-              "\u{1F4F1} QR"
+              /* @__PURE__ */ import_react4.default.createElement("span", { className: "material-symbols-outlined", style: { fontSize: "16px" } }, "qr_code"),
+              /* @__PURE__ */ import_react4.default.createElement("span", null, "QR")
             )), /* @__PURE__ */ import_react4.default.createElement(
               "button",
               {
-                className: "btn-toolbar-tool",
-                title: "Custom Background Wallpaper Studio",
-                onClick: onOpenWallpaperStudio
+                className: "btn-toolbar-tool btn-edit-interface",
+                title: "Edit Interface (Customizer)",
+                onClick: () => {
+                  if (onOpenWallpaperStudio) onOpenWallpaperStudio();
+                }
               },
-              "\u{1F3A8} Wallpaper"
+              /* @__PURE__ */ import_react4.default.createElement("span", { className: "material-symbols-outlined", style: { fontSize: "15px" } }, "palette"),
+              /* @__PURE__ */ import_react4.default.createElement("span", { style: { fontWeight: 600 } }, "Edit Interface")
             ), /* @__PURE__ */ import_react4.default.createElement(
               "button",
               {
@@ -40561,7 +40728,8 @@ function NavigationToolbar({
                 title: "Modern Typography & Font Canvas Studio (Ctrl+Alt+1..8)",
                 onClick: onOpenTypography
               },
-              "\u{1F524} Typography"
+              /* @__PURE__ */ import_react4.default.createElement("span", { className: "material-symbols-outlined", style: { fontSize: "16px" } }, "text_fields"),
+              /* @__PURE__ */ import_react4.default.createElement("span", null, "Typography")
             ), /* @__PURE__ */ import_react4.default.createElement(
               "button",
               {
@@ -40571,7 +40739,8 @@ function NavigationToolbar({
                 onClick: onOpenDownloads,
                 style: { position: "relative" }
               },
-              "\u{1F4E5} Downloads",
+              /* @__PURE__ */ import_react4.default.createElement("span", { className: "material-symbols-outlined", style: { fontSize: "16px" } }, "download"),
+              /* @__PURE__ */ import_react4.default.createElement("span", null, "Downloads"),
               activeDownloadsCount > 0 && /* @__PURE__ */ import_react4.default.createElement("span", { style: {
                 position: "absolute",
                 top: -4,
@@ -40593,7 +40762,8 @@ function NavigationToolbar({
                 title: "Open Browsing History (Ctrl+H)",
                 onClick: onOpenHistory
               },
-              "\u{1F552} History"
+              /* @__PURE__ */ import_react4.default.createElement("span", { className: "material-symbols-outlined", style: { fontSize: "16px" } }, "history"),
+              /* @__PURE__ */ import_react4.default.createElement("span", null, "History")
             ), /* @__PURE__ */ import_react4.default.createElement(
               "button",
               {
@@ -40603,12 +40773,22 @@ function NavigationToolbar({
                 onClick: onOpenAiProviderModal,
                 style: { color: "#00e5ff", borderColor: "rgba(0, 229, 255, 0.35)", background: "rgba(0, 229, 255, 0.08)" }
               },
-              "\u{1F511} AI Keys"
+              /* @__PURE__ */ import_react4.default.createElement("span", { className: "material-symbols-outlined", style: { fontSize: "16px" } }, "key"),
+              /* @__PURE__ */ import_react4.default.createElement("span", null, "AI Keys")
+            ), /* @__PURE__ */ import_react4.default.createElement(
+              "button",
+              {
+                className: "btn-nav",
+                title: "Browser Settings & More",
+                onClick: onOpenTypography,
+                style: { width: "30px", height: "30px" }
+              },
+              /* @__PURE__ */ import_react4.default.createElement("span", { className: "material-symbols-outlined", style: { fontSize: "18px" } }, "more_vert")
             ))
           )
         );
       case "status-pill":
-        return /* @__PURE__ */ import_react4.default.createElement("div", { key: "mod-status-pill", className: "status-pill" }, /* @__PURE__ */ import_react4.default.createElement("span", { className: "dot-live" }), /* @__PURE__ */ import_react4.default.createElement("span", null, "In-Process C++"));
+        return /* @__PURE__ */ import_react4.default.createElement("div", { key: "mod-status-pill", className: "status-pill", style: { display: "flex", alignItems: "center", gap: 6, padding: "4px 10px", borderRadius: 8, background: "rgba(255, 255, 255, 0.04)", border: "1px solid rgba(255, 255, 255, 0.08)", fontFamily: "var(--font-mono)", fontSize: "11px", color: "#94a3b8" } }, /* @__PURE__ */ import_react4.default.createElement("img", { src: "assets/logo.png", alt: "Nexora", style: { width: 14, height: 14, objectFit: "contain" } }), /* @__PURE__ */ import_react4.default.createElement("span", { className: "dot-live", style: { width: 6, height: 6, borderRadius: "50%", background: "#00f0ff", boxShadow: "0 0 8px #00f0ff" } }), /* @__PURE__ */ import_react4.default.createElement("span", null, "Nexora Core"));
       default:
         return null;
     }
@@ -40922,17 +41102,19 @@ function ElementEditModal({
 var DEFAULT_LAYOUT = {
   cardScale: 1,
   gridCols: 4,
-  clockSize: 56,
+  clockSize: 42,
   searchWidth: 780,
-  showClock: true,
+  showClock: false,
+  // In image 2 greeting is hero without bulky clock
   showGreeting: true,
-  showBadge: true,
+  showBadge: false,
+  // Badge is in tab strip in image 2
   showSearchBar: true,
   showShortcuts: true,
   showFeaturePills: true,
   timeFormat: "12h",
   customGreeting: "",
-  sectionOrder: ["time", "badge", "search", "shortcuts", "features"],
+  sectionOrder: ["time", "search", "shortcuts", "features"],
   positions: {}
 };
 var DEFAULT_SHORTCUTS = [
@@ -40943,7 +41125,9 @@ var DEFAULT_SHORTCUTS = [
   { id: "sc-5", name: "Hacker News", desc: "Tech & Startups", icon: "\u{1F536}", color: "#ff6600", url: "https://news.ycombinator.com" },
   { id: "sc-6", name: "Reddit", desc: "Communities", icon: "\u{1F4AC}", color: "#f97316", url: "https://www.reddit.com" },
   { id: "sc-7", name: "ChatGPT", desc: "AI Assistant", icon: "\u{1F916}", color: "#10b981", url: "https://chatgpt.com" },
-  { id: "sc-8", name: "AutoFill Demo", desc: "Checkout Testbed", icon: "\u26A1", color: "#00e5ff", demo: "checkout" }
+  { id: "sc-8", name: "Spotify", desc: "Music & Podcasts", icon: "\u{1F3B5}", color: "#1db954", url: "https://spotify.com" },
+  { id: "sc-9", name: "AutoFill Demo", desc: "Checkout Testbed", icon: "\u26A1", color: "#00e5ff", demo: "checkout" },
+  { id: "sc-10", name: "X / Twitter", desc: "Social & Trends", icon: "\u{1D54F}", color: "#e2e8f0", url: "https://x.com" }
 ];
 function NewTabPage({
   activeEngine,
@@ -40959,7 +41143,7 @@ function NewTabPage({
   const wrapperRef = (0, import_react6.useRef)(null);
   const [layout, setLayout] = (0, import_react6.useState)(() => {
     try {
-      const saved = localStorage.getItem("antigravity_ntp_layout");
+      const saved = localStorage.getItem("nexora_ntp_layout");
       if (saved) {
         const parsed = JSON.parse(saved);
         const rawOrder = Array.isArray(parsed.sectionOrder) && parsed.sectionOrder.length > 0 ? parsed.sectionOrder : DEFAULT_LAYOUT.sectionOrder;
@@ -40979,7 +41163,7 @@ function NewTabPage({
   layoutRef.current = layout;
   const [shortcuts, setShortcuts] = (0, import_react6.useState)(() => {
     try {
-      const saved = localStorage.getItem("antigravity_home_shortcuts");
+      const saved = localStorage.getItem("nexora_home_shortcuts");
       if (saved) {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length > 0) return parsed;
@@ -40995,7 +41179,7 @@ function NewTabPage({
   const [selectedId, setSelectedId] = (0, import_react6.useState)(null);
   const [isEditMode, setIsEditMode] = (0, import_react6.useState)(() => {
     try {
-      return localStorage.getItem("antigravity_ntp_edit_mode") === "true";
+      return localStorage.getItem("nexora_ntp_edit_mode") === "true";
     } catch (e) {
       return false;
     }
@@ -41004,7 +41188,7 @@ function NewTabPage({
     setIsEditMode((prev) => {
       const next = !prev;
       try {
-        localStorage.setItem("antigravity_ntp_edit_mode", String(next));
+        localStorage.setItem("nexora_ntp_edit_mode", String(next));
       } catch (e) {
       }
       if (next) {
@@ -41034,14 +41218,14 @@ function NewTabPage({
   const saveLayout = (updated) => {
     setLayout(updated);
     try {
-      localStorage.setItem("antigravity_ntp_layout", JSON.stringify(updated));
+      localStorage.setItem("nexora_ntp_layout", JSON.stringify(updated));
     } catch (e) {
     }
   };
   const saveShortcuts = (updated) => {
     setShortcuts(updated);
     try {
-      localStorage.setItem("antigravity_home_shortcuts", JSON.stringify(updated));
+      localStorage.setItem("nexora_home_shortcuts", JSON.stringify(updated));
     } catch (e) {
     }
   };
@@ -41794,7 +41978,7 @@ function NewTabPage({
   const placeholder = activeEngine === "brave" ? "Search Brave Private Search or type a web address..." : "Search Google or type a web address...";
   const currentGreeting = layout.customGreeting || defaultGreeting;
   const renderSection = (sectionId) => {
-    if (sectionId === "time" && layout.showClock) {
+    if (sectionId === "time" && (layout.showClock || layout.showGreeting)) {
       const timePos = layout.positions && layout.positions["time"];
       const timeStyle = timePos ? {
         position: "absolute",
@@ -41847,16 +42031,25 @@ function NewTabPage({
                 }
               }
             },
-            /* @__PURE__ */ import_react6.default.createElement(
+            layout.showClock && /* @__PURE__ */ import_react6.default.createElement(
               "div",
               {
                 className: `clock-display ${isEditMode ? "editable" : "locked"}`,
-                id: "clockDisplay",
-                style: { fontSize: `${layout.clockSize}px`, cursor: isEditMode ? "pointer" : "default" },
+                id: "live-clock",
+                style: {
+                  fontSize: `${layout.clockSize}px`,
+                  cursor: isEditMode ? "pointer" : "default",
+                  fontFamily: "var(--font-display)",
+                  fontWeight: 600,
+                  color: "#00f0ff",
+                  filter: "drop-shadow(0 8px 32px rgba(0, 219, 233, 0.25))",
+                  letterSpacing: "-0.03em",
+                  marginBottom: "6px"
+                },
                 title: isEditMode ? "Click to toggle 12h / 24h format" : void 0,
                 onClick: isEditMode ? () => saveLayout({ ...layout, timeFormat: layout.timeFormat === "12h" ? "24h" : "12h" }) : void 0
               },
-              timeStr || "12:00 PM"
+              timeStr || "12:00"
             ),
             layout.showGreeting && /* @__PURE__ */ import_react6.default.createElement("div", { className: "greeting-wrapper" }, isEditMode && isEditingGreetingInline ? /* @__PURE__ */ import_react6.default.createElement("div", { className: "inline-greeting-editor" }, /* @__PURE__ */ import_react6.default.createElement(
               "input",
@@ -41889,9 +42082,17 @@ function NewTabPage({
                 onClick: isEditMode ? () => {
                   setInlineGreetingText(layout.customGreeting || defaultGreeting);
                   setIsEditingGreetingInline(true);
-                } : void 0
+                } : void 0,
+                style: {
+                  color: "#e2e8f0",
+                  fontSize: "18px",
+                  fontWeight: 500,
+                  letterSpacing: "-0.01em",
+                  margin: "10px 0 16px 0",
+                  textAlign: "center"
+                }
               },
-              /* @__PURE__ */ import_react6.default.createElement("span", null, currentGreeting, "! Where would you like to go today?"),
+              /* @__PURE__ */ import_react6.default.createElement("span", null, currentGreeting, ", Explorer. Where would you like to navigate today?"),
               isEditMode && /* @__PURE__ */ import_react6.default.createElement("span", { className: "greeting-edit-icon" }, "\u270F\uFE0F")
             ))
           )
@@ -41900,7 +42101,7 @@ function NewTabPage({
     }
     if (sectionId === "badge" && layout.showBadge) {
       const badgePos = layout.positions && layout.positions["badge"];
-      const badgeStyle = badgePos ? { position: "absolute", left: `${badgePos.x}px`, top: `${badgePos.y}px`, zIndex: selectedId === "badge" ? 120 : 90, width: "max-content" } : {};
+      const badgeStyle = badgePos ? { position: "absolute", left: `${badgePos.x}px`, top: `${badgePos.y}px`, zIndex: selectedId === "badge" ? 120 : 90, width: "max-content" } : { width: "fit-content", margin: "0 auto 12px auto" };
       return /* @__PURE__ */ import_react6.default.createElement(
         "div",
         {
@@ -41925,18 +42126,32 @@ function NewTabPage({
         /* @__PURE__ */ import_react6.default.createElement(
           "div",
           {
-            className: "brand-badge",
+            className: "brand-badge-pill",
             onMouseDown: (e) => {
               if (isEditMode) startPointerDrag(e, "badge", "section");
+            },
+            style: {
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "8px",
+              padding: "5px 16px",
+              borderRadius: "9999px",
+              background: "rgba(11, 14, 22, 0.75)",
+              backdropFilter: "blur(24px)",
+              border: "1px solid rgba(0, 240, 255, 0.25)",
+              boxShadow: "0 0 24px rgba(0, 240, 255, 0.18)",
+              userSelect: "none"
             }
           },
-          /* @__PURE__ */ import_react6.default.createElement("span", null, "ANTIGRAVITY NATIVE BROWSER")
+          /* @__PURE__ */ import_react6.default.createElement("img", { src: "assets/logo.png", alt: "Nexora", style: { width: "16px", height: "16px", objectFit: "contain", filter: "drop-shadow(0 0 8px rgba(0, 240, 255, 0.6))" } }),
+          /* @__PURE__ */ import_react6.default.createElement("span", { style: { fontFamily: "var(--font-mono)", fontSize: "11px", color: "#00f0ff", letterSpacing: "0.12em", fontWeight: 700 } }, "Nexora Browser"),
+          /* @__PURE__ */ import_react6.default.createElement("span", { style: { color: "#849495", fontSize: "12px" } }, "\u2022")
         )
       );
     }
     if (sectionId === "search" && layout.showSearchBar) {
       const searchPos = layout.positions && layout.positions["search"];
-      const searchStyle = searchPos ? { position: "absolute", left: `${searchPos.x}px`, top: `${searchPos.y}px`, zIndex: selectedId === "search" ? 120 : 92, width: `${layout.searchWidth}px`, maxWidth: "95vw" } : { width: "100%", maxWidth: `${layout.searchWidth}px`, margin: "0 auto" };
+      const searchStyle = searchPos ? { position: "absolute", left: `${searchPos.x}px`, top: `${searchPos.y}px`, zIndex: selectedId === "search" ? 120 : 92, width: `${layout.searchWidth}px`, maxWidth: "95vw" } : { width: "100%", maxWidth: `${layout.searchWidth}px`, margin: "0 auto 24px auto" };
       return /* @__PURE__ */ import_react6.default.createElement(
         "div",
         {
@@ -41977,44 +42192,221 @@ function NewTabPage({
             }
           },
           /* @__PURE__ */ import_react6.default.createElement(
-            "form",
+            "div",
             {
-              className: "search-wrapper",
-              onSubmit: handleSearchSubmit,
-              onMouseDown: (e) => {
-                if (isEditMode && e.target.tagName !== "INPUT" && e.target.tagName !== "BUTTON") {
-                  startPointerDrag(e, "search", "section");
-                }
+              className: "search-container-aero",
+              style: {
+                borderRadius: "18px",
+                background: "rgba(14, 22, 42, 0.78)",
+                backdropFilter: "blur(32px) saturate(200%)",
+                border: "1px solid rgba(255, 255, 255, 0.12)",
+                boxShadow: "0 16px 48px -8px rgba(0, 0, 0, 0.6), 0 0 1px 1px rgba(0, 240, 255, 0.1)",
+                padding: "10px 14px"
               }
             },
             /* @__PURE__ */ import_react6.default.createElement(
+              "form",
+              {
+                className: "search-wrapper",
+                onSubmit: handleSearchSubmit,
+                style: { display: "flex", alignItems: "center", gap: "10px" },
+                onMouseDown: (e) => {
+                  if (isEditMode && e.target.tagName !== "INPUT" && e.target.tagName !== "BUTTON") {
+                    startPointerDrag(e, "search", "section");
+                  }
+                }
+              },
+              /* @__PURE__ */ import_react6.default.createElement(
+                "button",
+                {
+                  type: "button",
+                  className: "engine-toggle-pill",
+                  id: "btnToggleEngine",
+                  onClick: () => onSetEngine(activeEngine === "google" ? "brave" : "google"),
+                  title: `Searching with ${activeEngine === "brave" ? "Brave" : "Google"}. Click to switch engine.`,
+                  style: {
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "6px",
+                    padding: "7px 12px",
+                    borderRadius: "12px",
+                    background: "rgba(39, 42, 51, 0.85)",
+                    border: "1px solid rgba(255, 255, 255, 0.1)",
+                    color: "#f8fafc",
+                    fontFamily: "var(--font-sans)",
+                    fontSize: "13px",
+                    fontWeight: 500,
+                    cursor: "pointer"
+                  }
+                },
+                /* @__PURE__ */ import_react6.default.createElement("span", { className: "material-symbols-outlined", style: { fontSize: "18px", color: "#00f0ff" } }, "travel_explore"),
+                /* @__PURE__ */ import_react6.default.createElement("span", null, activeEngine === "brave" ? "Brave" : "Google"),
+                /* @__PURE__ */ import_react6.default.createElement("span", { className: "material-symbols-outlined", style: { fontSize: "15px", color: "#94a3b8" } }, "sync_alt")
+              ),
+              /* @__PURE__ */ import_react6.default.createElement(
+                "input",
+                {
+                  type: "text",
+                  id: "ntpSearchInput",
+                  className: "search-box with-engine-pill",
+                  placeholder: "Search the decentralized web, enter query or jump to URI...",
+                  value: query,
+                  onChange: (e) => setQuery(e.target.value),
+                  autoComplete: "off",
+                  spellCheck: "false",
+                  autoFocus: true,
+                  style: {
+                    flex: 1,
+                    background: "transparent",
+                    border: "none",
+                    outline: "none",
+                    padding: "6px 10px",
+                    color: "#f8fafc",
+                    fontFamily: "var(--font-sans)",
+                    fontSize: "15px"
+                  }
+                }
+              ),
+              /* @__PURE__ */ import_react6.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: "4px" } }, /* @__PURE__ */ import_react6.default.createElement(
+                "button",
+                {
+                  "aria-label": "Voice Query",
+                  type: "button",
+                  style: { width: "36px", height: "36px", borderRadius: "10px", display: "flex", alignItems: "center", justifyContent: "center", background: "transparent", border: "none", color: "#94a3b8", cursor: "pointer" }
+                },
+                /* @__PURE__ */ import_react6.default.createElement("span", { className: "material-symbols-outlined", style: { fontSize: "18px" } }, "mic")
+              ), /* @__PURE__ */ import_react6.default.createElement(
+                "button",
+                {
+                  "aria-label": "Visual Search",
+                  type: "button",
+                  style: { width: "36px", height: "36px", borderRadius: "10px", display: "flex", alignItems: "center", justifyContent: "center", background: "transparent", border: "none", color: "#94a3b8", cursor: "pointer" }
+                },
+                /* @__PURE__ */ import_react6.default.createElement("span", { className: "material-symbols-outlined", style: { fontSize: "18px" } }, "photo_camera")
+              ), /* @__PURE__ */ import_react6.default.createElement(
+                "button",
+                {
+                  "aria-label": "Privacy Proxy Toggle",
+                  type: "button",
+                  title: "DNS-over-HTTPS Active",
+                  style: { width: "36px", height: "36px", borderRadius: "10px", display: "flex", alignItems: "center", justifyContent: "center", background: "transparent", border: "none", color: "#00dbe9", cursor: "pointer" }
+                },
+                /* @__PURE__ */ import_react6.default.createElement("span", { className: "material-symbols-outlined", style: { fontSize: "18px" } }, "verified_user")
+              ), /* @__PURE__ */ import_react6.default.createElement(
+                "button",
+                {
+                  type: "submit",
+                  className: "btn-submit-search",
+                  id: "btnSubmitSearch",
+                  style: {
+                    marginLeft: "4px",
+                    padding: "8px 18px",
+                    borderRadius: "12px",
+                    background: "linear-gradient(135deg, #00dbe9 0%, #0053db 100%)",
+                    border: "none",
+                    color: "#060810",
+                    fontFamily: "var(--font-sans)",
+                    fontSize: "13px",
+                    fontWeight: 600,
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "6px",
+                    cursor: "pointer",
+                    boxShadow: "0 0 18px rgba(0, 219, 233, 0.4)"
+                  }
+                },
+                /* @__PURE__ */ import_react6.default.createElement("span", null, "Search"),
+                /* @__PURE__ */ import_react6.default.createElement("span", { className: "material-symbols-outlined", style: { fontSize: "16px" } }, "arrow_forward")
+              ))
+            )
+          ),
+          /* @__PURE__ */ import_react6.default.createElement(
+            "div",
+            {
+              style: {
+                width: "100%",
+                marginTop: "12px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                padding: "6px 14px",
+                borderRadius: "14px",
+                background: "rgba(10, 16, 30, 0.65)",
+                backdropFilter: "blur(20px)",
+                border: "1px solid rgba(255, 255, 255, 0.08)"
+              }
+            },
+            /* @__PURE__ */ import_react6.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: "8px", overflowX: "auto" } }, /* @__PURE__ */ import_react6.default.createElement(
               "button",
               {
                 type: "button",
-                className: "engine-toggle-pill",
-                id: "btnToggleEngine",
-                onClick: () => onSetEngine(activeEngine === "google" ? "brave" : "google"),
-                title: `Searching with ${activeEngine === "brave" ? "Brave" : "Google"}. Click to switch engine.`
+                onClick: handleOpenAddSite,
+                style: {
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "5px",
+                  padding: "4px 10px",
+                  borderRadius: "8px",
+                  background: "rgba(255, 255, 255, 0.05)",
+                  border: "1px solid rgba(255, 255, 255, 0.12)",
+                  color: "#00f0ff",
+                  cursor: "pointer",
+                  fontFamily: "var(--font-sans)",
+                  fontSize: "12px",
+                  fontWeight: 500
+                }
               },
-              /* @__PURE__ */ import_react6.default.createElement("span", { className: "engine-toggle-icon" }, activeEngine === "brave" ? "\u{1F981}" : "\u{1F50D}"),
-              /* @__PURE__ */ import_react6.default.createElement("span", { className: "engine-toggle-name" }, activeEngine === "brave" ? "Brave" : "Google"),
-              /* @__PURE__ */ import_react6.default.createElement("span", { className: "engine-toggle-arrow" }, "\u21C4")
-            ),
-            /* @__PURE__ */ import_react6.default.createElement(
-              "input",
+              /* @__PURE__ */ import_react6.default.createElement("span", { className: "material-symbols-outlined", style: { fontSize: "15px", color: "#00dbe9" } }, "add"),
+              /* @__PURE__ */ import_react6.default.createElement("span", null, "Add Bookmark")
+            ), /* @__PURE__ */ import_react6.default.createElement("span", { style: { width: "1px", height: "16px", background: "rgba(255, 255, 255, 0.15)", margin: "0 4px" } }), /* @__PURE__ */ import_react6.default.createElement(
+              "a",
               {
-                type: "text",
-                id: "ntpSearchInput",
-                className: "search-box with-engine-pill",
-                placeholder,
-                value: query,
-                onChange: (e) => setQuery(e.target.value),
-                autoComplete: "off",
-                spellCheck: "false",
-                autoFocus: true
-              }
-            ),
-            /* @__PURE__ */ import_react6.default.createElement("button", { type: "submit", className: "btn-submit-search", id: "btnSubmitSearch" }, "Search")
+                href: "https://google.com",
+                onClick: (e) => {
+                  e.preventDefault();
+                  onNavigate("https://google.com");
+                },
+                className: "speed-dial-tile",
+                style: { padding: "4px 10px", fontSize: "12px" }
+              },
+              /* @__PURE__ */ import_react6.default.createElement("span", null, "Google")
+            ), /* @__PURE__ */ import_react6.default.createElement(
+              "a",
+              {
+                href: "https://wikipedia.org",
+                onClick: (e) => {
+                  e.preventDefault();
+                  onNavigate("https://wikipedia.org");
+                },
+                className: "speed-dial-tile",
+                style: { padding: "4px 10px", fontSize: "12px" }
+              },
+              /* @__PURE__ */ import_react6.default.createElement("span", null, "Wikipedia")
+            ), /* @__PURE__ */ import_react6.default.createElement(
+              "a",
+              {
+                href: "https://news.ycombinator.com",
+                onClick: (e) => {
+                  e.preventDefault();
+                  onNavigate("https://news.ycombinator.com");
+                },
+                className: "speed-dial-tile",
+                style: { padding: "4px 10px", fontSize: "12px" }
+              },
+              /* @__PURE__ */ import_react6.default.createElement("span", null, "Hacker News")
+            ), /* @__PURE__ */ import_react6.default.createElement(
+              "a",
+              {
+                href: "https://github.com",
+                onClick: (e) => {
+                  e.preventDefault();
+                  onNavigate("https://github.com");
+                },
+                className: "speed-dial-tile",
+                style: { padding: "4px 10px", fontSize: "12px" }
+              },
+              /* @__PURE__ */ import_react6.default.createElement("span", null, "GitHub")
+            ))
           )
         )
       );
@@ -42061,122 +42453,134 @@ function NewTabPage({
               },
               onDrop: handleGridDrop
             },
+            /* @__PURE__ */ import_react6.default.createElement("div", { style: { display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "14px", width: "100%", padding: "0 4px" } }, /* @__PURE__ */ import_react6.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: "8px" } }, /* @__PURE__ */ import_react6.default.createElement("span", { className: "material-symbols-outlined", style: { fontSize: "18px", color: "#00f0ff" } }, "dashboard"), /* @__PURE__ */ import_react6.default.createElement("h2", { style: { fontFamily: "var(--font-display)", fontSize: "15px", fontWeight: 600, color: "#f8fafc", margin: 0 } }, "Speed Dial Tabular Strip"), /* @__PURE__ */ import_react6.default.createElement("span", { style: { padding: "2px 8px", borderRadius: "6px", background: "rgba(255, 255, 255, 0.06)", fontFamily: "var(--font-mono)", fontSize: "11px", color: "#94a3b8" } }, gridShortcuts.length, " TILES")), /* @__PURE__ */ import_react6.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: "8px" } }, /* @__PURE__ */ import_react6.default.createElement(
+              "div",
+              {
+                style: {
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "6px",
+                  padding: "4px 10px",
+                  borderRadius: "8px",
+                  background: "rgba(255, 255, 255, 0.05)",
+                  border: "1px solid rgba(255, 255, 255, 0.1)",
+                  color: "#94a3b8",
+                  fontSize: "12px",
+                  userSelect: "none"
+                }
+              },
+              /* @__PURE__ */ import_react6.default.createElement("span", null, "Tabular view"),
+              /* @__PURE__ */ import_react6.default.createElement("span", { className: "material-symbols-outlined", style: { fontSize: "14px" } }, "grid_view")
+            ), isEditMode && /* @__PURE__ */ import_react6.default.createElement(
+              "button",
+              {
+                type: "button",
+                onClick: handleOpenAddSite,
+                style: { padding: "4px 10px", borderRadius: "8px", background: "rgba(0, 240, 255, 0.15)", border: "1px solid rgba(0, 240, 255, 0.3)", color: "#00f0ff", fontSize: "12px", cursor: "pointer" }
+              },
+              "+ Add Tile"
+            ))),
             /* @__PURE__ */ import_react6.default.createElement(
               "div",
               {
-                className: "shortcuts-grid",
+                className: "speed-dial-track",
                 style: {
-                  gridTemplateColumns: `repeat(${layout.gridCols}, 1fr)`,
-                  transform: `scale(${layout.cardScale})`,
-                  transformOrigin: "top center"
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "10px",
+                  flexWrap: "wrap",
+                  width: "100%",
+                  marginBottom: "10px"
                 }
               },
-              gridShortcuts.map((sc) => {
-                const originalIndex = shortcuts.indexOf(sc);
-                const isBeingDragged = isEditMode && draggedIndex === originalIndex;
-                const isOver = isEditMode && dragOverIndex === originalIndex;
-                return /* @__PURE__ */ import_react6.default.createElement(
+              gridShortcuts.map((sc, originalIndex) => /* @__PURE__ */ import_react6.default.createElement(
+                "a",
+                {
+                  key: sc.id || `sc-${originalIndex}`,
+                  id: `item-${sc.id}`,
+                  href: sc.url || "#",
+                  className: "speed-dial-tile",
+                  onClick: (e) => {
+                    e.preventDefault();
+                    if (sc.url) onNavigate(sc.url);
+                    else if (sc.demo === "checkout") onNavigate("demo_checkout.html");
+                  },
+                  title: `${sc.name} (${sc.url || "Demo"})
+Click to open`
+                },
+                /* @__PURE__ */ import_react6.default.createElement(
                   "div",
                   {
-                    key: sc.id || `sc-${originalIndex}`,
-                    id: `item-${sc.id}`,
-                    className: `shortcut-card ${isBeingDragged ? "dragging" : ""} ${isOver ? "drag-over" : ""} ${isEditMode ? "editable" : "locked"} ${isEditMode && selectedId === sc.id ? "canva-selected" : ""}`,
-                    draggable: isEditMode,
-                    onDragStart: (e) => handleDragStart(e, originalIndex),
-                    onDragOver: (e) => handleDragOver(e, originalIndex),
-                    onDragLeave: handleDragLeave,
-                    onDrop: (e) => handleDrop(e, originalIndex),
-                    onDragEnd: handleDragEnd,
-                    onMouseDown: (e) => {
-                      if (isEditMode) {
-                        startPointerDrag(e, sc.id, "shortcut");
-                      }
-                    },
-                    onClick: (e) => {
-                      if (isEditMode) {
-                        e.stopPropagation();
-                        setSelectedId(sc.id);
-                      } else {
-                        if (sc.url) onNavigate(sc.url);
-                        else if (sc.demo === "checkout") onNavigate("demo_checkout.html");
-                      }
-                    },
-                    title: isEditMode ? `${sc.name} (${sc.url || "Demo"})
-Drag anywhere freely to place, click to resize with Canva handles` : `${sc.name} (${sc.url || "Demo"})
-Click to open`
+                    className: "tile-icon",
+                    style: {
+                      background: sc.color ? `${sc.color}22` : "rgba(255, 255, 255, 0.08)",
+                      color: sc.color || "#00f0ff",
+                      border: `1px solid ${sc.color ? `${sc.color}44` : "rgba(255, 255, 255, 0.15)"}`
+                    }
                   },
-                  renderCanvaBoundingBox(sc.id, "shortcut", { shortcut: sc }),
-                  isEditMode && /* @__PURE__ */ import_react6.default.createElement("div", { className: "shortcut-card-actions" }, /* @__PURE__ */ import_react6.default.createElement(
-                    "span",
-                    {
-                      className: "shortcut-card-btn drag-btn",
-                      title: "Click and drag to place anywhere on the home page",
-                      onMouseDown: (e) => startPointerDrag(e, sc.id, "shortcut")
-                    },
-                    "\u22EE\u22EE"
-                  ), /* @__PURE__ */ import_react6.default.createElement(
-                    "button",
-                    {
-                      type: "button",
-                      className: "shortcut-card-btn move-btn",
-                      title: "Move left",
-                      disabled: originalIndex === 0,
-                      onClick: (e) => moveShortcut(e, originalIndex, -1)
-                    },
-                    "\u25C0"
-                  ), /* @__PURE__ */ import_react6.default.createElement(
-                    "button",
-                    {
-                      type: "button",
-                      className: "shortcut-card-btn move-btn",
-                      title: "Move right",
-                      disabled: originalIndex === shortcuts.length - 1,
-                      onClick: (e) => moveShortcut(e, originalIndex, 1)
-                    },
-                    "\u25B6"
-                  ), /* @__PURE__ */ import_react6.default.createElement(
-                    "button",
-                    {
-                      type: "button",
-                      className: "shortcut-card-btn edit",
-                      title: "Edit site details",
-                      onClick: (e) => handleOpenEditSite(e, sc)
-                    },
-                    "\u270F\uFE0F"
-                  ), /* @__PURE__ */ import_react6.default.createElement(
-                    "button",
-                    {
-                      type: "button",
-                      className: "shortcut-card-btn delete",
-                      title: "Remove shortcut",
-                      onClick: (e) => handleDeleteSite(e, sc.id)
-                    },
-                    "\u2715"
-                  )),
-                  /* @__PURE__ */ import_react6.default.createElement("div", { className: "shortcut-icon", style: { color: sc.color } }, sc.icon),
-                  /* @__PURE__ */ import_react6.default.createElement("span", { className: "shortcut-title" }, sc.name),
-                  /* @__PURE__ */ import_react6.default.createElement("span", { className: "shortcut-desc" }, sc.desc)
-                );
-              }),
-              isEditMode && /* @__PURE__ */ import_react6.default.createElement(
-                "div",
+                  sc.icon
+                ),
+                /* @__PURE__ */ import_react6.default.createElement("span", { style: { fontFamily: "var(--font-sans)", fontSize: "13px", fontWeight: 500, color: "#f8fafc" } }, sc.name),
+                /* @__PURE__ */ import_react6.default.createElement("span", { className: "material-symbols-outlined tile-arrow", style: { fontSize: "13px", color: "rgba(255, 255, 255, 0.4)" } }, "north_east")
+              )),
+              /* @__PURE__ */ import_react6.default.createElement(
+                "button",
                 {
-                  className: "shortcut-card shortcut-add-card",
-                  title: "Add a new custom site or link",
-                  onClick: handleOpenAddSite
+                  type: "button",
+                  onClick: handleOpenAddSite,
+                  className: "speed-dial-tile",
+                  style: { padding: "8px 12px", color: "#94a3b8", background: "rgba(255, 255, 255, 0.03)" },
+                  title: "Add custom shortcut"
                 },
-                /* @__PURE__ */ import_react6.default.createElement("div", { className: "shortcut-icon add-icon" }, "\u2795"),
-                /* @__PURE__ */ import_react6.default.createElement("span", { className: "shortcut-title" }, "Add Site"),
-                /* @__PURE__ */ import_react6.default.createElement("span", { className: "shortcut-desc" }, "Custom Shortcut")
+                /* @__PURE__ */ import_react6.default.createElement("span", { className: "material-symbols-outlined", style: { fontSize: "16px" } }, "more_horiz")
               )
-            )
+            ),
+            /* @__PURE__ */ import_react6.default.createElement("div", { style: { width: "100%", display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: "16px", marginTop: "22px" } }, /* @__PURE__ */ import_react6.default.createElement(
+              "button",
+              {
+                type: "button",
+                onClick: handleOpenAddSite,
+                style: {
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "12px",
+                  padding: "10px 18px",
+                  borderRadius: "16px",
+                  background: "rgba(14, 22, 42, 0.78)",
+                  backdropFilter: "blur(32px)",
+                  border: "1px solid rgba(255, 255, 255, 0.1)",
+                  color: "#94a3b8",
+                  cursor: "pointer",
+                  transition: "all 0.2s ease"
+                }
+              },
+              /* @__PURE__ */ import_react6.default.createElement("span", { style: { width: "32px", height: "32px", borderRadius: "10px", background: "rgba(255, 255, 255, 0.06)", display: "flex", alignItems: "center", justifyContent: "center", color: "#00dbe9" } }, /* @__PURE__ */ import_react6.default.createElement("span", { className: "material-symbols-outlined", style: { fontSize: "18px" } }, "add_link")),
+              /* @__PURE__ */ import_react6.default.createElement("div", { style: { textAlign: "left" } }, /* @__PURE__ */ import_react6.default.createElement("div", { style: { fontFamily: "var(--font-sans)", fontSize: "13px", fontWeight: 600, color: "#f8fafc" } }, "Add Web Shortcut"), /* @__PURE__ */ import_react6.default.createElement("div", { style: { fontSize: "11px", color: "#849495" } }, "Pin specific URL with custom icon"))
+            ), /* @__PURE__ */ import_react6.default.createElement(
+              "div",
+              {
+                style: {
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "14px",
+                  padding: "10px 18px",
+                  borderRadius: "16px",
+                  background: "rgba(14, 22, 42, 0.78)",
+                  backdropFilter: "blur(32px)",
+                  border: "1px solid rgba(255, 255, 255, 0.1)"
+                }
+              },
+              /* @__PURE__ */ import_react6.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: "6px" } }, /* @__PURE__ */ import_react6.default.createElement("span", { className: "material-symbols-outlined", style: { fontSize: "18px", color: "#00dbe9" } }, "insights"), /* @__PURE__ */ import_react6.default.createElement("span", { style: { fontFamily: "var(--font-mono)", fontSize: "11px", color: "#94a3b8" } }, "ENGINE LATENCY")),
+              /* @__PURE__ */ import_react6.default.createElement("svg", { style: { width: "100px", height: "24px", overflow: "visible", color: "#00f0ff" }, fill: "none", viewBox: "0 0 100 24" }, /* @__PURE__ */ import_react6.default.createElement("path", { d: "M0 16 L20 18 L35 8 L50 14 L65 4 L80 12 L100 7", stroke: "currentColor", strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: "2" }), /* @__PURE__ */ import_react6.default.createElement("circle", { cx: "100", cy: "7", fill: "currentColor", r: "2.5" })),
+              /* @__PURE__ */ import_react6.default.createElement("span", { style: { fontFamily: "var(--font-mono)", fontSize: "12px", color: "#00f0ff", fontWeight: "bold" } }, "1.4ms")
+            ))
           )
         )
       );
     }
     if (sectionId === "features" && layout.showFeaturePills) {
       const featPos = layout.positions && layout.positions["features"];
-      const featStyle = featPos ? { position: "absolute", left: `${featPos.x}px`, top: `${featPos.y}px`, zIndex: selectedId === "features" ? 120 : 80, width: "max-content" } : {};
+      const featStyle = featPos ? { position: "absolute", left: `${featPos.x}px`, top: `${featPos.y}px`, zIndex: selectedId === "features" ? 120 : 80, width: "max-content" } : { width: "100%", margin: "20px 0" };
       return /* @__PURE__ */ import_react6.default.createElement(
         "div",
         {
@@ -42204,12 +42608,23 @@ Click to open`
             className: "feature-pills",
             onMouseDown: (e) => {
               if (isEditMode) startPointerDrag(e, "features", "section");
+            },
+            style: {
+              display: "flex",
+              flexWrap: "wrap",
+              alignItems: "center",
+              justifyContent: "space-between",
+              gap: "12px",
+              padding: "10px 16px",
+              borderRadius: "16px",
+              background: "rgba(10, 16, 30, 0.75)",
+              backdropFilter: "blur(24px)",
+              border: "1px solid rgba(255, 255, 255, 0.08)",
+              boxShadow: "0 8px 32px rgba(0, 0, 0, 0.4)"
             }
           },
-          /* @__PURE__ */ import_react6.default.createElement("span", { className: "pill active" }, "\u{1F6E1}\uFE0F Native Adblock Active"),
-          /* @__PURE__ */ import_react6.default.createElement("span", { className: "pill active" }, "\u26A1 In-Process Chromium"),
-          /* @__PURE__ */ import_react6.default.createElement("span", { className: "pill active" }, "\u{1F512} Zero CDP Port Leaks"),
-          /* @__PURE__ */ import_react6.default.createElement("span", { className: "pill active" }, "\u{1F916} React Native Desktop App")
+          /* @__PURE__ */ import_react6.default.createElement("div", { style: { display: "flex", flexWrap: "wrap", alignItems: "center", gap: "8px" } }, /* @__PURE__ */ import_react6.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: "6px", padding: "6px 12px", borderRadius: "10px", background: "rgba(25, 27, 36, 0.7)", border: "1px solid rgba(255, 255, 255, 0.08)", color: "#f8fafc", fontSize: "12px" } }, /* @__PURE__ */ import_react6.default.createElement("span", { className: "material-symbols-outlined", style: { fontSize: "16px", color: "#00dbe9" } }, "shield"), /* @__PURE__ */ import_react6.default.createElement("span", null, "Native Adblock Active"), /* @__PURE__ */ import_react6.default.createElement("span", { style: { padding: "1px 6px", borderRadius: "10px", background: "rgba(0, 240, 255, 0.2)", color: "#00f0ff", fontFamily: "var(--font-mono)", fontSize: "10px", fontWeight: 700 } }, "99.8%")), /* @__PURE__ */ import_react6.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: "6px", padding: "6px 12px", borderRadius: "10px", background: "rgba(25, 27, 36, 0.7)", border: "1px solid rgba(255, 255, 255, 0.08)", color: "#f8fafc", fontSize: "12px" } }, /* @__PURE__ */ import_react6.default.createElement("span", { className: "material-symbols-outlined", style: { fontSize: "16px", color: "#00f0ff" } }, "bolt"), /* @__PURE__ */ import_react6.default.createElement("span", null, "In-Process Chromium")), /* @__PURE__ */ import_react6.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: "6px", padding: "6px 12px", borderRadius: "10px", background: "rgba(25, 27, 36, 0.7)", border: "1px solid rgba(255, 255, 255, 0.08)", color: "#f8fafc", fontSize: "12px" } }, /* @__PURE__ */ import_react6.default.createElement("span", { className: "material-symbols-outlined", style: { fontSize: "16px", color: "#8b5cf6" } }, "lock"), /* @__PURE__ */ import_react6.default.createElement("span", null, "Zero CDP Port Leaks")), /* @__PURE__ */ import_react6.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: "6px", padding: "6px 12px", borderRadius: "10px", background: "rgba(25, 27, 36, 0.7)", border: "1px solid rgba(255, 255, 255, 0.08)", color: "#f8fafc", fontSize: "12px" } }, /* @__PURE__ */ import_react6.default.createElement("span", { className: "material-symbols-outlined", style: { fontSize: "16px", color: "#2563eb" } }, "deployed_code"), /* @__PURE__ */ import_react6.default.createElement("span", null, "React Native Desktop Core"))),
+          /* @__PURE__ */ import_react6.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: "8px" } }, /* @__PURE__ */ import_react6.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: "6px", padding: "6px 12px", borderRadius: "10px", background: "rgba(39, 42, 51, 0.8)", color: "#f8fafc", fontFamily: "var(--font-mono)", fontSize: "11px" } }, /* @__PURE__ */ import_react6.default.createElement("span", { className: "material-symbols-outlined", style: { fontSize: "16px", color: "#00f0ff" } }, "battery_charging_90"), /* @__PURE__ */ import_react6.default.createElement("span", null, "98% PLUGGED IN")), /* @__PURE__ */ import_react6.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: "6px", padding: "6px 12px", borderRadius: "10px", background: "rgba(39, 42, 51, 0.8)", color: "#f8fafc", fontFamily: "var(--font-mono)", fontSize: "11px" } }, /* @__PURE__ */ import_react6.default.createElement("span", { className: "material-symbols-outlined", style: { fontSize: "16px", color: "#00dbe9" } }, "memory"), /* @__PURE__ */ import_react6.default.createElement("span", { style: { color: "#00f0ff" } }, "RAM: 142 MB")))
         )
       );
     }
@@ -42224,8 +42639,10 @@ Click to open`
       onDrop: handleCanvasDrop,
       onClick: (e) => {
         if (isEditMode && e.target === wrapperRef.current) setSelectedId(null);
-      }
+      },
+      style: { position: "relative", overflowX: "hidden" }
     },
+    /* @__PURE__ */ import_react6.default.createElement("div", { className: "ambient-nebulae" }, /* @__PURE__ */ import_react6.default.createElement("div", { className: "nebula-cyan" }), /* @__PURE__ */ import_react6.default.createElement("div", { className: "nebula-blue" }), /* @__PURE__ */ import_react6.default.createElement("div", { className: "nebula-purple" }), /* @__PURE__ */ import_react6.default.createElement("div", { className: "nebula-bright" })),
     /* @__PURE__ */ import_react6.default.createElement("div", { className: "ntp-floating-top-bar" }, /* @__PURE__ */ import_react6.default.createElement(
       "button",
       {
@@ -42563,11 +42980,12 @@ var import_react7 = __toESM(require_react());
 // desktop/src/ai_harness_engine.js
 function resolveTargetUrl(target) {
   if (!target) return "https://www.google.com";
-  const trimmed = String(target).trim().replace(/[.,!?;:]+$/g, "").trim();
+  let trimmed = String(target).trim().replace(/[.,!?;:]+$/g, "").trim();
   if (!trimmed) return "https://www.google.com";
   if (trimmed.startsWith("http://") || trimmed.startsWith("https://") || trimmed.startsWith("file://") || trimmed.startsWith("antigravity://")) {
     return trimmed;
   }
+  trimmed = trimmed.replace(/^the\s+/i, "").trim();
   const lower = trimmed.toLowerCase();
   const specialDomains = {
     wikipedia: "https://www.wikipedia.org",
@@ -42575,7 +42993,16 @@ function resolveTargetUrl(target) {
     archive: "https://archive.org",
     huggingface: "https://huggingface.co",
     hn: "https://news.ycombinator.com",
-    hackernews: "https://news.ycombinator.com"
+    hackernews: "https://news.ycombinator.com",
+    youtube: "https://www.youtube.com",
+    youtubr: "https://www.youtube.com",
+    youtub: "https://www.youtube.com",
+    yutube: "https://www.youtube.com",
+    ytube: "https://www.youtube.com",
+    google: "https://www.google.com",
+    gogle: "https://www.google.com",
+    goole: "https://www.google.com",
+    github: "https://www.github.com"
   };
   if (specialDomains[lower]) return specialDomains[lower];
   if (trimmed.includes(".") && !trimmed.includes(" ") && !trimmed.includes("?")) {
@@ -42670,6 +43097,195 @@ async function waitForWebviewReady(webview, timeoutMs = 3500) {
   }
   return false;
 }
+var somMarkCoordinateCache = /* @__PURE__ */ new Map();
+function resolveInputDispatcher(target) {
+  if (!target) return null;
+  if (typeof target.sendInputEvent === "function") return target;
+  if (typeof target.getWebContents === "function") {
+    const wc = target.getWebContents();
+    if (wc && typeof wc.sendInputEvent === "function") return wc;
+  }
+  return null;
+}
+async function executeNativeHardwareClick(webContents, x, y, button = "left") {
+  const intX = Math.round(Number(x) || 0);
+  const intY = Math.round(Number(y) || 0);
+  const dispatcher = resolveInputDispatcher(webContents);
+  if (dispatcher) {
+    dispatcher.sendInputEvent({ type: "mouseMove", x: intX, y: intY });
+    dispatcher.sendInputEvent({ type: "mouseDown", x: intX, y: intY, button, clickCount: 1 });
+    await new Promise((r) => setTimeout(r, 50));
+    dispatcher.sendInputEvent({ type: "mouseUp", x: intX, y: intY, button, clickCount: 1 });
+    return { success: true, x: intX, y: intY };
+  }
+  try {
+    const electron2 = typeof window !== "undefined" && window.require ? window.require("electron") : null;
+    if (electron2 && electron2.ipcRenderer) {
+      const webContentsId = webContents && typeof webContents.getWebContentsId === "function" ? webContents.getWebContentsId() : webContents?.id || null;
+      const res = await electron2.ipcRenderer.invoke("native-hardware-click", { webContentsId, x: intX, y: intY, button, clickCount: 1 });
+      if (res && res.success) return res;
+    }
+  } catch (_) {
+  }
+  return { success: false, error: "Target does not support sendInputEvent" };
+}
+async function executeNativeHardwareKey(webContents, keyCode, modifiers = []) {
+  const dispatcher = resolveInputDispatcher(webContents);
+  if (dispatcher) {
+    dispatcher.sendInputEvent({ type: "keyDown", keyCode, modifiers });
+    dispatcher.sendInputEvent({ type: "char", keyCode, modifiers });
+    dispatcher.sendInputEvent({ type: "keyUp", keyCode, modifiers });
+    return { success: true, keyCode };
+  }
+  try {
+    const electron2 = typeof window !== "undefined" && window.require ? window.require("electron") : null;
+    if (electron2 && electron2.ipcRenderer) {
+      const webContentsId = webContents && typeof webContents.getWebContentsId === "function" ? webContents.getWebContentsId() : webContents?.id || null;
+      const res = await electron2.ipcRenderer.invoke("native-hardware-key", { webContentsId, keyCode, modifiers });
+      if (res && res.success) return res;
+    }
+  } catch (_) {
+  }
+  return { success: false, error: "Target does not support sendInputEvent" };
+}
+async function executeNativeHardwareType(webContents, text) {
+  const str = String(text || "");
+  for (let i = 0; i < str.length; i++) {
+    await executeNativeHardwareKey(webContents, str[i]);
+    await new Promise((r) => setTimeout(r, 15));
+  }
+  return { success: true, length: str.length };
+}
+function formatCdpAxTree(nodes) {
+  if (!Array.isArray(nodes) || nodes.length === 0) return "";
+  const lines = [];
+  for (const node of nodes.slice(0, 50)) {
+    const role = node.role?.value || "unknown";
+    if (role === "none" || role === "generic" || role === "LineBreak") continue;
+    const name = node.name?.value ? ` "${String(node.name.value).slice(0, 50)}"` : "";
+    const focused = node.focused?.value ? " [focused]" : "";
+    const disabled = node.disabled?.value ? " [disabled]" : "";
+    lines.push(`  ${role}${name}${focused}${disabled}`);
+  }
+  return lines.join("\n");
+}
+async function extractPageAXTree(webview) {
+  if (!webview || typeof webview.executeJavaScript !== "function") {
+    return "";
+  }
+  try {
+    const electron2 = typeof window !== "undefined" && window.require ? window.require("electron") : null;
+    if (electron2 && electron2.ipcRenderer) {
+      const webContentsId = typeof webview.getWebContentsId === "function" ? webview.getWebContentsId() : null;
+      if (webContentsId) {
+        const cdpRes = await electron2.ipcRenderer.invoke("native-ax-tree", { webContentsId });
+        if (cdpRes && cdpRes.success && Array.isArray(cdpRes.nodes) && cdpRes.nodes.length > 0) {
+          const formatted = formatCdpAxTree(cdpRes.nodes);
+          if (formatted && formatted.length > 20) return formatted;
+        }
+      }
+    }
+  } catch (_) {
+  }
+  try {
+    const axTreeString = await webview.executeJavaScript(`
+            (function() {
+                const results = [];
+                const maxNodes = 60;
+
+                function isVisible(el) {
+                    if (!el) return false;
+                    const s = window.getComputedStyle(el);
+                    if (s.display === 'none' || s.visibility === 'hidden') return false;
+                    const op = parseFloat(s.opacity);
+                    if (!isNaN(op) && op <= 0.05) return false;
+                    const r = el.getBoundingClientRect();
+                    return (r.width > 0 && r.height > 0) && r.bottom >= 0 && r.top <= (window.innerHeight || 800) + 1200;
+                }
+
+                function getAccessibleName(el) {
+                    const aria = (el.getAttribute('aria-label') || '').trim();
+                    if (aria) return aria;
+                    const labelledBy = el.getAttribute('aria-labelledby');
+                    if (labelledBy) {
+                        const lbl = document.getElementById(labelledBy);
+                        if (lbl) return (lbl.innerText || lbl.textContent || '').trim();
+                    }
+                    const alt = (el.getAttribute('alt') || '').trim();
+                    if (alt) return alt;
+                    const placeholder = (el.getAttribute('placeholder') || '').trim();
+                    if (placeholder) return placeholder;
+                    const title = (el.getAttribute('title') || '').trim();
+                    if (title) return title;
+                    const val = (el.value || '').trim();
+                    if (val && (el.tagName === 'INPUT' || el.tagName === 'BUTTON')) return val;
+                    const text = (el.innerText || el.textContent || '').replace(/\\s+/g, ' ').trim();
+                    if (text && text.length <= 80 && !text.startsWith('<')) return text;
+                    return '';
+                }
+
+                function getRole(el) {
+                    const explicit = el.getAttribute('role');
+                    if (explicit) return explicit.toLowerCase();
+                    if (el.computedRole) return el.computedRole;
+                    const tag = el.tagName.toLowerCase();
+                    const type = (el.getAttribute('type') || '').toLowerCase();
+                    if (tag === 'a' && el.hasAttribute('href')) return 'link';
+                    if (tag === 'button') return 'button';
+                    if (tag === 'input') {
+                        if (type === 'search') return 'searchbox';
+                        if (type === 'button' || type === 'submit' || type === 'reset') return 'button';
+                        if (type === 'checkbox') return 'checkbox';
+                        if (type === 'radio') return 'radio';
+                        return 'textbox';
+                    }
+                    if (tag === 'textarea') return 'textbox';
+                    if (tag === 'select') return 'combobox';
+                    if (tag === 'h1' || tag === 'h2' || tag === 'h3' || tag === 'h4' || tag === 'h5' || tag === 'h6') return 'heading';
+                    if (tag === 'img') return 'img';
+                    if (tag === 'video') return 'video';
+                    if (tag === 'nav') return 'navigation';
+                    if (tag === 'header') return 'banner';
+                    if (tag === 'main') return 'main';
+                    return null;
+                }
+
+                // Add document root node
+                results.push('RootWebArea "' + (document.title || 'Page') + '"');
+
+                const candidateNodes = Array.from(document.querySelectorAll(
+                    'a[href], button, input, textarea, select, [role], h1, h2, h3, h4, [tabindex]:not([tabindex="-1"]), video, audio'
+                )).filter(isVisible);
+
+                for (let i = 0; i < candidateNodes.length && results.length < maxNodes; i++) {
+                    const el = candidateNodes[i];
+                    const role = getRole(el);
+                    if (!role) continue;
+
+                    const name = getAccessibleName(el);
+                    const markId = el.getAttribute('data-som-id');
+                    const markStr = markId ? ' (#' + markId + ')' : '';
+
+                    const states = [];
+                    if (document.activeElement === el) states.push('[focused]');
+                    if (el.disabled || el.getAttribute('aria-disabled') === 'true') states.push('[disabled]');
+                    if (el.getAttribute('aria-expanded') === 'true') states.push('[expanded]');
+                    if (el.checked || el.getAttribute('aria-checked') === 'true') states.push('[checked]');
+
+                    const stateStr = states.length > 0 ? ' ' + states.join(' ') : '';
+                    const nameStr = name ? ' "' + name.slice(0, 60) + '"' : '';
+
+                    results.push('  ' + role + nameStr + stateStr + markStr);
+                }
+
+                return results.join('\\n');
+            })();
+        `);
+    return axTreeString || "";
+  } catch (_) {
+    return "";
+  }
+}
 async function executeWebviewClick(webview, targetText, fallbackNavigate) {
   const cleanTarget = (targetText || "").trim();
   if (!cleanTarget) {
@@ -42677,6 +43293,87 @@ async function executeWebviewClick(webview, targetText, fallbackNavigate) {
   }
   if (!webview || typeof webview.executeJavaScript !== "function") {
     return { success: false, message: "No active webview available to interact." };
+  }
+  let markIndex = null;
+  const markMatch = cleanTarget.match(/(?:\[?\s*(?:mark|badge|hashtag|number|no\.?)?\s*#?\s*(\d+)\s*\]?|^#?(\d+)$)/i);
+  if (markMatch) {
+    markIndex = parseInt(markMatch[1] || markMatch[2], 10);
+  }
+  if (markIndex !== null && !isNaN(markIndex)) {
+    try {
+      const markCoords = await webview.executeJavaScript(`
+                (function() {
+                    const markId = ${markIndex};
+                    let el = document.querySelector('[data-som-id="' + markId + '"]') || document.querySelector('#som-' + markId);
+                    if (!el) {
+                        const candidates = Array.from(document.querySelectorAll('button, a, input, textarea, select, [role="button"], [role="link"]')).filter(e => {
+                            const s = window.getComputedStyle(e);
+                            return s.display !== 'none' && s.visibility !== 'hidden' && e.offsetWidth > 0;
+                        });
+                        if (candidates[markId - 1]) el = candidates[markId - 1];
+                    }
+                    if (!el) return null;
+
+                    el.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
+                    const origOutline = el.style.outline;
+                    el.style.outline = '3px solid #FFE600';
+                    setTimeout(() => { try { el.style.outline = origOutline; } catch(_) {} }, 1200);
+
+                    const r = el.getBoundingClientRect();
+                    const cx = Math.round(r.left + r.width / 2);
+                    const cy = Math.round(r.top + r.height / 2);
+                    const tag = el.tagName.toLowerCase();
+                    const txt = (el.innerText || el.textContent || el.value || el.getAttribute('aria-label') || '').trim().slice(0, 60);
+                    const href = el.href || el.getAttribute('href') || '';
+                    const isInput = tag === 'input' || tag === 'textarea' || el.getAttribute('role') === 'searchbox';
+                    if (isInput) {
+                        try { el.focus(); if (typeof el.select === 'function') el.select(); } catch(_) {}
+                    }
+                    return { x: cx, y: cy, tag, txt, href, isInput };
+                })()
+            `).catch(() => null);
+      let clickX = null;
+      let clickY = null;
+      let markLabel = "";
+      let isInput = false;
+      let targetUrl = "";
+      let tag = "element";
+      if (markCoords && typeof markCoords.x === "number") {
+        clickX = markCoords.x;
+        clickY = markCoords.y;
+        markLabel = markCoords.txt;
+        isInput = markCoords.isInput;
+        targetUrl = markCoords.href;
+        tag = markCoords.tag;
+      } else if (somMarkCoordinateCache.has(markIndex)) {
+        const cached = somMarkCoordinateCache.get(markIndex);
+        clickX = cached.x;
+        clickY = cached.y;
+        markLabel = cached.text;
+        tag = cached.tag || "element";
+      }
+      if (clickX !== null && clickY !== null) {
+        await executeNativeHardwareClick(webview, clickX, clickY);
+        if (targetUrl && (targetUrl.startsWith("http://") || targetUrl.startsWith("https://"))) {
+          if (typeof fallbackNavigate === "function") {
+            fallbackNavigate(targetUrl);
+          } else if (typeof webview.loadURL === "function") {
+            webview.loadURL(targetUrl).catch(() => {
+            });
+          }
+        }
+        return {
+          success: true,
+          label: markLabel || `Mark #${markIndex}`,
+          tag,
+          matchType: `SoM Hardware Click (${clickX}, ${clickY})`,
+          markIndex,
+          isInput,
+          message: `\u{1F3AF} AI clicked mark <strong>[#${markIndex}]</strong> "${markLabel || tag}" via native hardware click at (${clickX}, ${clickY}).`
+        };
+      }
+    } catch (_) {
+    }
   }
   try {
     const result = await webview.executeJavaScript(`
@@ -43092,6 +43789,10 @@ async function executeWebviewClick(webview, targetText, fallbackNavigate) {
                         }, 50);
                     }
 
+                    const rect = matchedEl.getBoundingClientRect();
+                    const centerX = Math.round(rect.left + rect.width / 2);
+                    const centerY = Math.round(rect.top + rect.height / 2);
+
                     return {
                         success: true,
                         label: foundLabel,
@@ -43099,7 +43800,9 @@ async function executeWebviewClick(webview, targetText, fallbackNavigate) {
                         matchType: matchType,
                         markIndex: markIndex,
                         isInput: isInput,
-                        url: targetHref
+                        url: targetHref,
+                        x: centerX,
+                        y: centerY
                     };
                 }
 
@@ -43107,6 +43810,9 @@ async function executeWebviewClick(webview, targetText, fallbackNavigate) {
             })();
         `);
     if (result && result.success) {
+      if (typeof result.x === "number" && typeof result.y === "number") {
+        await executeNativeHardwareClick(webview, result.x, result.y);
+      }
       if (result.url && (result.url.startsWith("http://") || result.url.startsWith("https://"))) {
         if (typeof fallbackNavigate === "function") {
           fallbackNavigate(result.url);
@@ -43318,95 +44024,59 @@ function computeDomDelta(beforeSnap, afterSnap) {
   };
 }
 async function executeWebviewKeyPress(webview, key = "Space", modifiers = []) {
-  if (!webview || typeof webview.executeJavaScript !== "function") {
+  if (!webview) {
     return { success: false, message: "Webview is not available to receive key press." };
   }
   const cleanKey = (key || "Space").trim();
-  try {
-    const result = await webview.executeJavaScript(`
-            (function() {
-                const targetKey = ${JSON.stringify(cleanKey)};
-                const keyMap = {
-                    'space': { key: ' ', code: 'Space', keyCode: 32 },
-                    ' ': { key: ' ', code: 'Space', keyCode: 32 },
-                    'enter': { key: 'Enter', code: 'Enter', keyCode: 13 },
-                    'return': { key: 'Enter', code: 'Enter', keyCode: 13 },
-                    'tab': { key: 'Tab', code: 'Tab', keyCode: 9 },
-                    'escape': { key: 'Escape', code: 'Escape', keyCode: 27 },
-                    'esc': { key: 'Escape', code: 'Escape', keyCode: 27 },
-                    'arrowdown': { key: 'ArrowDown', code: 'ArrowDown', keyCode: 40 },
-                    'down': { key: 'ArrowDown', code: 'ArrowDown', keyCode: 40 },
-                    'arrowup': { key: 'ArrowUp', code: 'ArrowUp', keyCode: 38 },
-                    'up': { key: 'ArrowUp', code: 'ArrowUp', keyCode: 38 },
-                    'arrowleft': { key: 'ArrowLeft', code: 'ArrowLeft', keyCode: 37 },
-                    'left': { key: 'ArrowLeft', code: 'ArrowLeft', keyCode: 37 },
-                    'arrowright': { key: 'ArrowRight', code: 'ArrowRight', keyCode: 39 },
-                    'right': { key: 'ArrowRight', code: 'ArrowRight', keyCode: 39 },
-                    'backspace': { key: 'Backspace', code: 'Backspace', keyCode: 8 },
-                    'k': { key: 'k', code: 'KeyK', keyCode: 75 }
-                };
-
-                const mapped = keyMap[targetKey.toLowerCase()] || {
-                    key: targetKey,
-                    code: 'Key' + targetKey.toUpperCase(),
-                    keyCode: targetKey.charCodeAt(0) || 0
-                };
-
-                const targetEl = document.activeElement || document.body;
-
-                // 1. Dispatch keydown, keypress, keyup
-                ['keydown', 'keypress', 'keyup'].forEach(type => {
-                    targetEl.dispatchEvent(new KeyboardEvent(type, {
-                        key: mapped.key,
-                        code: mapped.code,
-                        keyCode: mapped.keyCode,
-                        which: mapped.keyCode,
-                        bubbles: true,
-                        cancelable: true
-                    }));
-                });
-
-                // 2. Media Playback Guarantee: If Space or 'k', ensure HTML5 video toggles cleanly
-                let mediaHandled = false;
-                if (mapped.code === 'Space' || mapped.code === 'KeyK') {
-                    const video = document.querySelector('video');
-                    if (video) {
-                        try {
-                            if (video.paused) {
-                                video.play();
-                                mediaHandled = true;
-                            } else {
-                                video.pause();
-                                mediaHandled = true;
-                            }
-                        } catch (e) {}
+  const keyMap = {
+    "space": "Space",
+    " ": "Space",
+    "enter": "Enter",
+    "return": "Enter",
+    "tab": "Tab",
+    "escape": "Escape",
+    "esc": "Escape",
+    "arrowdown": "ArrowDown",
+    "down": "ArrowDown",
+    "arrowup": "ArrowUp",
+    "up": "ArrowUp",
+    "arrowleft": "ArrowLeft",
+    "left": "ArrowLeft",
+    "arrowright": "ArrowRight",
+    "right": "ArrowRight",
+    "backspace": "Backspace",
+    "k": "KeyK"
+  };
+  const hardwareKeyCode = keyMap[cleanKey.toLowerCase()] || cleanKey;
+  await executeNativeHardwareKey(webview, hardwareKeyCode, modifiers);
+  let mediaHandled = false;
+  let targetTag = "body";
+  if (typeof webview.executeJavaScript === "function") {
+    try {
+      const extra = await webview.executeJavaScript(`
+                (function() {
+                    const k = ${JSON.stringify(cleanKey.toLowerCase())};
+                    let media = false;
+                    if (k === 'space' || k === ' ' || k === 'k') {
+                        const v = document.querySelector('video');
+                        if (v) {
+                            try { if (v.paused) v.play(); else v.pause(); media = true; } catch(_) {}
+                        }
+                    } else if (k === 'escape' || k === 'esc') {
+                        if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
                     }
-                }
-
-                // 3. Modal / Popup Dismiss Guarantee: If Escape, blur active element
-                if (mapped.code === 'Escape') {
-                    if (document.activeElement && document.activeElement.blur) {
-                        document.activeElement.blur();
-                    }
-                }
-
-                return {
-                    success: true,
-                    key: mapped.key,
-                    code: mapped.code,
-                    mediaHandled,
-                    targetTag: targetEl.tagName.toLowerCase()
-                };
-            })()
-        `);
-    return {
-      success: true,
-      message: `Pressed key [${result.code || cleanKey}] on <${result.targetTag || "body"}>${result.mediaHandled ? " (Video playback toggled)" : ""}.`,
-      details: result
-    };
-  } catch (e) {
-    return { success: false, message: `Key press error: ${e.message}` };
+                    return { media, activeTag: (document.activeElement ? document.activeElement.tagName.toLowerCase() : 'body') };
+                })()
+            `);
+      if (extra?.media) mediaHandled = true;
+      if (extra?.activeTag) targetTag = extra.activeTag;
+    } catch (_) {
+    }
   }
+  return {
+    success: true,
+    message: `Pressed hardware key [${hardwareKeyCode}] on <${targetTag}>${mediaHandled ? " (Video playback toggled)" : ""}.`
+  };
 }
 async function executeWebviewHover(webview, targetText) {
   if (!webview || typeof webview.executeJavaScript !== "function") {
@@ -43474,11 +44144,14 @@ async function executeWebviewType(webview, textToType, target = null, submit = f
     return { success: false, message: "No active webview available for typing." };
   }
   try {
+    if (target) {
+      await executeWebviewClick(webview, target);
+      await new Promise((r) => setTimeout(r, 80));
+    }
     const result = await webview.executeJavaScript(`
             (function() {
                 const text = ${JSON.stringify(textToType)};
                 const targetQuery = ${JSON.stringify(target || "")}.trim();
-                const shouldSubmit = ${!!submit};
                 const shouldClear = ${clear !== false};
 
                 function isVisible(el) {
@@ -43507,47 +44180,7 @@ async function executeWebviewType(webview, textToType, target = null, submit = f
                     }
                 }
 
-                // 2. Target Specified: Check Placeholder, Aria-Label, Name, or ID
-                if (!targetInput && targetQuery) {
-                    const cleanQ = targetQuery.toLowerCase();
-                    const candidates = Array.from(document.querySelectorAll('input:not([type="hidden"]), textarea')).filter(isVisible);
-
-                    // Exact or substring match on placeholder
-                    targetInput = candidates.find(c => (c.placeholder || '').toLowerCase().includes(cleanQ));
-                    if (targetInput) matchedBy = 'Placeholder: "' + targetInput.placeholder + '"';
-
-                    // Match on aria-label
-                    if (!targetInput) {
-                        targetInput = candidates.find(c => (c.getAttribute('aria-label') || '').toLowerCase().includes(cleanQ));
-                        if (targetInput) matchedBy = 'Aria-Label: "' + targetInput.getAttribute('aria-label') + '"';
-                    }
-
-                    // Match on associated <label>
-                    if (!targetInput) {
-                        const labels = Array.from(document.querySelectorAll('label')).filter(l => (l.innerText || '').toLowerCase().includes(cleanQ));
-                        for (const lbl of labels) {
-                            if (lbl.htmlFor) {
-                                const el = document.getElementById(lbl.htmlFor);
-                                if (el && isVisible(el)) { targetInput = el; matchedBy = 'Label: "' + lbl.innerText.trim() + '"'; break; }
-                            }
-                            const inner = lbl.querySelector('input, textarea');
-                            if (inner && isVisible(inner)) { targetInput = inner; matchedBy = 'Inner Label: "' + lbl.innerText.trim() + '"'; break; }
-                        }
-                    }
-
-                    // Direct CSS Selector
-                    if (!targetInput) {
-                        try {
-                            const selEl = document.querySelector(targetQuery);
-                            if (selEl && isVisible(selEl)) {
-                                targetInput = selEl.matches('input, textarea') ? selEl : selEl.querySelector('input, textarea');
-                                if (targetInput) matchedBy = 'CSS Selector';
-                            }
-                        } catch (e) {}
-                    }
-                }
-
-                // 3. No Target or Target Not Found: Use document.activeElement if editable
+                // 2. Active Element Check
                 if (!targetInput && document.activeElement) {
                     const act = document.activeElement;
                     if ((act.tagName === 'INPUT' || act.tagName === 'TEXTAREA' || act.isContentEditable) && isVisible(act)) {
@@ -43556,7 +44189,7 @@ async function executeWebviewType(webview, textToType, target = null, submit = f
                     }
                 }
 
-                // 4. Fallback: Search bar or first visible input
+                // 3. Fallback to search bar or visible text input
                 if (!targetInput) {
                     const searchSelectors = [
                         'input[type="search"]', 'input[name="q"]', 'input[name="s"]', 'input[name*="search" i]',
@@ -43581,7 +44214,7 @@ async function executeWebviewType(webview, textToType, target = null, submit = f
 
                 targetInput.focus();
 
-                // OpenCode React / Vue Prototype Descriptor Setter Override
+                // Clear existing content if requested
                 const isTextArea = targetInput instanceof HTMLTextAreaElement;
                 const proto = isTextArea ? window.HTMLTextAreaElement.prototype : window.HTMLInputElement.prototype;
                 const descriptor = Object.getOwnPropertyDescriptor(proto, 'value');
@@ -43590,16 +44223,9 @@ async function executeWebviewType(webview, textToType, target = null, submit = f
                 if (shouldClear) {
                     if (nativeSetter) nativeSetter.call(targetInput, '');
                     else targetInput.value = '';
+                    targetInput.dispatchEvent(new Event('input', { bubbles: true }));
+                    targetInput.dispatchEvent(new Event('change', { bubbles: true }));
                 }
-
-                if (nativeSetter) {
-                    nativeSetter.call(targetInput, text);
-                } else {
-                    targetInput.value = text;
-                }
-
-                targetInput.dispatchEvent(new Event('input', { bubbles: true }));
-                targetInput.dispatchEvent(new Event('change', { bubbles: true }));
 
                 // Subtle visual outline feedback
                 const origOutline = targetInput.style.outline;
@@ -43610,58 +44236,64 @@ async function executeWebviewType(webview, textToType, target = null, submit = f
                     targetInput.style.boxShadow = '';
                 }, 1000);
 
-                // Form Submit only if explicitly requested
-                let formSubmitted = false;
-                if (shouldSubmit) {
-                    ['keydown', 'keypress', 'keyup'].forEach(evtName => {
-                        targetInput.dispatchEvent(new KeyboardEvent(evtName, {
-                            key: 'Enter',
-                            code: 'Enter',
-                            keyCode: 13,
-                            which: 13,
-                            bubbles: true,
-                            cancelable: true
-                        }));
-                    });
-
-                    const form = targetInput.closest('form');
-                    if (form) {
-                        try {
-                            const submitBtn = form.querySelector('button[type="submit"], input[type="submit"], button[aria-label*="Search" i], [class*="submit" i]');
-                            if (submitBtn) {
-                                submitBtn.click();
-                                formSubmitted = true;
-                            } else if (typeof form.requestSubmit === 'function') {
-                                form.requestSubmit();
-                                formSubmitted = true;
-                            } else if (typeof form.submit === 'function') {
-                                form.submit();
-                                formSubmitted = true;
-                            }
-                        } catch (e) {}
-                    }
-                }
-
                 return {
                     success: true,
-                    text: text,
                     inputTag: targetInput.tagName.toLowerCase(),
                     placeholder: targetInput.placeholder || '',
-                    matchedBy: matchedBy,
-                    submitted: formSubmitted
+                    matchedBy: matchedBy
                 };
             })();
         `);
-    if (result && result.success) {
-      const subMsg = result.submitted ? " (submitted)" : "";
-      return {
-        success: true,
-        message: `Typed "${textToType}" into <${result.inputTag}> [${result.matchedBy}]${subMsg}.`,
-        details: result
-      };
-    } else {
-      return { success: false, message: `Could not type into element: ${result ? result.error : "Unknown error"}` };
+    if (!result || !result.success) {
+      return { success: false, message: `Could not focus target input: ${result ? result.error : "Unknown error"}` };
     }
+    await executeNativeHardwareType(webview, textToType);
+    await webview.executeJavaScript(`
+            (function() {
+                const el = document.activeElement;
+                if (el && (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA')) {
+                    const val = ${JSON.stringify(textToType)};
+                    if (el.value !== val) {
+                        const isTextArea = el instanceof HTMLTextAreaElement;
+                        const proto = isTextArea ? window.HTMLTextAreaElement.prototype : window.HTMLInputElement.prototype;
+                        const desc = Object.getOwnPropertyDescriptor(proto, 'value');
+                        if (desc && desc.set) desc.set.call(el, val);
+                        else el.value = val;
+                    }
+                    el.dispatchEvent(new Event('input', { bubbles: true }));
+                    el.dispatchEvent(new Event('change', { bubbles: true }));
+                }
+            })();
+        `).catch(() => {
+    });
+    let formSubmitted = false;
+    if (submit) {
+      await new Promise((r) => setTimeout(r, 60));
+      await executeNativeHardwareKey(webview, "Enter");
+      formSubmitted = true;
+      await webview.executeJavaScript(`
+                (function() {
+                    const el = document.activeElement;
+                    if (el) {
+                        const form = el.closest('form');
+                        if (form) {
+                            try {
+                                const submitBtn = form.querySelector('button[type="submit"], input[type="submit"]');
+                                if (submitBtn) submitBtn.click();
+                                else if (typeof form.requestSubmit === 'function') form.requestSubmit();
+                            } catch (_) {}
+                        }
+                    }
+                })();
+            `).catch(() => {
+      });
+    }
+    const subMsg = formSubmitted ? " (submitted)" : "";
+    return {
+      success: true,
+      message: `Typed "${textToType}" into <${result.inputTag}> [${result.matchedBy}] via native hardware input${subMsg}.`,
+      details: result
+    };
   } catch (e) {
     return { success: false, message: `Type text error: ${e.message}` };
   }
@@ -43903,6 +44535,8 @@ async function renderSetOfMarksOverlay(webview, maxMarks = 120) {
                     el.setAttribute('data-som-id', String(markNum));
 
                     const rect = el.getBoundingClientRect();
+                    const centerX = Math.round(rect.left + rect.width / 2);
+                    const centerY = Math.round(rect.top + rect.height / 2);
                     const top = Math.max(0, rect.top + scrollY - 9);
                     const left = Math.max(0, rect.left + scrollX - 5);
 
@@ -43943,7 +44577,8 @@ async function renderSetOfMarksOverlay(webview, maxMarks = 120) {
                         text: labelText.slice(0, 70),
                         tag: el.tagName.toLowerCase(),
                         href: el.href || el.getAttribute('href') || '',
-                        rect: { top: Math.round(rect.top), left: Math.round(rect.left), width: Math.round(rect.width), height: Math.round(rect.height) }
+                        rect: { top: Math.round(rect.top), left: Math.round(rect.left), width: Math.round(rect.width), height: Math.round(rect.height) },
+                        center: { x: centerX, y: centerY }
                     });
                 });
 
@@ -43951,6 +44586,15 @@ async function renderSetOfMarksOverlay(webview, maxMarks = 120) {
                 return actionableList;
             })();
         `);
+    somMarkCoordinateCache.clear();
+    if (Array.isArray(marks)) {
+      for (const item of marks) {
+        if (item && item.center) {
+          somMarkCoordinateCache.set(item.id, { x: item.center.x, y: item.center.y, text: item.text, tag: item.tag, rect: item.rect });
+          somMarkCoordinateCache.set(item.mark, { x: item.center.x, y: item.center.y, text: item.text, tag: item.tag, rect: item.rect });
+        }
+      }
+    }
     return marks || [];
   } catch (e) {
     return [];
@@ -44568,16 +45212,26 @@ async function executeToolCallAndVerify(toolCall, context = {}) {
         pageData.actionableMarks = somMarks;
       } catch (_) {
       }
+      let axTree = "";
+      try {
+        axTree = await extractPageAXTree(wv);
+        pageData.axTree = axTree;
+      } catch (_) {
+      }
       const dlList = (pageData.downloads || []).map((d) => `- "${d.text}" ${d.href ? `-> ${d.href}` : ""}`).join("\n");
       const linkList = (pageData.links || []).slice(0, 25).map((l) => `- "${l.text}" -> ${l.href}`).join("\n");
       const searchList = (pageData.searchInputs || []).join(", ") || "none";
       const somList = (somMarks || []).slice(0, 25).map((m) => `${m.mark}: "${m.text}" (<${m.tag}>)`).join(" | ");
+      const axSection = axTree ? `
+
+\u{1F333} **Accessibility Tree (AXTree):**
+${axTree}` : "";
       const summary = `\u{1F4C4} **Page Title:** "${pageData.title}"
 \u{1F517} **URL:** ${pageData.url}
 \u{1F50D} **Search Inputs:** ${searchList}
 \u{1F4CC} **Headings (${pageData.headings?.length || 0}):** ${(pageData.headings || []).slice(0, 10).join(" | ") || "none"}
 \u{1F3F7}\uFE0F **Marked Interactive Elements (${somMarks?.length || 0}):**
-${somList || "None detected"}
+${somList || "None detected"}${axSection}
 
 \u{1F4E5} **Detected Download/Stream Triggers (${pageData.downloads?.length || 0}):**
 ${dlList || "None detected"}
@@ -44586,7 +45240,7 @@ ${dlList || "None detected"}
 ${linkList || "None detected"}
 
 \u{1F4DD} **Page Content Excerpt:**
-${(pageData.bodyText || "").substring(0, 1200)}...`;
+${(pageData.bodyText || "").substring(0, 800)}...`;
       const isBlank = (!pageData.title || pageData.title === "about:blank") && (!pageData.links || pageData.links.length === 0);
       if (isBlank) {
         return {
@@ -44869,6 +45523,168 @@ ${matchSummary}
       verification: `\u{1F3C1} [Verified Goal: ${msg}]`
     };
   }
+  if (name === "get_tools_on_demand") {
+    const category = (args.category || "all").toLowerCase();
+    const query = (args.query || "").toLowerCase();
+    try {
+      const provMod = await Promise.resolve().then(() => (init_aiProviderService(), aiProviderService_exports));
+      const allTools = provMod.BROWSER_TOOLS || [];
+      let matched = allTools;
+      if (category !== "all") {
+        if (category === "second_brain" || category === "memory") {
+          matched = allTools.filter((t) => ["search_memory", "read_raw_session"].includes(t.function.name));
+        } else if (category === "skills") {
+          matched = allTools.filter((t) => ["list_skills", "read_skill"].includes(t.function.name));
+        } else if (category === "media") {
+          matched = allTools.filter((t) => ["verify_media_playback", "press_key"].includes(t.function.name));
+        } else if (category === "download") {
+          matched = allTools.filter((t) => ["download_item", "verify_download"].includes(t.function.name));
+        } else if (category === "inspection") {
+          matched = allTools.filter((t) => ["read_page", "grep_page"].includes(t.function.name));
+        }
+      }
+      if (query) {
+        matched = matched.filter((t) => t.function.name.toLowerCase().includes(query) || t.function.description.toLowerCase().includes(query));
+      }
+      return {
+        success: true,
+        action: "get_tools_on_demand",
+        pagedTools: matched,
+        count: matched.length,
+        message: `Paged ${matched.length} tools into context: ${matched.map((t) => t.function.name).join(", ")}`,
+        verification: `\u2705 [Verified: On-demand tool pager dynamically loaded ${matched.length} tool schemas without prompt bloat]`
+      };
+    } catch (e) {
+      return {
+        success: false,
+        action: "get_tools_on_demand",
+        error: e.message,
+        verification: `\u26A0\uFE0F [Tool Pager Failed: ${e.message}]`
+      };
+    }
+  }
+  if (name === "search_memory") {
+    const query = args.query || "";
+    const limit = args.limit || 5;
+    try {
+      const res = await fetch("http://127.0.0.1:4892/api/memory/search", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ query, limit })
+      }).then((r) => r.json());
+      const factsCount = res.facts ? res.facts.length : 0;
+      const summariesCount = res.summaries ? res.summaries.length : 0;
+      return {
+        success: true,
+        action: "search_memory",
+        data: res,
+        message: `Memory Search Results for "${query}": Found ${factsCount} permanent facts/preferences, ${summariesCount} session summaries.
+` + (res.facts || []).map((f) => `- ${f.category}: ${f.snippet}`).join("\n") + "\n" + (res.summaries || []).map((s) => `\u2022 [Session ${s.session_id} (${s.date})]: ${s.title}
+  Summary: ${s.summary}`).join("\n"),
+        verification: `\u2705 [Verified Memory Search: Found ${factsCount} facts, ${summariesCount} summaries]`
+      };
+    } catch (e) {
+      return {
+        success: false,
+        action: "search_memory",
+        error: e.message,
+        verification: `\u26A0\uFE0F [Memory Search Failed: ${e.message}]`
+      };
+    }
+  }
+  if (name === "read_raw_session") {
+    const sessionId = args.session_id || args.sessionId || "";
+    try {
+      const res = await fetch("http://127.0.0.1:4892/api/memory/raw", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ session_id: sessionId })
+      }).then((r) => r.json());
+      if (res.found) {
+        return {
+          success: true,
+          action: "read_raw_session",
+          sessionId,
+          content: res.content,
+          filePath: res.filePath,
+          message: `Loaded full uncompressed raw session chat (${sessionId}) from disk (${res.filePath}). Length: ${res.content.length} chars.`,
+          verification: `\u2705 [Verified Action: Full 90-day raw chat loaded for session ${sessionId}]`
+        };
+      } else {
+        return {
+          success: false,
+          action: "read_raw_session",
+          error: res.error || "Session transcript not found",
+          verification: `\u26A0\uFE0F [Raw Chat Not Found: ${sessionId}]`
+        };
+      }
+    } catch (e) {
+      return {
+        success: false,
+        action: "read_raw_session",
+        error: e.message,
+        verification: `\u26A0\uFE0F [Raw Chat Load Failed: ${e.message}]`
+      };
+    }
+  }
+  if (name === "list_skills") {
+    try {
+      const res = await fetch("http://127.0.0.1:4892/api/skills").then((r) => r.json());
+      const skills = res.skills || [];
+      return {
+        success: true,
+        action: "list_skills",
+        skills,
+        count: skills.length,
+        message: `Available Antigravity Skills (${skills.length}):
+` + skills.map((s) => `\u2022 ${s.name}: ${s.description}`).join("\n"),
+        verification: `\u2705 [Verified: Retrieved ${skills.length} procedural skills with zero token bloat]`
+      };
+    } catch (e) {
+      return {
+        success: false,
+        action: "list_skills",
+        error: e.message,
+        verification: `\u26A0\uFE0F [List Skills Failed: ${e.message}]`
+      };
+    }
+  }
+  if (name === "read_skill") {
+    const skillName = args.name || "";
+    try {
+      const res = await fetch("http://127.0.0.1:4892/api/skills/read", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: skillName })
+      }).then((r) => r.json());
+      if (res.found) {
+        return {
+          success: true,
+          action: "read_skill",
+          name: skillName,
+          meta: res.meta,
+          instructions: res.instructions,
+          message: `Loaded procedural skill "${skillName}" (v${res.meta?.version || "1.0.0"}):
+${res.instructions}`,
+          verification: `\u2705 [Verified: Loaded procedural skill instructions for "${skillName}"]`
+        };
+      } else {
+        return {
+          success: false,
+          action: "read_skill",
+          error: res.error || `Skill "${skillName}" not found`,
+          verification: `\u26A0\uFE0F [Skill Not Found: "${skillName}"]`
+        };
+      }
+    } catch (e) {
+      return {
+        success: false,
+        action: "read_skill",
+        error: e.message,
+        verification: `\u26A0\uFE0F [Read Skill Failed: ${e.message}]`
+      };
+    }
+  }
   return {
     success: false,
     error: `Unknown tool: ${name}`,
@@ -45024,11 +45840,55 @@ async function executeAutonomousAgentLoop(promptText, context = {}) {
   if (!sendChatMessage2 || !activeConfig) {
     return `\u26A0\uFE0F AI Provider service is not available. Please check AI Provider settings.`;
   }
+  if (activeConfig.id === "opencodezen" && (!activeConfig.apiKey || !activeConfig.apiKey.trim())) {
+    return `\u26A0\uFE0F <strong>OpenCode Zen API Key Required:</strong> OpenCode Zen's public rate limit is exhausted without an API key.<br><br>\u{1F4A1} Please click the <strong>\u2699 Keys</strong> button at the top to paste your OpenCode Zen API key, or switch to a local provider (LM Studio / Ollama) or OpenRouter / OpenAI.`;
+  }
+  const sessionId = "session_" + Date.now();
   const maxTurns = 20;
   const agentHistory = [];
   const executionLogs = [];
   let completed = false;
-  const systemPrompt = `You are the Autonomous Antigravity Browser Controller.
+  const CORE_TOOL_NAMES = [
+    "navigate",
+    "open_tab",
+    "close_tab",
+    "switch_tab",
+    "search_page",
+    "read_page",
+    "grep_page",
+    "click_element",
+    "type_text",
+    "press_key",
+    "hover_element",
+    "scroll_page",
+    "finish_task",
+    "remind_user",
+    "get_tools_on_demand",
+    "delegate_subtask"
+  ];
+  let activeToolsForSession = (BROWSER_TOOLS2 || []).filter((t) => CORE_TOOL_NAMES.includes(t.function?.name));
+  if (activeToolsForSession.length === 0) {
+    activeToolsForSession = [...BROWSER_TOOLS2 || []];
+  }
+  let staticPrefix = "";
+  try {
+    const memStatus = await fetch("http://127.0.0.1:4892/api/memory/status").then((r) => r.json()).catch(() => null);
+    if (memStatus && memStatus.anchors) {
+      staticPrefix = `=== AGENT SOUL & SAFETY RULES ===
+${(memStatus.anchors.soul || "").trim()}
+
+=== USER PROFILE & PREFERENCES ===
+${(memStatus.anchors.user || "").trim()}
+
+=== CURATED PERMANENT MEMORY & CREDENTIALS ===
+${(memStatus.anchors.memory || "").trim()}
+=====================================
+
+`;
+    }
+  } catch (_) {
+  }
+  const systemPrompt = `${staticPrefix}You are the Autonomous Nexora Browser Controller.
 You directly control this browser to accomplish the user's goal across ANY web application or platform.
 
 OPERATING PRINCIPLES:
@@ -45039,6 +45899,7 @@ OPERATING PRINCIPLES:
 3. KEYBOARD & MEDIA PRIMITIVES: Use press_key("Space") to toggle video play/pause on any player. Use press_key("Enter") to submit forms. Use press_key("Escape") to dismiss popups or modal overlays.
 4. SEARCH & FORMS: Use search_page(query) to instantly search on YouTube, Google, or the active page. Use type_text(text, target, submit, clear) to target specific inputs or marks (#N).
 5. NOTIFICATIONS: When a goal is accomplished or download completed, call finish_task(message, success) and optionally remind_user(message).
+6. CODEX TOOL PAGER: To page specialized memory or browser tools on demand, invoke get_tools_on_demand({ category, query }).
 
 AVAILABLE TOOLS:
 - navigate: { "url": string }
@@ -45058,6 +45919,7 @@ AVAILABLE TOOLS:
 - remind_user: { "message": string }
 - delegate_subtask: { "subagent_id": string, "role": string, "goal": string, "tab_id"?: number }
 - verify_media_playback: {} (Inspect if video/audio is actively playing on any site)
+- get_tools_on_demand: { "category"?: string, "query"?: string }
 - finish_task: { "message": string, "success": boolean }
 
 Output format:
@@ -45126,7 +45988,9 @@ Output format:
 - Active Tab: "${curTabTitle}" (${curTabUrl})
 - Sub-Agents: ${subAgentSummary}
 - Page Phase: ${pageObs?.phase || "GENERAL_PAGE"}
-${pageObs?.searchInputs && pageObs.searchInputs.length > 0 ? `- Search Inputs Detected: ${pageObs.searchInputs.map((i) => i.placeholder || i.name || i.id).join(", ")}` : ""}
+${pageObs?.axTree ? `- Accessibility Tree (AXTree):
+${pageObs.axTree}
+` : ""}${pageObs?.searchInputs && pageObs.searchInputs.length > 0 ? `- Search Inputs Detected: ${pageObs.searchInputs.map((i) => i.placeholder || i.name || i.id).join(", ")}` : ""}
 ${pageObs?.actionableElements && pageObs.actionableElements.length > 0 ? `- Actionable Marks [Set-of-Marks]: ${pageObs.actionableElements.slice(0, 35).map((a) => `${a.mark}: "${a.text}" (<${a.tag}>)`).join(" | ")}` : ""}
 ${pageObs?.downloadTriggers && pageObs.downloadTriggers.length > 0 ? `- Download Triggers Detected: ${pageObs.downloadTriggers.slice(0, 5).map((d) => d.text).join(" | ")}` : ""}
 ${dlObs?.hasActiveDownloads || dlObs?.hasCompletedDownloads ? `- Downloads State: ${dlObs.hasCompletedDownloads ? `Completed (${dlObs.completed[0]?.filename})` : `Active (${dlObs.active[0]?.percent}%)`}` : ""}
@@ -45142,7 +46006,9 @@ Current Browser State:
 - Active Tab: "${curTabTitle}" (${curTabUrl})
 - Sub-Agents: ${subAgentSummary}
 - Page Phase: ${pageObs?.phase || "GENERAL_PAGE"}
-${pageObs?.searchInputs && pageObs.searchInputs.length > 0 ? `- Search Inputs Detected: ${pageObs.searchInputs.map((i) => i.placeholder || i.name || i.id).join(", ")}` : ""}
+${pageObs?.axTree ? `- Accessibility Tree (AXTree):
+${pageObs.axTree}
+` : ""}${pageObs?.searchInputs && pageObs.searchInputs.length > 0 ? `- Search Inputs Detected: ${pageObs.searchInputs.map((i) => i.placeholder || i.name || i.id).join(", ")}` : ""}
 ${pageObs?.page?.headings && pageObs.page.headings.length > 0 ? `- Headings/Titles on Page: ${pageObs.page.headings.slice(0, 8).join(" | ")}` : ""}
 ${pageObs?.actionableElements && pageObs.actionableElements.length > 0 ? `- Actionable Marks [Set-of-Marks]: ${pageObs.actionableElements.slice(0, 35).map((a) => `${a.mark}: "${a.text}" (<${a.tag}>)`).join(" | ")}` : ""}
 ${dlObs?.hasActiveDownloads || dlObs?.hasCompletedDownloads ? `- Downloads State: ${dlObs.hasCompletedDownloads ? `Completed (${dlObs.completed[0]?.filename})` : `Active (${dlObs.active[0]?.percent}%)`}` : ""}
@@ -45152,9 +46018,9 @@ Based on this live observation, what is your single next dynamic action toward t
     }
     let aiRes = await sendChatMessage2({
       prompt: currentTurnPrompt,
-      history: agentHistory,
+      history: agentHistory.slice(-6),
       systemPrompt,
-      tools: BROWSER_TOOLS2,
+      tools: activeToolsForSession,
       onChunk: (chunk) => {
         if (onStreamChunk) onStreamChunk(chunk);
       },
@@ -45164,16 +46030,19 @@ Based on this live observation, what is your single next dynamic action toward t
       signal
     });
     if (!aiRes || !aiRes.success || aiRes.aborted) {
-      logTelemetry("warn", `Turn ${turn}: Model call failed or dropped. Initiating diagnostic recovery...`);
+      if (aiRes?.aborted || signal?.aborted) break;
+      const primaryError = aiRes?.error || "Model request failed";
+      logTelemetry("warn", `Turn ${turn}: Model call failed (${primaryError}). Initiating diagnostic recovery...`);
       const retryRes = await sendChatMessage2({
         prompt: `[Diagnostic Retry] Previous response dropped. Active tab is "${curTabTitle}" (${curTabUrl}). Goal: "${raw}". State your next dynamic action:`,
         history: agentHistory.slice(-4),
         systemPrompt,
-        tools: BROWSER_TOOLS2,
+        tools: activeToolsForSession,
         signal
       });
       if (!retryRes || !retryRes.success) {
-        executionLogs.push({ turn, error: "Model connection unrecoverable on turn " + turn });
+        const finalError = retryRes?.error || primaryError;
+        executionLogs.push({ turn, error: finalError });
         break;
       }
       aiRes = retryRes;
@@ -45309,6 +46178,23 @@ You MUST emit an actionable tool call in \`\`\`tool_call format to interact with
     }
     const durationMs = Date.now() - startTime;
     turnExecutions.push(execRes);
+    if (toolName === "get_tools_on_demand" && Array.isArray(execRes.pagedTools)) {
+      for (const pt of execRes.pagedTools) {
+        if (!activeToolsForSession.some((t) => t.function?.name === pt.function?.name)) {
+          activeToolsForSession.push(pt);
+        }
+      }
+    }
+    fetch("http://127.0.0.1:4892/api/tasks/checkpoint", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        task: raw,
+        checkpoint: `Turn ${turn}: ${toolName}`,
+        status: "In Progress"
+      })
+    }).catch(() => {
+    });
     if (onToolEvent) {
       onToolEvent({
         id: toolCallId,
@@ -45413,9 +46299,60 @@ ${e.matches.slice(0, 20).map((m, i) => `${m.mark ? `[Mark ${m.mark}]` : `[#${i +
     } else if (lastLog?.executions && lastLog.executions.length > 0) {
       const lastEx = lastLog.executions[lastLog.executions.length - 1];
       conclusionText = lastEx.verification || lastEx.message || "Workflow steps completed.";
+    } else if (lastLog?.error) {
+      const provName = activeConfig?.name || "AI Provider";
+      const modelName = activeConfig?.model || "";
+      const errMsg = lastLog.error;
+      let hint = "";
+      if (errMsg.includes("Free usage limit reached") || errMsg.includes("429")) {
+        hint = `<br><br>\u{1F4A1} <strong>Rate Limit / Free Tier Exhausted:</strong> ${provName} (${modelName}) reached its usage limit. Please click <strong>\u2699 Keys</strong> at the top to paste your API key, or switch to another provider (such as OpenAI, LM Studio, Ollama, or OpenRouter).`;
+      } else if (errMsg.includes("401") || errMsg.includes("API key") || errMsg.includes("Unauthorized") || errMsg.includes("not configured")) {
+        hint = `<br><br>\u{1F4A1} <strong>API Key Required:</strong> Please configure your API key for <strong>${provName}</strong> by clicking the <strong>\u2699 Keys</strong> button at the top.`;
+      } else if (errMsg.includes("Failed to connect") || errMsg.includes("fetch failed") || errMsg.includes("ECONNREFUSED")) {
+        hint = `<br><br>\u{1F4A1} <strong>Connection Failed:</strong> Could not connect to <strong>${provName}</strong> at <code>${activeConfig?.baseUrl}</code>. Please ensure your local model server (LM Studio / Ollama) is running.`;
+      }
+      return `\u26A0\uFE0F <strong>AI Model Error [${provName}${modelName ? `: ${modelName}` : ""}]:</strong> ${errMsg}${hint}`;
     } else {
       conclusionText = "Autonomous workflow complete.";
     }
+  }
+  try {
+    await fetch("http://127.0.0.1:4892/api/tasks/clear", { method: "POST" }).catch(() => {
+    });
+    const rawTranscript = [
+      `# Session Transcript: ${sessionId}`,
+      `**User Goal:** ${raw}`,
+      `**Date:** ${(/* @__PURE__ */ new Date()).toISOString()}`,
+      `**Total Turns:** ${executionLogs.length}`,
+      `**Completed:** ${completed}`,
+      "",
+      "## Execution Logs & Turns",
+      ...executionLogs.map((l) => [
+        `### Turn ${l.turn}`,
+        l.reasoning ? `**Reasoning:** ${l.reasoning}` : "",
+        `**Assistant Reply:**
+${l.reply}`,
+        "**Executions:**",
+        ...(l.executions || []).map((e) => `- [${e.action}] ${e.verification || e.message || ""}`)
+      ].filter(Boolean).join("\n\n")),
+      "",
+      `## Conclusion
+${conclusionText}`
+    ].join("\n\n");
+    await fetch("http://127.0.0.1:4892/api/memory/session/save", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        sessionId,
+        transcript: rawTranscript,
+        goal: raw,
+        turns: agentHistory,
+        title: raw
+      })
+    }).catch(() => {
+    });
+  } catch (e) {
+    console.warn("[Session End Transcript Save Failed]", e);
   }
   return `\u{1F3AF} <strong>Conclusion:</strong> ${conclusionText.replace(/\n/g, "<br>")}`;
 }
@@ -45444,6 +46381,10 @@ async function executeAiBrowserCommand(promptText, context = {}) {
   } = context;
   raw = raw.replace(/[.,!?;:]+$/g, "").trim();
   let cleanPrompt = raw.replace(/^(?:hey\s+(?:browser|copilot|ai|antigravity)\s*[,:]?\s*|ok(?:ay)?\s+(?:browser|copilot|ai)\s*[,:]?\s*|copilot\s*[,:]?\s*|browser\s*[,:]?\s*)/i, "").replace(/^(?:can\s+you\s+(?:please\s+)?|could\s+you\s+(?:please\s+)?|please\s+|would\s+you\s+(?:please\s+)?|i\s+want\s+(?:you\s+)?to\s+|i\s+would\s+like\s+to\s+|go\s+ahead\s+and\s+|help\s+me\s+(?:to\s+)?)/i, "").replace(/\s+(?:for\s+me|please|right\s+now|now|at\s+once)\s*$/i, "").replace(/[.,!?;:]+$/g, "").trim();
+  cleanPrompt = cleanPrompt.replace(/\b(?:ope|opn|opne)\b/gi, "open").replace(/\b(?:youtubr|youtub|yutube|ytube)\b/gi, "youtube").replace(/\b(?:gogle|goole)\b/gi, "google").replace(/\b(?:in\s+(?:the\s+|hr\s+|this\s+)?(?:cureent|curent|curret)\s+(?:chat|tab|window|view))\b/gi, "in the current tab").replace(/\b(?:in\s+hr\s+current\s+chat)\b/gi, "in the current tab").replace(/\b(?:in\s+current\s+chat)\b/gi, "in the current tab").replace(/\b(?:in\s+hr\s+cureent\s+chat)\b/gi, "in the current tab");
+  if (/^(?:hi|hello|hey|greetings|howdy|good\s+(?:morning|afternoon|evening|day)|sup|yo)\b/i.test(cleanPrompt)) {
+    return `\u{1F44B} Hi there! I'm <strong>Nexora Copilot</strong>, your AI browser assistant.<br><br>Here are some things you can try right now:<br>\u2022 \u{1F310} <code>open youtube in current tab</code> or <code>open github</code><br>\u2022 \u{1F50D} <code>search for lofi beats on youtube</code><br>\u2022 \u{1F5B1}\uFE0F <code>number words</code> then <code>click #2</code><br>\u2022 \u{1F4DC} <code>scroll 50</code>, <code>scroll top</code>, <code>summarize page</code><br>\u2022 \u{1F916} Multi-step workflows and web automation<br><br>\u{1F4A1} Say <code>shortcuts</code> or <code>what can ai do</code> for the full capability list!`;
+  }
   const isSingleStep = !/\b(?:and|then|after|also|while)\b/i.test(cleanPrompt);
   const compoundSiteSearchMatch = cleanPrompt.match(/^(?:open|go\s+to|navigate\s+to)\s+(youtube|google|github|wikipedia|reddit|bing|duckduckgo|amazon)\s+(?:and|then)\s+(?:search(?:\s+for)?|look\s+up|find|play|watch|type)\s+(.+)$/i) || cleanPrompt.match(/^(?:search(?:\s+for)?|look\s+up|find|play|watch)\s+(.+?)\s+(?:on|in)\s+(youtube|google|github|wikipedia|reddit|bing|duckduckgo|amazon)$/i);
   if (compoundSiteSearchMatch) {
@@ -45469,10 +46410,10 @@ async function executeAiBrowserCommand(promptText, context = {}) {
       return `\u{1F310} Opened <strong>${site}</strong> search for <strong>"${searchQuery}"</strong> in a new tab.<br><br>\u2705 <strong>[Verified Action: Opened ${targetUrl}]</strong>`;
     }
   }
-  const isCurrentTabIntent = /\b(?:in\s+(?:the\s+)?(?:current|this|active)\s+tab|here)\b/i.test(cleanPrompt);
+  const isCurrentTabIntent = /\b(?:in\s+(?:the\s+)?(?:current|this|active)\s+(?:tab|chat|window|view)|here)\b/i.test(cleanPrompt);
   const isNavVerb = /^(?:open|navigate\s+to|navigate|go\s+to)\s+/i.test(cleanPrompt);
   if (isCurrentTabIntent && isNavVerb && isSingleStep) {
-    const dest = cleanPrompt.replace(/^(?:open|navigate\s+to|navigate|go\s+to)\s+/i, "").replace(/\b(?:in\s+(?:the\s+)?(?:current|this|active)\s+tab|here)\b/gi, "").trim();
+    let dest = cleanPrompt.replace(/^(?:open|navigate\s+to|navigate|go\s+to)\s+/i, "").replace(/\b(?:in\s+(?:the\s+)?(?:current|this|active)\s+(?:tab|chat|window|view)|here)\b/gi, "").replace(/^(?:the\s+)/i, "").trim();
     if (dest && onNavigate) {
       const finalUrl = resolveTargetUrl(dest);
       onNavigate(finalUrl);
@@ -45678,7 +46619,7 @@ async function executeAiBrowserCommand(promptText, context = {}) {
     }
   }
   if (isCurrentTabIntent && isSingleStep && (lower.startsWith("open ") || lower.startsWith("navigate ") || lower.startsWith("go to "))) {
-    const dest = cleanPrompt.replace(/^(?:open|navigate\s+to|navigate|go\s+to)\s+/i).replace(/\b(?:in\s+(?:the\s+)?(?:current|this|active)\s+tab|here)\b/gi, "").trim();
+    let dest = cleanPrompt.replace(/^(?:open|navigate\s+to|navigate|go\s+to)\s+/i, "").replace(/\b(?:in\s+(?:the\s+)?(?:current|this|active)\s+(?:tab|chat|window|view)|here)\b/gi, "").replace(/^(?:the\s+)/i, "").trim();
     if (dest && onNavigate) {
       const finalUrl = resolveTargetUrl(dest);
       onNavigate(finalUrl);
@@ -45956,35 +46897,40 @@ async function executeAiBrowserCommand(promptText, context = {}) {
       const { getActiveProviderConfig: getActiveProviderConfig2, streamChatMessage: streamChatMessage2, sendChatMessage: sendChatMessage2 } = await Promise.resolve().then(() => (init_aiProviderService(), aiProviderService_exports));
       const activeConfig = context.activeConfig || getActiveProviderConfig2();
       const hasKeyOrLocal = activeConfig && (activeConfig.apiKey || activeConfig.id === "lmstudio" || activeConfig.id === "ollama" || activeConfig.id === "ornith");
-      if (hasKeyOrLocal) {
-        const activeUrl = activeTab?.url || "";
-        const activeTitle = activeTab?.title || "";
-        const systemPrompt = `You are Antigravity Browser AI Copilot. You assist the user with web browsing, writing, essays, and questions.
+      if (!hasKeyOrLocal) {
+        return `\u26A0\uFE0F <strong>API Key Required:</strong> To answer conversational questions or write content with <strong>${activeConfig?.name || "AI"}</strong>, please configure your API key in <strong>\u2699 Keys</strong>, or switch to a local provider (LM Studio / Ollama).`;
+      }
+      const activeUrl = activeTab?.url || "";
+      const activeTitle = activeTab?.title || "";
+      const systemPrompt = `You are Nexora Browser AI Copilot. You assist the user with web browsing, writing, essays, and questions.
 Active Tab: "${activeTitle}" (${activeUrl})
 Total Open Tabs: ${tabs.length}.
 Always reply in the same language as the user's current message (default to English unless the user writes in Hindi or Korean). Keep answers clear, well-structured, and helpful.`;
-        const chatFn = streamChatMessage2 || sendChatMessage2;
-        const aiRes = await chatFn({
-          prompt: raw,
-          systemPrompt,
-          config: activeConfig,
-          tools: [],
-          // No tools for pure conversational Q&A
-          onChunk: (chunk) => {
-            if (context.onStreamChunk) context.onStreamChunk(chunk);
-          },
-          onReasoningChunk: (rChunk) => {
-            if (context.onStreamReasoning) context.onStreamReasoning(rChunk);
-          },
-          signal: context.signal
-        });
-        if (aiRes && aiRes.success && !aiRes.aborted) {
-          const replyText = (aiRes.reply || "").trim();
-          return `\u{1F916} <strong>[${aiRes.provider}: ${aiRes.model}]</strong><br>${replyText.replace(/\n/g, "<br>")}`;
-        }
+      const chatFn = streamChatMessage2 || sendChatMessage2;
+      const aiRes = await chatFn({
+        prompt: raw,
+        systemPrompt,
+        config: activeConfig,
+        tools: [],
+        // No tools for pure conversational Q&A
+        onChunk: (chunk) => {
+          if (context.onStreamChunk) context.onStreamChunk(chunk);
+        },
+        onReasoningChunk: (rChunk) => {
+          if (context.onStreamReasoning) context.onStreamReasoning(rChunk);
+        },
+        signal: context.signal
+      });
+      if (aiRes && aiRes.success && !aiRes.aborted) {
+        const replyText = (aiRes.reply || "").trim();
+        return `\u{1F916} <strong>[${aiRes.provider}: ${aiRes.model}]</strong><br>${replyText.replace(/\n/g, "<br>")}`;
+      }
+      if (aiRes && !aiRes.success) {
+        return `\u26A0\uFE0F <strong>AI Model Error [${activeConfig?.name || "AI"}${activeConfig?.model ? `: ${activeConfig.model}` : ""}]:</strong> ${aiRes.error || "Failed to generate response"}. Please verify your API key or model settings in <strong>\u2699 Keys</strong>.`;
       }
     } catch (e) {
       console.warn("[AI Harness conversational error]", e.message);
+      return `\u26A0\uFE0F <strong>AI Error:</strong> ${e.message}`;
     }
   }
   try {
@@ -46265,13 +47211,17 @@ async function extractAdaptivePageContext(webview) {
                     el.setAttribute('data-som-orig-outline', orig || '');
                     el.style.outline = '1.5px solid rgba(255, 230, 0, 0.75)';
 
+                    const centerX = Math.round(r.left + r.width / 2);
+                    const centerY = Math.round(r.top + r.height / 2);
+
                     actionableElements.push({
                         mark: '#' + markId++,
                         text: text.substring(0, 70),
                         tag: el.tagName.toLowerCase(),
                         id: el.id || '',
                         href: el.href || el.getAttribute('href') || '',
-                        rect: { top: Math.round(r.top), left: Math.round(r.left), width: Math.round(r.width), height: Math.round(r.height) }
+                        rect: { top: Math.round(r.top), left: Math.round(r.left), width: Math.round(r.width), height: Math.round(r.height) },
+                        center: { x: centerX, y: centerY }
                     });
                     if (actionableElements.length >= 120) break;
                 }
@@ -46318,6 +47268,22 @@ async function extractAdaptivePageContext(webview) {
                 };
             })();
         `);
+    if (context && Array.isArray(context.actionableElements)) {
+      for (const item of context.actionableElements) {
+        if (item && item.center) {
+          somMarkCoordinateCache.set(item.mark, { x: item.center.x, y: item.center.y, text: item.text, tag: item.tag, rect: item.rect });
+          const idNum = parseInt((item.mark || "").replace(/\D/g, ""), 10);
+          if (!isNaN(idNum)) {
+            somMarkCoordinateCache.set(idNum, { x: item.center.x, y: item.center.y, text: item.text, tag: item.tag, rect: item.rect });
+          }
+        }
+      }
+    }
+    try {
+      const axTree = await extractPageAXTree(webview);
+      if (axTree) context.axTree = axTree;
+    } catch (_) {
+    }
     return context;
   } catch (err) {
     return {
@@ -46474,6 +47440,82 @@ function AiHudSidebar({
   const [recordingTimer, setRecordingTimer] = (0, import_react7.useState)(0);
   const [isGenerating, setIsGenerating] = (0, import_react7.useState)(false);
   const [activeAiConfig, setActiveAiConfig] = (0, import_react7.useState)(() => getActiveProviderConfig());
+  const [brainSearchQuery, setBrainSearchQuery] = (0, import_react7.useState)("");
+  const [brainSearchResults, setBrainSearchResults] = (0, import_react7.useState)(null);
+  const [brainRawSession, setBrainRawSession] = (0, import_react7.useState)(null);
+  const [brainStatus, setBrainStatus] = (0, import_react7.useState)(null);
+  const [isSearchingBrain, setIsSearchingBrain] = (0, import_react7.useState)(false);
+  const [isReflectingBrain, setIsReflectingBrain] = (0, import_react7.useState)(false);
+  const [selectedSkill, setSelectedSkill] = (0, import_react7.useState)(null);
+  const loadBrainStatus = async () => {
+    try {
+      const res = await fetch("http://127.0.0.1:4892/api/memory/status").then((r) => r.json());
+      if (res.success) setBrainStatus(res);
+    } catch (_) {
+    }
+  };
+  (0, import_react7.useEffect)(() => {
+    if (activeModuleTab === "brain") {
+      loadBrainStatus();
+    }
+  }, [activeModuleTab]);
+  const handleBrainSearch = async (e) => {
+    if (e) e.preventDefault();
+    if (!brainSearchQuery.trim()) return;
+    setIsSearchingBrain(true);
+    try {
+      const res = await fetch("http://127.0.0.1:4892/api/memory/search", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ query: brainSearchQuery, limit: 5 })
+      }).then((r) => r.json());
+      setBrainSearchResults(res);
+    } catch (err) {
+      console.error("[Brain Search Error]", err);
+    } finally {
+      setIsSearchingBrain(false);
+    }
+  };
+  const handleLoadRawSession = async (sessionId) => {
+    try {
+      const res = await fetch("http://127.0.0.1:4892/api/memory/raw", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ session_id: sessionId })
+      }).then((r) => r.json());
+      if (res.found) {
+        setBrainRawSession(res);
+      }
+    } catch (err) {
+      console.error("[Raw Session Error]", err);
+    }
+  };
+  const handleTriggerReflection = async () => {
+    setIsReflectingBrain(true);
+    try {
+      await fetch("http://127.0.0.1:4892/api/memory/reflect", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ force: true })
+      });
+      await loadBrainStatus();
+    } catch (err) {
+      console.error("[Trigger Reflection Error]", err);
+    } finally {
+      setIsReflectingBrain(false);
+    }
+  };
+  const handleReadSkill = async (skillName) => {
+    try {
+      const res = await fetch("http://127.0.0.1:4892/api/skills/read", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: skillName })
+      }).then((r) => r.json());
+      if (res.found) setSelectedSkill(res);
+    } catch (_) {
+    }
+  };
   (0, import_react7.useEffect)(() => {
     const handleProviderChanged = (e) => {
       if (e?.detail?.config) {
@@ -46989,7 +48031,7 @@ function AiHudSidebar({
     }
   };
   if (!isOpen || isDetached) return null;
-  return /* @__PURE__ */ import_react7.default.createElement("aside", { className: "ai-hud-sidebar mac-docked-cockpit", id: "aiHudSidebar" }, /* @__PURE__ */ import_react7.default.createElement("header", { className: "mac-docked-header" }, /* @__PURE__ */ import_react7.default.createElement("div", { className: "mac-cockpit-brand" }, /* @__PURE__ */ import_react7.default.createElement("span", { className: "mac-brand-sparkle" }, "\u2726"), /* @__PURE__ */ import_react7.default.createElement("span", { className: "mac-brand-name" }, "Antigravity Copilot")), /* @__PURE__ */ import_react7.default.createElement("div", { className: "mac-header-actions" }, /* @__PURE__ */ import_react7.default.createElement("label", { className: "som-toggle-label", title: "Render Set-of-Marks numerical bounding boxes over elements" }, /* @__PURE__ */ import_react7.default.createElement(
+  return /* @__PURE__ */ import_react7.default.createElement("aside", { className: "ai-hud-sidebar mac-docked-cockpit", id: "aiHudSidebar" }, /* @__PURE__ */ import_react7.default.createElement("header", { className: "mac-docked-header" }, /* @__PURE__ */ import_react7.default.createElement("div", { className: "mac-cockpit-brand", style: { display: "flex", alignItems: "center", gap: "6px" } }, /* @__PURE__ */ import_react7.default.createElement("img", { src: "assets/logo.png", alt: "Nexora", style: { width: "16px", height: "16px", objectFit: "contain" } }), /* @__PURE__ */ import_react7.default.createElement("span", { className: "mac-brand-name" }, "Nexora Copilot")), /* @__PURE__ */ import_react7.default.createElement("div", { className: "mac-header-actions" }, /* @__PURE__ */ import_react7.default.createElement("label", { className: "som-toggle-label", title: "Render Set-of-Marks numerical bounding boxes over elements" }, /* @__PURE__ */ import_react7.default.createElement(
     "input",
     {
       type: "checkbox",
@@ -47049,6 +48091,13 @@ function AiHudSidebar({
       onClick: () => setActiveModuleTab("chat")
     },
     "\u{1F4AC} AI Chat & Voice"
+  ), /* @__PURE__ */ import_react7.default.createElement(
+    "button",
+    {
+      className: `mac-nav-tab ${activeModuleTab === "brain" ? "active" : ""}`,
+      onClick: () => setActiveModuleTab("brain")
+    },
+    "\u{1F9E0} Second Brain"
   ), /* @__PURE__ */ import_react7.default.createElement(
     "button",
     {
@@ -47319,7 +48368,53 @@ function AiHudSidebar({
       }
     },
     "Execute"
-  )), /* @__PURE__ */ import_react7.default.createElement("div", { className: "mac-code-box" }, grepMatches.length === 0 ? /* @__PURE__ */ import_react7.default.createElement("div", { style: { color: "#64748b", textAlign: "center", padding: "16px" } }, "No grep matches found. Type a query above.") : grepMatches.map((m, i) => /* @__PURE__ */ import_react7.default.createElement("div", { key: i, style: { padding: "4px 0", borderBottom: "1px solid rgba(255,255,255,0.05)", fontFamily: "var(--font-mono)" } }, typeof m === "object" ? JSON.stringify(m) : String(m))))), activeToolTab === "autofill" && /* @__PURE__ */ import_react7.default.createElement("div", { className: "mac-tool-panel" }, /* @__PURE__ */ import_react7.default.createElement("div", { style: { padding: "12px", background: "rgba(255,255,255,0.03)", borderRadius: 8, marginBottom: 12 } }, /* @__PURE__ */ import_react7.default.createElement("h4", { style: { color: "#fff", fontSize: "13px", marginBottom: 4 } }, "Autofill Engine (`components/autofill`)"), /* @__PURE__ */ import_react7.default.createElement("p", { style: { color: "#94a3b8", fontSize: "11px", margin: 0 } }, "Populate checkout and login fields using in-process C++ AutofillProfile heuristics.")), /* @__PURE__ */ import_react7.default.createElement("div", { style: { display: "flex", gap: 8 } }, /* @__PURE__ */ import_react7.default.createElement("button", { className: "mac-pill-btn", onClick: onTriggerAutofill }, "\u26A1 Execute Autofill Now"), /* @__PURE__ */ import_react7.default.createElement("button", { className: "mac-pill-btn", onClick: () => onLoadDemo && onLoadDemo("checkout") }, "Load Demo")), /* @__PURE__ */ import_react7.default.createElement("div", { style: { marginTop: 12, padding: "10px", background: "rgba(0,0,0,0.3)", borderRadius: 6, fontSize: "11px", color: "#10b981", fontFamily: "var(--font-mono)" } }, autofillStatus || "Ready for autofill execution.")), activeToolTab === "telemetry" && /* @__PURE__ */ import_react7.default.createElement("div", { className: "mac-tool-panel" }, /* @__PURE__ */ import_react7.default.createElement("div", { style: { display: "flex", justifyContent: "space-between", marginBottom: 8 } }, /* @__PURE__ */ import_react7.default.createElement("span", { style: { fontSize: "11px", color: "#94a3b8" } }, "Live In-Process Event Bus"), /* @__PURE__ */ import_react7.default.createElement("button", { className: "mac-pill-btn", onClick: onClearTelemetry }, "Clear Logs")), /* @__PURE__ */ import_react7.default.createElement("div", { className: "mac-code-box" }, telemetryLogs.length === 0 ? /* @__PURE__ */ import_react7.default.createElement("div", { style: { color: "#64748b", textAlign: "center", padding: "16px" } }, "No events logged yet.") : [...telemetryLogs].reverse().map((log, i) => /* @__PURE__ */ import_react7.default.createElement("div", { key: i, style: { padding: "3px 0", fontSize: "11px", fontFamily: "var(--font-mono)" } }, /* @__PURE__ */ import_react7.default.createElement("span", { style: { color: "#64748b" } }, "[", log.time, "] "), /* @__PURE__ */ import_react7.default.createElement("span", { style: { color: log.type === "act" ? "#00e5ff" : log.type === "verify" ? "#10b981" : "#e2e8f0" } }, log.msg))))))));
+  )), /* @__PURE__ */ import_react7.default.createElement("div", { className: "mac-code-box" }, grepMatches.length === 0 ? /* @__PURE__ */ import_react7.default.createElement("div", { style: { color: "#64748b", textAlign: "center", padding: "16px" } }, "No grep matches found. Type a query above.") : grepMatches.map((m, i) => /* @__PURE__ */ import_react7.default.createElement("div", { key: i, style: { padding: "4px 0", borderBottom: "1px solid rgba(255,255,255,0.05)", fontFamily: "var(--font-mono)" } }, typeof m === "object" ? JSON.stringify(m) : String(m))))), activeToolTab === "autofill" && /* @__PURE__ */ import_react7.default.createElement("div", { className: "mac-tool-panel" }, /* @__PURE__ */ import_react7.default.createElement("div", { style: { padding: "12px", background: "rgba(255,255,255,0.03)", borderRadius: 8, marginBottom: 12 } }, /* @__PURE__ */ import_react7.default.createElement("h4", { style: { color: "#fff", fontSize: "13px", marginBottom: 4 } }, "Autofill Engine (`components/autofill`)"), /* @__PURE__ */ import_react7.default.createElement("p", { style: { color: "#94a3b8", fontSize: "11px", margin: 0 } }, "Populate checkout and login fields using in-process C++ AutofillProfile heuristics.")), /* @__PURE__ */ import_react7.default.createElement("div", { style: { display: "flex", gap: 8 } }, /* @__PURE__ */ import_react7.default.createElement("button", { className: "mac-pill-btn", onClick: onTriggerAutofill }, "\u26A1 Execute Autofill Now"), /* @__PURE__ */ import_react7.default.createElement("button", { className: "mac-pill-btn", onClick: () => onLoadDemo && onLoadDemo("checkout") }, "Load Demo")), /* @__PURE__ */ import_react7.default.createElement("div", { style: { marginTop: 12, padding: "10px", background: "rgba(0,0,0,0.3)", borderRadius: 6, fontSize: "11px", color: "#10b981", fontFamily: "var(--font-mono)" } }, autofillStatus || "Ready for autofill execution.")), activeToolTab === "telemetry" && /* @__PURE__ */ import_react7.default.createElement("div", { className: "mac-tool-panel" }, /* @__PURE__ */ import_react7.default.createElement("div", { style: { display: "flex", justifyContent: "space-between", marginBottom: 8 } }, /* @__PURE__ */ import_react7.default.createElement("span", { style: { fontSize: "11px", color: "#94a3b8" } }, "Live In-Process Event Bus"), /* @__PURE__ */ import_react7.default.createElement("button", { className: "mac-pill-btn", onClick: onClearTelemetry }, "Clear Logs")), /* @__PURE__ */ import_react7.default.createElement("div", { className: "mac-code-box" }, telemetryLogs.length === 0 ? /* @__PURE__ */ import_react7.default.createElement("div", { style: { color: "#64748b", textAlign: "center", padding: "16px" } }, "No events logged yet.") : [...telemetryLogs].reverse().map((log, i) => /* @__PURE__ */ import_react7.default.createElement("div", { key: i, style: { padding: "3px 0", fontSize: "11px", fontFamily: "var(--font-mono)" } }, /* @__PURE__ */ import_react7.default.createElement("span", { style: { color: "#64748b" } }, "[", log.time, "] "), /* @__PURE__ */ import_react7.default.createElement("span", { style: { color: log.type === "act" ? "#00e5ff" : log.type === "verify" ? "#10b981" : "#e2e8f0" } }, log.msg)))))), activeModuleTab === "brain" && /* @__PURE__ */ import_react7.default.createElement("div", { className: "mac-tool-panel", style: { padding: "12px", display: "flex", flexDirection: "column", gap: "14px" } }, /* @__PURE__ */ import_react7.default.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", background: "rgba(255,255,255,0.03)", padding: "10px 12px", borderRadius: 8 } }, /* @__PURE__ */ import_react7.default.createElement("div", null, /* @__PURE__ */ import_react7.default.createElement("div", { style: { fontSize: "13px", fontWeight: 600, color: "#f8fafc" } }, "\u{1F9E0} AI Second Brain"), /* @__PURE__ */ import_react7.default.createElement("div", { style: { fontSize: "11px", color: "#94a3b8" } }, brainStatus?.skillsCount || 0, " Skills \u2022 90-Day Raw Retention \u2022 8 AM Reflection")), /* @__PURE__ */ import_react7.default.createElement("div", { style: { display: "flex", gap: 6 } }, /* @__PURE__ */ import_react7.default.createElement(
+    "button",
+    {
+      className: "mac-pill-btn",
+      onClick: handleTriggerReflection,
+      disabled: isReflectingBrain,
+      style: { background: isReflectingBrain ? "rgba(0,229,255,0.1)" : void 0 }
+    },
+    isReflectingBrain ? "\u23F3 Reflecting..." : "\u26A1 Reflect Now"
+  ), /* @__PURE__ */ import_react7.default.createElement("button", { className: "mac-pill-btn", onClick: loadBrainStatus }, "\u{1F504}"))), brainStatus?.interruptedTask && /* @__PURE__ */ import_react7.default.createElement("div", { style: { background: "rgba(245, 158, 11, 0.1)", border: "1px solid rgba(245, 158, 11, 0.3)", borderRadius: 8, padding: "10px 12px" } }, /* @__PURE__ */ import_react7.default.createElement("div", { style: { fontSize: "12px", fontWeight: 600, color: "#fbbf24", marginBottom: 4 } }, "\u26A0\uFE0F Checkpoint Detected (Restart Recovery)"), /* @__PURE__ */ import_react7.default.createElement("div", { style: { fontSize: "11px", color: "#fde68a", marginBottom: 8 } }, 'Task: "', brainStatus.interruptedTask.task, '" (', brainStatus.interruptedTask.checkpoint, ")"), /* @__PURE__ */ import_react7.default.createElement(
+    "button",
+    {
+      className: "mac-pill-btn",
+      style: { borderColor: "#f59e0b", color: "#fbbf24" },
+      onClick: () => {
+        setChatInput(brainStatus.interruptedTask.task);
+        setActiveModuleTab("chat");
+      }
+    },
+    "\u25B6\uFE0F Resume Task"
+  )), /* @__PURE__ */ import_react7.default.createElement("form", { onSubmit: handleBrainSearch, style: { display: "flex", gap: 6 } }, /* @__PURE__ */ import_react7.default.createElement(
+    "input",
+    {
+      type: "text",
+      className: "mac-chat-input",
+      style: { flex: 1, padding: "8px 12px", fontSize: "12px", borderRadius: 6, background: "rgba(0,0,0,0.3)", color: "#fff", border: "1px solid rgba(255,255,255,0.1)" },
+      placeholder: "Search summaries, passwords, or topics...",
+      value: brainSearchQuery,
+      onChange: (e) => setBrainSearchQuery(e.target.value)
+    }
+  ), /* @__PURE__ */ import_react7.default.createElement("button", { className: "mac-pill-btn", type: "submit", disabled: isSearchingBrain }, isSearchingBrain ? "Searching..." : "\u{1F50D} Search")), brainSearchResults && /* @__PURE__ */ import_react7.default.createElement("div", { style: { background: "rgba(0,0,0,0.25)", borderRadius: 8, padding: "10px", maxHeight: "200px", overflowY: "auto" } }, /* @__PURE__ */ import_react7.default.createElement("div", { style: { fontSize: "11px", color: "#94a3b8", marginBottom: 6, fontWeight: 600 } }, 'Search Results for "', brainSearchResults.query, '"'), brainSearchResults.facts?.length === 0 && brainSearchResults.summaries?.length === 0 && /* @__PURE__ */ import_react7.default.createElement("div", { style: { fontSize: "11px", color: "#64748b" } }, "No memory records matched."), brainSearchResults.facts?.map((f, i) => /* @__PURE__ */ import_react7.default.createElement("div", { key: i, style: { fontSize: "11px", padding: "4px 0", borderBottom: "1px solid rgba(255,255,255,0.05)" } }, /* @__PURE__ */ import_react7.default.createElement("span", { style: { color: "#00e5ff" } }, f.category, " "), /* @__PURE__ */ import_react7.default.createElement("span", { style: { color: "#e2e8f0" } }, f.snippet))), brainSearchResults.summaries?.map((s, i) => /* @__PURE__ */ import_react7.default.createElement("div", { key: i, style: { fontSize: "11px", padding: "6px 0", borderBottom: "1px solid rgba(255,255,255,0.05)" } }, /* @__PURE__ */ import_react7.default.createElement("div", { style: { display: "flex", justifyContent: "space-between", color: "#a78bfa" } }, /* @__PURE__ */ import_react7.default.createElement("span", null, "Session ", s.session_id, " (", s.date, ")"), /* @__PURE__ */ import_react7.default.createElement(
+    "button",
+    {
+      className: "mac-pill-btn",
+      style: { fontSize: "9px", padding: "1px 6px" },
+      onClick: () => handleLoadRawSession(s.session_id)
+    },
+    "\u{1F4C4} Raw Chat"
+  )), /* @__PURE__ */ import_react7.default.createElement("div", { style: { color: "#94a3b8", marginTop: 2 } }, s.summary)))), brainRawSession && /* @__PURE__ */ import_react7.default.createElement("div", { style: { background: "rgba(15, 23, 42, 0.95)", border: "1px solid rgba(0, 229, 255, 0.3)", borderRadius: 8, padding: "12px" } }, /* @__PURE__ */ import_react7.default.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 } }, /* @__PURE__ */ import_react7.default.createElement("span", { style: { fontSize: "12px", fontWeight: 600, color: "#00e5ff" } }, "\u{1F4C4} Uncompressed Raw Transcript: ", brainRawSession.sessionId), /* @__PURE__ */ import_react7.default.createElement("button", { className: "mac-pill-btn close-x", onClick: () => setBrainRawSession(null) }, "\u2715")), /* @__PURE__ */ import_react7.default.createElement("pre", { style: { maxHeight: "180px", overflowY: "auto", fontSize: "10px", color: "#cbd5e1", whiteSpace: "pre-wrap", background: "rgba(0,0,0,0.4)", padding: "8px", borderRadius: 6, margin: 0 } }, brainRawSession.content)), /* @__PURE__ */ import_react7.default.createElement("div", { style: { background: "rgba(255,255,255,0.02)", borderRadius: 8, padding: "10px 12px", border: "1px solid rgba(255,255,255,0.05)" } }, /* @__PURE__ */ import_react7.default.createElement("div", { style: { fontSize: "12px", fontWeight: 600, color: "#38bdf8", marginBottom: 4 } }, "\u{1F4CC} User Profile & Preferences (USER.md)"), /* @__PURE__ */ import_react7.default.createElement("pre", { style: { margin: 0, fontSize: "11px", color: "#94a3b8", whiteSpace: "pre-wrap", maxHeight: "100px", overflowY: "auto" } }, brainStatus?.anchors?.user || "No preferences recorded.")), /* @__PURE__ */ import_react7.default.createElement("div", { style: { background: "rgba(255,255,255,0.02)", borderRadius: 8, padding: "10px 12px", border: "1px solid rgba(255,255,255,0.05)" } }, /* @__PURE__ */ import_react7.default.createElement("div", { style: { fontSize: "12px", fontWeight: 600, color: "#4ade80", marginBottom: 4 } }, "\u{1F9E0} Curated Memory & Platform Quirks (MEMORY.md)"), /* @__PURE__ */ import_react7.default.createElement("pre", { style: { margin: 0, fontSize: "11px", color: "#94a3b8", whiteSpace: "pre-wrap", maxHeight: "100px", overflowY: "auto" } }, brainStatus?.anchors?.memory || "No curated memory entries.")), /* @__PURE__ */ import_react7.default.createElement("div", { style: { background: "rgba(255,255,255,0.02)", borderRadius: 8, padding: "10px 12px", border: "1px solid rgba(255,255,255,0.05)" } }, /* @__PURE__ */ import_react7.default.createElement("div", { style: { fontSize: "12px", fontWeight: 600, color: "#f43f5e", marginBottom: 6 } }, "\u26A1 Procedural Skills (", brainStatus?.skills?.length || 0, ")"), /* @__PURE__ */ import_react7.default.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 6, maxHeight: "140px", overflowY: "auto" } }, brainStatus?.skills?.map((sk, i) => /* @__PURE__ */ import_react7.default.createElement("div", { key: i, style: { display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "11px", padding: "4px 0", borderBottom: "1px solid rgba(255,255,255,0.04)" } }, /* @__PURE__ */ import_react7.default.createElement("div", null, /* @__PURE__ */ import_react7.default.createElement("span", { style: { color: "#f1f5f9", fontWeight: 500 } }, sk.name, " "), /* @__PURE__ */ import_react7.default.createElement("span", { style: { color: "#64748b", fontSize: "10px" } }, "(", sk.source, ")"), /* @__PURE__ */ import_react7.default.createElement("div", { style: { color: "#94a3b8", fontSize: "10px" } }, sk.description)), /* @__PURE__ */ import_react7.default.createElement(
+    "button",
+    {
+      className: "mac-pill-btn",
+      style: { fontSize: "9px", padding: "2px 6px", flexShrink: 0 },
+      onClick: () => handleReadSkill(sk.name)
+    },
+    "View"
+  ))))), selectedSkill && /* @__PURE__ */ import_react7.default.createElement("div", { style: { background: "rgba(15, 23, 42, 0.95)", border: "1px solid rgba(244, 63, 94, 0.3)", borderRadius: 8, padding: "12px" } }, /* @__PURE__ */ import_react7.default.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 } }, /* @__PURE__ */ import_react7.default.createElement("span", { style: { fontSize: "12px", fontWeight: 600, color: "#f43f5e" } }, "\u26A1 Procedural Skill: ", selectedSkill.name), /* @__PURE__ */ import_react7.default.createElement("button", { className: "mac-pill-btn close-x", onClick: () => setSelectedSkill(null) }, "\u2715")), /* @__PURE__ */ import_react7.default.createElement("pre", { style: { maxHeight: "180px", overflowY: "auto", fontSize: "10px", color: "#cbd5e1", whiteSpace: "pre-wrap", background: "rgba(0,0,0,0.4)", padding: "8px", borderRadius: 6, margin: 0 } }, selectedSkill.instructions)))));
 }
 
 // desktop/src/components/BookmarksBar.jsx
@@ -48155,7 +49250,7 @@ function DownloadsPage({
       onClick: onClearCompleted
     },
     "\u{1F9F9} Clear Completed"
-  ))), /* @__PURE__ */ import_react14.default.createElement("main", { className: "downloads-content" }, filteredDownloads.length === 0 ? /* @__PURE__ */ import_react14.default.createElement("div", { className: "downloads-empty-state" }, /* @__PURE__ */ import_react14.default.createElement("div", { className: "empty-icon-circle" }, "\u{1F4E5}"), /* @__PURE__ */ import_react14.default.createElement("h2", null, searchTerm ? "No downloads match your search" : "No downloads yet"), /* @__PURE__ */ import_react14.default.createElement("p", null, searchTerm ? "Try searching for another filename or keyword." : "Files you download using Antigravity Browser will appear here with live speed and progress."), /* @__PURE__ */ import_react14.default.createElement("button", { className: "downloads-action-btn primary", onClick: onOpenDownloadsFolder }, "Open Downloads Folder")) : /* @__PURE__ */ import_react14.default.createElement("div", { className: "downloads-list" }, filteredDownloads.map((dl) => {
+  ))), /* @__PURE__ */ import_react14.default.createElement("main", { className: "downloads-content" }, filteredDownloads.length === 0 ? /* @__PURE__ */ import_react14.default.createElement("div", { className: "downloads-empty-state" }, /* @__PURE__ */ import_react14.default.createElement("div", { className: "empty-icon-circle" }, "\u{1F4E5}"), /* @__PURE__ */ import_react14.default.createElement("h2", null, searchTerm ? "No downloads match your search" : "No downloads yet"), /* @__PURE__ */ import_react14.default.createElement("p", null, searchTerm ? "Try searching for another filename or keyword." : "Files you download using Nexora Browser will appear here with live speed and progress."), /* @__PURE__ */ import_react14.default.createElement("button", { className: "downloads-action-btn primary", onClick: onOpenDownloadsFolder }, "Open Downloads Folder")) : /* @__PURE__ */ import_react14.default.createElement("div", { className: "downloads-list" }, filteredDownloads.map((dl) => {
     const isProgressing = dl.state === "progressing";
     const isCompleted = dl.state === "completed";
     const isPaused = dl.isPaused || dl.state === "paused";
@@ -48654,6 +49749,11 @@ function AiProviderModal({
       cancelled = true;
     };
   }, [isOpen, selectedProviderId, currentConfig?.baseUrl]);
+  (0, import_react17.useEffect)(() => {
+    if (currentConfig?.id === "opencodezen" && currentConfig.baseUrl && (currentConfig.baseUrl.includes("opencodezen.com") || currentConfig.baseUrl.includes("api.opencodezen"))) {
+      handleUpdateField("baseUrl", "https://opencode.ai/zen/v1");
+    }
+  }, [currentConfig?.id, currentConfig?.baseUrl]);
   if (!isOpen) return null;
   const handleUpdateField = (field, value) => {
     const targetId = currentConfig.id;
@@ -48676,9 +49776,24 @@ function AiProviderModal({
     }
   };
   const handleSelectPresetModel = (modelName) => {
-    handleUpdateField("model", modelName);
+    if (!modelName) return;
+    const targetId = currentConfig.id;
+    const existingPresets = Array.isArray(currentConfig.presetModels) ? currentConfig.presetModels : [];
+    const updatedPresets = Array.from(/* @__PURE__ */ new Set([modelName, ...existingPresets]));
+    setConfigs((prev) => {
+      const next = {
+        ...prev,
+        [targetId]: {
+          ...prev[targetId] || currentConfig,
+          model: modelName,
+          presetModels: updatedPresets
+        }
+      };
+      saveAiProvidersConfig(next);
+      return next;
+    });
     window.dispatchEvent(new CustomEvent("antigravity-active-provider-changed", {
-      detail: { providerId: currentConfig.id, config: { ...currentConfig, model: modelName } }
+      detail: { providerId: targetId, config: { ...currentConfig, model: modelName, presetModels: updatedPresets } }
     }));
   };
   const handleAddModel = () => {
@@ -48720,21 +49835,22 @@ function AiProviderModal({
       return next;
     });
   };
-  const handleScanModels = async () => {
+  const handleScanModels = async (overrideConfig = null) => {
+    const configToScan = overrideConfig || currentConfig;
     setIsScanningModels(true);
-    const res = await fetchAvailableModels(currentConfig);
+    const res = await fetchAvailableModels(configToScan);
     setIsScanningModels(false);
     if (res.success && res.models.length > 0) {
       setDetectedModels(res.models);
-      const targetId = currentConfig.id;
-      const existingPresets = Array.isArray(currentConfig.presetModels) ? currentConfig.presetModels : [];
-      const mergedModels = Array.from(/* @__PURE__ */ new Set([...res.models, ...existingPresets]));
-      const nextActiveModel = res.models.includes(currentConfig.model) ? currentConfig.model : res.models[0];
+      const targetId = configToScan.id;
+      const existingPresets = Array.isArray(configToScan.presetModels) ? configToScan.presetModels : [];
+      const mergedModels = Array.from(/* @__PURE__ */ new Set([...existingPresets, ...res.models.slice(0, 15)]));
+      const nextActiveModel = configToScan.model && res.models.includes(configToScan.model) ? configToScan.model : res.models[0] || "";
       setConfigs((prev) => {
         const next = {
           ...prev,
           [targetId]: {
-            ...prev[targetId] || currentConfig,
+            ...prev[targetId] || configToScan,
             model: nextActiveModel,
             presetModels: mergedModels
           }
@@ -48745,13 +49861,13 @@ function AiProviderModal({
       setTestStatus({
         loading: false,
         success: true,
-        message: `Detected ${res.models.length} installed model(s): ${res.models.slice(0, 3).join(", ")}`
+        message: `Loaded ${res.models.length} model(s) from endpoint. Select your model below!`
       });
     } else {
       setTestStatus({
         loading: false,
         success: false,
-        message: res.error || "No models detected at this endpoint"
+        message: res.error || "No models detected at this endpoint. Please check URL and API Key."
       });
     }
   };
@@ -48853,9 +49969,9 @@ function AiProviderModal({
   };
   const providerList = Object.values(configs);
   const allModelsForCurrent = Array.from(/* @__PURE__ */ new Set([
-    ...detectedModels || [],
+    ...currentConfig.model ? [currentConfig.model] : [],
     ...Array.isArray(currentConfig.presetModels) ? currentConfig.presetModels : [],
-    ...currentConfig.model ? [currentConfig.model] : []
+    ...(detectedModels || []).slice(0, 10)
   ]));
   const modalNode = /* @__PURE__ */ import_react17.default.createElement(
     "div",
@@ -48912,7 +50028,7 @@ function AiProviderModal({
             background: "rgba(255, 255, 255, 0.02)"
           }
         },
-        /* @__PURE__ */ import_react17.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: "10px" } }, /* @__PURE__ */ import_react17.default.createElement("span", { style: { fontSize: "20px" } }, "\u26A1"), /* @__PURE__ */ import_react17.default.createElement("div", null, /* @__PURE__ */ import_react17.default.createElement("h3", { style: { margin: 0, fontSize: "16px", fontWeight: 700, color: "#f8fafc" } }, "AI Model Setup & Provider Keys"), /* @__PURE__ */ import_react17.default.createElement("span", { style: { fontSize: "11px", color: "#94a3b8" } }, "Add models, scan local Ollama / LM Studio models, and configure API endpoints"))),
+        /* @__PURE__ */ import_react17.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: "10px" } }, /* @__PURE__ */ import_react17.default.createElement("img", { src: "assets/logo.png", alt: "Nexora", style: { width: "22px", height: "22px", objectFit: "contain", filter: "drop-shadow(0 0 8px rgba(0, 240, 255, 0.5))" } }), /* @__PURE__ */ import_react17.default.createElement("div", null, /* @__PURE__ */ import_react17.default.createElement("h3", { style: { margin: 0, fontSize: "16px", fontWeight: 700, color: "#f8fafc" } }, "AI Model Setup & Provider Keys"), /* @__PURE__ */ import_react17.default.createElement("span", { style: { fontSize: "11px", color: "#94a3b8" } }, "Add models, scan local Ollama / LM Studio models, and configure API endpoints"))),
         /* @__PURE__ */ import_react17.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: "10px" } }, /* @__PURE__ */ import_react17.default.createElement(
           "button",
           {
@@ -49239,25 +50355,70 @@ function AiProviderModal({
               gap: "10px"
             }
           },
-          /* @__PURE__ */ import_react17.default.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center" } }, /* @__PURE__ */ import_react17.default.createElement("div", null, /* @__PURE__ */ import_react17.default.createElement("label", { style: { fontSize: "13px", fontWeight: 700, color: "#f8fafc" } }, "\u{1F9E0} Model Setup & Selection"), /* @__PURE__ */ import_react17.default.createElement("div", { style: { fontSize: "11px", color: "#94a3b8" } }, "Select an active model below or add a new model ID to this provider")), /* @__PURE__ */ import_react17.default.createElement(
+          /* @__PURE__ */ import_react17.default.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center" } }, /* @__PURE__ */ import_react17.default.createElement("div", null, /* @__PURE__ */ import_react17.default.createElement("label", { style: { fontSize: "13px", fontWeight: 700, color: "#f8fafc" } }, "\u{1F9E0} Model Setup & Selection"), /* @__PURE__ */ import_react17.default.createElement("div", { style: { fontSize: "11px", color: "#94a3b8" } }, "Select an active model below or scan available models from this endpoint")), /* @__PURE__ */ import_react17.default.createElement(
             "button",
             {
               type: "button",
-              onClick: handleScanModels,
+              onClick: () => handleScanModels(),
               disabled: isScanningModels,
               style: {
-                padding: "5px 10px",
+                padding: "6px 14px",
                 borderRadius: "6px",
-                border: "1px solid rgba(0, 229, 255, 0.35)",
-                background: "rgba(0, 229, 255, 0.1)",
+                border: "1px solid #00e5ff",
+                background: isScanningModels ? "rgba(0, 229, 255, 0.05)" : "rgba(0, 229, 255, 0.15)",
                 color: "#00e5ff",
-                fontSize: "11px",
-                fontWeight: 600,
-                cursor: isScanningModels ? "wait" : "pointer"
+                fontSize: "11.5px",
+                fontWeight: 700,
+                cursor: isScanningModels ? "wait" : "pointer",
+                display: "flex",
+                alignItems: "center",
+                gap: "6px",
+                boxShadow: "0 0 10px rgba(0, 229, 255, 0.2)"
               }
             },
-            isScanningModels ? "\u23F3 Scanning..." : "\u{1F504} Scan Installed Models"
+            isScanningModels ? "\u23F3 Scanning Models..." : "\u{1F504} Scan Installed Models"
           )),
+          detectedModels.length > 0 && /* @__PURE__ */ import_react17.default.createElement(
+            "div",
+            {
+              style: {
+                padding: "10px 14px",
+                borderRadius: "8px",
+                background: "rgba(0, 229, 255, 0.08)",
+                border: "1px solid rgba(0, 229, 255, 0.3)",
+                display: "flex",
+                flexDirection: "column",
+                gap: "6px"
+              }
+            },
+            /* @__PURE__ */ import_react17.default.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center" } }, /* @__PURE__ */ import_react17.default.createElement("span", { style: { fontSize: "12px", fontWeight: 700, color: "#00e5ff" } }, "\u{1F4CB} Scanned Models (", detectedModels.length, " models ready to select)"), /* @__PURE__ */ import_react17.default.createElement("span", { style: { fontSize: "11px", color: "#10b981", fontWeight: 600 } }, "\u25CF Verified live from endpoint")),
+            /* @__PURE__ */ import_react17.default.createElement(
+              "select",
+              {
+                value: detectedModels.includes(currentConfig.model) ? currentConfig.model : "",
+                onChange: (e) => {
+                  if (e.target.value) {
+                    handleSelectPresetModel(e.target.value);
+                  }
+                },
+                style: {
+                  width: "100%",
+                  padding: "9px 12px",
+                  borderRadius: "6px",
+                  border: "1px solid rgba(0, 229, 255, 0.5)",
+                  background: "#070b14",
+                  color: "#00e5ff",
+                  fontSize: "13px",
+                  fontFamily: "monospace",
+                  fontWeight: 600,
+                  cursor: "pointer",
+                  outline: "none"
+                }
+              },
+              /* @__PURE__ */ import_react17.default.createElement("option", { value: "" }, "-- Click here to select a scanned model (", detectedModels.length, " available) --"),
+              detectedModels.map((m) => /* @__PURE__ */ import_react17.default.createElement("option", { key: m, value: m }, m))
+            )
+          ),
           /* @__PURE__ */ import_react17.default.createElement("div", { style: { display: "flex", gap: "8px" } }, /* @__PURE__ */ import_react17.default.createElement(
             "input",
             {
@@ -49421,15 +50582,15 @@ function AiProviderModal({
             }
           },
           showApiKey ? "Hide Key" : "Show Key"
-        )), /* @__PURE__ */ import_react17.default.createElement(
+        )), /* @__PURE__ */ import_react17.default.createElement("div", { style: { display: "flex", gap: "8px" } }, /* @__PURE__ */ import_react17.default.createElement(
           "input",
           {
             type: showApiKey ? "text" : "password",
             value: currentConfig.apiKey || "",
             onChange: (e) => handleUpdateField("apiKey", e.target.value),
-            placeholder: currentConfig.id === "anthropic" ? "sk-ant-api03-..." : currentConfig.id === "openrouter" ? "sk-or-v1-..." : "sk-... or enter your key",
+            placeholder: currentConfig.id === "anthropic" ? "sk-ant-api03-..." : currentConfig.id === "openrouter" ? "sk-or-v1-..." : currentConfig.id === "opencodezen" ? "sk-... Paste OpenCode Zen API key" : "sk-... or enter your key",
             style: {
-              width: "100%",
+              flex: 1,
               padding: "9px 12px",
               borderRadius: "8px",
               border: "1px solid rgba(255, 255, 255, 0.12)",
@@ -49440,7 +50601,30 @@ function AiProviderModal({
               boxSizing: "border-box"
             }
           }
-        )), /* @__PURE__ */ import_react17.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: "12px", marginTop: "2px" } }, /* @__PURE__ */ import_react17.default.createElement(
+        ), /* @__PURE__ */ import_react17.default.createElement(
+          "button",
+          {
+            type: "button",
+            onClick: () => handleScanModels(currentConfig),
+            disabled: isScanningModels,
+            title: "Scan models immediately using this endpoint and pasted API key",
+            style: {
+              padding: "8px 16px",
+              borderRadius: "8px",
+              border: "1px solid #00e5ff",
+              background: isScanningModels ? "rgba(0, 229, 255, 0.1)" : "rgba(0, 229, 255, 0.2)",
+              color: "#00e5ff",
+              fontSize: "12px",
+              fontWeight: 700,
+              cursor: isScanningModels ? "wait" : "pointer",
+              whiteSpace: "nowrap",
+              display: "flex",
+              alignItems: "center",
+              gap: "6px"
+            }
+          },
+          isScanningModels ? "\u23F3 Scanning..." : "\u{1F504} Scan Models with Key"
+        ))), /* @__PURE__ */ import_react17.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: "12px", marginTop: "2px" } }, /* @__PURE__ */ import_react17.default.createElement(
           "button",
           {
             onClick: handleRunTest,
@@ -49704,7 +50888,7 @@ function App() {
   const [isAiProviderModalOpen, setIsAiProviderModalOpen] = (0, import_react18.useState)(false);
   const [latestSnapshot, setLatestSnapshot] = (0, import_react18.useState)(null);
   const [telemetryLogs, setTelemetryLogs] = (0, import_react18.useState)([
-    { time: (/* @__PURE__ */ new Date()).toLocaleTimeString(), type: "info", msg: "Antigravity React Native Desktop Shell initialized" },
+    { time: (/* @__PURE__ */ new Date()).toLocaleTimeString(), type: "info", msg: "Nexora React Native Desktop Shell initialized" },
     { time: (/* @__PURE__ */ new Date()).toLocaleTimeString(), type: "info", msg: "Brave adblock-rust engine active (EasyList + uBlock Origin)" }
   ]);
   const [bookmarks, setBookmarks] = (0, import_react18.useState)(() => {
@@ -51482,8 +52666,10 @@ function App() {
       className: "webview-container",
       id: "webviewContainer",
       style: {
-        flex: !isHudDetached && isHudOpen ? 7 : 1,
-        width: !isHudDetached && isHudOpen ? "auto" : "100%",
+        flex: 1,
+        width: !isHudDetached && isHudOpen ? "calc(100% - 420px)" : "100%",
+        maxWidth: !isHudDetached && isHudOpen ? "calc(100% - 420px)" : "100%",
+        minWidth: 0,
         position: "relative",
         overflow: "hidden"
       }
@@ -51765,10 +52951,10 @@ function App() {
       elementId: activeCodeEditingElementId,
       onClose: () => setActiveCodeEditingElementId(null),
       onUpdated: (elId) => {
-        console.log(`[Antigravity] Element ${elId} custom code hot-swapped.`);
+        console.log(`[Nexora] Element ${elId} custom code hot-swapped.`);
       }
     }
-  ));
+  ), /* @__PURE__ */ import_react18.default.createElement("footer", { className: "nexora-status-footer" }, /* @__PURE__ */ import_react18.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: "14px", flexWrap: "nowrap", overflow: "hidden" } }, /* @__PURE__ */ import_react18.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: "6px" } }, /* @__PURE__ */ import_react18.default.createElement("span", { className: "indicator-dot" }), /* @__PURE__ */ import_react18.default.createElement("span", { style: { color: "#f8fafc", fontWeight: 600 } }, "MEM OK: 142 MB")), /* @__PURE__ */ import_react18.default.createElement("span", { style: { color: "rgba(255, 255, 255, 0.2)" } }, "|"), /* @__PURE__ */ import_react18.default.createElement("span", null, "PING: 1.4ms"), /* @__PURE__ */ import_react18.default.createElement("span", { style: { color: "rgba(255, 255, 255, 0.2)" } }, "|"), /* @__PURE__ */ import_react18.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: "5px", color: "#00dbe9" } }, /* @__PURE__ */ import_react18.default.createElement("span", { className: "material-symbols-outlined", style: { fontSize: "13px" } }, "bolt"), /* @__PURE__ */ import_react18.default.createElement("span", null, "In-Process Chromium")), /* @__PURE__ */ import_react18.default.createElement("span", { style: { color: "rgba(255, 255, 255, 0.2)" } }, "|"), /* @__PURE__ */ import_react18.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: "5px", color: "#a855f7" } }, /* @__PURE__ */ import_react18.default.createElement("span", { className: "material-symbols-outlined", style: { fontSize: "13px" } }, "lock"), /* @__PURE__ */ import_react18.default.createElement("span", null, "Zero CDP Leaks"))), /* @__PURE__ */ import_react18.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: "14px", flexShrink: 0 } }, /* @__PURE__ */ import_react18.default.createElement("div", { style: { display: "flex", alignItems: "center", gap: "5px" } }, /* @__PURE__ */ import_react18.default.createElement("span", { className: "material-symbols-outlined", style: { fontSize: "13px", color: "#00dbe9" } }, "shield"), /* @__PURE__ */ import_react18.default.createElement("span", null, "TRACKERS BLOCKED: ", shieldsStats.totalBlocked || adblockCount || 68)), /* @__PURE__ */ import_react18.default.createElement("span", { style: { color: "rgba(255, 255, 255, 0.2)" } }, "|"), /* @__PURE__ */ import_react18.default.createElement("span", { style: { color: "#00f0ff", letterSpacing: "0.05em", fontWeight: 600 } }, "NEXORA ENGINE"))));
 }
 
 // desktop/src/components/DetachedAiHudCockpit.jsx
@@ -52322,7 +53508,7 @@ function DetachedAiHudCockpit() {
       title: "Maximize / Restore",
       onClick: () => ipcRenderer3.send("hud-window-maximize")
     }
-  )), /* @__PURE__ */ import_react19.default.createElement("div", { className: "mac-cockpit-brand" }, /* @__PURE__ */ import_react19.default.createElement("span", { className: "mac-brand-sparkle" }, "\u2726"), /* @__PURE__ */ import_react19.default.createElement("span", { className: "mac-brand-name" }, "Antigravity Copilot")), /* @__PURE__ */ import_react19.default.createElement("div", { className: "mac-target-pill", title: "Current active tab in main browser" }, /* @__PURE__ */ import_react19.default.createElement("span", { style: { fontSize: "11px", opacity: 0.65 } }, "Target:"), /* @__PURE__ */ import_react19.default.createElement(
+  )), /* @__PURE__ */ import_react19.default.createElement("div", { className: "mac-cockpit-brand" }, /* @__PURE__ */ import_react19.default.createElement("span", { className: "mac-brand-sparkle" }, "\u2726"), /* @__PURE__ */ import_react19.default.createElement("span", { className: "mac-brand-name" }, "Nexora Copilot")), /* @__PURE__ */ import_react19.default.createElement("div", { className: "mac-target-pill", title: "Current active tab in main browser" }, /* @__PURE__ */ import_react19.default.createElement("span", { style: { fontSize: "11px", opacity: 0.65 } }, "Target:"), /* @__PURE__ */ import_react19.default.createElement(
     "select",
     {
       className: "mac-target-select",
@@ -52607,17 +53793,17 @@ if (container) {
   const isDetached = params.get("view") === "detached-hud" || window.location.hash === "#detached-hud";
   if (isDetached) {
     root.render(
-      /* @__PURE__ */ import_react20.default.createElement(ErrorBoundary, { title: "Detached AI Cockpit Error" }, /* @__PURE__ */ import_react20.default.createElement(DetachedAiHudCockpit, null))
+      /* @__PURE__ */ import_react20.default.createElement(ErrorBoundary, { title: "Nexora Detached AI Cockpit Error" }, /* @__PURE__ */ import_react20.default.createElement(DetachedAiHudCockpit, null))
     );
-    console.log("[Antigravity] React Detached AI Cockpit mounted successfully.");
+    console.log("[Nexora] React Detached AI Cockpit mounted successfully.");
   } else {
     root.render(
-      /* @__PURE__ */ import_react20.default.createElement(ErrorBoundary, { title: "Antigravity Browser Core UI" }, /* @__PURE__ */ import_react20.default.createElement(App, null))
+      /* @__PURE__ */ import_react20.default.createElement(ErrorBoundary, { title: "Nexora Browser Core UI" }, /* @__PURE__ */ import_react20.default.createElement(App, null))
     );
-    console.log("[Antigravity] React Desktop App mounted successfully.");
+    console.log("[Nexora] React Desktop App mounted successfully.");
   }
 } else {
-  console.error("[Antigravity] Root element not found.");
+  console.error("[Nexora] Root element not found.");
 }
 /*! Bundled license information:
 

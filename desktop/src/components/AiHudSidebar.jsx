@@ -80,6 +80,88 @@ export default function AiHudSidebar({
     const [isGenerating, setIsGenerating] = useState(false);
     const [activeAiConfig, setActiveAiConfig] = useState(() => getActiveProviderConfig());
 
+    // Second Brain Module State
+    const [brainSearchQuery, setBrainSearchQuery] = useState('');
+    const [brainSearchResults, setBrainSearchResults] = useState(null);
+    const [brainRawSession, setBrainRawSession] = useState(null);
+    const [brainStatus, setBrainStatus] = useState(null);
+    const [isSearchingBrain, setIsSearchingBrain] = useState(false);
+    const [isReflectingBrain, setIsReflectingBrain] = useState(false);
+    const [selectedSkill, setSelectedSkill] = useState(null);
+
+    const loadBrainStatus = async () => {
+        try {
+            const res = await fetch('http://127.0.0.1:4892/api/memory/status').then(r => r.json());
+            if (res.success) setBrainStatus(res);
+        } catch (_) {}
+    };
+
+    useEffect(() => {
+        if (activeModuleTab === 'brain') {
+            loadBrainStatus();
+        }
+    }, [activeModuleTab]);
+
+    const handleBrainSearch = async (e) => {
+        if (e) e.preventDefault();
+        if (!brainSearchQuery.trim()) return;
+        setIsSearchingBrain(true);
+        try {
+            const res = await fetch('http://127.0.0.1:4892/api/memory/search', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ query: brainSearchQuery, limit: 5 })
+            }).then(r => r.json());
+            setBrainSearchResults(res);
+        } catch (err) {
+            console.error('[Brain Search Error]', err);
+        } finally {
+            setIsSearchingBrain(false);
+        }
+    };
+
+    const handleLoadRawSession = async (sessionId) => {
+        try {
+            const res = await fetch('http://127.0.0.1:4892/api/memory/raw', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ session_id: sessionId })
+            }).then(r => r.json());
+            if (res.found) {
+                setBrainRawSession(res);
+            }
+        } catch (err) {
+            console.error('[Raw Session Error]', err);
+        }
+    };
+
+    const handleTriggerReflection = async () => {
+        setIsReflectingBrain(true);
+        try {
+            await fetch('http://127.0.0.1:4892/api/memory/reflect', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ force: true })
+            });
+            await loadBrainStatus();
+        } catch (err) {
+            console.error('[Trigger Reflection Error]', err);
+        } finally {
+            setIsReflectingBrain(false);
+        }
+    };
+
+    const handleReadSkill = async (skillName) => {
+        try {
+            const res = await fetch('http://127.0.0.1:4892/api/skills/read', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name: skillName })
+            }).then(r => r.json());
+            if (res.found) setSelectedSkill(res);
+        } catch (_) {}
+    };
+
     useEffect(() => {
         const handleProviderChanged = (e) => {
             if (e?.detail?.config) {
@@ -648,9 +730,9 @@ export default function AiHudSidebar({
         <aside className="ai-hud-sidebar mac-docked-cockpit" id="aiHudSidebar">
             {/* Docked Header (Authentic Mac Style WITHOUT Window Traffic Lights / Min / Max) */}
             <header className="mac-docked-header">
-                <div className="mac-cockpit-brand">
-                    <span className="mac-brand-sparkle">✦</span>
-                    <span className="mac-brand-name">Antigravity Copilot</span>
+                <div className="mac-cockpit-brand" style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <img src="assets/logo.png" alt="Nexora" style={{ width: '16px', height: '16px', objectFit: 'contain' }} />
+                    <span className="mac-brand-name">Nexora Copilot</span>
                 </div>
 
                 <div className="mac-header-actions">
@@ -715,6 +797,12 @@ export default function AiHudSidebar({
                     onClick={() => setActiveModuleTab('chat')}
                 >
                     💬 AI Chat & Voice
+                </button>
+                <button
+                    className={`mac-nav-tab ${activeModuleTab === 'brain' ? 'active' : ''}`}
+                    onClick={() => setActiveModuleTab('brain')}
+                >
+                    🧠 Second Brain
                 </button>
                 <button
                     className={`mac-nav-tab ${activeModuleTab === 'shields' ? 'active' : ''}`}
@@ -1284,6 +1372,181 @@ export default function AiHudSidebar({
                                         ))
                                     )}
                                 </div>
+                            </div>
+                        )}
+                    </div>
+                )}
+
+                {/* 4. SECOND BRAIN MODULE VIEW */}
+                {activeModuleTab === 'brain' && (
+                    <div className="mac-tool-panel" style={{ padding: '12px', display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                        {/* Status & Reflection Toolbar */}
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(255,255,255,0.03)', padding: '10px 12px', borderRadius: 8 }}>
+                            <div>
+                                <div style={{ fontSize: '13px', fontWeight: 600, color: '#f8fafc' }}>
+                                    🧠 AI Second Brain
+                                </div>
+                                <div style={{ fontSize: '11px', color: '#94a3b8' }}>
+                                    {brainStatus?.skillsCount || 0} Skills • 90-Day Raw Retention • 8 AM Reflection
+                                </div>
+                            </div>
+                            <div style={{ display: 'flex', gap: 6 }}>
+                                <button
+                                    className="mac-pill-btn"
+                                    onClick={handleTriggerReflection}
+                                    disabled={isReflectingBrain}
+                                    style={{ background: isReflectingBrain ? 'rgba(0,229,255,0.1)' : undefined }}
+                                >
+                                    {isReflectingBrain ? '⏳ Reflecting...' : '⚡ Reflect Now'}
+                                </button>
+                                <button className="mac-pill-btn" onClick={loadBrainStatus}>
+                                    🔄
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* Interrupted Task Alert Banner */}
+                        {brainStatus?.interruptedTask && (
+                            <div style={{ background: 'rgba(245, 158, 11, 0.1)', border: '1px solid rgba(245, 158, 11, 0.3)', borderRadius: 8, padding: '10px 12px' }}>
+                                <div style={{ fontSize: '12px', fontWeight: 600, color: '#fbbf24', marginBottom: 4 }}>
+                                    ⚠️ Checkpoint Detected (Restart Recovery)
+                                </div>
+                                <div style={{ fontSize: '11px', color: '#fde68a', marginBottom: 8 }}>
+                                    Task: "{brainStatus.interruptedTask.task}" ({brainStatus.interruptedTask.checkpoint})
+                                </div>
+                                <button
+                                    className="mac-pill-btn"
+                                    style={{ borderColor: '#f59e0b', color: '#fbbf24' }}
+                                    onClick={() => {
+                                        setChatInput(brainStatus.interruptedTask.task);
+                                        setActiveModuleTab('chat');
+                                    }}
+                                >
+                                    ▶️ Resume Task
+                                </button>
+                            </div>
+                        )}
+
+                        {/* Fast SQLite Summary Search Form */}
+                        <form onSubmit={handleBrainSearch} style={{ display: 'flex', gap: 6 }}>
+                            <input
+                                type="text"
+                                className="mac-chat-input"
+                                style={{ flex: 1, padding: '8px 12px', fontSize: '12px', borderRadius: 6, background: 'rgba(0,0,0,0.3)', color: '#fff', border: '1px solid rgba(255,255,255,0.1)' }}
+                                placeholder="Search summaries, passwords, or topics..."
+                                value={brainSearchQuery}
+                                onChange={(e) => setBrainSearchQuery(e.target.value)}
+                            />
+                            <button className="mac-pill-btn" type="submit" disabled={isSearchingBrain}>
+                                {isSearchingBrain ? 'Searching...' : '🔍 Search'}
+                            </button>
+                        </form>
+
+                        {/* Search Results Display */}
+                        {brainSearchResults && (
+                            <div style={{ background: 'rgba(0,0,0,0.25)', borderRadius: 8, padding: '10px', maxHeight: '200px', overflowY: 'auto' }}>
+                                <div style={{ fontSize: '11px', color: '#94a3b8', marginBottom: 6, fontWeight: 600 }}>
+                                    Search Results for "{brainSearchResults.query}"
+                                </div>
+                                {brainSearchResults.facts?.length === 0 && brainSearchResults.summaries?.length === 0 && (
+                                    <div style={{ fontSize: '11px', color: '#64748b' }}>No memory records matched.</div>
+                                )}
+                                {brainSearchResults.facts?.map((f, i) => (
+                                    <div key={i} style={{ fontSize: '11px', padding: '4px 0', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                                        <span style={{ color: '#00e5ff' }}>{f.category} </span>
+                                        <span style={{ color: '#e2e8f0' }}>{f.snippet}</span>
+                                    </div>
+                                ))}
+                                {brainSearchResults.summaries?.map((s, i) => (
+                                    <div key={i} style={{ fontSize: '11px', padding: '6px 0', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', color: '#a78bfa' }}>
+                                            <span>Session {s.session_id} ({s.date})</span>
+                                            <button
+                                                className="mac-pill-btn"
+                                                style={{ fontSize: '9px', padding: '1px 6px' }}
+                                                onClick={() => handleLoadRawSession(s.session_id)}
+                                            >
+                                                📄 Raw Chat
+                                            </button>
+                                        </div>
+                                        <div style={{ color: '#94a3b8', marginTop: 2 }}>{s.summary}</div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+
+                        {/* Full 90-Day Raw Chat Modal Viewer */}
+                        {brainRawSession && (
+                            <div style={{ background: 'rgba(15, 23, 42, 0.95)', border: '1px solid rgba(0, 229, 255, 0.3)', borderRadius: 8, padding: '12px' }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                                    <span style={{ fontSize: '12px', fontWeight: 600, color: '#00e5ff' }}>
+                                        📄 Uncompressed Raw Transcript: {brainRawSession.sessionId}
+                                    </span>
+                                    <button className="mac-pill-btn close-x" onClick={() => setBrainRawSession(null)}>✕</button>
+                                </div>
+                                <pre style={{ maxHeight: '180px', overflowY: 'auto', fontSize: '10px', color: '#cbd5e1', whiteSpace: 'pre-wrap', background: 'rgba(0,0,0,0.4)', padding: '8px', borderRadius: 6, margin: 0 }}>
+                                    {brainRawSession.content}
+                                </pre>
+                            </div>
+                        )}
+
+                        {/* Curated User Preferences (USER.md) */}
+                        <div style={{ background: 'rgba(255,255,255,0.02)', borderRadius: 8, padding: '10px 12px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                            <div style={{ fontSize: '12px', fontWeight: 600, color: '#38bdf8', marginBottom: 4 }}>
+                                📌 User Profile & Preferences (USER.md)
+                            </div>
+                            <pre style={{ margin: 0, fontSize: '11px', color: '#94a3b8', whiteSpace: 'pre-wrap', maxHeight: '100px', overflowY: 'auto' }}>
+                                {brainStatus?.anchors?.user || 'No preferences recorded.'}
+                            </pre>
+                        </div>
+
+                        {/* Curated Technical Memory (MEMORY.md) */}
+                        <div style={{ background: 'rgba(255,255,255,0.02)', borderRadius: 8, padding: '10px 12px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                            <div style={{ fontSize: '12px', fontWeight: 600, color: '#4ade80', marginBottom: 4 }}>
+                                🧠 Curated Memory & Platform Quirks (MEMORY.md)
+                            </div>
+                            <pre style={{ margin: 0, fontSize: '11px', color: '#94a3b8', whiteSpace: 'pre-wrap', maxHeight: '100px', overflowY: 'auto' }}>
+                                {brainStatus?.anchors?.memory || 'No curated memory entries.'}
+                            </pre>
+                        </div>
+
+                        {/* Procedural Skills List */}
+                        <div style={{ background: 'rgba(255,255,255,0.02)', borderRadius: 8, padding: '10px 12px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                            <div style={{ fontSize: '12px', fontWeight: 600, color: '#f43f5e', marginBottom: 6 }}>
+                                ⚡ Procedural Skills ({brainStatus?.skills?.length || 0})
+                            </div>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: 6, maxHeight: '140px', overflowY: 'auto' }}>
+                                {brainStatus?.skills?.map((sk, i) => (
+                                    <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '11px', padding: '4px 0', borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
+                                        <div>
+                                            <span style={{ color: '#f1f5f9', fontWeight: 500 }}>{sk.name} </span>
+                                            <span style={{ color: '#64748b', fontSize: '10px' }}>({sk.source})</span>
+                                            <div style={{ color: '#94a3b8', fontSize: '10px' }}>{sk.description}</div>
+                                        </div>
+                                        <button
+                                            className="mac-pill-btn"
+                                            style={{ fontSize: '9px', padding: '2px 6px', flexShrink: 0 }}
+                                            onClick={() => handleReadSkill(sk.name)}
+                                        >
+                                            View
+                                        </button>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Selected Skill Viewer Modal */}
+                        {selectedSkill && (
+                            <div style={{ background: 'rgba(15, 23, 42, 0.95)', border: '1px solid rgba(244, 63, 94, 0.3)', borderRadius: 8, padding: '12px' }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                                    <span style={{ fontSize: '12px', fontWeight: 600, color: '#f43f5e' }}>
+                                        ⚡ Procedural Skill: {selectedSkill.name}
+                                    </span>
+                                    <button className="mac-pill-btn close-x" onClick={() => setSelectedSkill(null)}>✕</button>
+                                </div>
+                                <pre style={{ maxHeight: '180px', overflowY: 'auto', fontSize: '10px', color: '#cbd5e1', whiteSpace: 'pre-wrap', background: 'rgba(0,0,0,0.4)', padding: '8px', borderRadius: 6, margin: 0 }}>
+                                    {selectedSkill.instructions}
+                                </pre>
                             </div>
                         )}
                     </div>

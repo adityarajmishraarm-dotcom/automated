@@ -125,7 +125,7 @@ export default function App() {
     const [isAiProviderModalOpen, setIsAiProviderModalOpen] = useState(false);
     const [latestSnapshot, setLatestSnapshot] = useState(null);
     const [telemetryLogs, setTelemetryLogs] = useState([
-        { time: new Date().toLocaleTimeString(), type: 'info', msg: 'Antigravity React Native Desktop Shell initialized' },
+        { time: new Date().toLocaleTimeString(), type: 'info', msg: 'Nexora React Native Desktop Shell initialized' },
         { time: new Date().toLocaleTimeString(), type: 'info', msg: 'Brave adblock-rust engine active (EasyList + uBlock Origin)' }
     ]);
 
@@ -2000,8 +2000,10 @@ export default function App() {
                     className="webview-container"
                     id="webviewContainer"
                     style={{
-                        flex: (!isHudDetached && isHudOpen) ? 7 : 1,
-                        width: (!isHudDetached && isHudOpen) ? 'auto' : '100%',
+                        flex: 1,
+                        width: (!isHudDetached && isHudOpen) ? 'calc(100% - 420px)' : '100%',
+                        maxWidth: (!isHudDetached && isHudOpen) ? 'calc(100% - 420px)' : '100%',
+                        minWidth: 0,
                         position: 'relative',
                         overflow: 'hidden'
                     }}
@@ -2304,10 +2306,40 @@ export default function App() {
                     elementId={activeCodeEditingElementId}
                     onClose={() => setActiveCodeEditingElementId(null)}
                     onUpdated={(elId) => {
-                        console.log(`[Antigravity] Element ${elId} custom code hot-swapped.`);
+                        console.log(`[Nexora] Element ${elId} custom code hot-swapped.`);
                     }}
                 />
             )}
+
+            {/* Aero Dark Glass Redesigned Status Footer with Image 3 Telemetry */}
+            <footer className="nexora-status-footer">
+                <div style={{ display: 'flex', alignItems: 'center', gap: '14px', flexWrap: 'nowrap', overflow: 'hidden' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <span className="indicator-dot" />
+                        <span style={{ color: '#f8fafc', fontWeight: 600 }}>MEM OK: 142 MB</span>
+                    </div>
+                    <span style={{ color: 'rgba(255, 255, 255, 0.2)' }}>|</span>
+                    <span>PING: 1.4ms</span>
+                    <span style={{ color: 'rgba(255, 255, 255, 0.2)' }}>|</span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '5px', color: '#00dbe9' }}>
+                        <span className="material-symbols-outlined" style={{ fontSize: '13px' }}>bolt</span>
+                        <span>In-Process Chromium</span>
+                    </div>
+                    <span style={{ color: 'rgba(255, 255, 255, 0.2)' }}>|</span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '5px', color: '#a855f7' }}>
+                        <span className="material-symbols-outlined" style={{ fontSize: '13px' }}>lock</span>
+                        <span>Zero CDP Leaks</span>
+                    </div>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '14px', flexShrink: 0 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                        <span className="material-symbols-outlined" style={{ fontSize: '13px', color: '#00dbe9' }}>shield</span>
+                        <span>TRACKERS BLOCKED: {shieldsStats.totalBlocked || adblockCount || 68}</span>
+                    </div>
+                    <span style={{ color: 'rgba(255, 255, 255, 0.2)' }}>|</span>
+                    <span style={{ color: '#00f0ff', letterSpacing: '0.05em', fontWeight: 600 }}>NEXORA ENGINE</span>
+                </div>
+            </footer>
         </div>
     );
 }

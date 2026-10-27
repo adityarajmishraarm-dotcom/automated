@@ -1,10 +1,10 @@
 {
-  "name": "antigravity-browser",
+  "name": "nexora-browser",
   "version": "1.0.0",
-  "description": "Antigravity AI-Native Desktop Browser (Chrome/Brave Alternative)",
+  "description": "Nexora AI-Native Desktop Browser (Chrome/Brave Alternative)",
   "main": "desktop/main.js",
   "scripts": {
-    "build:react": "esbuild desktop/src/index.jsx --bundle --outfile=desktop/dist/bundle.js --platform=node --external:electron --loader:.jsx=jsx && node -e \"require('fs').copyFileSync('desktop/guest_preload.js','desktop/dist/guest_preload.js')\"",
+    "build:react": "esbuild desktop/src/index.jsx --bundle --outfile=desktop/dist/bundle.js --platform=node --external:electron --loader:.jsx=jsx && node -e \"require('fs').copyFileSync('desktop/guest_preload.js','desktop/dist/guest_preload.js'); require('fs').mkdirSync('desktop/dist/assets',{recursive:true}); require('fs').copyFileSync('desktop/assets/logo.png','desktop/dist/assets/logo.png')\"",
     "start": "npm run build:react && electron desktop"
   },
   "keywords": [

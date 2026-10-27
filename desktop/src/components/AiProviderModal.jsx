@@ -85,6 +85,13 @@ export default function AiProviderModal({
         return () => { cancelled = true; };
     }, [isOpen, selectedProviderId, currentConfig?.baseUrl]);
 
+    // Auto-heal OpenCode Zen URL if stale
+    useEffect(() => {
+        if (currentConfig?.id === 'opencodezen' && currentConfig.baseUrl && (currentConfig.baseUrl.includes('opencodezen.com') || currentConfig.baseUrl.includes('api.opencodezen'))) {
+            handleUpdateField('baseUrl', 'https://opencode.ai/zen/v1');
+        }
+    }, [currentConfig?.id, currentConfig?.baseUrl]);
+
     if (!isOpen) return null;
 
     const handleUpdateField = (field, value) => {
@@ -110,9 +117,24 @@ export default function AiProviderModal({
     };
 
     const handleSelectPresetModel = (modelName) => {
-        handleUpdateField('model', modelName);
+        if (!modelName) return;
+        const targetId = currentConfig.id;
+        const existingPresets = Array.isArray(currentConfig.presetModels) ? currentConfig.presetModels : [];
+        const updatedPresets = Array.from(new Set([modelName, ...existingPresets]));
+        setConfigs(prev => {
+            const next = {
+                ...prev,
+                [targetId]: {
+                    ...(prev[targetId] || currentConfig),
+                    model: modelName,
+                    presetModels: updatedPresets
+                }
+            };
+            saveAiProvidersConfig(next);
+            return next;
+        });
         window.dispatchEvent(new CustomEvent('antigravity-active-provider-changed', {
-            detail: { providerId: currentConfig.id, config: { ...currentConfig, model: modelName } }
+            detail: { providerId: targetId, config: { ...currentConfig, model: modelName, presetModels: updatedPresets } }
         }));
     };
 
@@ -159,21 +181,24 @@ export default function AiProviderModal({
         });
     };
 
-    const handleScanModels = async () => {
+    const handleScanModels = async (overrideConfig = null) => {
+        const configToScan = overrideConfig || currentConfig;
         setIsScanningModels(true);
-        const res = await fetchAvailableModels(currentConfig);
+        const res = await fetchAvailableModels(configToScan);
         setIsScanningModels(false);
         if (res.success && res.models.length > 0) {
             setDetectedModels(res.models);
-            const targetId = currentConfig.id;
-            const existingPresets = Array.isArray(currentConfig.presetModels) ? currentConfig.presetModels : [];
-            const mergedModels = Array.from(new Set([...res.models, ...existingPresets]));
-            const nextActiveModel = res.models.includes(currentConfig.model) ? currentConfig.model : res.models[0];
+            const targetId = configToScan.id;
+            const existingPresets = Array.isArray(configToScan.presetModels) ? configToScan.presetModels : [];
+            const mergedModels = Array.from(new Set([...existingPresets, ...res.models.slice(0, 15)]));
+            const nextActiveModel = configToScan.model && res.models.includes(configToScan.model)
+                ? configToScan.model
+                : (res.models[0] || '');
             setConfigs(prev => {
                 const next = {
                     ...prev,
                     [targetId]: {
-                        ...(prev[targetId] || currentConfig),
+                        ...(prev[targetId] || configToScan),
                         model: nextActiveModel,
                         presetModels: mergedModels
                     }
@@ -184,13 +209,13 @@ export default function AiProviderModal({
             setTestStatus({
                 loading: false,
                 success: true,
-                message: `Detected ${res.models.length} installed model(s): ${res.models.slice(0, 3).join(', ')}`
+                message: `Loaded ${res.models.length} model(s) from endpoint. Select your model below!`
             });
         } else {
             setTestStatus({
                 loading: false,
                 success: false,
-                message: res.error || 'No models detected at this endpoint'
+                message: res.error || 'No models detected at this endpoint. Please check URL and API Key.'
             });
         }
     };
@@ -299,9 +324,9 @@ export default function AiProviderModal({
 
     const providerList = Object.values(configs);
     const allModelsForCurrent = Array.from(new Set([
-        ...(detectedModels || []),
+        ...(currentConfig.model ? [currentConfig.model] : []),
         ...(Array.isArray(currentConfig.presetModels) ? currentConfig.presetModels : []),
-        ...(currentConfig.model ? [currentConfig.model] : [])
+        ...((detectedModels || []).slice(0, 10))
     ]));
 
     const modalNode = (
@@ -356,7 +381,7 @@ export default function AiProviderModal({
                     }}
                 >
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                        <span style={{ fontSize: '20px' }}>⚡</span>
+                        <img src="assets/logo.png" alt="Nexora" style={{ width: '22px', height: '22px', objectFit: 'contain', filter: 'drop-shadow(0 0 8px rgba(0, 240, 255, 0.5))' }} />
                         <div>
                             <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 700, color: '#f8fafc' }}>
                                 AI Model Setup & Provider Keys
@@ -748,27 +773,83 @@ export default function AiProviderModal({
                                                 🧠 Model Setup & Selection
                                             </label>
                                             <div style={{ fontSize: '11px', color: '#94a3b8' }}>
-                                                Select an active model below or add a new model ID to this provider
+                                                Select an active model below or scan available models from this endpoint
                                             </div>
                                         </div>
                                         <button
                                             type="button"
-                                            onClick={handleScanModels}
+                                            onClick={() => handleScanModels()}
                                             disabled={isScanningModels}
                                             style={{
-                                                padding: '5px 10px',
+                                                padding: '6px 14px',
                                                 borderRadius: '6px',
-                                                border: '1px solid rgba(0, 229, 255, 0.35)',
-                                                background: 'rgba(0, 229, 255, 0.1)',
+                                                border: '1px solid #00e5ff',
+                                                background: isScanningModels ? 'rgba(0, 229, 255, 0.05)' : 'rgba(0, 229, 255, 0.15)',
                                                 color: '#00e5ff',
-                                                fontSize: '11px',
-                                                fontWeight: 600,
-                                                cursor: isScanningModels ? 'wait' : 'pointer'
+                                                fontSize: '11.5px',
+                                                fontWeight: 700,
+                                                cursor: isScanningModels ? 'wait' : 'pointer',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                gap: '6px',
+                                                boxShadow: '0 0 10px rgba(0, 229, 255, 0.2)'
                                             }}
                                         >
-                                            {isScanningModels ? '⏳ Scanning...' : '🔄 Scan Installed Models'}
+                                            {isScanningModels ? '⏳ Scanning Models...' : '🔄 Scan Installed Models'}
                                         </button>
                                     </div>
+
+                                    {/* Live Detected Models Dropdown Selector */}
+                                    {detectedModels.length > 0 && (
+                                        <div
+                                            style={{
+                                                padding: '10px 14px',
+                                                borderRadius: '8px',
+                                                background: 'rgba(0, 229, 255, 0.08)',
+                                                border: '1px solid rgba(0, 229, 255, 0.3)',
+                                                display: 'flex',
+                                                flexDirection: 'column',
+                                                gap: '6px'
+                                            }}
+                                        >
+                                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                                <span style={{ fontSize: '12px', fontWeight: 700, color: '#00e5ff' }}>
+                                                    📋 Scanned Models ({detectedModels.length} models ready to select)
+                                                </span>
+                                                <span style={{ fontSize: '11px', color: '#10b981', fontWeight: 600 }}>
+                                                    ● Verified live from endpoint
+                                                </span>
+                                            </div>
+                                            <select
+                                                value={detectedModels.includes(currentConfig.model) ? currentConfig.model : ''}
+                                                onChange={(e) => {
+                                                    if (e.target.value) {
+                                                        handleSelectPresetModel(e.target.value);
+                                                    }
+                                                }}
+                                                style={{
+                                                    width: '100%',
+                                                    padding: '9px 12px',
+                                                    borderRadius: '6px',
+                                                    border: '1px solid rgba(0, 229, 255, 0.5)',
+                                                    background: '#070b14',
+                                                    color: '#00e5ff',
+                                                    fontSize: '13px',
+                                                    fontFamily: 'monospace',
+                                                    fontWeight: 600,
+                                                    cursor: 'pointer',
+                                                    outline: 'none'
+                                                }}
+                                            >
+                                                <option value="">-- Click here to select a scanned model ({detectedModels.length} available) --</option>
+                                                {detectedModels.map(m => (
+                                                    <option key={m} value={m}>
+                                                        {m}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                    )}
 
                                     {/* Current Active Model Input + Add New Model Input */}
                                     <div style={{ display: 'flex', gap: '8px' }}>
@@ -949,23 +1030,47 @@ export default function AiProviderModal({
                                             {showApiKey ? 'Hide Key' : 'Show Key'}
                                         </button>
                                     </div>
-                                    <input
-                                        type={showApiKey ? 'text' : 'password'}
-                                        value={currentConfig.apiKey || ''}
-                                        onChange={(e) => handleUpdateField('apiKey', e.target.value)}
-                                        placeholder={currentConfig.id === 'anthropic' ? 'sk-ant-api03-...' : (currentConfig.id === 'openrouter' ? 'sk-or-v1-...' : 'sk-... or enter your key')}
-                                        style={{
-                                            width: '100%',
-                                            padding: '9px 12px',
-                                            borderRadius: '8px',
-                                            border: '1px solid rgba(255, 255, 255, 0.12)',
-                                            background: 'rgba(15, 23, 42, 0.6)',
-                                            color: '#f8fafc',
-                                            fontSize: '13px',
-                                            fontFamily: 'monospace',
-                                            boxSizing: 'border-box'
-                                        }}
-                                    />
+                                    <div style={{ display: 'flex', gap: '8px' }}>
+                                        <input
+                                            type={showApiKey ? 'text' : 'password'}
+                                            value={currentConfig.apiKey || ''}
+                                            onChange={(e) => handleUpdateField('apiKey', e.target.value)}
+                                            placeholder={currentConfig.id === 'anthropic' ? 'sk-ant-api03-...' : (currentConfig.id === 'openrouter' ? 'sk-or-v1-...' : (currentConfig.id === 'opencodezen' ? 'sk-... Paste OpenCode Zen API key' : 'sk-... or enter your key'))}
+                                            style={{
+                                                flex: 1,
+                                                padding: '9px 12px',
+                                                borderRadius: '8px',
+                                                border: '1px solid rgba(255, 255, 255, 0.12)',
+                                                background: 'rgba(15, 23, 42, 0.6)',
+                                                color: '#f8fafc',
+                                                fontSize: '13px',
+                                                fontFamily: 'monospace',
+                                                boxSizing: 'border-box'
+                                            }}
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() => handleScanModels(currentConfig)}
+                                            disabled={isScanningModels}
+                                            title="Scan models immediately using this endpoint and pasted API key"
+                                            style={{
+                                                padding: '8px 16px',
+                                                borderRadius: '8px',
+                                                border: '1px solid #00e5ff',
+                                                background: isScanningModels ? 'rgba(0, 229, 255, 0.1)' : 'rgba(0, 229, 255, 0.2)',
+                                                color: '#00e5ff',
+                                                fontSize: '12px',
+                                                fontWeight: 700,
+                                                cursor: isScanningModels ? 'wait' : 'pointer',
+                                                whiteSpace: 'nowrap',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                gap: '6px'
+                                            }}
+                                        >
+                                            {isScanningModels ? '⏳ Scanning...' : '🔄 Scan Models with Key'}
+                                        </button>
+                                    </div>
                                 </div>
 
                                 {/* Connection Test Action */}

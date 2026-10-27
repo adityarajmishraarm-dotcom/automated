@@ -5,17 +5,17 @@ import ElementEditModal from './ElementEditModal.jsx';
 const DEFAULT_LAYOUT = {
     cardScale: 1.0,
     gridCols: 4,
-    clockSize: 56,
+    clockSize: 42,
     searchWidth: 780,
-    showClock: true,
+    showClock: false, // In image 2 greeting is hero without bulky clock
     showGreeting: true,
-    showBadge: true,
+    showBadge: false, // Badge is in tab strip in image 2
     showSearchBar: true,
     showShortcuts: true,
     showFeaturePills: true,
     timeFormat: '12h',
     customGreeting: '',
-    sectionOrder: ['time', 'badge', 'search', 'shortcuts', 'features'],
+    sectionOrder: ['time', 'search', 'shortcuts', 'features'],
     positions: {}
 };
 
@@ -27,7 +27,9 @@ const DEFAULT_SHORTCUTS = [
     { id: 'sc-5', name: 'Hacker News', desc: 'Tech & Startups', icon: '🔶', color: '#ff6600', url: 'https://news.ycombinator.com' },
     { id: 'sc-6', name: 'Reddit', desc: 'Communities', icon: '💬', color: '#f97316', url: 'https://www.reddit.com' },
     { id: 'sc-7', name: 'ChatGPT', desc: 'AI Assistant', icon: '🤖', color: '#10b981', url: 'https://chatgpt.com' },
-    { id: 'sc-8', name: 'AutoFill Demo', desc: 'Checkout Testbed', icon: '⚡', color: '#00e5ff', demo: 'checkout' }
+    { id: 'sc-8', name: 'Spotify', desc: 'Music & Podcasts', icon: '🎵', color: '#1db954', url: 'https://spotify.com' },
+    { id: 'sc-9', name: 'AutoFill Demo', desc: 'Checkout Testbed', icon: '⚡', color: '#00e5ff', demo: 'checkout' },
+    { id: 'sc-10', name: 'X / Twitter', desc: 'Social & Trends', icon: '𝕏', color: '#e2e8f0', url: 'https://x.com' }
 ];
 
 export default function NewTabPage({
@@ -47,7 +49,7 @@ export default function NewTabPage({
     // Persistent Layout State
     const [layout, setLayout] = useState(() => {
         try {
-            const saved = localStorage.getItem('antigravity_ntp_layout');
+            const saved = localStorage.getItem('nexora_ntp_layout');
             if (saved) {
                 const parsed = JSON.parse(saved);
                 const rawOrder = Array.isArray(parsed.sectionOrder) && parsed.sectionOrder.length > 0
@@ -62,7 +64,7 @@ export default function NewTabPage({
                     positions: parsed.positions || {}
                 };
             }
-        } catch (e) {}
+        } catch (e) { }
         return DEFAULT_LAYOUT;
     });
     const layoutRef = useRef(layout);
@@ -71,12 +73,12 @@ export default function NewTabPage({
     // Persistent Shortcuts State
     const [shortcuts, setShortcuts] = useState(() => {
         try {
-            const saved = localStorage.getItem('antigravity_home_shortcuts');
+            const saved = localStorage.getItem('nexora_home_shortcuts');
             if (saved) {
                 const parsed = JSON.parse(saved);
                 if (Array.isArray(parsed) && parsed.length > 0) return parsed;
             }
-        } catch (e) {}
+        } catch (e) { }
         return DEFAULT_SHORTCUTS;
     });
 
@@ -94,7 +96,7 @@ export default function NewTabPage({
     // Edit Mode Toggle state (strictly persisted to localStorage)
     const [isEditMode, setIsEditMode] = useState(() => {
         try {
-            return localStorage.getItem('antigravity_ntp_edit_mode') === 'true';
+            return localStorage.getItem('nexora_ntp_edit_mode') === 'true';
         } catch (e) {
             return false;
         }
@@ -103,7 +105,7 @@ export default function NewTabPage({
     const toggleEditMode = () => {
         setIsEditMode(prev => {
             const next = !prev;
-            try { localStorage.setItem('antigravity_ntp_edit_mode', String(next)); } catch (e) {}
+            try { localStorage.setItem('nexora_ntp_edit_mode', String(next)); } catch (e) { }
             if (next) {
                 showToast('✏️ Edit Mode ON: Drag to rearrange, click any item to resize with Canva handles');
             } else {
@@ -135,12 +137,12 @@ export default function NewTabPage({
     // Save helper routines
     const saveLayout = (updated) => {
         setLayout(updated);
-        try { localStorage.setItem('antigravity_ntp_layout', JSON.stringify(updated)); } catch (e) {}
+        try { localStorage.setItem('nexora_ntp_layout', JSON.stringify(updated)); } catch (e) { }
     };
 
     const saveShortcuts = (updated) => {
         setShortcuts(updated);
-        try { localStorage.setItem('antigravity_home_shortcuts', JSON.stringify(updated)); } catch (e) {}
+        try { localStorage.setItem('nexora_home_shortcuts', JSON.stringify(updated)); } catch (e) { }
     };
 
     // Time update loop
@@ -365,7 +367,7 @@ export default function NewTabPage({
                     setDraggedIndex(null);
                     return;
                 }
-            } catch (err) {}
+            } catch (err) { }
         }
 
         const textData = e.dataTransfer.getData('text/plain') || e.dataTransfer.getData('text/uri-list');
@@ -734,8 +736,8 @@ export default function NewTabPage({
                         onClick={(e) => {
                             e.stopPropagation();
                             const codeId = targetId === 'time' ? 'element_ntp_clock' :
-                                           targetId === 'search' ? 'element_ntp_search_bar' :
-                                           'element_speed_dial';
+                                targetId === 'search' ? 'element_ntp_search_bar' :
+                                    'element_speed_dial';
                             setActiveEditingElement(codeId);
                         }}
                     >
@@ -857,7 +859,7 @@ export default function NewTabPage({
                     handleDragEnd();
                     return;
                 }
-            } catch (err) {}
+            } catch (err) { }
         }
         const textData = e.dataTransfer.getData('text/plain') || e.dataTransfer.getData('text/uri-list');
         if (textData && (textData.startsWith('http://') || textData.startsWith('https://'))) {
@@ -1001,7 +1003,7 @@ export default function NewTabPage({
     const currentGreeting = layout.customGreeting || defaultGreeting;
 
     const renderSection = (sectionId) => {
-        if (sectionId === 'time' && layout.showClock) {
+        if (sectionId === 'time' && (layout.showClock || layout.showGreeting)) {
             const timePos = layout.positions && layout.positions['time'];
             const timeStyle = timePos
                 ? {
@@ -1055,16 +1057,27 @@ export default function NewTabPage({
                                 }
                             }}
                         >
-                            <div
-                                className={`clock-display ${isEditMode ? 'editable' : 'locked'}`}
-                                id="clockDisplay"
-                                style={{ fontSize: `${layout.clockSize}px`, cursor: isEditMode ? 'pointer' : 'default' }}
-                                title={isEditMode ? "Click to toggle 12h / 24h format" : undefined}
-                                onClick={isEditMode ? () => saveLayout({ ...layout, timeFormat: layout.timeFormat === '12h' ? '24h' : '12h' }) : undefined}
-                            >
-                                {timeStr || '12:00 PM'}
-                            </div>
-                            
+                            {layout.showClock && (
+                                <div
+                                    className={`clock-display ${isEditMode ? 'editable' : 'locked'}`}
+                                    id="live-clock"
+                                    style={{
+                                        fontSize: `${layout.clockSize}px`,
+                                        cursor: isEditMode ? 'pointer' : 'default',
+                                        fontFamily: 'var(--font-display)',
+                                        fontWeight: 600,
+                                        color: '#00f0ff',
+                                        filter: 'drop-shadow(0 8px 32px rgba(0, 219, 233, 0.25))',
+                                        letterSpacing: '-0.03em',
+                                        marginBottom: '6px'
+                                    }}
+                                    title={isEditMode ? "Click to toggle 12h / 24h format" : undefined}
+                                    onClick={isEditMode ? () => saveLayout({ ...layout, timeFormat: layout.timeFormat === '12h' ? '24h' : '12h' }) : undefined}
+                                >
+                                    {timeStr || '12:00'}
+                                </div>
+                            )}
+
                             {layout.showGreeting && (
                                 <div className="greeting-wrapper">
                                     {isEditMode && isEditingGreetingInline ? (
@@ -1099,8 +1112,16 @@ export default function NewTabPage({
                                                 setInlineGreetingText(layout.customGreeting || defaultGreeting);
                                                 setIsEditingGreetingInline(true);
                                             } : undefined}
+                                            style={{
+                                                color: '#e2e8f0',
+                                                fontSize: '18px',
+                                                fontWeight: 500,
+                                                letterSpacing: '-0.01em',
+                                                margin: '10px 0 16px 0',
+                                                textAlign: 'center'
+                                            }}
                                         >
-                                            <span>{currentGreeting}! Where would you like to go today?</span>
+                                            <span>{currentGreeting}, Explorer. Where would you like to navigate today?</span>
                                             {isEditMode && <span className="greeting-edit-icon">✏️</span>}
                                         </div>
                                     )}
@@ -1116,7 +1137,7 @@ export default function NewTabPage({
             const badgePos = layout.positions && layout.positions['badge'];
             const badgeStyle = badgePos
                 ? { position: 'absolute', left: `${badgePos.x}px`, top: `${badgePos.y}px`, zIndex: selectedId === 'badge' ? 120 : 90, width: 'max-content' }
-                : {};
+                : { width: 'fit-content', margin: '0 auto 12px auto' };
 
             return (
                 <div
@@ -1139,12 +1160,26 @@ export default function NewTabPage({
                 >
                     {renderCanvaBoundingBox('badge', 'badge')}
                     <div
-                        className="brand-badge"
+                        className="brand-badge-pill"
                         onMouseDown={(e) => {
                             if (isEditMode) startPointerDrag(e, 'badge', 'section');
                         }}
+                        style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '8px',
+                            padding: '5px 16px',
+                            borderRadius: '9999px',
+                            background: 'rgba(11, 14, 22, 0.75)',
+                            backdropFilter: 'blur(24px)',
+                            border: '1px solid rgba(0, 240, 255, 0.25)',
+                            boxShadow: '0 0 24px rgba(0, 240, 255, 0.18)',
+                            userSelect: 'none'
+                        }}
                     >
-                        <span>ANTIGRAVITY NATIVE BROWSER</span>
+                        <img src="assets/logo.png" alt="Nexora" style={{ width: '16px', height: '16px', objectFit: 'contain', filter: 'drop-shadow(0 0 8px rgba(0, 240, 255, 0.6))' }} />
+                        <span style={{ fontFamily: 'var(--font-mono)', fontSize: '11px', color: '#00f0ff', letterSpacing: '0.12em', fontWeight: 700 }}>Nexora Browser</span>
+                        <span style={{ color: '#849495', fontSize: '12px' }}>•</span>
                     </div>
                 </div>
             );
@@ -1155,7 +1190,7 @@ export default function NewTabPage({
             const searchPos = layout.positions && layout.positions['search'];
             const searchStyle = searchPos
                 ? { position: 'absolute', left: `${searchPos.x}px`, top: `${searchPos.y}px`, zIndex: selectedId === 'search' ? 120 : 92, width: `${layout.searchWidth}px`, maxWidth: '95vw' }
-                : { width: '100%', maxWidth: `${layout.searchWidth}px`, margin: '0 auto' };
+                : { width: '100%', maxWidth: `${layout.searchWidth}px`, margin: '0 auto 24px auto' };
 
             return (
                 <div
@@ -1198,42 +1233,197 @@ export default function NewTabPage({
                             }
                         }}
                     >
-                        <form
-                            className="search-wrapper"
-                            onSubmit={handleSearchSubmit}
-                            onMouseDown={(e) => {
-                                if (isEditMode && e.target.tagName !== 'INPUT' && e.target.tagName !== 'BUTTON') {
-                                    startPointerDrag(e, 'search', 'section');
-                                }
+                        <div
+                            className="search-container-aero"
+                            style={{
+                                borderRadius: '18px',
+                                background: 'rgba(14, 22, 42, 0.78)',
+                                backdropFilter: 'blur(32px) saturate(200%)',
+                                border: '1px solid rgba(255, 255, 255, 0.12)',
+                                boxShadow: '0 16px 48px -8px rgba(0, 0, 0, 0.6), 0 0 1px 1px rgba(0, 240, 255, 0.1)',
+                                padding: '10px 14px'
                             }}
                         >
-                            {/* Unified Search Engine Switcher directly inside the single search bar */}
-                            <button
-                                type="button"
-                                className="engine-toggle-pill"
-                                id="btnToggleEngine"
-                                onClick={() => onSetEngine(activeEngine === 'google' ? 'brave' : 'google')}
-                                title={`Searching with ${activeEngine === 'brave' ? 'Brave' : 'Google'}. Click to switch engine.`}
+                            <form
+                                className="search-wrapper"
+                                onSubmit={handleSearchSubmit}
+                                style={{ display: 'flex', alignItems: 'center', gap: '10px' }}
+                                onMouseDown={(e) => {
+                                    if (isEditMode && e.target.tagName !== 'INPUT' && e.target.tagName !== 'BUTTON') {
+                                        startPointerDrag(e, 'search', 'section');
+                                    }
+                                }}
                             >
-                                <span className="engine-toggle-icon">{activeEngine === 'brave' ? '🦁' : '🔍'}</span>
-                                <span className="engine-toggle-name">{activeEngine === 'brave' ? 'Brave' : 'Google'}</span>
-                                <span className="engine-toggle-arrow">⇄</span>
-                            </button>
-                            <input
-                                type="text"
-                                id="ntpSearchInput"
-                                className="search-box with-engine-pill"
-                                placeholder={placeholder}
-                                value={query}
-                                onChange={(e) => setQuery(e.target.value)}
-                                autoComplete="off"
-                                spellCheck="false"
-                                autoFocus
-                            />
-                            <button type="submit" className="btn-submit-search" id="btnSubmitSearch">
-                                Search
-                            </button>
-                        </form>
+                                {/* Unified Search Engine Switcher directly inside the single search bar */}
+                                <button
+                                    type="button"
+                                    className="engine-toggle-pill"
+                                    id="btnToggleEngine"
+                                    onClick={() => onSetEngine(activeEngine === 'google' ? 'brave' : 'google')}
+                                    title={`Searching with ${activeEngine === 'brave' ? 'Brave' : 'Google'}. Click to switch engine.`}
+                                    style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '6px',
+                                        padding: '7px 12px',
+                                        borderRadius: '12px',
+                                        background: 'rgba(39, 42, 51, 0.85)',
+                                        border: '1px solid rgba(255, 255, 255, 0.1)',
+                                        color: '#f8fafc',
+                                        fontFamily: 'var(--font-sans)',
+                                        fontSize: '13px',
+                                        fontWeight: 500,
+                                        cursor: 'pointer'
+                                    }}
+                                >
+                                    <span className="material-symbols-outlined" style={{ fontSize: '18px', color: '#00f0ff' }}>travel_explore</span>
+                                    <span>{activeEngine === 'brave' ? 'Brave' : 'Google'}</span>
+                                    <span className="material-symbols-outlined" style={{ fontSize: '15px', color: '#94a3b8' }}>sync_alt</span>
+                                </button>
+                                <input
+                                    type="text"
+                                    id="ntpSearchInput"
+                                    className="search-box with-engine-pill"
+                                    placeholder="Search the decentralized web, enter query or jump to URI..."
+                                    value={query}
+                                    onChange={(e) => setQuery(e.target.value)}
+                                    autoComplete="off"
+                                    spellCheck="false"
+                                    autoFocus
+                                    style={{
+                                        flex: 1,
+                                        background: 'transparent',
+                                        border: 'none',
+                                        outline: 'none',
+                                        padding: '6px 10px',
+                                        color: '#f8fafc',
+                                        fontFamily: 'var(--font-sans)',
+                                        fontSize: '15px'
+                                    }}
+                                />
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                    <button
+                                        aria-label="Voice Query"
+                                        type="button"
+                                        style={{ width: '36px', height: '36px', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'transparent', border: 'none', color: '#94a3b8', cursor: 'pointer' }}
+                                    >
+                                        <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>mic</span>
+                                    </button>
+                                    <button
+                                        aria-label="Visual Search"
+                                        type="button"
+                                        style={{ width: '36px', height: '36px', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'transparent', border: 'none', color: '#94a3b8', cursor: 'pointer' }}
+                                    >
+                                        <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>photo_camera</span>
+                                    </button>
+                                    <button
+                                        aria-label="Privacy Proxy Toggle"
+                                        type="button"
+                                        title="DNS-over-HTTPS Active"
+                                        style={{ width: '36px', height: '36px', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'transparent', border: 'none', color: '#00dbe9', cursor: 'pointer' }}
+                                    >
+                                        <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>verified_user</span>
+                                    </button>
+                                    <button
+                                        type="submit"
+                                        className="btn-submit-search"
+                                        id="btnSubmitSearch"
+                                        style={{
+                                            marginLeft: '4px',
+                                            padding: '8px 18px',
+                                            borderRadius: '12px',
+                                            background: 'linear-gradient(135deg, #00dbe9 0%, #0053db 100%)',
+                                            border: 'none',
+                                            color: '#060810',
+                                            fontFamily: 'var(--font-sans)',
+                                            fontSize: '13px',
+                                            fontWeight: 600,
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: '6px',
+                                            cursor: 'pointer',
+                                            boxShadow: '0 0 18px rgba(0, 219, 233, 0.4)'
+                                        }}
+                                    >
+                                        <span>Search</span>
+                                        <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>arrow_forward</span>
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+
+                        {/* Quicktags Strip directly beneath Omnibox */}
+                        <div
+                            style={{
+                                width: '100%',
+                                marginTop: '12px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'space-between',
+                                padding: '6px 14px',
+                                borderRadius: '14px',
+                                background: 'rgba(10, 16, 30, 0.65)',
+                                backdropFilter: 'blur(20px)',
+                                border: '1px solid rgba(255, 255, 255, 0.08)'
+                            }}
+                        >
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', overflowX: 'auto' }}>
+                                <button
+                                    type="button"
+                                    onClick={handleOpenAddSite}
+                                    style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '5px',
+                                        padding: '4px 10px',
+                                        borderRadius: '8px',
+                                        background: 'rgba(255, 255, 255, 0.05)',
+                                        border: '1px solid rgba(255, 255, 255, 0.12)',
+                                        color: '#00f0ff',
+                                        cursor: 'pointer',
+                                        fontFamily: 'var(--font-sans)',
+                                        fontSize: '12px',
+                                        fontWeight: 500
+                                    }}
+                                >
+                                    <span className="material-symbols-outlined" style={{ fontSize: '15px', color: '#00dbe9' }}>add</span>
+                                    <span>Add Bookmark</span>
+                                </button>
+                                <span style={{ width: '1px', height: '16px', background: 'rgba(255, 255, 255, 0.15)', margin: '0 4px' }} />
+                                <a
+                                    href="https://google.com"
+                                    onClick={(e) => { e.preventDefault(); onNavigate('https://google.com'); }}
+                                    className="speed-dial-tile"
+                                    style={{ padding: '4px 10px', fontSize: '12px' }}
+                                >
+                                    <span>Google</span>
+                                </a>
+                                <a
+                                    href="https://wikipedia.org"
+                                    onClick={(e) => { e.preventDefault(); onNavigate('https://wikipedia.org'); }}
+                                    className="speed-dial-tile"
+                                    style={{ padding: '4px 10px', fontSize: '12px' }}
+                                >
+                                    <span>Wikipedia</span>
+                                </a>
+                                <a
+                                    href="https://news.ycombinator.com"
+                                    onClick={(e) => { e.preventDefault(); onNavigate('https://news.ycombinator.com'); }}
+                                    className="speed-dial-tile"
+                                    style={{ padding: '4px 10px', fontSize: '12px' }}
+                                >
+                                    <span>Hacker News</span>
+                                </a>
+                                <a
+                                    href="https://github.com"
+                                    onClick={(e) => { e.preventDefault(); onNavigate('https://github.com'); }}
+                                    className="speed-dial-tile"
+                                    style={{ padding: '4px 10px', fontSize: '12px' }}
+                                >
+                                    <span>GitHub</span>
+                                </a>
+                            </div>
+                        </div>
                     </CustomizableElementWrapper>
                 </div>
             );
@@ -1284,126 +1474,162 @@ export default function NewTabPage({
                             }}
                             onDrop={handleGridDrop}
                         >
-                        <div
-                            className="shortcuts-grid"
-                            style={{
-                                gridTemplateColumns: `repeat(${layout.gridCols}, 1fr)`,
-                                transform: `scale(${layout.cardScale})`,
-                                transformOrigin: 'top center'
-                            }}
-                        >
-                            {gridShortcuts.map((sc) => {
-                                const originalIndex = shortcuts.indexOf(sc);
-                                const isBeingDragged = isEditMode && draggedIndex === originalIndex;
-                                const isOver = isEditMode && dragOverIndex === originalIndex;
-                                return (
+                            {/* Speed Dial Tabular Strip Header matching Image 2 */}
+                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px', width: '100%', padding: '0 4px' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                    <span className="material-symbols-outlined" style={{ fontSize: '18px', color: '#00f0ff' }}>dashboard</span>
+                                    <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '15px', fontWeight: 600, color: '#f8fafc', margin: 0 }}>Speed Dial Tabular Strip</h2>
+                                    <span style={{ padding: '2px 8px', borderRadius: '6px', background: 'rgba(255, 255, 255, 0.06)', fontFamily: 'var(--font-mono)', fontSize: '11px', color: '#94a3b8' }}>
+                                        {gridShortcuts.length} TILES
+                                    </span>
+                                </div>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                                     <div
+                                        style={{
+                                            display: 'inline-flex',
+                                            alignItems: 'center',
+                                            gap: '6px',
+                                            padding: '4px 10px',
+                                            borderRadius: '8px',
+                                            background: 'rgba(255, 255, 255, 0.05)',
+                                            border: '1px solid rgba(255, 255, 255, 0.1)',
+                                            color: '#94a3b8',
+                                            fontSize: '12px',
+                                            userSelect: 'none'
+                                        }}
+                                    >
+                                        <span>Tabular view</span>
+                                        <span className="material-symbols-outlined" style={{ fontSize: '14px' }}>grid_view</span>
+                                    </div>
+                                    {isEditMode && (
+                                        <button
+                                            type="button"
+                                            onClick={handleOpenAddSite}
+                                            style={{ padding: '4px 10px', borderRadius: '8px', background: 'rgba(0, 240, 255, 0.15)', border: '1px solid rgba(0, 240, 255, 0.3)', color: '#00f0ff', fontSize: '12px', cursor: 'pointer' }}
+                                        >
+                                            + Add Tile
+                                        </button>
+                                    )}
+                                </div>
+                            </div>
+
+                            {/* Sleek Horizontal Speed Dial Pill Strip (Image 2) */}
+                            <div
+                                className="speed-dial-track"
+                                style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '10px',
+                                    flexWrap: 'wrap',
+                                    width: '100%',
+                                    marginBottom: '10px'
+                                }}
+                            >
+                                {gridShortcuts.map((sc, originalIndex) => (
+                                    <a
                                         key={sc.id || `sc-${originalIndex}`}
                                         id={`item-${sc.id}`}
-                                        className={`shortcut-card ${isBeingDragged ? 'dragging' : ''} ${isOver ? 'drag-over' : ''} ${isEditMode ? 'editable' : 'locked'} ${isEditMode && selectedId === sc.id ? 'canva-selected' : ''}`}
-                                        draggable={isEditMode}
-                                        onDragStart={(e) => handleDragStart(e, originalIndex)}
-                                        onDragOver={(e) => handleDragOver(e, originalIndex)}
-                                        onDragLeave={handleDragLeave}
-                                        onDrop={(e) => handleDrop(e, originalIndex)}
-                                        onDragEnd={handleDragEnd}
-                                        onMouseDown={(e) => {
-                                            if (isEditMode) {
-                                                startPointerDrag(e, sc.id, 'shortcut');
-                                            }
-                                        }}
+                                        href={sc.url || '#'}
+                                        className="speed-dial-tile"
                                         onClick={(e) => {
-                                            if (isEditMode) {
-                                                e.stopPropagation();
-                                                setSelectedId(sc.id);
-                                            } else {
-                                                if (sc.url) onNavigate(sc.url);
-                                                else if (sc.demo === 'checkout') onNavigate('demo_checkout.html');
-                                            }
+                                            e.preventDefault();
+                                            if (sc.url) onNavigate(sc.url);
+                                            else if (sc.demo === 'checkout') onNavigate('demo_checkout.html');
                                         }}
-                                        title={isEditMode ? `${sc.name} (${sc.url || 'Demo'})\nDrag anywhere freely to place, click to resize with Canva handles` : `${sc.name} (${sc.url || 'Demo'})\nClick to open`}
+                                        title={`${sc.name} (${sc.url || 'Demo'})\nClick to open`}
                                     >
-                                        {renderCanvaBoundingBox(sc.id, 'shortcut', { shortcut: sc })}
-                                        {/* Card Hover Action Buttons (strictly in Edit Mode) */}
-                                        {isEditMode && (
-                                            <div className="shortcut-card-actions">
-                                                <span
-                                                    className="shortcut-card-btn drag-btn"
-                                                    title="Click and drag to place anywhere on the home page"
-                                                    onMouseDown={(e) => startPointerDrag(e, sc.id, 'shortcut')}
-                                                >
-                                                    ⋮⋮
-                                                </span>
-                                                <button
-                                                    type="button"
-                                                    className="shortcut-card-btn move-btn"
-                                                    title="Move left"
-                                                    disabled={originalIndex === 0}
-                                                    onClick={(e) => moveShortcut(e, originalIndex, -1)}
-                                                >
-                                                    ◀
-                                                </button>
-                                                <button
-                                                    type="button"
-                                                    className="shortcut-card-btn move-btn"
-                                                    title="Move right"
-                                                    disabled={originalIndex === shortcuts.length - 1}
-                                                    onClick={(e) => moveShortcut(e, originalIndex, 1)}
-                                                >
-                                                    ▶
-                                                </button>
-                                                <button
-                                                    type="button"
-                                                    className="shortcut-card-btn edit"
-                                                    title="Edit site details"
-                                                    onClick={(e) => handleOpenEditSite(e, sc)}
-                                                >
-                                                    ✏️
-                                                </button>
-                                                <button
-                                                    type="button"
-                                                    className="shortcut-card-btn delete"
-                                                    title="Remove shortcut"
-                                                    onClick={(e) => handleDeleteSite(e, sc.id)}
-                                                >
-                                                    ✕
-                                                </button>
-                                            </div>
-                                        )}
-
-                                        <div className="shortcut-icon" style={{ color: sc.color }}>
+                                        <div
+                                            className="tile-icon"
+                                            style={{
+                                                background: sc.color ? `${sc.color}22` : 'rgba(255, 255, 255, 0.08)',
+                                                color: sc.color || '#00f0ff',
+                                                border: `1px solid ${sc.color ? `${sc.color}44` : 'rgba(255, 255, 255, 0.15)'}`
+                                            }}
+                                        >
                                             {sc.icon}
                                         </div>
-                                        <span className="shortcut-title">{sc.name}</span>
-                                        <span className="shortcut-desc">{sc.desc}</span>
-                                    </div>
-                                );
-                            })}
+                                        <span style={{ fontFamily: 'var(--font-sans)', fontSize: '13px', fontWeight: 500, color: '#f8fafc' }}>
+                                            {sc.name}
+                                        </span>
+                                        <span className="material-symbols-outlined tile-arrow" style={{ fontSize: '13px', color: 'rgba(255, 255, 255, 0.4)' }}>
+                                            north_east
+                                        </span>
+                                    </a>
+                                ))}
 
-                            {/* Add Site New Tile (strictly in Edit Mode) */}
-                            {isEditMode && (
-                                <div
-                                    className="shortcut-card shortcut-add-card"
-                                    title="Add a new custom site or link"
+                                <button
+                                    type="button"
                                     onClick={handleOpenAddSite}
+                                    className="speed-dial-tile"
+                                    style={{ padding: '8px 12px', color: '#94a3b8', background: 'rgba(255, 255, 255, 0.03)' }}
+                                    title="Add custom shortcut"
                                 >
-                                    <div className="shortcut-icon add-icon">➕</div>
-                                    <span className="shortcut-title">Add Site</span>
-                                    <span className="shortcut-desc">Custom Shortcut</span>
+                                    <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>more_horiz</span>
+                                </button>
+                            </div>
+
+                            {/* Secondary Actions & Latency Sparkline */}
+                            <div style={{ width: '100%', display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: '16px', marginTop: '22px' }}>
+                                <button
+                                    type="button"
+                                    onClick={handleOpenAddSite}
+                                    style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '12px',
+                                        padding: '10px 18px',
+                                        borderRadius: '16px',
+                                        background: 'rgba(14, 22, 42, 0.78)',
+                                        backdropFilter: 'blur(32px)',
+                                        border: '1px solid rgba(255, 255, 255, 0.1)',
+                                        color: '#94a3b8',
+                                        cursor: 'pointer',
+                                        transition: 'all 0.2s ease'
+                                    }}
+                                >
+                                    <span style={{ width: '32px', height: '32px', borderRadius: '10px', background: 'rgba(255, 255, 255, 0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#00dbe9' }}>
+                                        <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>add_link</span>
+                                    </span>
+                                    <div style={{ textAlign: 'left' }}>
+                                        <div style={{ fontFamily: 'var(--font-sans)', fontSize: '13px', fontWeight: 600, color: '#f8fafc' }}>Add Web Shortcut</div>
+                                        <div style={{ fontSize: '11px', color: '#849495' }}>Pin specific URL with custom icon</div>
+                                    </div>
+                                </button>
+
+                                <div
+                                    style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '14px',
+                                        padding: '10px 18px',
+                                        borderRadius: '16px',
+                                        background: 'rgba(14, 22, 42, 0.78)',
+                                        backdropFilter: 'blur(32px)',
+                                        border: '1px solid rgba(255, 255, 255, 0.1)'
+                                    }}
+                                >
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                        <span className="material-symbols-outlined" style={{ fontSize: '18px', color: '#00dbe9' }}>insights</span>
+                                        <span style={{ fontFamily: 'var(--font-mono)', fontSize: '11px', color: '#94a3b8' }}>ENGINE LATENCY</span>
+                                    </div>
+                                    <svg style={{ width: '100px', height: '24px', overflow: 'visible', color: '#00f0ff' }} fill="none" viewBox="0 0 100 24">
+                                        <path d="M0 16 L20 18 L35 8 L50 14 L65 4 L80 12 L100 7" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" />
+                                        <circle cx="100" cy="7" fill="currentColor" r="2.5" />
+                                    </svg>
+                                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: '12px', color: '#00f0ff', fontWeight: 'bold' }}>1.4ms</span>
                                 </div>
-                            )}
+                            </div>
                         </div>
-                    </div>
-                </CustomizableElementWrapper>
-            </div>
-        );
-    }
+                    </CustomizableElementWrapper>
+                </div>
+            );
+        }
 
         if (sectionId === 'features' && layout.showFeaturePills) {
             const featPos = layout.positions && layout.positions['features'];
             const featStyle = featPos
                 ? { position: 'absolute', left: `${featPos.x}px`, top: `${featPos.y}px`, zIndex: selectedId === 'features' ? 120 : 80, width: 'max-content' }
-                : {};
+                : { width: '100%', margin: '20px 0' };
 
             return (
                 <div
@@ -1430,11 +1656,49 @@ export default function NewTabPage({
                         onMouseDown={(e) => {
                             if (isEditMode) startPointerDrag(e, 'features', 'section');
                         }}
+                        style={{
+                            display: 'flex',
+                            flexWrap: 'wrap',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            gap: '12px',
+                            padding: '10px 16px',
+                            borderRadius: '16px',
+                            background: 'rgba(10, 16, 30, 0.75)',
+                            backdropFilter: 'blur(24px)',
+                            border: '1px solid rgba(255, 255, 255, 0.08)',
+                            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4)'
+                        }}
                     >
-                        <span className="pill active">🛡️ Native Adblock Active</span>
-                        <span className="pill active">⚡ In-Process Chromium</span>
-                        <span className="pill active">🔒 Zero CDP Port Leaks</span>
-                        <span className="pill active">🤖 React Native Desktop App</span>
+                        <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '8px' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '6px 12px', borderRadius: '10px', background: 'rgba(25, 27, 36, 0.7)', border: '1px solid rgba(255, 255, 255, 0.08)', color: '#f8fafc', fontSize: '12px' }}>
+                                <span className="material-symbols-outlined" style={{ fontSize: '16px', color: '#00dbe9' }}>shield</span>
+                                <span>Native Adblock Active</span>
+                                <span style={{ padding: '1px 6px', borderRadius: '10px', background: 'rgba(0, 240, 255, 0.2)', color: '#00f0ff', fontFamily: 'var(--font-mono)', fontSize: '10px', fontWeight: 700 }}>99.8%</span>
+                            </div>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '6px 12px', borderRadius: '10px', background: 'rgba(25, 27, 36, 0.7)', border: '1px solid rgba(255, 255, 255, 0.08)', color: '#f8fafc', fontSize: '12px' }}>
+                                <span className="material-symbols-outlined" style={{ fontSize: '16px', color: '#00f0ff' }}>bolt</span>
+                                <span>In-Process Chromium</span>
+                            </div>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '6px 12px', borderRadius: '10px', background: 'rgba(25, 27, 36, 0.7)', border: '1px solid rgba(255, 255, 255, 0.08)', color: '#f8fafc', fontSize: '12px' }}>
+                                <span className="material-symbols-outlined" style={{ fontSize: '16px', color: '#8b5cf6' }}>lock</span>
+                                <span>Zero CDP Port Leaks</span>
+                            </div>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '6px 12px', borderRadius: '10px', background: 'rgba(25, 27, 36, 0.7)', border: '1px solid rgba(255, 255, 255, 0.08)', color: '#f8fafc', fontSize: '12px' }}>
+                                <span className="material-symbols-outlined" style={{ fontSize: '16px', color: '#2563eb' }}>deployed_code</span>
+                                <span>React Native Desktop Core</span>
+                            </div>
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '6px 12px', borderRadius: '10px', background: 'rgba(39, 42, 51, 0.8)', color: '#f8fafc', fontFamily: 'var(--font-mono)', fontSize: '11px' }}>
+                                <span className="material-symbols-outlined" style={{ fontSize: '16px', color: '#00f0ff' }}>battery_charging_90</span>
+                                <span>98% PLUGGED IN</span>
+                            </div>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '6px 12px', borderRadius: '10px', background: 'rgba(39, 42, 51, 0.8)', color: '#f8fafc', fontFamily: 'var(--font-mono)', fontSize: '11px' }}>
+                                <span className="material-symbols-outlined" style={{ fontSize: '16px', color: '#00dbe9' }}>memory</span>
+                                <span style={{ color: '#00f0ff' }}>RAM: 142 MB</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             );
@@ -1452,7 +1716,15 @@ export default function NewTabPage({
             onClick={(e) => {
                 if (isEditMode && e.target === wrapperRef.current) setSelectedId(null);
             }}
+            style={{ position: 'relative', overflowX: 'hidden' }}
         >
+            {/* Ambient Atmospheric Nebulae from Aero Dark Glass Redesign */}
+            <div className="ambient-nebulae">
+                <div className="nebula-cyan" />
+                <div className="nebula-blue" />
+                <div className="nebula-purple" />
+                <div className="nebula-bright" />
+            </div>
             {/* Top Right Floating Customize & Bookmarks Action Bar */}
             <div className="ntp-floating-top-bar">
                 {/* Master Edit Mode Toggle Button */}
@@ -1522,7 +1794,7 @@ export default function NewTabPage({
                         {/* Element Sizing Section */}
                         <div className="ntp-custom-section">
                             <h4>📏 Element Sizing & Resizing</h4>
-                            
+
                             <div className="ntp-control-row">
                                 <label>Shortcuts Card Scale: <b>{Math.round(layout.cardScale * 100)}%</b></label>
                                 <input

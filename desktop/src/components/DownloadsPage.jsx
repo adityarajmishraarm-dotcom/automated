@@ -98,7 +98,7 @@ export default function DownloadsPage({
                     <div className="downloads-empty-state">
                         <div className="empty-icon-circle">📥</div>
                         <h2>{searchTerm ? 'No downloads match your search' : 'No downloads yet'}</h2>
-                        <p>{searchTerm ? 'Try searching for another filename or keyword.' : 'Files you download using Antigravity Browser will appear here with live speed and progress.'}</p>
+                        <p>{searchTerm ? 'Try searching for another filename or keyword.' : 'Files you download using Nexora Browser will appear here with live speed and progress.'}</p>
                         <button className="downloads-action-btn primary" onClick={onOpenDownloadsFolder}>
                             Open Downloads Folder
                         </button>

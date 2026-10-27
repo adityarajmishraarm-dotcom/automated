@@ -287,25 +287,33 @@ body[data-theme="matrix"] {
 }
 
 :root {
-    --bg-window: #070b14;
-    --bg-tab-bar: #0a0f1d;
-    --bg-tab-inactive: #0f172a;
-    --bg-tab-active: #1e293b;
-    --bg-toolbar: #0f172a;
-    --bg-omnibox: #070b14;
-    --bg-sidebar: #0a0f1d;
-    --border-color: #1e293b;
-    --border-bright: #334155;
+    --bg-window: #060810;
+    --bg-surface: #11131c;
+    --bg-surface-low: #191b24;
+    --bg-surface-high: #272a33;
+    --bg-surface-highest: #32343e;
+    --bg-tab-bar: rgba(10, 16, 30, 0.72);
+    --bg-tab-inactive: rgba(255, 255, 255, 0.04);
+    --bg-tab-active: rgba(14, 22, 42, 0.88);
+    --bg-toolbar: rgba(25, 27, 36, 0.65);
+    --bg-omnibox: rgba(11, 14, 22, 0.92);
+    --bg-sidebar: #11131c;
+    --border-color: rgba(255, 255, 255, 0.08);
+    --border-bright: rgba(255, 255, 255, 0.15);
+    --border-highlight: rgba(0, 240, 255, 0.35);
     --text-primary: #f8fafc;
     --text-secondary: #94a3b8;
-    --text-muted: #64748b;
-    --accent-cyan: #00e5ff;
+    --text-muted: #475569;
+    --accent-cyan: #00f0ff;
+    --accent-cyan-dim: #00dbe9;
+    --accent-cobalt: #2563eb;
+    --accent-purple: #8b5cf6;
     --accent-yellow: #ffe600;
     --accent-green: #10b981;
-    --accent-red: #ef4444;
-    --font-display: 'Outfit', 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    --font-sans: 'Inter', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
-    --font-mono: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+    --accent-red: #ffb4ab;
+    --font-display: 'Geist', 'Outfit', 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --font-sans: 'Geist', 'Inter', -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
+    --font-mono: 'Space Mono', 'JetBrains Mono', Consolas, monospace;
 }
 
 * {
@@ -941,20 +949,24 @@ body {
 
 /* Main Workspace */
 .main-browser-workspace {
-    flex: 1;
-    display: flex;
-    overflow: hidden;
-    position: relative;
+    flex: 1 !important;
+    display: flex !important;
+    overflow: hidden !important;
+    position: relative !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
 }
 
 /* Webview Container */
 .webview-container {
-    flex: 1;
-    width: 100%;
-    position: relative;
-    background: var(--bg-window);
-    display: flex;
-    flex-direction: column;
+    flex: 1 !important;
+    min-width: 0 !important;
+    width: 100% !important;
+    position: relative !important;
+    background: var(--bg-window) !important;
+    display: flex !important;
+    flex-direction: column !important;
     overflow: hidden !important;
 }
 
@@ -981,13 +993,16 @@ body {
 
 /* AI HUD Sidebar */
 .ai-hud-sidebar {
-    flex: 3;
-    min-width: 380px;
-    max-width: 460px;
+    width: 420px !important;
+    min-width: 360px !important;
+    max-width: 480px !important;
+    flex-shrink: 0 !important;
+    height: 100% !important;
     background: var(--bg-sidebar);
     border-left: 1px solid var(--border-color);
     display: flex;
     flex-direction: column;
+    overflow: hidden !important;
 }
 
 .sidebar-header {
@@ -1618,17 +1633,23 @@ body {
 
 .time-box {
     text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
 }
 
 .clock-display {
     font-size: 56px;
     font-weight: 800;
     letter-spacing: -1.5px;
-    background: linear-gradient(135deg, #ffffff 40%, #94a3b8 100%);
+    background: linear-gradient(135deg, #00f0ff 0%, #ffffff 50%, #94a3b8 100%);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
     font-variant-numeric: tabular-nums;
+    text-align: center;
 }
 
 .greeting-display {
@@ -1637,6 +1658,7 @@ body {
     margin-top: 4px;
     font-weight: 500;
     letter-spacing: 0.3px;
+    text-align: center;
 }
 
 .engine-selector {
@@ -1784,6 +1806,7 @@ body {
 }
 
 .shortcut-title {
+    display: block;
     font-size: 13px;
     font-weight: 600;
     color: var(--text-primary);
@@ -1791,6 +1814,8 @@ body {
 }
 
 .shortcut-desc {
+    display: block;
+    margin-top: 2px;
     font-size: 11px;
     color: var(--text-muted);
 }
@@ -6744,5 +6769,425 @@ body.has-wallpaper .ai-hud-sidebar {
 
 .toolbar-dnd-handle:active {
     cursor: grabbing;
+}
+
+/* ==========================================================================
+   AERO DARK GLASS DESIGN SYSTEM (NEXORA BROWSER)
+   ========================================================================== */
+
+/* Material Symbols Outlined Font Support */
+.material-symbols-outlined {
+    font-family: 'Material Symbols Outlined' !important;
+    font-weight: normal;
+    font-style: normal;
+    font-size: 18px;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+    word-wrap: normal;
+    direction: ltr;
+    -webkit-font-feature-settings: 'liga';
+    -webkit-font-smoothing: antialiased;
+    vertical-align: middle;
+}
+
+/* Glass Stratum Layering */
+.apple-glass {
+    background: rgba(10, 16, 30, 0.72) !important;
+    backdrop-filter: blur(24px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(24px) saturate(180%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37) !important;
+}
+
+.apple-glass-card {
+    background: rgba(14, 22, 42, 0.78) !important;
+    backdrop-filter: blur(32px) saturate(200%) !important;
+    -webkit-backdrop-filter: blur(32px) saturate(200%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    box-shadow: 0 16px 48px -8px rgba(0, 0, 0, 0.6), 0 0 1px 1px rgba(0, 240, 255, 0.1) !important;
+}
+
+.apple-glass-pill {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.apple-glass-pill:hover {
+    background: rgba(0, 240, 255, 0.08) !important;
+    border-color: rgba(0, 240, 255, 0.35) !important;
+    box-shadow: 0 0 16px rgba(0, 240, 255, 0.2) !important;
+}
+
+/* Ambient Nebulae Background Glows */
+.ambient-nebulae {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+}
+
+.nebula-cyan {
+    position: absolute;
+    top: -96px;
+    left: 25%;
+    width: 640px;
+    height: 560px;
+    background: rgba(0, 219, 233, 0.18);
+    border-radius: 50%;
+    filter: blur(130px);
+    pointer-events: none;
+}
+
+.nebula-blue {
+    position: absolute;
+    top: 28%;
+    right: -64px;
+    width: 640px;
+    height: 640px;
+    background: rgba(0, 83, 219, 0.2);
+    border-radius: 50%;
+    filter: blur(150px);
+    pointer-events: none;
+}
+
+.nebula-purple {
+    position: absolute;
+    top: 42%;
+    left: 10%;
+    width: 580px;
+    height: 580px;
+    background: rgba(109, 59, 215, 0.16);
+    border-radius: 50%;
+    filter: blur(140px);
+    pointer-events: none;
+}
+
+.nebula-bright {
+    position: absolute;
+    bottom: -80px;
+    right: 25%;
+    width: 520px;
+    height: 520px;
+    background: rgba(0, 240, 255, 0.12);
+    border-radius: 50%;
+    filter: blur(130px);
+    pointer-events: none;
+}
+
+/* Nexora Brand Styling */
+.nexora-brand-title {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: -0.3px;
+    background: linear-gradient(135deg, #dbfcff 0%, #00f0ff 50%, #2563eb 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 20px rgba(0, 240, 255, 0.4);
+}
+
+/* Redesigned TabStrip */
+.tab-strip-bar {
+    height: 44px !important;
+    background: rgba(10, 16, 30, 0.75) !important;
+    backdrop-filter: blur(24px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(24px) saturate(180%) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+    padding: 0 14px !important;
+    gap: 10px !important;
+}
+
+.native-tab {
+    height: 32px !important;
+    background: rgba(255, 255, 255, 0.04) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-radius: 10px !important;
+    color: #94a3b8 !important;
+    font-family: var(--font-sans) !important;
+    font-size: 12px !important;
+    font-weight: 500 !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
+    transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.native-tab:hover {
+    background: rgba(255, 255, 255, 0.08) !important;
+    border-color: rgba(255, 255, 255, 0.16) !important;
+    color: #f8fafc !important;
+}
+
+.native-tab.active {
+    background: rgba(14, 22, 42, 0.9) !important;
+    border: 1px solid rgba(255, 255, 255, 0.18) !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(0, 240, 255, 0.75) !important;
+    color: #ffffff !important;
+}
+
+/* Redesigned Navigation Toolbar */
+.navigation-toolbar {
+    height: 52px !important;
+    background: rgba(17, 19, 28, 0.78) !important;
+    backdrop-filter: blur(28px) saturate(190%) !important;
+    -webkit-backdrop-filter: blur(28px) saturate(190%) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+    padding: 0 14px !important;
+    gap: 10px !important;
+}
+
+.btn-nav {
+    width: 32px !important;
+    height: 32px !important;
+    border-radius: 8px !important;
+    background: transparent !important;
+    border: 1px solid transparent !important;
+    color: #94a3b8 !important;
+    font-size: 14px !important;
+    transition: all 0.15s ease !important;
+}
+
+.btn-nav:hover {
+    background: rgba(255, 255, 255, 0.08) !important;
+    border-color: rgba(255, 255, 255, 0.12) !important;
+    color: #ffffff !important;
+}
+
+.omnibox-box {
+    background: rgba(6, 8, 16, 0.85) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 12px !important;
+    height: 38px !important;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5) !important;
+    padding: 0 12px !important;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.omnibox-box:focus-within {
+    border-color: rgba(0, 240, 255, 0.5) !important;
+    box-shadow: 0 0 24px rgba(0, 240, 255, 0.22), inset 0 2px 4px rgba(0, 0, 0, 0.5) !important;
+}
+
+.url-input {
+    font-family: var(--font-sans) !important;
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    color: #f8fafc !important;
+}
+
+.url-input::placeholder {
+    color: #849495 !important;
+}
+
+/* Security Badge in Omnibox */
+.omnibox-secure-badge {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    color: #00dbe9;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    user-select: none;
+}
+
+/* AI ON Toggle in Omnibox */
+.omnibox-ai-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 8px;
+    border-radius: 6px;
+    background: rgba(0, 240, 255, 0.15);
+    color: #00f0ff;
+    border: 1px solid rgba(0, 240, 255, 0.3);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.omnibox-ai-pill:hover {
+    background: rgba(0, 240, 255, 0.3);
+    box-shadow: 0 0 12px rgba(0, 240, 255, 0.4);
+}
+
+/* Toolbar Action Buttons */
+.btn-toolbar-tool {
+    height: 32px !important;
+    padding: 0 10px !important;
+    border-radius: 8px !important;
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    color: #cbd5e1 !important;
+    font-family: var(--font-sans) !important;
+    font-size: 12px !important;
+    font-weight: 500 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    transition: all 0.15s ease !important;
+}
+
+.btn-toolbar-tool:hover {
+    background: rgba(255, 255, 255, 0.1) !important;
+    border-color: rgba(255, 255, 255, 0.2) !important;
+    color: #ffffff !important;
+}
+
+.btn-edit-interface {
+    background: rgba(0, 240, 255, 0.15) !important;
+    border: 1px solid rgba(255, 255, 255, 0.22) !important;
+    color: #00f0ff !important;
+    box-shadow: 0 0 18px rgba(0, 219, 233, 0.22) !important;
+}
+
+.btn-edit-interface:hover {
+    background: rgba(0, 240, 255, 0.28) !important;
+    border-color: rgba(255, 255, 255, 0.4) !important;
+    color: #ffffff !important;
+}
+
+/* Speed Dial Tabular Strip */
+.speed-dial-track {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding: 4px 0;
+}
+
+.speed-dial-track::-webkit-scrollbar {
+    display: none;
+}
+
+.speed-dial-tile {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 14px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    color: #f8fafc;
+    text-decoration: none;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.speed-dial-tile:hover {
+    transform: translateY(-3px);
+    background: rgba(0, 240, 255, 0.06);
+    border-color: rgba(0, 240, 255, 0.35);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5), 0 0 16px rgba(0, 240, 255, 0.2);
+    color: #00f0ff;
+}
+
+.speed-dial-tile .tile-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    background: rgba(11, 14, 22, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    flex-shrink: 0;
+    transition: transform 0.2s ease;
+}
+
+.speed-dial-tile:hover .tile-icon {
+    transform: scale(1.08);
+}
+
+.speed-dial-tile .tile-arrow {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.3);
+    transition: all 0.2s ease;
+}
+
+.speed-dial-tile:hover .tile-arrow {
+    color: #00f0ff;
+    transform: translate(2px, -2px);
+}
+
+/* Redesigned Status Footer */
+.nexora-status-footer {
+    height: 34px !important;
+    flex-shrink: 0 !important;
+    position: relative !important;
+    width: 100% !important;
+    z-index: 40 !important;
+    box-sizing: border-box !important;
+    background: rgba(10, 16, 30, 0.9) !important;
+    backdrop-filter: blur(24px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(24px) saturate(180%) !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    padding: 0 18px !important;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: #94a3b8;
+    user-select: none;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.4);
+}
+
+.nexora-status-footer .indicator-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #00dbe9;
+    box-shadow: 0 0 10px #00dbe9;
+    display: inline-block;
+}
+
+/* Telemetry Pills for Image 3 & New Tab Page Footer Section */
+.telemetry-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 10px;
+    background: rgba(22, 27, 40, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: #f8fafc;
+    font-size: 12px;
+    font-family: var(--font-sans);
+    backdrop-filter: blur(16px);
+    transition: all 0.2s ease;
+}
+
+.telemetry-pill:hover {
+    background: rgba(30, 38, 56, 0.85);
+    border-color: rgba(0, 240, 255, 0.3);
+}
+
+.telemetry-badge-cyan {
+    padding: 1px 6px;
+    border-radius: 10px;
+    background: rgba(0, 240, 255, 0.18);
+    color: #00f0ff;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    font-weight: 700;
 }
 

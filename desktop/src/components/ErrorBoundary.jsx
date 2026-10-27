@@ -1,7 +1,7 @@
 import React from 'react';
 
 /**
- * Universal React Error Boundary for Antigravity Browser
+ * Universal React Error Boundary for Nexora Browser
  * Prevents any component, custom element, or renderer exception from crashing the whole browser window.
  */
 export default class ErrorBoundary extends React.Component {
@@ -15,7 +15,7 @@ export default class ErrorBoundary extends React.Component {
     }
 
     componentDidCatch(error, errorInfo) {
-        console.error('[Antigravity ErrorBoundary Caught]:', error, errorInfo);
+        console.error('[Nexora ErrorBoundary Caught]:', error, errorInfo);
         this.setState({ errorInfo });
     }
 

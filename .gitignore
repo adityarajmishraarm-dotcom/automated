@@ -36,5 +36,13 @@ test_yt_status.py
 models_cache/
 *.onnx
 
+# Secrets, Sessions & Python cache
+.env
+*.env
+*.session
+__pycache__/
+*.pyc
+
+
 
 

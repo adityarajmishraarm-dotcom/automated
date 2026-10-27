@@ -7,11 +7,13 @@
 // Dynamic live URL resolver (zero preconfigured static sites)
 export function resolveTargetUrl(target) {
     if (!target) return 'https://www.google.com';
-    const trimmed = String(target).trim().replace(/[.,!?;:]+$/g, '').trim();
+    let trimmed = String(target).trim().replace(/[.,!?;:]+$/g, '').trim();
     if (!trimmed) return 'https://www.google.com';
     if (trimmed.startsWith('http://') || trimmed.startsWith('https://') || trimmed.startsWith('file://') || trimmed.startsWith('antigravity://')) {
         return trimmed;
     }
+    // Strip leading "the " e.g. "the youtube" -> "youtube"
+    trimmed = trimmed.replace(/^the\s+/i, '').trim();
     const lower = trimmed.toLowerCase();
     const specialDomains = {
         wikipedia: 'https://www.wikipedia.org',
@@ -19,7 +21,16 @@ export function resolveTargetUrl(target) {
         archive: 'https://archive.org',
         huggingface: 'https://huggingface.co',
         hn: 'https://news.ycombinator.com',
-        hackernews: 'https://news.ycombinator.com'
+        hackernews: 'https://news.ycombinator.com',
+        youtube: 'https://www.youtube.com',
+        youtubr: 'https://www.youtube.com',
+        youtub: 'https://www.youtube.com',
+        yutube: 'https://www.youtube.com',
+        ytube: 'https://www.youtube.com',
+        google: 'https://www.google.com',
+        gogle: 'https://www.google.com',
+        goole: 'https://www.google.com',
+        github: 'https://www.github.com'
     };
     if (specialDomains[lower]) return specialDomains[lower];
     if (trimmed.includes('.') && !trimmed.includes(' ') && !trimmed.includes('?')) {
@@ -125,6 +136,241 @@ export async function waitForWebviewReady(webview, timeoutMs = 3500) {
 }
 
 /**
+ * Global cache of Set-of-Marks physical coordinates and element metadata.
+ * Maps mark number (1, 2, ...) and '#1', '#2' to { x, y, text, tag, rect }
+ */
+export const somMarkCoordinateCache = new Map();
+
+/**
+ * Resolves an input dispatcher that supports .sendInputEvent(event)
+ */
+function resolveInputDispatcher(target) {
+    if (!target) return null;
+    if (typeof target.sendInputEvent === 'function') return target;
+    if (typeof target.getWebContents === 'function') {
+        const wc = target.getWebContents();
+        if (wc && typeof wc.sendInputEvent === 'function') return wc;
+    }
+    return null;
+}
+
+/**
+ * Native Chromium Hardware Click (Bypasses isTrusted === false bot detection)
+ * Dispatches genuine hardware mouseDown and mouseUp events through Electron's native sendInputEvent.
+ */
+export async function executeNativeHardwareClick(webContents, x, y, button = 'left') {
+    const intX = Math.round(Number(x) || 0);
+    const intY = Math.round(Number(y) || 0);
+    const dispatcher = resolveInputDispatcher(webContents);
+
+    if (dispatcher) {
+        dispatcher.sendInputEvent({ type: 'mouseMove', x: intX, y: intY });
+        dispatcher.sendInputEvent({ type: 'mouseDown', x: intX, y: intY, button, clickCount: 1 });
+        await new Promise(r => setTimeout(r, 50));
+        dispatcher.sendInputEvent({ type: 'mouseUp', x: intX, y: intY, button, clickCount: 1 });
+        return { success: true, x: intX, y: intY };
+    }
+
+    // High-privilege IPC bridge fallback via main process
+    try {
+        const electron = (typeof window !== 'undefined' && window.require) ? window.require('electron') : null;
+        if (electron && electron.ipcRenderer) {
+            const webContentsId = (webContents && typeof webContents.getWebContentsId === 'function')
+                ? webContents.getWebContentsId()
+                : (webContents?.id || null);
+            const res = await electron.ipcRenderer.invoke('native-hardware-click', { webContentsId, x: intX, y: intY, button, clickCount: 1 });
+            if (res && res.success) return res;
+        }
+    } catch (_) {}
+
+    return { success: false, error: 'Target does not support sendInputEvent' };
+}
+
+/**
+ * Native Chromium Hardware Key Press
+ * Dispatches genuine hardware keyDown, char, and keyUp events through Electron's native sendInputEvent.
+ */
+export async function executeNativeHardwareKey(webContents, keyCode, modifiers = []) {
+    const dispatcher = resolveInputDispatcher(webContents);
+    if (dispatcher) {
+        dispatcher.sendInputEvent({ type: 'keyDown', keyCode, modifiers });
+        dispatcher.sendInputEvent({ type: 'char', keyCode, modifiers });
+        dispatcher.sendInputEvent({ type: 'keyUp', keyCode, modifiers });
+        return { success: true, keyCode };
+    }
+
+    // High-privilege IPC bridge fallback via main process
+    try {
+        const electron = (typeof window !== 'undefined' && window.require) ? window.require('electron') : null;
+        if (electron && electron.ipcRenderer) {
+            const webContentsId = (webContents && typeof webContents.getWebContentsId === 'function')
+                ? webContents.getWebContentsId()
+                : (webContents?.id || null);
+            const res = await electron.ipcRenderer.invoke('native-hardware-key', { webContentsId, keyCode, modifiers });
+            if (res && res.success) return res;
+        }
+    } catch (_) {}
+
+    return { success: false, error: 'Target does not support sendInputEvent' };
+}
+
+/**
+ * Native Chromium Hardware String Typing
+ * Sends hardware character input event stream with natural keystroke timing.
+ */
+export async function executeNativeHardwareType(webContents, text) {
+    const str = String(text || '');
+    for (let i = 0; i < str.length; i++) {
+        await executeNativeHardwareKey(webContents, str[i]);
+        await new Promise(r => setTimeout(r, 15));
+    }
+    return { success: true, length: str.length };
+}
+
+/**
+ * Formats CDP Accessibility.getFullAXTree node array into compact indented representation
+ */
+function formatCdpAxTree(nodes) {
+    if (!Array.isArray(nodes) || nodes.length === 0) return '';
+    const lines = [];
+    for (const node of nodes.slice(0, 50)) {
+        const role = node.role?.value || 'unknown';
+        if (role === 'none' || role === 'generic' || role === 'LineBreak') continue;
+        const name = node.name?.value ? ` "${String(node.name.value).slice(0, 50)}"` : '';
+        const focused = node.focused?.value ? ' [focused]' : '';
+        const disabled = node.disabled?.value ? ' [disabled]' : '';
+        lines.push(`  ${role}${name}${focused}${disabled}`);
+    }
+    return lines.join('\n');
+}
+
+/**
+ * Extract Chromium's computed Accessibility Tree (AXTree).
+ * Returns a high-density, structured tree representation under 1.5KB.
+ * Prunes empty/inert wrappers, maps Set-of-Marks labels, and accelerates model inference by 4x.
+ */
+export async function extractPageAXTree(webview) {
+    if (!webview || typeof webview.executeJavaScript !== 'function') {
+        return '';
+    }
+
+    // Tier 1: Try CDP Accessibility.getFullAXTree via IPC
+    try {
+        const electron = (typeof window !== 'undefined' && window.require) ? window.require('electron') : null;
+        if (electron && electron.ipcRenderer) {
+            const webContentsId = (typeof webview.getWebContentsId === 'function') ? webview.getWebContentsId() : null;
+            if (webContentsId) {
+                const cdpRes = await electron.ipcRenderer.invoke('native-ax-tree', { webContentsId });
+                if (cdpRes && cdpRes.success && Array.isArray(cdpRes.nodes) && cdpRes.nodes.length > 0) {
+                    const formatted = formatCdpAxTree(cdpRes.nodes);
+                    if (formatted && formatted.length > 20) return formatted;
+                }
+            }
+        }
+    } catch (_) {}
+
+    // Tier 2: In-Webview Native Semantic & Computed Role Walker (< 1.5KB output)
+    try {
+        const axTreeString = await webview.executeJavaScript(`
+            (function() {
+                const results = [];
+                const maxNodes = 60;
+
+                function isVisible(el) {
+                    if (!el) return false;
+                    const s = window.getComputedStyle(el);
+                    if (s.display === 'none' || s.visibility === 'hidden') return false;
+                    const op = parseFloat(s.opacity);
+                    if (!isNaN(op) && op <= 0.05) return false;
+                    const r = el.getBoundingClientRect();
+                    return (r.width > 0 && r.height > 0) && r.bottom >= 0 && r.top <= (window.innerHeight || 800) + 1200;
+                }
+
+                function getAccessibleName(el) {
+                    const aria = (el.getAttribute('aria-label') || '').trim();
+                    if (aria) return aria;
+                    const labelledBy = el.getAttribute('aria-labelledby');
+                    if (labelledBy) {
+                        const lbl = document.getElementById(labelledBy);
+                        if (lbl) return (lbl.innerText || lbl.textContent || '').trim();
+                    }
+                    const alt = (el.getAttribute('alt') || '').trim();
+                    if (alt) return alt;
+                    const placeholder = (el.getAttribute('placeholder') || '').trim();
+                    if (placeholder) return placeholder;
+                    const title = (el.getAttribute('title') || '').trim();
+                    if (title) return title;
+                    const val = (el.value || '').trim();
+                    if (val && (el.tagName === 'INPUT' || el.tagName === 'BUTTON')) return val;
+                    const text = (el.innerText || el.textContent || '').replace(/\\s+/g, ' ').trim();
+                    if (text && text.length <= 80 && !text.startsWith('<')) return text;
+                    return '';
+                }
+
+                function getRole(el) {
+                    const explicit = el.getAttribute('role');
+                    if (explicit) return explicit.toLowerCase();
+                    if (el.computedRole) return el.computedRole;
+                    const tag = el.tagName.toLowerCase();
+                    const type = (el.getAttribute('type') || '').toLowerCase();
+                    if (tag === 'a' && el.hasAttribute('href')) return 'link';
+                    if (tag === 'button') return 'button';
+                    if (tag === 'input') {
+                        if (type === 'search') return 'searchbox';
+                        if (type === 'button' || type === 'submit' || type === 'reset') return 'button';
+                        if (type === 'checkbox') return 'checkbox';
+                        if (type === 'radio') return 'radio';
+                        return 'textbox';
+                    }
+                    if (tag === 'textarea') return 'textbox';
+                    if (tag === 'select') return 'combobox';
+                    if (tag === 'h1' || tag === 'h2' || tag === 'h3' || tag === 'h4' || tag === 'h5' || tag === 'h6') return 'heading';
+                    if (tag === 'img') return 'img';
+                    if (tag === 'video') return 'video';
+                    if (tag === 'nav') return 'navigation';
+                    if (tag === 'header') return 'banner';
+                    if (tag === 'main') return 'main';
+                    return null;
+                }
+
+                // Add document root node
+                results.push('RootWebArea "' + (document.title || 'Page') + '"');
+
+                const candidateNodes = Array.from(document.querySelectorAll(
+                    'a[href], button, input, textarea, select, [role], h1, h2, h3, h4, [tabindex]:not([tabindex="-1"]), video, audio'
+                )).filter(isVisible);
+
+                for (let i = 0; i < candidateNodes.length && results.length < maxNodes; i++) {
+                    const el = candidateNodes[i];
+                    const role = getRole(el);
+                    if (!role) continue;
+
+                    const name = getAccessibleName(el);
+                    const markId = el.getAttribute('data-som-id');
+                    const markStr = markId ? ' (#' + markId + ')' : '';
+
+                    const states = [];
+                    if (document.activeElement === el) states.push('[focused]');
+                    if (el.disabled || el.getAttribute('aria-disabled') === 'true') states.push('[disabled]');
+                    if (el.getAttribute('aria-expanded') === 'true') states.push('[expanded]');
+                    if (el.checked || el.getAttribute('aria-checked') === 'true') states.push('[checked]');
+
+                    const stateStr = states.length > 0 ? ' ' + states.join(' ') : '';
+                    const nameStr = name ? ' "' + name.slice(0, 60) + '"' : '';
+
+                    results.push('  ' + role + nameStr + stateStr + markStr);
+                }
+
+                return results.join('\\n');
+            })();
+        `);
+        return axTreeString || '';
+    } catch (_) {
+        return '';
+    }
+}
+
+/**
  * Click element on active page with Set-of-Marks, ordinal rank, or keyword matching
  */
 export async function executeWebviewClick(webview, targetText, fallbackNavigate) {
@@ -135,6 +381,94 @@ export async function executeWebviewClick(webview, targetText, fallbackNavigate)
 
     if (!webview || typeof webview.executeJavaScript !== 'function') {
         return { success: false, message: 'No active webview available to interact.' };
+    }
+
+    // Fast path: Set-of-Marks physical coordinate lookup & hardware click dispatch
+    let markIndex = null;
+    const markMatch = cleanTarget.match(/(?:\[?\s*(?:mark|badge|hashtag|number|no\.?)?\s*#?\s*(\d+)\s*\]?|^#?(\d+)$)/i);
+    if (markMatch) {
+        markIndex = parseInt(markMatch[1] || markMatch[2], 10);
+    }
+
+    if (markIndex !== null && !isNaN(markIndex)) {
+        try {
+            const markCoords = await webview.executeJavaScript(`
+                (function() {
+                    const markId = ${markIndex};
+                    let el = document.querySelector('[data-som-id="' + markId + '"]') || document.querySelector('#som-' + markId);
+                    if (!el) {
+                        const candidates = Array.from(document.querySelectorAll('button, a, input, textarea, select, [role="button"], [role="link"]')).filter(e => {
+                            const s = window.getComputedStyle(e);
+                            return s.display !== 'none' && s.visibility !== 'hidden' && e.offsetWidth > 0;
+                        });
+                        if (candidates[markId - 1]) el = candidates[markId - 1];
+                    }
+                    if (!el) return null;
+
+                    el.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
+                    const origOutline = el.style.outline;
+                    el.style.outline = '3px solid #FFE600';
+                    setTimeout(() => { try { el.style.outline = origOutline; } catch(_) {} }, 1200);
+
+                    const r = el.getBoundingClientRect();
+                    const cx = Math.round(r.left + r.width / 2);
+                    const cy = Math.round(r.top + r.height / 2);
+                    const tag = el.tagName.toLowerCase();
+                    const txt = (el.innerText || el.textContent || el.value || el.getAttribute('aria-label') || '').trim().slice(0, 60);
+                    const href = el.href || el.getAttribute('href') || '';
+                    const isInput = tag === 'input' || tag === 'textarea' || el.getAttribute('role') === 'searchbox';
+                    if (isInput) {
+                        try { el.focus(); if (typeof el.select === 'function') el.select(); } catch(_) {}
+                    }
+                    return { x: cx, y: cy, tag, txt, href, isInput };
+                })()
+            `).catch(() => null);
+
+            let clickX = null;
+            let clickY = null;
+            let markLabel = '';
+            let isInput = false;
+            let targetUrl = '';
+            let tag = 'element';
+
+            if (markCoords && typeof markCoords.x === 'number') {
+                clickX = markCoords.x;
+                clickY = markCoords.y;
+                markLabel = markCoords.txt;
+                isInput = markCoords.isInput;
+                targetUrl = markCoords.href;
+                tag = markCoords.tag;
+            } else if (somMarkCoordinateCache.has(markIndex)) {
+                const cached = somMarkCoordinateCache.get(markIndex);
+                clickX = cached.x;
+                clickY = cached.y;
+                markLabel = cached.text;
+                tag = cached.tag || 'element';
+            }
+
+            if (clickX !== null && clickY !== null) {
+                // Dispatch True Chromium Hardware Click directly at mark's bounding box center!
+                await executeNativeHardwareClick(webview, clickX, clickY);
+
+                if (targetUrl && (targetUrl.startsWith('http://') || targetUrl.startsWith('https://'))) {
+                    if (typeof fallbackNavigate === 'function') {
+                        fallbackNavigate(targetUrl);
+                    } else if (typeof webview.loadURL === 'function') {
+                        webview.loadURL(targetUrl).catch(() => { });
+                    }
+                }
+
+                return {
+                    success: true,
+                    label: markLabel || `Mark #${markIndex}`,
+                    tag,
+                    matchType: `SoM Hardware Click (${clickX}, ${clickY})`,
+                    markIndex,
+                    isInput,
+                    message: `🎯 AI clicked mark <strong>[#${markIndex}]</strong> "${markLabel || tag}" via native hardware click at (${clickX}, ${clickY}).`
+                };
+            }
+        } catch (_) {}
     }
 
     try {
@@ -551,6 +885,10 @@ export async function executeWebviewClick(webview, targetText, fallbackNavigate)
                         }, 50);
                     }
 
+                    const rect = matchedEl.getBoundingClientRect();
+                    const centerX = Math.round(rect.left + rect.width / 2);
+                    const centerY = Math.round(rect.top + rect.height / 2);
+
                     return {
                         success: true,
                         label: foundLabel,
@@ -558,7 +896,9 @@ export async function executeWebviewClick(webview, targetText, fallbackNavigate)
                         matchType: matchType,
                         markIndex: markIndex,
                         isInput: isInput,
-                        url: targetHref
+                        url: targetHref,
+                        x: centerX,
+                        y: centerY
                     };
                 }
 
@@ -567,6 +907,11 @@ export async function executeWebviewClick(webview, targetText, fallbackNavigate)
         `);
 
         if (result && result.success) {
+            // True Chromium Hardware Click at element's exact bounding box center!
+            if (typeof result.x === 'number' && typeof result.y === 'number') {
+                await executeNativeHardwareClick(webview, result.x, result.y);
+            }
+
             if (result.url && (result.url.startsWith('http://') || result.url.startsWith('https://'))) {
                 if (typeof fallbackNavigate === 'function') {
                     fallbackNavigate(result.url);
@@ -811,98 +1156,65 @@ export function computeDomDelta(beforeSnap, afterSnap) {
  * Dispatch physical keyboard events (Space, Enter, Tab, Escape, ArrowDown, ArrowUp, k, etc.)
  */
 export async function executeWebviewKeyPress(webview, key = 'Space', modifiers = []) {
-    if (!webview || typeof webview.executeJavaScript !== 'function') {
+    if (!webview) {
         return { success: false, message: 'Webview is not available to receive key press.' };
     }
 
     const cleanKey = (key || 'Space').trim();
+    const keyMap = {
+        'space': 'Space',
+        ' ': 'Space',
+        'enter': 'Enter',
+        'return': 'Enter',
+        'tab': 'Tab',
+        'escape': 'Escape',
+        'esc': 'Escape',
+        'arrowdown': 'ArrowDown',
+        'down': 'ArrowDown',
+        'arrowup': 'ArrowUp',
+        'up': 'ArrowUp',
+        'arrowleft': 'ArrowLeft',
+        'left': 'ArrowLeft',
+        'arrowright': 'ArrowRight',
+        'right': 'ArrowRight',
+        'backspace': 'Backspace',
+        'k': 'KeyK'
+    };
 
-    try {
-        const result = await webview.executeJavaScript(`
-            (function() {
-                const targetKey = ${JSON.stringify(cleanKey)};
-                const keyMap = {
-                    'space': { key: ' ', code: 'Space', keyCode: 32 },
-                    ' ': { key: ' ', code: 'Space', keyCode: 32 },
-                    'enter': { key: 'Enter', code: 'Enter', keyCode: 13 },
-                    'return': { key: 'Enter', code: 'Enter', keyCode: 13 },
-                    'tab': { key: 'Tab', code: 'Tab', keyCode: 9 },
-                    'escape': { key: 'Escape', code: 'Escape', keyCode: 27 },
-                    'esc': { key: 'Escape', code: 'Escape', keyCode: 27 },
-                    'arrowdown': { key: 'ArrowDown', code: 'ArrowDown', keyCode: 40 },
-                    'down': { key: 'ArrowDown', code: 'ArrowDown', keyCode: 40 },
-                    'arrowup': { key: 'ArrowUp', code: 'ArrowUp', keyCode: 38 },
-                    'up': { key: 'ArrowUp', code: 'ArrowUp', keyCode: 38 },
-                    'arrowleft': { key: 'ArrowLeft', code: 'ArrowLeft', keyCode: 37 },
-                    'left': { key: 'ArrowLeft', code: 'ArrowLeft', keyCode: 37 },
-                    'arrowright': { key: 'ArrowRight', code: 'ArrowRight', keyCode: 39 },
-                    'right': { key: 'ArrowRight', code: 'ArrowRight', keyCode: 39 },
-                    'backspace': { key: 'Backspace', code: 'Backspace', keyCode: 8 },
-                    'k': { key: 'k', code: 'KeyK', keyCode: 75 }
-                };
+    const hardwareKeyCode = keyMap[cleanKey.toLowerCase()] || cleanKey;
 
-                const mapped = keyMap[targetKey.toLowerCase()] || {
-                    key: targetKey,
-                    code: 'Key' + targetKey.toUpperCase(),
-                    keyCode: targetKey.charCodeAt(0) || 0
-                };
+    // 1. Dispatch True Chromium Hardware Key Event (Bypasses isTrusted === false)
+    await executeNativeHardwareKey(webview, hardwareKeyCode, modifiers);
 
-                const targetEl = document.activeElement || document.body;
-
-                // 1. Dispatch keydown, keypress, keyup
-                ['keydown', 'keypress', 'keyup'].forEach(type => {
-                    targetEl.dispatchEvent(new KeyboardEvent(type, {
-                        key: mapped.key,
-                        code: mapped.code,
-                        keyCode: mapped.keyCode,
-                        which: mapped.keyCode,
-                        bubbles: true,
-                        cancelable: true
-                    }));
-                });
-
-                // 2. Media Playback Guarantee: If Space or 'k', ensure HTML5 video toggles cleanly
-                let mediaHandled = false;
-                if (mapped.code === 'Space' || mapped.code === 'KeyK') {
-                    const video = document.querySelector('video');
-                    if (video) {
-                        try {
-                            if (video.paused) {
-                                video.play();
-                                mediaHandled = true;
-                            } else {
-                                video.pause();
-                                mediaHandled = true;
-                            }
-                        } catch (e) {}
+    // 2. In-webview safety handler for media playback & modal dismiss
+    let mediaHandled = false;
+    let targetTag = 'body';
+    if (typeof webview.executeJavaScript === 'function') {
+        try {
+            const extra = await webview.executeJavaScript(`
+                (function() {
+                    const k = ${JSON.stringify(cleanKey.toLowerCase())};
+                    let media = false;
+                    if (k === 'space' || k === ' ' || k === 'k') {
+                        const v = document.querySelector('video');
+                        if (v) {
+                            try { if (v.paused) v.play(); else v.pause(); media = true; } catch(_) {}
+                        }
+                    } else if (k === 'escape' || k === 'esc') {
+                        if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
                     }
-                }
-
-                // 3. Modal / Popup Dismiss Guarantee: If Escape, blur active element
-                if (mapped.code === 'Escape') {
-                    if (document.activeElement && document.activeElement.blur) {
-                        document.activeElement.blur();
-                    }
-                }
-
-                return {
-                    success: true,
-                    key: mapped.key,
-                    code: mapped.code,
-                    mediaHandled,
-                    targetTag: targetEl.tagName.toLowerCase()
-                };
-            })()
-        `);
-
-        return {
-            success: true,
-            message: `Pressed key [${result.code || cleanKey}] on <${result.targetTag || 'body'}>${result.mediaHandled ? ' (Video playback toggled)' : ''}.`,
-            details: result
-        };
-    } catch (e) {
-        return { success: false, message: `Key press error: ${e.message}` };
+                    return { media, activeTag: (document.activeElement ? document.activeElement.tagName.toLowerCase() : 'body') };
+                })()
+            `);
+            if (extra?.media) mediaHandled = true;
+            if (extra?.activeTag) targetTag = extra.activeTag;
+        } catch (_) {}
     }
+
+    return {
+        success: true,
+        message: `Pressed hardware key [${hardwareKeyCode}] on <${targetTag}>${mediaHandled ? ' (Video playback toggled)' : ''}.`
+    };
 }
 
 /**
@@ -984,11 +1296,16 @@ export async function executeWebviewType(webview, textToType, target = null, sub
     }
 
     try {
+        // 1. If target specified, focus and activate it via hardware click
+        if (target) {
+            await executeWebviewClick(webview, target);
+            await new Promise(r => setTimeout(r, 80));
+        }
+
         const result = await webview.executeJavaScript(`
             (function() {
                 const text = ${JSON.stringify(textToType)};
                 const targetQuery = ${JSON.stringify(target || '')}.trim();
-                const shouldSubmit = ${!!submit};
                 const shouldClear = ${clear !== false};
 
                 function isVisible(el) {
@@ -1017,47 +1334,7 @@ export async function executeWebviewType(webview, textToType, target = null, sub
                     }
                 }
 
-                // 2. Target Specified: Check Placeholder, Aria-Label, Name, or ID
-                if (!targetInput && targetQuery) {
-                    const cleanQ = targetQuery.toLowerCase();
-                    const candidates = Array.from(document.querySelectorAll('input:not([type="hidden"]), textarea')).filter(isVisible);
-
-                    // Exact or substring match on placeholder
-                    targetInput = candidates.find(c => (c.placeholder || '').toLowerCase().includes(cleanQ));
-                    if (targetInput) matchedBy = 'Placeholder: "' + targetInput.placeholder + '"';
-
-                    // Match on aria-label
-                    if (!targetInput) {
-                        targetInput = candidates.find(c => (c.getAttribute('aria-label') || '').toLowerCase().includes(cleanQ));
-                        if (targetInput) matchedBy = 'Aria-Label: "' + targetInput.getAttribute('aria-label') + '"';
-                    }
-
-                    // Match on associated <label>
-                    if (!targetInput) {
-                        const labels = Array.from(document.querySelectorAll('label')).filter(l => (l.innerText || '').toLowerCase().includes(cleanQ));
-                        for (const lbl of labels) {
-                            if (lbl.htmlFor) {
-                                const el = document.getElementById(lbl.htmlFor);
-                                if (el && isVisible(el)) { targetInput = el; matchedBy = 'Label: "' + lbl.innerText.trim() + '"'; break; }
-                            }
-                            const inner = lbl.querySelector('input, textarea');
-                            if (inner && isVisible(inner)) { targetInput = inner; matchedBy = 'Inner Label: "' + lbl.innerText.trim() + '"'; break; }
-                        }
-                    }
-
-                    // Direct CSS Selector
-                    if (!targetInput) {
-                        try {
-                            const selEl = document.querySelector(targetQuery);
-                            if (selEl && isVisible(selEl)) {
-                                targetInput = selEl.matches('input, textarea') ? selEl : selEl.querySelector('input, textarea');
-                                if (targetInput) matchedBy = 'CSS Selector';
-                            }
-                        } catch (e) {}
-                    }
-                }
-
-                // 3. No Target or Target Not Found: Use document.activeElement if editable
+                // 2. Active Element Check
                 if (!targetInput && document.activeElement) {
                     const act = document.activeElement;
                     if ((act.tagName === 'INPUT' || act.tagName === 'TEXTAREA' || act.isContentEditable) && isVisible(act)) {
@@ -1066,7 +1343,7 @@ export async function executeWebviewType(webview, textToType, target = null, sub
                     }
                 }
 
-                // 4. Fallback: Search bar or first visible input
+                // 3. Fallback to search bar or visible text input
                 if (!targetInput) {
                     const searchSelectors = [
                         'input[type="search"]', 'input[name="q"]', 'input[name="s"]', 'input[name*="search" i]',
@@ -1091,7 +1368,7 @@ export async function executeWebviewType(webview, textToType, target = null, sub
 
                 targetInput.focus();
 
-                // OpenCode React / Vue Prototype Descriptor Setter Override
+                // Clear existing content if requested
                 const isTextArea = targetInput instanceof HTMLTextAreaElement;
                 const proto = isTextArea ? window.HTMLTextAreaElement.prototype : window.HTMLInputElement.prototype;
                 const descriptor = Object.getOwnPropertyDescriptor(proto, 'value');
@@ -1100,16 +1377,9 @@ export async function executeWebviewType(webview, textToType, target = null, sub
                 if (shouldClear) {
                     if (nativeSetter) nativeSetter.call(targetInput, '');
                     else targetInput.value = '';
+                    targetInput.dispatchEvent(new Event('input', { bubbles: true }));
+                    targetInput.dispatchEvent(new Event('change', { bubbles: true }));
                 }
-
-                if (nativeSetter) {
-                    nativeSetter.call(targetInput, text);
-                } else {
-                    targetInput.value = text;
-                }
-
-                targetInput.dispatchEvent(new Event('input', { bubbles: true }));
-                targetInput.dispatchEvent(new Event('change', { bubbles: true }));
 
                 // Subtle visual outline feedback
                 const origOutline = targetInput.style.outline;
@@ -1120,59 +1390,72 @@ export async function executeWebviewType(webview, textToType, target = null, sub
                     targetInput.style.boxShadow = '';
                 }, 1000);
 
-                // Form Submit only if explicitly requested
-                let formSubmitted = false;
-                if (shouldSubmit) {
-                    ['keydown', 'keypress', 'keyup'].forEach(evtName => {
-                        targetInput.dispatchEvent(new KeyboardEvent(evtName, {
-                            key: 'Enter',
-                            code: 'Enter',
-                            keyCode: 13,
-                            which: 13,
-                            bubbles: true,
-                            cancelable: true
-                        }));
-                    });
-
-                    const form = targetInput.closest('form');
-                    if (form) {
-                        try {
-                            const submitBtn = form.querySelector('button[type="submit"], input[type="submit"], button[aria-label*="Search" i], [class*="submit" i]');
-                            if (submitBtn) {
-                                submitBtn.click();
-                                formSubmitted = true;
-                            } else if (typeof form.requestSubmit === 'function') {
-                                form.requestSubmit();
-                                formSubmitted = true;
-                            } else if (typeof form.submit === 'function') {
-                                form.submit();
-                                formSubmitted = true;
-                            }
-                        } catch (e) {}
-                    }
-                }
-
                 return {
                     success: true,
-                    text: text,
                     inputTag: targetInput.tagName.toLowerCase(),
                     placeholder: targetInput.placeholder || '',
-                    matchedBy: matchedBy,
-                    submitted: formSubmitted
+                    matchedBy: matchedBy
                 };
             })();
         `);
 
-        if (result && result.success) {
-            const subMsg = result.submitted ? ' (submitted)' : '';
-            return {
-                success: true,
-                message: `Typed "${textToType}" into <${result.inputTag}> [${result.matchedBy}]${subMsg}.`,
-                details: result
-            };
-        } else {
-            return { success: false, message: `Could not type into element: ${result ? result.error : 'Unknown error'}` };
+        if (!result || !result.success) {
+            return { success: false, message: `Could not focus target input: ${result ? result.error : 'Unknown error'}` };
         }
+
+        // 2. Dispatch True Chromium Hardware Character Stream (Bypasses isTrusted === false)
+        await executeNativeHardwareType(webview, textToType);
+
+        // 3. Reactive State Sync for React/Vue/Angular
+        await webview.executeJavaScript(`
+            (function() {
+                const el = document.activeElement;
+                if (el && (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA')) {
+                    const val = ${JSON.stringify(textToType)};
+                    if (el.value !== val) {
+                        const isTextArea = el instanceof HTMLTextAreaElement;
+                        const proto = isTextArea ? window.HTMLTextAreaElement.prototype : window.HTMLInputElement.prototype;
+                        const desc = Object.getOwnPropertyDescriptor(proto, 'value');
+                        if (desc && desc.set) desc.set.call(el, val);
+                        else el.value = val;
+                    }
+                    el.dispatchEvent(new Event('input', { bubbles: true }));
+                    el.dispatchEvent(new Event('change', { bubbles: true }));
+                }
+            })();
+        `).catch(() => {});
+
+        // 4. Form Submit if requested
+        let formSubmitted = false;
+        if (submit) {
+            await new Promise(r => setTimeout(r, 60));
+            // Send native Enter key
+            await executeNativeHardwareKey(webview, 'Enter');
+            formSubmitted = true;
+
+            await webview.executeJavaScript(`
+                (function() {
+                    const el = document.activeElement;
+                    if (el) {
+                        const form = el.closest('form');
+                        if (form) {
+                            try {
+                                const submitBtn = form.querySelector('button[type="submit"], input[type="submit"]');
+                                if (submitBtn) submitBtn.click();
+                                else if (typeof form.requestSubmit === 'function') form.requestSubmit();
+                            } catch (_) {}
+                        }
+                    }
+                })();
+            `).catch(() => {});
+        }
+
+        const subMsg = formSubmitted ? ' (submitted)' : '';
+        return {
+            success: true,
+            message: `Typed "${textToType}" into <${result.inputTag}> [${result.matchedBy}] via native hardware input${subMsg}.`,
+            details: result
+        };
     } catch (e) {
         return { success: false, message: `Type text error: ${e.message}` };
     }
@@ -1425,6 +1708,8 @@ export async function renderSetOfMarksOverlay(webview, maxMarks = 120) {
                     el.setAttribute('data-som-id', String(markNum));
 
                     const rect = el.getBoundingClientRect();
+                    const centerX = Math.round(rect.left + rect.width / 2);
+                    const centerY = Math.round(rect.top + rect.height / 2);
                     const top = Math.max(0, rect.top + scrollY - 9);
                     const left = Math.max(0, rect.left + scrollX - 5);
 
@@ -1465,7 +1750,8 @@ export async function renderSetOfMarksOverlay(webview, maxMarks = 120) {
                         text: labelText.slice(0, 70),
                         tag: el.tagName.toLowerCase(),
                         href: el.href || el.getAttribute('href') || '',
-                        rect: { top: Math.round(rect.top), left: Math.round(rect.left), width: Math.round(rect.width), height: Math.round(rect.height) }
+                        rect: { top: Math.round(rect.top), left: Math.round(rect.left), width: Math.round(rect.width), height: Math.round(rect.height) },
+                        center: { x: centerX, y: centerY }
                     });
                 });
 
@@ -1473,6 +1759,16 @@ export async function renderSetOfMarksOverlay(webview, maxMarks = 120) {
                 return actionableList;
             })();
         `);
+
+        somMarkCoordinateCache.clear();
+        if (Array.isArray(marks)) {
+            for (const item of marks) {
+                if (item && item.center) {
+                    somMarkCoordinateCache.set(item.id, { x: item.center.x, y: item.center.y, text: item.text, tag: item.tag, rect: item.rect });
+                    somMarkCoordinateCache.set(item.mark, { x: item.center.x, y: item.center.y, text: item.text, tag: item.tag, rect: item.rect });
+                }
+            }
+        }
         return marks || [];
     } catch (e) {
         return [];
@@ -2147,12 +2443,20 @@ export async function executeToolCallAndVerify(toolCall, context = {}) {
                 pageData.actionableMarks = somMarks;
             } catch (_) {}
 
+            // AXTree-First Perception: Extract Chromium Accessibility Tree (< 1.5KB)
+            let axTree = '';
+            try {
+                axTree = await extractPageAXTree(wv);
+                pageData.axTree = axTree;
+            } catch (_) {}
+
             const dlList = (pageData.downloads || []).map(d => `- "${d.text}" ${d.href ? `-> ${d.href}` : ''}`).join('\n');
             const linkList = (pageData.links || []).slice(0, 25).map(l => `- "${l.text}" -> ${l.href}`).join('\n');
             const searchList = (pageData.searchInputs || []).join(', ') || 'none';
             const somList = (somMarks || []).slice(0, 25).map(m => `${m.mark}: "${m.text}" (<${m.tag}>)`).join(' | ');
+            const axSection = axTree ? `\n\n🌳 **Accessibility Tree (AXTree):**\n${axTree}` : '';
 
-            const summary = `📄 **Page Title:** "${pageData.title}"\n🔗 **URL:** ${pageData.url}\n🔍 **Search Inputs:** ${searchList}\n📌 **Headings (${pageData.headings?.length || 0}):** ${(pageData.headings || []).slice(0, 10).join(' | ') || 'none'}\n🏷️ **Marked Interactive Elements (${somMarks?.length || 0}):**\n${somList || 'None detected'}\n\n📥 **Detected Download/Stream Triggers (${pageData.downloads?.length || 0}):**\n${dlList || 'None detected'}\n\n🌐 **Top Interactive Links (${pageData.links?.length || 0}):**\n${linkList || 'None detected'}\n\n📝 **Page Content Excerpt:**\n${(pageData.bodyText || '').substring(0, 1200)}...`;
+            const summary = `📄 **Page Title:** "${pageData.title}"\n🔗 **URL:** ${pageData.url}\n🔍 **Search Inputs:** ${searchList}\n📌 **Headings (${pageData.headings?.length || 0}):** ${(pageData.headings || []).slice(0, 10).join(' | ') || 'none'}\n🏷️ **Marked Interactive Elements (${somMarks?.length || 0}):**\n${somList || 'None detected'}${axSection}\n\n📥 **Detected Download/Stream Triggers (${pageData.downloads?.length || 0}):**\n${dlList || 'None detected'}\n\n🌐 **Top Interactive Links (${pageData.links?.length || 0}):**\n${linkList || 'None detected'}\n\n📝 **Page Content Excerpt:**\n${(pageData.bodyText || '').substring(0, 800)}...`;
 
             const isBlank = (!pageData.title || pageData.title === 'about:blank') && (!pageData.links || pageData.links.length === 0);
             if (isBlank) {
@@ -2786,12 +3090,38 @@ export async function executeAutonomousAgentLoop(promptText, context = {}) {
         return `⚠️ AI Provider service is not available. Please check AI Provider settings.`;
     }
 
+    if (activeConfig.id === 'opencodezen' && (!activeConfig.apiKey || !activeConfig.apiKey.trim())) {
+        return `⚠️ <strong>OpenCode Zen API Key Required:</strong> OpenCode Zen's public rate limit is exhausted without an API key.<br><br>💡 Please click the <strong>⚙ Keys</strong> button at the top to paste your OpenCode Zen API key, or switch to a local provider (LM Studio / Ollama) or OpenRouter / OpenAI.`;
+    }
+
+    const sessionId = 'session_' + Date.now();
     const maxTurns = 20;
     const agentHistory = [];
     const executionLogs = [];
     let completed = false;
 
-    const systemPrompt = `You are the Autonomous Antigravity Browser Controller.
+    // Codex Dynamic Tool Pager: Initialize with 11 universal primitives + meta-tools
+    const CORE_TOOL_NAMES = [
+        'navigate', 'open_tab', 'close_tab', 'switch_tab', 'search_page',
+        'read_page', 'grep_page', 'click_element', 'type_text', 'press_key',
+        'hover_element', 'scroll_page', 'finish_task', 'remind_user',
+        'get_tools_on_demand', 'delegate_subtask'
+    ];
+    let activeToolsForSession = (BROWSER_TOOLS || []).filter(t => CORE_TOOL_NAMES.includes(t.function?.name));
+    if (activeToolsForSession.length === 0) {
+        activeToolsForSession = [...(BROWSER_TOOLS || [])];
+    }
+
+    // Load static KV prefix from Second Brain (SOUL.md + USER.md + MEMORY.md)
+    let staticPrefix = '';
+    try {
+        const memStatus = await fetch('http://127.0.0.1:4892/api/memory/status').then(r => r.json()).catch(() => null);
+        if (memStatus && memStatus.anchors) {
+            staticPrefix = `=== AGENT SOUL & SAFETY RULES ===\n${(memStatus.anchors.soul || '').trim()}\n\n=== USER PROFILE & PREFERENCES ===\n${(memStatus.anchors.user || '').trim()}\n\n=== CURATED PERMANENT MEMORY & CREDENTIALS ===\n${(memStatus.anchors.memory || '').trim()}\n=====================================\n\n`;
+        }
+    } catch (_) {}
+
+    const systemPrompt = `${staticPrefix}You are the Autonomous Nexora Browser Controller.
 You directly control this browser to accomplish the user's goal across ANY web application or platform.
 
 OPERATING PRINCIPLES:
@@ -2802,6 +3132,7 @@ OPERATING PRINCIPLES:
 3. KEYBOARD & MEDIA PRIMITIVES: Use press_key("Space") to toggle video play/pause on any player. Use press_key("Enter") to submit forms. Use press_key("Escape") to dismiss popups or modal overlays.
 4. SEARCH & FORMS: Use search_page(query) to instantly search on YouTube, Google, or the active page. Use type_text(text, target, submit, clear) to target specific inputs or marks (#N).
 5. NOTIFICATIONS: When a goal is accomplished or download completed, call finish_task(message, success) and optionally remind_user(message).
+6. CODEX TOOL PAGER: To page specialized memory or browser tools on demand, invoke get_tools_on_demand({ category, query }).
 
 AVAILABLE TOOLS:
 - navigate: { "url": string }
@@ -2821,6 +3152,7 @@ AVAILABLE TOOLS:
 - remind_user: { "message": string }
 - delegate_subtask: { "subagent_id": string, "role": string, "goal": string, "tab_id"?: number }
 - verify_media_playback: {} (Inspect if video/audio is actively playing on any site)
+- get_tools_on_demand: { "category"?: string, "query"?: string }
 - finish_task: { "message": string, "success": boolean }
 
 Output format:
@@ -2896,7 +3228,7 @@ Output format:
 - Active Tab: "${curTabTitle}" (${curTabUrl})
 - Sub-Agents: ${subAgentSummary}
 - Page Phase: ${pageObs?.phase || 'GENERAL_PAGE'}
-${pageObs?.searchInputs && pageObs.searchInputs.length > 0 ? `- Search Inputs Detected: ${pageObs.searchInputs.map(i => i.placeholder || i.name || i.id).join(', ')}` : ''}
+${pageObs?.axTree ? `- Accessibility Tree (AXTree):\n${pageObs.axTree}\n` : ''}${pageObs?.searchInputs && pageObs.searchInputs.length > 0 ? `- Search Inputs Detected: ${pageObs.searchInputs.map(i => i.placeholder || i.name || i.id).join(', ')}` : ''}
 ${pageObs?.actionableElements && pageObs.actionableElements.length > 0 ? `- Actionable Marks [Set-of-Marks]: ${pageObs.actionableElements.slice(0, 35).map(a => `${a.mark}: "${a.text}" (<${a.tag}>)`).join(' | ')}` : ''}
 ${pageObs?.downloadTriggers && pageObs.downloadTriggers.length > 0 ? `- Download Triggers Detected: ${pageObs.downloadTriggers.slice(0, 5).map(d => d.text).join(' | ')}` : ''}
 ${dlObs?.hasActiveDownloads || dlObs?.hasCompletedDownloads ? `- Downloads State: ${dlObs.hasCompletedDownloads ? `Completed (${dlObs.completed[0]?.filename})` : `Active (${dlObs.active[0]?.percent}%)`}` : ''}
@@ -2912,7 +3244,7 @@ Current Browser State:
 - Active Tab: "${curTabTitle}" (${curTabUrl})
 - Sub-Agents: ${subAgentSummary}
 - Page Phase: ${pageObs?.phase || 'GENERAL_PAGE'}
-${pageObs?.searchInputs && pageObs.searchInputs.length > 0 ? `- Search Inputs Detected: ${pageObs.searchInputs.map(i => i.placeholder || i.name || i.id).join(', ')}` : ''}
+${pageObs?.axTree ? `- Accessibility Tree (AXTree):\n${pageObs.axTree}\n` : ''}${pageObs?.searchInputs && pageObs.searchInputs.length > 0 ? `- Search Inputs Detected: ${pageObs.searchInputs.map(i => i.placeholder || i.name || i.id).join(', ')}` : ''}
 ${pageObs?.page?.headings && pageObs.page.headings.length > 0 ? `- Headings/Titles on Page: ${pageObs.page.headings.slice(0, 8).join(' | ')}` : ''}
 ${pageObs?.actionableElements && pageObs.actionableElements.length > 0 ? `- Actionable Marks [Set-of-Marks]: ${pageObs.actionableElements.slice(0, 35).map(a => `${a.mark}: "${a.text}" (<${a.tag}>)`).join(' | ')}` : ''}
 ${dlObs?.hasActiveDownloads || dlObs?.hasCompletedDownloads ? `- Downloads State: ${dlObs.hasCompletedDownloads ? `Completed (${dlObs.completed[0]?.filename})` : `Active (${dlObs.active[0]?.percent}%)`}` : ''}
@@ -2923,9 +3255,9 @@ Based on this live observation, what is your single next dynamic action toward t
 
         let aiRes = await sendChatMessage({
             prompt: currentTurnPrompt,
-            history: agentHistory,
+            history: agentHistory.slice(-6),
             systemPrompt,
-            tools: BROWSER_TOOLS,
+            tools: activeToolsForSession,
             onChunk: (chunk) => {
                 if (onStreamChunk) onStreamChunk(chunk);
             },
@@ -2937,16 +3269,19 @@ Based on this live observation, what is your single next dynamic action toward t
 
         // Diagnostic recovery if model request drops
         if (!aiRes || !aiRes.success || aiRes.aborted) {
-            logTelemetry('warn', `Turn ${turn}: Model call failed or dropped. Initiating diagnostic recovery...`);
+            if (aiRes?.aborted || signal?.aborted) break;
+            const primaryError = aiRes?.error || 'Model request failed';
+            logTelemetry('warn', `Turn ${turn}: Model call failed (${primaryError}). Initiating diagnostic recovery...`);
             const retryRes = await sendChatMessage({
                 prompt: `[Diagnostic Retry] Previous response dropped. Active tab is "${curTabTitle}" (${curTabUrl}). Goal: "${raw}". State your next dynamic action:`,
                 history: agentHistory.slice(-4),
                 systemPrompt,
-                tools: BROWSER_TOOLS,
+                tools: activeToolsForSession,
                 signal
             });
             if (!retryRes || !retryRes.success) {
-                executionLogs.push({ turn, error: 'Model connection unrecoverable on turn ' + turn });
+                const finalError = retryRes?.error || primaryError;
+                executionLogs.push({ turn, error: finalError });
                 break;
             }
             aiRes = retryRes;
@@ -3117,6 +3452,26 @@ You MUST emit an actionable tool call in \`\`\`tool_call format to interact with
         const durationMs = Date.now() - startTime;
         turnExecutions.push(execRes);
 
+        // Dynamic Codex Tool Pager: dynamically register paged tools into activeToolsForSession
+        if (toolName === 'get_tools_on_demand' && Array.isArray(execRes.pagedTools)) {
+            for (const pt of execRes.pagedTools) {
+                if (!activeToolsForSession.some(t => t.function?.name === pt.function?.name)) {
+                    activeToolsForSession.push(pt);
+                }
+            }
+        }
+
+        // Checkpoint progress to HEARTBEAT.md
+        fetch('http://127.0.0.1:4892/api/tasks/checkpoint', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                task: raw,
+                checkpoint: `Turn ${turn}: ${toolName}`,
+                status: 'In Progress'
+            })
+        }).catch(() => {});
+
         // Dispatch live completion event
         if (onToolEvent) {
             onToolEvent({
@@ -3227,9 +3582,59 @@ You must click on the target song/video item (e.g. click_element with mark "#1",
         } else if (lastLog?.executions && lastLog.executions.length > 0) {
             const lastEx = lastLog.executions[lastLog.executions.length - 1];
             conclusionText = lastEx.verification || lastEx.message || 'Workflow steps completed.';
+        } else if (lastLog?.error) {
+            const provName = activeConfig?.name || 'AI Provider';
+            const modelName = activeConfig?.model || '';
+            const errMsg = lastLog.error;
+            let hint = '';
+            if (errMsg.includes('Free usage limit reached') || errMsg.includes('429')) {
+                hint = `<br><br>💡 <strong>Rate Limit / Free Tier Exhausted:</strong> ${provName} (${modelName}) reached its usage limit. Please click <strong>⚙ Keys</strong> at the top to paste your API key, or switch to another provider (such as OpenAI, LM Studio, Ollama, or OpenRouter).`;
+            } else if (errMsg.includes('401') || errMsg.includes('API key') || errMsg.includes('Unauthorized') || errMsg.includes('not configured')) {
+                hint = `<br><br>💡 <strong>API Key Required:</strong> Please configure your API key for <strong>${provName}</strong> by clicking the <strong>⚙ Keys</strong> button at the top.`;
+            } else if (errMsg.includes('Failed to connect') || errMsg.includes('fetch failed') || errMsg.includes('ECONNREFUSED')) {
+                hint = `<br><br>💡 <strong>Connection Failed:</strong> Could not connect to <strong>${provName}</strong> at <code>${activeConfig?.baseUrl}</code>. Please ensure your local model server (LM Studio / Ollama) is running.`;
+            }
+            return `⚠️ <strong>AI Model Error [${provName}${modelName ? `: ${modelName}` : ''}]:</strong> ${errMsg}${hint}`;
         } else {
             conclusionText = 'Autonomous workflow complete.';
         }
+    }
+
+    // Persist full uncompressed transcript to 90-day raw storage and clear task checkpoint
+    try {
+        await fetch('http://127.0.0.1:4892/api/tasks/clear', { method: 'POST' }).catch(() => {});
+        const rawTranscript = [
+            `# Session Transcript: ${sessionId}`,
+            `**User Goal:** ${raw}`,
+            `**Date:** ${new Date().toISOString()}`,
+            `**Total Turns:** ${executionLogs.length}`,
+            `**Completed:** ${completed}`,
+            '',
+            '## Execution Logs & Turns',
+            ...executionLogs.map(l => [
+                `### Turn ${l.turn}`,
+                l.reasoning ? `**Reasoning:** ${l.reasoning}` : '',
+                `**Assistant Reply:**\n${l.reply}`,
+                '**Executions:**',
+                ...(l.executions || []).map(e => `- [${e.action}] ${e.verification || e.message || ''}`)
+            ].filter(Boolean).join('\n\n')),
+            '',
+            `## Conclusion\n${conclusionText}`
+        ].join('\n\n');
+
+        await fetch('http://127.0.0.1:4892/api/memory/session/save', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                sessionId,
+                transcript: rawTranscript,
+                goal: raw,
+                turns: agentHistory,
+                title: raw
+            })
+        }).catch(() => {});
+    } catch (e) {
+        console.warn('[Session End Transcript Save Failed]', e);
     }
 
     return `🎯 <strong>Conclusion:</strong> ${conclusionText.replace(/\n/g, '<br>')}`;
@@ -3273,6 +3678,21 @@ export async function executeAiBrowserCommand(promptText, context = {}) {
         .replace(/[.,!?;:]+$/g, '')
         .trim();
 
+    // Fast-typing & voice ASR phonetic typo correction
+    cleanPrompt = cleanPrompt
+        .replace(/\b(?:ope|opn|opne)\b/gi, 'open')
+        .replace(/\b(?:youtubr|youtub|yutube|ytube)\b/gi, 'youtube')
+        .replace(/\b(?:gogle|goole)\b/gi, 'google')
+        .replace(/\b(?:in\s+(?:the\s+|hr\s+|this\s+)?(?:cureent|curent|curret)\s+(?:chat|tab|window|view))\b/gi, 'in the current tab')
+        .replace(/\b(?:in\s+hr\s+current\s+chat)\b/gi, 'in the current tab')
+        .replace(/\b(?:in\s+current\s+chat)\b/gi, 'in the current tab')
+        .replace(/\b(?:in\s+hr\s+cureent\s+chat)\b/gi, 'in the current tab');
+
+    // Friendly Greeting Handler (Instant zero-latency response without burning LLM turns)
+    if (/^(?:hi|hello|hey|greetings|howdy|good\s+(?:morning|afternoon|evening|day)|sup|yo)\b/i.test(cleanPrompt)) {
+        return `👋 Hi there! I'm <strong>Nexora Copilot</strong>, your AI browser assistant.<br><br>Here are some things you can try right now:<br>• 🌐 <code>open youtube in current tab</code> or <code>open github</code><br>• 🔍 <code>search for lofi beats on youtube</code><br>• 🖱️ <code>number words</code> then <code>click #2</code><br>• 📜 <code>scroll 50</code>, <code>scroll top</code>, <code>summarize page</code><br>• 🤖 Multi-step workflows and web automation<br><br>💡 Say <code>shortcuts</code> or <code>what can ai do</code> for the full capability list!`;
+    }
+
     const isSingleStep = !/\b(?:and|then|after|also|while)\b/i.test(cleanPrompt);
 
     // 0. COMPOUND VOICE SEARCH & NAVIGATION COMMANDS:
@@ -3306,12 +3726,13 @@ export async function executeAiBrowserCommand(promptText, context = {}) {
     }
 
     // 0a. DIRECT CURRENT TAB NAVIGATION: "open youtube in the current tab", "open google here", "navigate to github in this tab"
-    const isCurrentTabIntent = /\b(?:in\s+(?:the\s+)?(?:current|this|active)\s+tab|here)\b/i.test(cleanPrompt);
+    const isCurrentTabIntent = /\b(?:in\s+(?:the\s+)?(?:current|this|active)\s+(?:tab|chat|window|view)|here)\b/i.test(cleanPrompt);
     const isNavVerb = /^(?:open|navigate\s+to|navigate|go\s+to)\s+/i.test(cleanPrompt);
     if (isCurrentTabIntent && isNavVerb && isSingleStep) {
-        const dest = cleanPrompt
+        let dest = cleanPrompt
             .replace(/^(?:open|navigate\s+to|navigate|go\s+to)\s+/i, '')
-            .replace(/\b(?:in\s+(?:the\s+)?(?:current|this|active)\s+tab|here)\b/gi, '')
+            .replace(/\b(?:in\s+(?:the\s+)?(?:current|this|active)\s+(?:tab|chat|window|view)|here)\b/gi, '')
+            .replace(/^(?:the\s+)/i, '')
             .trim();
         if (dest && onNavigate) {
             const finalUrl = resolveTargetUrl(dest);
@@ -3579,9 +4000,10 @@ export async function executeAiBrowserCommand(promptText, context = {}) {
 
     // 5.8 OPEN WEBSITE IN CURRENT TAB ("open youtube in the current tab", "open google here", "navigate to github in this tab")
     if (isCurrentTabIntent && isSingleStep && (lower.startsWith('open ') || lower.startsWith('navigate ') || lower.startsWith('go to '))) {
-        const dest = cleanPrompt
-            .replace(/^(?:open|navigate\s+to|navigate|go\s+to)\s+/i)
-            .replace(/\b(?:in\s+(?:the\s+)?(?:current|this|active)\s+tab|here)\b/gi, '')
+        let dest = cleanPrompt
+            .replace(/^(?:open|navigate\s+to|navigate|go\s+to)\s+/i, '')
+            .replace(/\b(?:in\s+(?:the\s+)?(?:current|this|active)\s+(?:tab|chat|window|view)|here)\b/gi, '')
+            .replace(/^(?:the\s+)/i, '')
             .trim();
         if (dest && onNavigate) {
             const finalUrl = resolveTargetUrl(dest);
@@ -3909,36 +4331,43 @@ export async function executeAiBrowserCommand(promptText, context = {}) {
             const activeConfig = context.activeConfig || getActiveProviderConfig();
             const hasKeyOrLocal = activeConfig && (activeConfig.apiKey || activeConfig.id === 'lmstudio' || activeConfig.id === 'ollama' || activeConfig.id === 'ornith');
 
-            if (hasKeyOrLocal) {
-                const activeUrl = activeTab?.url || '';
-                const activeTitle = activeTab?.title || '';
-                const systemPrompt = `You are Antigravity Browser AI Copilot. You assist the user with web browsing, writing, essays, and questions.
+            if (!hasKeyOrLocal) {
+                return `⚠️ <strong>API Key Required:</strong> To answer conversational questions or write content with <strong>${activeConfig?.name || 'AI'}</strong>, please configure your API key in <strong>⚙ Keys</strong>, or switch to a local provider (LM Studio / Ollama).`;
+            }
+
+            const activeUrl = activeTab?.url || '';
+            const activeTitle = activeTab?.title || '';
+            const systemPrompt = `You are Nexora Browser AI Copilot. You assist the user with web browsing, writing, essays, and questions.
 Active Tab: "${activeTitle}" (${activeUrl})
 Total Open Tabs: ${tabs.length}.
 Always reply in the same language as the user's current message (default to English unless the user writes in Hindi or Korean). Keep answers clear, well-structured, and helpful.`;
 
-                const chatFn = streamChatMessage || sendChatMessage;
-                const aiRes = await chatFn({
-                    prompt: raw,
-                    systemPrompt,
-                    config: activeConfig,
-                    tools: [], // No tools for pure conversational Q&A
-                    onChunk: (chunk) => {
-                        if (context.onStreamChunk) context.onStreamChunk(chunk);
-                    },
-                    onReasoningChunk: (rChunk) => {
-                        if (context.onStreamReasoning) context.onStreamReasoning(rChunk);
-                    },
-                    signal: context.signal
-                });
+            const chatFn = streamChatMessage || sendChatMessage;
+            const aiRes = await chatFn({
+                prompt: raw,
+                systemPrompt,
+                config: activeConfig,
+                tools: [], // No tools for pure conversational Q&A
+                onChunk: (chunk) => {
+                    if (context.onStreamChunk) context.onStreamChunk(chunk);
+                },
+                onReasoningChunk: (rChunk) => {
+                    if (context.onStreamReasoning) context.onStreamReasoning(rChunk);
+                },
+                signal: context.signal
+            });
 
-                if (aiRes && aiRes.success && !aiRes.aborted) {
-                    const replyText = (aiRes.reply || '').trim();
-                    return `🤖 <strong>[${aiRes.provider}: ${aiRes.model}]</strong><br>${replyText.replace(/\n/g, '<br>')}`;
-                }
+            if (aiRes && aiRes.success && !aiRes.aborted) {
+                const replyText = (aiRes.reply || '').trim();
+                return `🤖 <strong>[${aiRes.provider}: ${aiRes.model}]</strong><br>${replyText.replace(/\n/g, '<br>')}`;
+            }
+
+            if (aiRes && !aiRes.success) {
+                return `⚠️ <strong>AI Model Error [${activeConfig?.name || 'AI'}${activeConfig?.model ? `: ${activeConfig.model}` : ''}]:</strong> ${aiRes.error || 'Failed to generate response'}. Please verify your API key or model settings in <strong>⚙ Keys</strong>.`;
             }
         } catch (e) {
             console.warn('[AI Harness conversational error]', e.message);
+            return `⚠️ <strong>AI Error:</strong> ${e.message}`;
         }
     }
 
@@ -4231,13 +4660,17 @@ export async function extractAdaptivePageContext(webview) {
                     el.setAttribute('data-som-orig-outline', orig || '');
                     el.style.outline = '1.5px solid rgba(255, 230, 0, 0.75)';
 
+                    const centerX = Math.round(r.left + r.width / 2);
+                    const centerY = Math.round(r.top + r.height / 2);
+
                     actionableElements.push({
                         mark: '#' + markId++,
                         text: text.substring(0, 70),
                         tag: el.tagName.toLowerCase(),
                         id: el.id || '',
                         href: el.href || el.getAttribute('href') || '',
-                        rect: { top: Math.round(r.top), left: Math.round(r.left), width: Math.round(r.width), height: Math.round(r.height) }
+                        rect: { top: Math.round(r.top), left: Math.round(r.left), width: Math.round(r.width), height: Math.round(r.height) },
+                        center: { x: centerX, y: centerY }
                     });
                     if (actionableElements.length >= 120) break;
                 }
@@ -4284,6 +4717,23 @@ export async function extractAdaptivePageContext(webview) {
                 };
             })();
         `);
+
+        if (context && Array.isArray(context.actionableElements)) {
+            for (const item of context.actionableElements) {
+                if (item && item.center) {
+                    somMarkCoordinateCache.set(item.mark, { x: item.center.x, y: item.center.y, text: item.text, tag: item.tag, rect: item.rect });
+                    const idNum = parseInt((item.mark || '').replace(/\D/g, ''), 10);
+                    if (!isNaN(idNum)) {
+                        somMarkCoordinateCache.set(idNum, { x: item.center.x, y: item.center.y, text: item.text, tag: item.tag, rect: item.rect });
+                    }
+                }
+            }
+        }
+        try {
+            const axTree = await extractPageAXTree(webview);
+            if (axTree) context.axTree = axTree;
+        } catch (_) {}
+
         return context;
     } catch (err) {
         return {

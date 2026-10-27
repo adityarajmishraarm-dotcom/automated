@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, session, shell, dialog } = require('electron');
+const { app, BrowserWindow, ipcMain, session, shell, dialog, nativeImage, webContents } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const http = require('http');
@@ -20,6 +20,12 @@ if (!gotTheLock) {
         }
     });
 }
+
+// Ensure Windows taskbar grouping uses the app's custom identity and icon
+if (process.platform === 'win32') {
+    app.setAppUserModelId('com.nexora.browser');
+}
+app.setName('Nexora Browser');
 
 // Chromium performance & cache switches to prevent Windows file locking delays
 app.commandLine.appendSwitch('disable-gpu-shader-disk-cache');
@@ -52,13 +58,18 @@ let secondBrainMemoryManager = null;
 let secondBrainMemoryRetriever = null;
 let secondBrainSkillManager = null;
 let secondBrainReflectionEngine = null;
+let secondBrainLifecycleManager = null;
 
 try {
-    const sbPath = path.resolve(__dirname, '..', '..', 'second brain');
+    let sbPath = path.resolve(__dirname, '..', 'second brain');
+    if (!fs.existsSync(sbPath)) {
+        sbPath = path.resolve(__dirname, '..', '..', 'second brain');
+    }
     const MemoryManager = require(path.join(sbPath, 'memory_manager'));
     const MemoryRetriever = require(path.join(sbPath, 'memory_retriever'));
     const SkillManager = require(path.join(sbPath, 'skill_manager'));
     const ReflectionEngine = require(path.join(sbPath, 'reflection_engine'));
+    const LifecycleManager = require(path.join(sbPath, 'lifecycle_manager'));
 
     secondBrainMemoryManager = new MemoryManager();
     secondBrainMemoryRetriever = new MemoryRetriever(secondBrainMemoryManager);
@@ -68,7 +79,16 @@ try {
         memoryRetriever: secondBrainMemoryRetriever,
         skillManager: secondBrainSkillManager
     });
-    console.log('[Second Brain] Initialized with', secondBrainSkillManager.listSkills().length, 'procedural skills.');
+    secondBrainLifecycleManager = new LifecycleManager({
+        memoryManager: secondBrainMemoryManager,
+        memoryRetriever: secondBrainMemoryRetriever,
+        skillManager: secondBrainSkillManager,
+        reflectionEngine: secondBrainReflectionEngine
+    });
+    // Start morning 8:00 AM daily reflection cron schedule
+    secondBrainLifecycleManager.startMorningCron();
+
+    console.log('[Second Brain] Initialized with', secondBrainSkillManager.listSkills().length, 'procedural skills and 8:00 AM reflection schedule active.');
 } catch (e) {
     console.warn('[Second Brain Init in main.js]', e.message);
 }
@@ -204,14 +224,18 @@ function formatBytes(bytes, decimals = 2) {
 }
 
 function createWindow() {
+    const appIconPath = path.join(__dirname, 'assets', 'icon.png');
+    const appIcon = fs.existsSync(appIconPath) ? nativeImage.createFromPath(appIconPath) : null;
+
     mainWindow = new BrowserWindow({
         center: true,
         width: 1360,
         height: 860,
         minWidth: 800,
         minHeight: 600,
-        title: "Antigravity Browser - AI-Native React Desktop App",
+        title: "Nexora Browser - AI-Native Desktop App",
         backgroundColor: "#070b14",
+        icon: appIcon || appIconPath,
         frame: false, // Pure frameless window - eliminates Windows OS title bar and duplicate top padding
         autoHideMenuBar: true,
         show: true, // Mandatory visible full browser on every launch
@@ -241,6 +265,9 @@ function createWindow() {
     });
 
     mainWindow.once('ready-to-show', () => {
+        if (appIcon && process.platform === 'win32') {
+            mainWindow.setIcon(appIcon);
+        }
         mainWindow.show();
         mainWindow.maximize();
         mainWindow.focus();
@@ -564,7 +591,7 @@ function createWindow() {
 
     // Window ready logging, URL dispatch, and automated snapshot verification
     mainWindow.webContents.on('did-finish-load', () => {
-        console.log('[Native Browser] Antigravity Browser Shell initialized.');
+        console.log('[Native Browser] Nexora Browser Shell initialized.');
         const initialUrl = process.argv.find(arg => typeof arg === 'string' && (arg.startsWith('http://') || arg.startsWith('https://')));
         if (initialUrl) {
             setTimeout(() => {
@@ -900,7 +927,7 @@ function startAiControlServer(port = 4892) {
             if (pathname === '/api/status' && req.method === 'GET') {
                 return sendJson(200, {
                     status: 'ok',
-                    app: 'Antigravity Native Browser',
+                    app: 'Nexora Native Browser',
                     port,
                     pid: process.pid,
                     platform: process.platform,
@@ -1328,8 +1355,112 @@ function startAiControlServer(port = 4892) {
                 });
             }
 
+            // --- Second Brain REST API Endpoints ---
+            if (pathname === '/api/memory/status' && req.method === 'GET') {
+                const anchors = secondBrainMemoryManager ? secondBrainMemoryManager.readAnchorFiles() : {};
+                const skills = secondBrainSkillManager ? secondBrainSkillManager.listSkills() : [];
+                const interruptedTask = secondBrainLifecycleManager ? secondBrainLifecycleManager.checkInterruptedTask() : null;
+                return sendJson(200, {
+                    success: true,
+                    initialized: !!secondBrainMemoryManager,
+                    skillsCount: skills.length,
+                    skills,
+                    interruptedTask,
+                    anchors: {
+                        soul: anchors.soul || '',
+                        user: anchors.user || '',
+                        memory: anchors.memory || '',
+                        heartbeat: anchors.heartbeat || ''
+                    }
+                });
+            }
+
+            if (pathname === '/api/memory/search' && req.method === 'POST') {
+                const body = await readBody();
+                const query = body.query || '';
+                const limit = body.limit || 5;
+                if (!secondBrainMemoryRetriever) {
+                    return sendJson(500, { success: false, error: 'Second Brain retriever not initialized' });
+                }
+                const results = secondBrainMemoryRetriever.searchMemory({ query, limit });
+                return sendJson(200, { success: true, ...results });
+            }
+
+            if (pathname === '/api/memory/raw' && req.method === 'POST') {
+                const body = await readBody();
+                const sessionId = body.session_id || body.sessionId;
+                if (!secondBrainMemoryRetriever) {
+                    return sendJson(500, { success: false, error: 'Second Brain retriever not initialized' });
+                }
+                const rawResult = secondBrainMemoryRetriever.readRawSession(sessionId);
+                return sendJson(rawResult.found ? 200 : 404, { success: rawResult.found, ...rawResult });
+            }
+
+            if (pathname === '/api/skills' && req.method === 'GET') {
+                if (!secondBrainSkillManager) {
+                    return sendJson(500, { success: false, error: 'Second Brain skill manager not initialized' });
+                }
+                const skills = secondBrainSkillManager.listSkills();
+                return sendJson(200, { success: true, count: skills.length, skills });
+            }
+
+            if (pathname === '/api/skills/read' && req.method === 'POST') {
+                const body = await readBody();
+                const name = body.name || '';
+                if (!secondBrainSkillManager) {
+                    return sendJson(500, { success: false, error: 'Second Brain skill manager not initialized' });
+                }
+                const skillData = secondBrainSkillManager.readSkill(name);
+                return sendJson(skillData.found ? 200 : 404, { success: skillData.found, ...skillData });
+            }
+
+            if (pathname === '/api/memory/reflect' && req.method === 'POST') {
+                if (!secondBrainReflectionEngine) {
+                    return sendJson(500, { success: false, error: 'Second Brain reflection engine not initialized' });
+                }
+                const body = await readBody();
+                const reflectionResult = secondBrainReflectionEngine.runMorningReflection({ force: !!body.force });
+                return sendJson(200, { success: true, ...reflectionResult });
+            }
+
+            if (pathname === '/api/memory/session/save' && req.method === 'POST') {
+                const body = await readBody();
+                const { sessionId, transcript, goal, turns, title } = body;
+                if (!secondBrainMemoryManager) {
+                    return sendJson(500, { success: false, error: 'Second Brain memory manager not initialized' });
+                }
+                const sId = sessionId || ('session_' + Date.now());
+                const rawPath = secondBrainMemoryManager.writeRawSession(
+                    sId,
+                    turns || transcript || '',
+                    title || goal || 'Browser Automation Session'
+                );
+                return sendJson(200, { success: true, sessionId: sId, filePath: rawPath });
+            }
+
+            if (pathname === '/api/tasks/active' && req.method === 'GET') {
+                const active = secondBrainLifecycleManager ? secondBrainLifecycleManager.checkInterruptedTask() : null;
+                return sendJson(200, { success: true, activeTask: active });
+            }
+
+            if (pathname === '/api/tasks/checkpoint' && req.method === 'POST') {
+                const body = await readBody();
+                const { task, checkpoint, status } = body;
+                if (secondBrainLifecycleManager) {
+                    secondBrainLifecycleManager.checkpointTask(task, checkpoint, status);
+                }
+                return sendJson(200, { success: true });
+            }
+
+            if (pathname === '/api/tasks/clear' && req.method === 'POST') {
+                if (secondBrainLifecycleManager) {
+                    secondBrainLifecycleManager.clearActiveTask();
+                }
+                return sendJson(200, { success: true });
+            }
+
             if (pathname === '/api/restart' && req.method === 'POST') {
-                sendJson(200, { success: true, message: 'Restarting Antigravity Browser...' });
+                sendJson(200, { success: true, message: 'Restarting Nexora Browser...' });
                 setTimeout(() => {
                     app.relaunch();
                     app.exit(0);
@@ -1354,6 +1485,13 @@ function startAiControlServer(port = 4892) {
 }
 
 app.whenReady().then(() => {
+    if (process.platform === 'win32') {
+        app.setAppUserModelId('com.nexora.browser');
+    }
+    const appIconPath = path.join(__dirname, 'assets', 'icon.png');
+    if (app.dock && fs.existsSync(appIconPath)) {
+        app.dock.setIcon(appIconPath);
+    }
     createWindow();
     startAiControlServer(4892);
 
@@ -1646,9 +1784,10 @@ function createHudWindow() {
         height: hudHeight,
         minWidth: 460,
         minHeight: 500,
-        title: "Antigravity AI Copilot & Core Engine Cockpit (External HUD)",
+        title: "Nexora AI Copilot & Core Engine Cockpit (External HUD)",
         backgroundColor: "#060911",
         autoHideMenuBar: true,
+        icon: (fs.existsSync(path.join(__dirname, 'assets', 'icon.png')) ? nativeImage.createFromPath(path.join(__dirname, 'assets', 'icon.png')) : null),
         frame: false, // Pure Mac-style frameless HUD window (removes Windows OS top title bar & duplicate close buttons)
         show: false,
         webPreferences: {
@@ -1885,6 +2024,84 @@ ipcMain.handle('save-history', (event, historyList) => {
 ipcMain.handle('clear-history', () => {
     return savePersistedHistory([]);
 });
+
+// Native Hardware Input & Chromium Accessibility IPC Handlers
+ipcMain.handle('native-hardware-click', async (event, { webContentsId, x, y, button = 'left', clickCount = 1 }) => {
+    let targetWc = null;
+    if (webContentsId && webContents && typeof webContents.fromId === 'function') {
+        try { targetWc = webContents.fromId(webContentsId); } catch (_) {}
+    }
+    if (!targetWc && mainWindow && !mainWindow.isDestroyed()) {
+        targetWc = mainWindow.webContents;
+    }
+    if (!targetWc || targetWc.isDestroyed()) {
+        return { success: false, error: 'Target webContents not found' };
+    }
+    try {
+        const intX = Math.round(Number(x) || 0);
+        const intY = Math.round(Number(y) || 0);
+        targetWc.sendInputEvent({ type: 'mouseMove', x: intX, y: intY });
+        targetWc.sendInputEvent({ type: 'mouseDown', x: intX, y: intY, button, clickCount });
+        await new Promise(r => setTimeout(r, 50));
+        targetWc.sendInputEvent({ type: 'mouseUp', x: intX, y: intY, button, clickCount });
+        return { success: true, x: intX, y: intY };
+    } catch (e) {
+        console.error('[Native Hardware Click Error]', e);
+        return { success: false, error: e.message };
+    }
+});
+
+ipcMain.handle('native-hardware-key', async (event, { webContentsId, keyCode, modifiers = [] }) => {
+    let targetWc = null;
+    if (webContentsId && webContents && typeof webContents.fromId === 'function') {
+        try { targetWc = webContents.fromId(webContentsId); } catch (_) {}
+    }
+    if (!targetWc && mainWindow && !mainWindow.isDestroyed()) {
+        targetWc = mainWindow.webContents;
+    }
+    if (!targetWc || targetWc.isDestroyed()) {
+        return { success: false, error: 'Target webContents not found' };
+    }
+    try {
+        targetWc.sendInputEvent({ type: 'keyDown', keyCode, modifiers });
+        targetWc.sendInputEvent({ type: 'char', keyCode, modifiers });
+        targetWc.sendInputEvent({ type: 'keyUp', keyCode, modifiers });
+        return { success: true, keyCode };
+    } catch (e) {
+        console.error('[Native Hardware Key Error]', e);
+        return { success: false, error: e.message };
+    }
+});
+
+ipcMain.handle('native-ax-tree', async (event, { webContentsId }) => {
+    let targetWc = null;
+    if (webContentsId && webContents && typeof webContents.fromId === 'function') {
+        try { targetWc = webContents.fromId(webContentsId); } catch (_) {}
+    }
+    if (!targetWc && mainWindow && !mainWindow.isDestroyed()) {
+        targetWc = mainWindow.webContents;
+    }
+    if (!targetWc || targetWc.isDestroyed()) {
+        return { success: false, error: 'Target webContents not found' };
+    }
+    if (!targetWc.debugger) {
+        return { success: false, error: 'Debugger not available on target webContents' };
+    }
+    try {
+        const wasAttached = targetWc.debugger.isAttached();
+        if (!wasAttached) {
+            targetWc.debugger.attach('1.3');
+        }
+        const result = await targetWc.debugger.sendCommand('Accessibility.getFullAXTree');
+        if (!wasAttached) {
+            try { targetWc.debugger.detach(); } catch (_) {}
+        }
+        return { success: true, nodes: result.nodes || [] };
+    } catch (e) {
+        return { success: false, error: e.message };
+    }
+});
+
 
 
 

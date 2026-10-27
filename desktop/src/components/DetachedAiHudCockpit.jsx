@@ -602,7 +602,7 @@ export default function DetachedAiHudCockpit() {
 
                 <div className="mac-cockpit-brand">
                     <span className="mac-brand-sparkle">✦</span>
-                    <span className="mac-brand-name">Antigravity Copilot</span>
+                    <span className="mac-brand-name">Nexora Copilot</span>
                 </div>
 
                 {/* Compact Target Tab Switcher */}

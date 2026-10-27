@@ -327,7 +327,7 @@ const DEFAULT_ELEMENT_TEMPLATES = {
   <input 
     type="text" 
     class="ai-input" 
-    placeholder="Ask Antigravity Copilot or automate a task..." 
+    placeholder="Ask Nexora Copilot or automate a task..." 
     data-action="ai-execute" 
   />
   <button class="ai-run-btn" data-action="submit">Ask AI</button>

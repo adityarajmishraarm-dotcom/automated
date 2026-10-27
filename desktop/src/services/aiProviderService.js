@@ -80,10 +80,10 @@ export const DEFAULT_PROVIDERS = {
         id: 'opencodezen',
         name: 'OpenCode Zen',
         type: 'openai_compatible',
-        baseUrl: 'https://api.opencodezen.com/v1',
+        baseUrl: 'https://opencode.ai/zen/v1',
         apiKey: '',
-        model: 'opencode-zen-v1',
-        presetModels: ['opencode-zen-v1', 'opencode-zen-fast', 'opencode-zen-vision']
+        model: '',
+        presetModels: []
     },
     anthropic: {
         id: 'anthropic',
@@ -97,6 +97,30 @@ export const DEFAULT_PROVIDERS = {
 };
 
 /**
+ * Auto-heal and normalize provider base URLs
+ */
+export function normalizeBaseUrl(url, providerId = '') {
+    if (!url || typeof url !== 'string') return '';
+    let normalized = url.trim().replace(/\/+$/, '');
+    if (normalized.includes('localhost:1234')) {
+        normalized = normalized.replace('localhost:1234', '127.0.0.1:1234');
+    }
+    if (normalized.includes('localhost:11434')) {
+        normalized = normalized.replace('localhost:11434', '127.0.0.1:11434');
+    }
+    // Auto-heal OpenCode Zen URLs (replace invalid api.opencodezen.com or opencodezen.com)
+    if (normalized.includes('opencodezen.com') || (providerId === 'opencodezen' && normalized.includes('api.opencodezen'))) {
+        normalized = normalized.replace(/https?:\/\/(api\.)?opencodezen\.com(\/v1)?/i, 'https://opencode.ai/zen/v1');
+    }
+    if (providerId === 'opencodezen') {
+        if (normalized === 'https://opencode.ai/v1' || normalized === 'https://api.opencode.ai/v1' || normalized === 'https://opencode.ai/zen') {
+            normalized = 'https://opencode.ai/zen/v1';
+        }
+    }
+    return normalized;
+}
+
+/**
  * Load saved provider configs merged with default definitions
  */
 export function getAiProvidersConfig() {
@@ -107,9 +131,7 @@ export function getAiProvidersConfig() {
         const merged = { ...DEFAULT_PROVIDERS };
         for (const [key, val] of Object.entries(parsed)) {
             if (!val || typeof val !== 'object') continue;
-            let normBaseUrl = val.baseUrl || '';
-            if (normBaseUrl.includes('localhost:1234')) normBaseUrl = normBaseUrl.replace('localhost:1234', '127.0.0.1:1234');
-            if (normBaseUrl.includes('localhost:11434')) normBaseUrl = normBaseUrl.replace('localhost:11434', '127.0.0.1:11434');
+            let normBaseUrl = normalizeBaseUrl(val.baseUrl || '', key);
             if (merged[key]) {
                 const defaultPresets = Array.isArray(DEFAULT_PROVIDERS[key]?.presetModels) ? DEFAULT_PROVIDERS[key].presetModels : [];
                 const savedPresets = Array.isArray(val.presetModels) ? val.presetModels : [];
@@ -147,15 +169,19 @@ export function getAiProvidersConfig() {
  */
 export async function fetchAvailableModels(config) {
     if (!config || !config.baseUrl) return { success: false, models: [], error: 'Missing Base URL' };
-    let cleanBaseUrl = (config.baseUrl || '').replace(/\/+$/, '');
-    if (cleanBaseUrl.includes('localhost:1234')) cleanBaseUrl = cleanBaseUrl.replace('localhost:1234', '127.0.0.1:1234');
-    if (cleanBaseUrl.includes('localhost:11434')) cleanBaseUrl = cleanBaseUrl.replace('localhost:11434', '127.0.0.1:11434');
+    let cleanBaseUrl = normalizeBaseUrl(config.baseUrl, config.id);
     const headers = { 'Content-Type': 'application/json' };
-    if (config.apiKey) {
-        headers['Authorization'] = `Bearer ${config.apiKey}`;
+    if (config.apiKey && config.apiKey.trim()) {
+        headers['Authorization'] = `Bearer ${config.apiKey.trim()}`;
     }
+
+    // 1. First attempt with authorization headers if present
     try {
-        const res = await fetch(`${cleanBaseUrl}/models`, { method: 'GET', headers });
+        const res = await fetch(`${cleanBaseUrl}/models`, {
+            method: 'GET',
+            headers,
+            signal: AbortSignal.timeout(6000)
+        });
         if (res.ok) {
             const data = await res.json().catch(() => ({}));
             const list = Array.isArray(data.data)
@@ -165,12 +191,34 @@ export async function fetchAvailableModels(config) {
                 return { success: true, models: Array.from(new Set(list)) };
             }
         }
-    } catch (e) {}
+    } catch (e) {
+        // Fallback to unauthenticated fetch
+    }
 
-    // Fallback for Ollama root /api/tags
+    // 2. Fallback: unauthenticated GET /models (OpenCode Zen provides a public model catalog of 84+ models)
+    if (headers['Authorization'] || config.id === 'opencodezen') {
+        try {
+            const unauthRes = await fetch(`${cleanBaseUrl}/models`, {
+                method: 'GET',
+                headers: { 'Content-Type': 'application/json' },
+                signal: AbortSignal.timeout(6000)
+            });
+            if (unauthRes.ok) {
+                const data = await unauthRes.json().catch(() => ({}));
+                const list = Array.isArray(data.data)
+                    ? data.data.map(m => m.id || m.name).filter(Boolean)
+                    : (Array.isArray(data.models) ? data.models.map(m => m.name || m.id || m).filter(Boolean) : []);
+                if (list.length > 0) {
+                    return { success: true, models: Array.from(new Set(list)) };
+                }
+            }
+        } catch (e) {}
+    }
+
+    // 3. Fallback for Ollama root /api/tags
     try {
         const rootUrl = cleanBaseUrl.replace(/\/v1$/i, '');
-        const tagsRes = await fetch(`${rootUrl}/api/tags`, { method: 'GET' });
+        const tagsRes = await fetch(`${rootUrl}/api/tags`, { method: 'GET', signal: AbortSignal.timeout(6000) });
         if (tagsRes.ok) {
             const tagsData = await tagsRes.json().catch(() => ({}));
             const list = Array.isArray(tagsData.models)
@@ -249,7 +297,7 @@ export async function testConnection(providerId, customConfig = null) {
     const config = customConfig || (getAiProvidersConfig()[providerId] || DEFAULT_PROVIDERS[providerId]);
     if (!config) return { success: false, error: 'Unknown provider' };
 
-    const cleanBaseUrl = (config.baseUrl || '').replace(/\/+$/, '');
+    const cleanBaseUrl = normalizeBaseUrl(config.baseUrl || '', providerId);
     const startTime = performance.now();
 
     try {
@@ -268,7 +316,8 @@ export async function testConnection(providerId, customConfig = null) {
                     model: config.model || 'claude-3-5-haiku-20241022',
                     max_tokens: 5,
                     messages: [{ role: 'user', content: 'Ping' }]
-                })
+                }),
+                signal: AbortSignal.timeout(8000)
             });
 
             const latencyMs = Math.round(performance.now() - startTime);
@@ -283,33 +332,45 @@ export async function testConnection(providerId, customConfig = null) {
             };
         }
 
-        // OpenAI Compatible / LM Studio / Ollama / OpenRouter / OpenCode
+        // OpenAI Compatible / LM Studio / Ollama / OpenRouter / OpenCode / OpenCode Zen
         const headers = { 'Content-Type': 'application/json' };
-        if (config.apiKey) {
-            headers['Authorization'] = `Bearer ${config.apiKey}`;
+        if (config.apiKey && config.apiKey.trim()) {
+            headers['Authorization'] = `Bearer ${config.apiKey.trim()}`;
         }
         if (providerId === 'openrouter') {
-            headers['HTTP-Referer'] = 'https://antigravity.browser';
-            headers['X-Title'] = 'Antigravity Native Browser';
+            headers['HTTP-Referer'] = 'https://nexora.browser';
+            headers['X-Title'] = 'Nexora Native Browser';
         }
 
-        // First attempt lightweight /models endpoint
-        try {
-            const modelsRes = await fetch(`${cleanBaseUrl}/models`, {
-                method: 'GET',
-                headers
-            });
-            if (modelsRes.ok) {
-                const data = await modelsRes.json().catch(() => ({}));
-                const latencyMs = Math.round(performance.now() - startTime);
-                const models = Array.isArray(data.data) ? data.data.map(m => m.id) : [];
-                return { success: true, latencyMs, models, provider: config.name };
+        // For cloud providers (OpenCode Zen, OpenCode, OpenRouter, OpenAI), always test chat completions to verify auth and quotas
+        if (providerId === 'opencodezen' && (!config.apiKey || !config.apiKey.trim())) {
+            return {
+                success: false,
+                latencyMs: 0,
+                error: 'OpenCode Zen requires an API key (sk-...). The public free tier limit is exhausted.'
+            };
+        }
+
+        // For local providers (LM Studio, Ollama), testing /models is fast and sufficient
+        if (providerId === 'lmstudio' || providerId === 'ollama' || providerId === 'ornith') {
+            try {
+                const modelsRes = await fetch(`${cleanBaseUrl}/models`, {
+                    method: 'GET',
+                    headers,
+                    signal: AbortSignal.timeout(6000)
+                });
+                if (modelsRes.ok) {
+                    const data = await modelsRes.json().catch(() => ({}));
+                    const latencyMs = Math.round(performance.now() - startTime);
+                    const models = Array.isArray(data.data) ? data.data.map(m => m.id || m.name) : [];
+                    return { success: true, latencyMs, models, provider: config.name };
+                }
+            } catch (mErr) {
+                // Fallback to chat completions if /models blocked
             }
-        } catch (mErr) {
-            // Fallback to chat completions if /models blocked
         }
 
-        // Fallback test via chat completions
+        // Test chat completions for model validity and quota
         const chatRes = await fetch(`${cleanBaseUrl}/chat/completions`, {
             method: 'POST',
             headers,
@@ -317,7 +378,8 @@ export async function testConnection(providerId, customConfig = null) {
                 model: config.model || 'default',
                 messages: [{ role: 'user', content: 'ping' }],
                 max_tokens: 5
-            })
+            }),
+            signal: AbortSignal.timeout(8000)
         });
 
         const latencyMs = Math.round(performance.now() - startTime);
@@ -326,17 +388,18 @@ export async function testConnection(providerId, customConfig = null) {
         }
 
         const errData = await chatRes.json().catch(() => ({}));
+        const errMsg = errData.error?.message || `HTTP ${chatRes.status}: ${chatRes.statusText}`;
         return {
             success: false,
             latencyMs,
-            error: errData.error?.message || `HTTP ${chatRes.status}: ${chatRes.statusText}`
+            error: errMsg
         };
     } catch (networkErr) {
         const latencyMs = Math.round(performance.now() - startTime);
         return {
             success: false,
             latencyMs,
-            error: `Connection failed: ${networkErr.message}. Ensure endpoint is running and accessible.`
+            error: `Connection failed: ${networkErr.message}. Ensure endpoint URL is reachable.`
         };
     }
 }
@@ -654,7 +717,7 @@ export const BROWSER_TOOLS = [
         type: 'function',
         function: {
             name: 'list_skills',
-            description: 'List all available procedural Antigravity skills (DOM navigator, credential autofill, gateway bypass, ponytale, etc.) with zero token bloat.',
+            description: 'List all available procedural Nexora skills (DOM navigator, credential autofill, gateway bypass, ponytale, etc.) with zero token bloat.',
             parameters: {
                 type: 'object',
                 properties: {}
@@ -688,7 +751,7 @@ export function generateToolSystemPrompt(tools = BROWSER_TOOLS) {
     }).join('\n');
 
     return `\n\nBROWSER AUTOMATION TOOLS AVAILABLE:
-You are the Autonomous Antigravity Browser Agent. You directly control this browser.
+You are the Autonomous Nexora Browser Agent. You directly control this browser.
 When the user gives you a task or goal, you must REASON about the goal, PLAN the necessary steps, and EXECUTE browser tools.
 
 HOW TO EMIT TOOL CALLS:
@@ -721,8 +784,8 @@ async function fetchOpenAICompatibleWithFailover(config, requestBody, headers, s
         requestBody.reasoning_effort = 'low';
     }
 
-    // Normalize localhost to 127.0.0.1 to avoid Windows IPv6 ::1 connection drops
-    let cleanBaseUrl = (config.baseUrl || '').replace(/\/+$/, '');
+    // Normalize base URL and localhost to 127.0.0.1 to avoid Windows IPv6 ::1 connection drops
+    let cleanBaseUrl = normalizeBaseUrl(config.baseUrl || '', config.id);
     if (cleanBaseUrl.includes('localhost:')) {
         cleanBaseUrl = cleanBaseUrl.replace('localhost:', '127.0.0.1:');
     }
@@ -906,8 +969,8 @@ export async function sendChatMessage({
             headers['Authorization'] = `Bearer ${config.apiKey}`;
         }
         if (config.id === 'openrouter') {
-            headers['HTTP-Referer'] = 'https://antigravity.browser';
-            headers['X-Title'] = 'Antigravity Native Browser';
+            headers['HTTP-Referer'] = 'https://nexora.browser';
+            headers['X-Title'] = 'Nexora Native Browser';
         }
 
         const messages = [];
@@ -1161,8 +1224,8 @@ export async function streamChatMessage({
             headers['Authorization'] = `Bearer ${config.apiKey}`;
         }
         if (config.id === 'openrouter') {
-            headers['HTTP-Referer'] = 'https://antigravity.browser';
-            headers['X-Title'] = 'Antigravity Native Browser';
+            headers['HTTP-Referer'] = 'https://nexora.browser';
+            headers['X-Title'] = 'Nexora Native Browser';
         }
 
         const messages = [];

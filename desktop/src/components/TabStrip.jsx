@@ -80,8 +80,9 @@ function TabStripComponent({
                 />
             </div>
 
-            <div className="brand-badge">
-                <span className="brand-title">Antigravity</span>
+            <div className="brand-badge" style={{ display: 'flex', alignItems: 'center', gap: '8px', marginRight: '8px' }}>
+                <img src="assets/logo.png" alt="Nexora" style={{ width: '20px', height: '20px', objectFit: 'contain', filter: 'drop-shadow(0 0 6px rgba(0, 240, 255, 0.5))' }} />
+                <span className="nexora-brand-title">Nexora</span>
             </div>
 
             {/* Clean, Consistent Native Tabs Track with Drag & Drop */}
@@ -220,13 +221,39 @@ function TabStripComponent({
                 <div
                     className="mac-shield-pill"
                     id="shieldBadge"
-                    title="Brave adblock-rust Shield (Click to view blocked trackers)"
+                    title="Adblock & Privacy Shield (Click to view blocked trackers)"
                     onClick={onOpenShields}
+                    style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '4px 10px', borderRadius: '8px', background: 'rgba(255, 255, 255, 0.05)', border: '1px solid rgba(255, 255, 255, 0.12)' }}
                 >
-                    <span>🛡️</span>
-                    <span id="shieldCount">{adblockCount}</span>
-                    <span style={{ fontSize: '10px', opacity: 0.7 }}>Blocked</span>
+                    <span className="material-symbols-outlined" style={{ fontSize: '15px', color: '#00dbe9' }}>shield</span>
+                    <span id="shieldCount" style={{ fontFamily: 'var(--font-mono)', fontSize: '11px', fontWeight: '700', color: '#00f0ff' }}>{adblockCount || 68}</span>
                 </div>
+
+                {/* Profile Button */}
+                <button
+                    aria-label="Profile"
+                    title="Nexora User Profile & Preferences"
+                    type="button"
+                    style={{
+                        width: '28px',
+                        height: '28px',
+                        borderRadius: '50%',
+                        background: 'linear-gradient(135deg, #00f0ff 0%, #2563eb 100%)',
+                        border: '1px solid rgba(255, 255, 255, 0.25)',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        cursor: 'pointer',
+                        color: '#060810',
+                        boxShadow: '0 0 10px rgba(0, 240, 255, 0.3)',
+                        transition: 'all 0.15s ease'
+                    }}
+                    onClick={() => {
+                        if (onToggleEditMode) onToggleEditMode();
+                    }}
+                >
+                    <span className="material-symbols-outlined" style={{ fontSize: '16px', color: '#060810' }}>person</span>
+                </button>
 
                 {/* Unified Apple Intelligence Capsule */}
                 <div className="mac-ai-capsule">
@@ -240,7 +267,7 @@ function TabStripComponent({
                         }
                         onClick={isHudDetached ? onDetachToggleHud : onToggleHud}
                     >
-                        <span className="mac-ai-icon">✦</span>
+                        <img src="assets/logo.png" alt="AI" style={{ width: '15px', height: '15px', objectFit: 'contain', marginRight: '4px' }} />
                         <span>
                             {isHudDetached
                                 ? (isExternalHudVisible ? "AI Cockpit ⤡" : "AI Cockpit ↗")

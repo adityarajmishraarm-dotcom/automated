@@ -100,10 +100,18 @@ export default function NavigationToolbar({
                         }}
                     >
                         <div className="nav-controls">
-                            <button className="btn-nav" id="btnBack" title="Back (Alt+Left)" onClick={onBack}>‹</button>
-                            <button className="btn-nav" id="btnForward" title="Forward (Alt+Right)" onClick={onForward}>›</button>
-                            <button className="btn-nav" id="btnReload" title="Reload (Ctrl+R)" onClick={onReload}>↻</button>
-                            <button className="btn-nav" id="btnHome" title="Home (Alt+Home)" onClick={onHome}>🏠</button>
+                            <button className="btn-nav" id="btnBack" title="Back (Alt+Left)" onClick={onBack}>
+                                <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>arrow_back</span>
+                            </button>
+                            <button className="btn-nav" id="btnForward" title="Forward (Alt+Right)" onClick={onForward}>
+                                <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>arrow_forward</span>
+                            </button>
+                            <button className="btn-nav" id="btnReload" title="Reload (Ctrl+R)" onClick={onReload}>
+                                <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>refresh</span>
+                            </button>
+                            <button className="btn-nav" id="btnHome" title="Home (Alt+Home)" onClick={onHome}>
+                                <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>home</span>
+                            </button>
                         </div>
                     </CustomizableElementWrapper>
                 );
@@ -161,7 +169,11 @@ export default function NavigationToolbar({
                         }}
                     >
                         <div className="omnibox-box">
-                            <span className="lock-icon" id="lockIcon">{getLockIcon()}</span>
+                            <div className="omnibox-secure-badge" id="lockIcon">
+                                <span className="material-symbols-outlined" style={{ fontSize: '15px', color: '#00dbe9' }}>lock</span>
+                                <span>SECURE</span>
+                            </div>
+                            <span style={{ fontFamily: 'var(--font-mono)', fontSize: '11px', color: '#849495', userSelect: 'none' }}>https://</span>
                             <input
                                 ref={inputRef}
                                 type="text"
@@ -173,16 +185,27 @@ export default function NavigationToolbar({
                                 onFocus={handleFocus}
                                 onClick={handleClick}
                             />
-                            <span className="engine-tag" id="engineIndicatorTag">
+                            <span className="engine-tag" id="engineIndicatorTag" style={{ fontFamily: 'var(--font-mono)', fontSize: '10px', background: 'rgba(255,255,255,0.06)', borderRadius: 4, padding: '2px 6px' }}>
                                 {activeEngine === 'brave' ? 'Brave' : 'Google'}
                             </span>
                             <button
                                 className={`btn-toolbar-tool ${isBookmarked ? 'active-starred' : ''}`}
-                                style={{ border: 'none', background: 'transparent', fontSize: '14px', cursor: 'pointer', padding: '0 4px' }}
+                                style={{ border: 'none', background: 'transparent', fontSize: '16px', cursor: 'pointer', padding: '0 4px', color: isBookmarked ? '#00f0ff' : '#94a3b8' }}
                                 title={isBookmarked ? "Remove Bookmark (Ctrl+D)" : "Bookmark Page (Ctrl+D)"}
                                 onClick={onToggleBookmark}
                             >
-                                {isBookmarked ? '★' : '☆'}
+                                <span className="material-symbols-outlined" style={{ fontSize: '17px' }}>{isBookmarked ? 'star' : 'star_border'}</span>
+                            </button>
+                            <button
+                                className="omnibox-ai-pill"
+                                title="AI Assistant Layer"
+                                type="button"
+                                onClick={() => {
+                                    if (onOpenAiProviderModal) onOpenAiProviderModal();
+                                }}
+                            >
+                                <span className="material-symbols-outlined" style={{ fontSize: '13px' }}>auto_awesome</span>
+                                <span>AI ON</span>
                             </button>
                         </div>
                     </CustomizableElementWrapper>
@@ -226,7 +249,7 @@ export default function NavigationToolbar({
                             else if (action === 'open-ai-provider') onOpenAiProviderModal();
                         }}
                     >
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                             {!isNewTab && (
                                 <>
                                     <button
@@ -234,24 +257,30 @@ export default function NavigationToolbar({
                                         title="Clean Distraction-Free Reader Mode"
                                         onClick={onOpenReaderMode}
                                     >
-                                        📖 Reader
+                                        <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>menu_book</span>
+                                        <span>Reader</span>
                                     </button>
                                     <button
                                         className="btn-toolbar-tool"
                                         title="Scan QR Code to open on mobile"
                                         onClick={onOpenQrCode}
                                     >
-                                        📱 QR
+                                        <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>qr_code</span>
+                                        <span>QR</span>
                                     </button>
                                 </>
                             )}
 
+                            {/* Edit Interface Pill Button */}
                             <button
-                                className="btn-toolbar-tool"
-                                title="Custom Background Wallpaper Studio"
-                                onClick={onOpenWallpaperStudio}
+                                className="btn-toolbar-tool btn-edit-interface"
+                                title="Edit Interface (Customizer)"
+                                onClick={() => {
+                                    if (onOpenWallpaperStudio) onOpenWallpaperStudio();
+                                }}
                             >
-                                🎨 Wallpaper
+                                <span className="material-symbols-outlined" style={{ fontSize: '15px' }}>palette</span>
+                                <span style={{ fontWeight: 600 }}>Edit Interface</span>
                             </button>
 
                             <button
@@ -260,7 +289,8 @@ export default function NavigationToolbar({
                                 title="Modern Typography & Font Canvas Studio (Ctrl+Alt+1..8)"
                                 onClick={onOpenTypography}
                             >
-                                🔤 Typography
+                                <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>text_fields</span>
+                                <span>Typography</span>
                             </button>
 
                             <button
@@ -270,7 +300,8 @@ export default function NavigationToolbar({
                                 onClick={onOpenDownloads}
                                 style={{ position: 'relative' }}
                             >
-                                📥 Downloads
+                                <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>download</span>
+                                <span>Downloads</span>
                                 {activeDownloadsCount > 0 && (
                                     <span style={{
                                         position: 'absolute',
@@ -296,7 +327,8 @@ export default function NavigationToolbar({
                                 title="Open Browsing History (Ctrl+H)"
                                 onClick={onOpenHistory}
                             >
-                                🕒 History
+                                <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>history</span>
+                                <span>History</span>
                             </button>
 
                             <button
@@ -306,7 +338,17 @@ export default function NavigationToolbar({
                                 onClick={onOpenAiProviderModal}
                                 style={{ color: '#00e5ff', borderColor: 'rgba(0, 229, 255, 0.35)', background: 'rgba(0, 229, 255, 0.08)' }}
                             >
-                                🔑 AI Keys
+                                <span className="material-symbols-outlined" style={{ fontSize: '16px' }}>key</span>
+                                <span>AI Keys</span>
+                            </button>
+
+                            <button
+                                className="btn-nav"
+                                title="Browser Settings & More"
+                                onClick={onOpenTypography}
+                                style={{ width: '30px', height: '30px' }}
+                            >
+                                <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>more_vert</span>
                             </button>
                         </div>
                     </CustomizableElementWrapper>
@@ -314,9 +356,10 @@ export default function NavigationToolbar({
 
             case 'status-pill':
                 return (
-                    <div key="mod-status-pill" className="status-pill">
-                        <span className="dot-live"></span>
-                        <span>In-Process C++</span>
+                    <div key="mod-status-pill" className="status-pill" style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '4px 10px', borderRadius: 8, background: 'rgba(255, 255, 255, 0.04)', border: '1px solid rgba(255, 255, 255, 0.08)', fontFamily: 'var(--font-mono)', fontSize: '11px', color: '#94a3b8' }}>
+                        <img src="assets/logo.png" alt="Nexora" style={{ width: 14, height: 14, objectFit: 'contain' }} />
+                        <span className="dot-live" style={{ width: 6, height: 6, borderRadius: '50%', background: '#00f0ff', boxShadow: '0 0 8px #00f0ff' }}></span>
+                        <span>Nexora Core</span>
                     </div>
                 );
 
